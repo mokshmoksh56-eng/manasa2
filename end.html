@@ -156,7 +156,7 @@
 
     <!-- ✅ الهيدر -->
     <section class="hero-banner">
-        <div class="lesson-title" id="reportTitle">بيانات الحصة الحالية</div>
+        <div class="lesson-title" id="reportTitle">بيانات مجموعة --</div>
     </section>
 
     <!-- ✅ تقرير البيانات -->
@@ -286,6 +286,9 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
+            // ✅ تم تصحيح الجافا سكريبت لمنع ظهور الشباك أو كلمة كود المجموعة
+            document.getElementById('reportTitle').innerText = `بيانات مجموعة ${currentLessonId}`;
+
             loadActualData();
 
             // فحص حالة النشر عند فتح الصفحة
