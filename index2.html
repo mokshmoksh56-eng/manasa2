@@ -159,7 +159,7 @@
             margin-bottom: 12px;
         }
 
-        /* ✅ أزرار الإجراءات (تم تبديل الأماكن: التعديل أولاً ثم الحذف) */
+        /* ✅ أزرار الإجراءات (تعديل الاسم أولاً ثم الحذف) */
         .card-actions {
             position: absolute;
             top: 10px;
@@ -384,7 +384,7 @@
         </div>
     </section>
 
-    <!-- ✅ نافذة تفاصيل المجموعة (خالية من زر الحذف) -->
+    <!-- ✅ نافذة تفاصيل المجموعة (خالية تماماً من أزرار أو علامات الحذف) -->
     <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 8px; margin-bottom: 10px;">
@@ -397,7 +397,7 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف -->
+    <!-- ✅ نافذة تأكيد الحذف الرئيسية -->
     <div id="deleteModal" class="modal-overlay" onclick="closeModal('deleteModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #FEE2E2; color: #EF4444;">
@@ -502,7 +502,7 @@
                 newCard.className = `portal-card ${cardStyle}`;
                 
                 newCard.innerHTML = `
-                    <!-- ✅ أزرار الإجراءات (تم تبديل الأماكن: التعديل أولاً ثم الحذف) -->
+                    <!-- ✅ أزرار الإجراءات الخارجية (تعديل الاسم أولاً ثم الحذف) -->
                     <div class="card-actions">
                         <button class="btn-action btn-edit" title="تعديل الاسم" onclick="openRenameModal(${lesson.id}, event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 14px; height: 14px;">
@@ -626,6 +626,7 @@
                                     ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ') 
                                     : 'غير محدد';
 
+                // محتوى المودال يخلو تماماً من زر أو رسالة الحذف
                 contentEl.innerHTML = `
                     <p>👤 <b>المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
                     <p>🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
