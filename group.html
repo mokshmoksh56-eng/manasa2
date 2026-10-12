@@ -67,7 +67,7 @@
         .step-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* متغيرات الألوان لكل خطوة بناءً على طلبك */
+        /* متغيرات الألوان لكل خطوة */
         .theme-pink { --c-main: #FF6B6B; --c-dark: #E03131; --c-light: #FFF5F5; --c-border: #FFC9C9; }
         .theme-turq { --c-main: #00D2C6; --c-dark: #008B82; --c-light: #F2FDFD; --c-border: #A7EBE7; }
         .theme-teal { --c-main: #25968b; --c-dark: #1b736a; --c-light: #e0f2f0; --c-border: #b2dfdb; }
@@ -135,7 +135,7 @@
     <!-- ✅ الهيدر -->
     <section class="hero-banner">
         <div class="hero-content">
-            <div class="hero-brand">إعداد <span class="accent">الحصة</span></div>
+            <div class="hero-brand">إعداد <span class="accent">المجموعة</span></div>
             <div class="hero-headline" id="lessonTitleDisplay">جاري الإعداد...</div>
         </div>
     </section>
@@ -264,21 +264,25 @@
 
             <div class="nav-buttons">
                 <button class="btn-prev" onclick="prevStep(2)">رجوع</button>
-                <button class="btn-next" onclick="finishSetup()">✅ إنهاء ودخول الحصة</button>
+                <button class="btn-next" onclick="finishSetup()">✅ حفظ وإنهاء التقرير</button>
             </div>
         </div>
     </div>
 
     <script>
         let currentLessonId = '1';
+        let isEditMode = false;
         let mapInitialized = false;
         let map, marker;
         
-        // قراءة رقم الحصة من الرابط
+        // قراءة رقم الحصة أو المجموعة ووضع التعديل من الرابط
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
-            document.getElementById('lessonTitleDisplay').innerText = `إعداد حصة رقم ${currentLessonId}`;
+            if(urlParams.has('mode') && urlParams.get('mode') === 'edit') isEditMode = true;
+            
+            const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
+            document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
         };
 
         // ==========================================
@@ -373,13 +377,12 @@
         }
 
         // ==========================================
-        // ✅ إنهاء الإعدادات والذهاب لصفحة الحصة
+        // ✅ حفظ وإنهاء والتوجيه إلى end.html
         // ==========================================
         function finishSetup() {
-            // هنا يمكنك حفظ البيانات في localStorage
-            // ثم التوجيه للصفحة النهائية
-            alert("تم حفظ إعدادات الحصة بنجاح! جاري الدخول...");
-            window.location.href = `lesson${currentLessonId}.html`;
+            // رسالة نجاح سريعة والتوجيه لصفحة التقرير النهائية end.html
+            alert("تم حفظ إعدادات المجموعة بنجاح!");
+            window.location.href = `end.html?lessonId=${currentLessonId}`; 
         }
     </script>
 </body>
