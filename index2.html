@@ -636,19 +636,7 @@
             });
         }
 
-        // ✅ تحويل الوقت من نظام 24 ساعة إلى نظام 12 ساعة مع (صباحاً / مساءً)
-        function formatTimeTo12Hour(timeStr) {
-            if (!timeStr) return '--:--';
-            let parts = timeStr.split(':');
-            let hours = parseInt(parts[0], 10);
-            let minutes = parts[1];
-            let period = hours >= 12 ? 'مساءً' : 'صباحاً';
-            hours = hours % 12;
-            hours = hours ? hours : 12; 
-            return `${hours}:${minutes} ${period}`;
-        }
-
-        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة
+        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية)
         function openGroupModal(lessonId) {
             const savedState = sessionStorage.getItem('lessonState_' + lessonId);
             const modal = document.getElementById('groupModal');
@@ -659,8 +647,11 @@
                 const data = JSON.parse(savedState);
                 nameEl.innerText = data.g_name || `مجموعة رقم ${lessonId}`;
                 
-                const startTime12 = formatTimeTo12Hour(data.g_start);
-                const endTime12 = formatTimeTo12Hour(data.g_end);
+                // عرض بيانات الساعة الرقمية المخصصة
+                const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? 
+                                    `${data.start_hour}:${data.start_min} ${data.start_ampm}` : '--:--';
+                const endTime12 = (data.end_hour && data.end_min && data.end_ampm) ? 
+                                  `${data.end_hour}:${data.end_min} ${data.end_ampm}` : '--:--';
 
                 // استخراج الأيام، الشهور، والتكرار الأسبوعي الجديدة
                 const daysStr = data.g_days && data.g_days.length > 0 ? data.g_days.join('، ') : 'غير محدد';
