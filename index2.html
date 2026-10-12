@@ -242,7 +242,7 @@
             box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
         }
 
-        /* ✅ كارت إضافة حصة/مجموعة جديدة */
+        /* ✅ كارت إضافة مجموعة جديدة */
         .card-add-new {
             background: #F1F5F9;
             border: 3px dashed #CBD5E1;
@@ -475,7 +475,7 @@
             </div>
             
             <h1 class="hero-headline">
-                <span class="part-1">إدارة المجموعات</span>
+                <span class="part-1">إدارة الحصص</span>
                 <span class="dots">...</span>
                 <span class="part-2">تابع طلابك باحترافية</span>
             </h1>
@@ -486,14 +486,14 @@
         </div>
     </section>
 
-    <!-- ✅ قسم البطاقات (إدارة المجموعات والحصص) -->
+    <!-- ✅ قسم البطاقات (جداول الحصص) -->
     <section class="cards-section">
         <div class="container mx-auto max-w-5xl">
-            <!-- تم إضافة ID للجريد ليتم إضافة الكروت بداخله -->
+            <!-- حاوية الكروت -->
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
                 
-                <!-- ✅ كارت إنشاء مجموعة جديدة (يعمل بـ JavaScript) -->
-                <div onclick="createNewLesson()" class="portal-card card-add-new">
+                <!-- ✅ كارت إنشاء مجموعة جديدة -->
+                <div onclick="createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -511,58 +511,108 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- ✅ سكريبت التفاعل (إضافة وحذف) مع الربط الذكي بالملف الجديد -->
+    <!-- ✅ سكريبت الحفظ واسترجاع البيانات تلقائياً عند التحديث (Refresh) -->
     <script>
-        let lessonCounter = 0;
+        let lessons = [];
 
-        function createNewLesson() {
-            lessonCounter++;
+        // عند تحميل الصفحة، استرجاع الحصص المحفوظة مسبقاً
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedLessons = localStorage.getItem('teacher_lessons');
+            if (savedLessons) {
+                try {
+                    lessons = JSON.parse(savedLessons);
+                    renderLessons();
+                } catch(e) {
+                    lessons = [];
+                }
+            }
+        });
+
+        // إنشاء حصة جديدة
+        function createNewLesson(saveToStorage = true) {
+            // توليد معرف فريد أو رقم تسلسلي بناءً على الحصص الحالية
+            const newId = lessons.length > 0 ? Math.max(...lessons.map(l => l.id)) + 1 : 1;
+            
+            const lessonData = {
+                id: newId,
+                title: `مجموعة رقم ${newId}`
+            };
+
+            lessons.push(lessonData);
+            
+            if (saveToStorage) {
+                saveLessonsToStorage();
+            }
+            
+            renderLessons();
+        }
+
+        // عرض الحصص على الشاشة
+        function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
-            // التبديل بين التصميمين (الأزرق والأخضر) ليعطي مظهراً جذاباً
-            const isBlue = lessonCounter % 2 !== 0;
-            const cardStyle = isBlue ? 'card-teacher' : 'card-student';
-            const imgName = isBlue ? 'teacher.png' : 'student.png';
-
-            // إنشاء عنصر الكارت الجديد
-            const newCard = document.createElement('div');
-            newCard.className = `portal-card ${cardStyle} animate-fade-in`;
-            
-            newCard.innerHTML = `
-                <!-- زر الحذف -->
-                <button class="btn-delete" title="حذف المجموعة" onclick="deleteLesson(this)">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                <div class="card-image-box">
-                    <!-- تأكد من وجود الصور في نفس المجلد -->
-                    <img src="./${imgName}" alt="صورة الحصة">
-                </div>
-                <div class="card-text">
-                    <h2>مجموعة رقم ${lessonCounter}</h2>
-                    <p>قم بالدخول لإعداد بيانات المجموعة (المواعيد، المادة، والموقع).</p>
-                    
-                    <!-- ✅ التعديل الجديد: التوجيه لملف group.html مع تمرير رقم المجموعة -->
-                    <a href="./group.html?lessonId=${lessonCounter}" class="btn-go">
-                        إعداد المجموعة <span>➔</span>
-                    </a>
+            // الاحتفاظ بكارت "إنشاء مجموعة جديدة" فقط، وإعادة بناء باقي الكروت
+            const addCardHTML = `
+                <div onclick="createNewLesson(true)" class="portal-card card-add-new">
+                    <div class="icon-plus">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                    <h2>إنشاء مجموعة جديدة</h2>
                 </div>
             `;
             
-            // إضافة الكارت الجديد في نهاية الجريد
-            container.appendChild(newCard);
+            container.innerHTML = addCardHTML;
+
+            // بناء كروت الحصص المخزنة
+            lessons.forEach((lesson, index) => {
+                const isBlue = (index + 1) % 2 !== 0;
+                const cardStyle = isBlue ? 'card-teacher' : 'card-student';
+                const imgName = isBlue ? 'teacher.png' : 'student.png';
+
+                const newCard = document.createElement('div');
+                newCard.className = `portal-card ${cardStyle} animate-fade-in`;
+                
+                newCard.innerHTML = `
+                    <!-- زر الحذف -->
+                    <button class="btn-delete" title="حذف المجموعة" onclick="deleteLesson(${lesson.id})">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+
+                    <div class="card-image-box">
+                        <img src="./${imgName}" alt="صورة الحصة">
+                    </div>
+                    <div class="card-text">
+                        <h2>${lesson.title}</h2>
+                        <p>قم بالدخول لإعداد بيانات المجموعة (المواعيد، المادة، والموقع).</p>
+                        <a href="./group.html?lessonId=${lesson.id}" class="btn-go">
+                            إعداد المجموعة <span>➔</span>
+                        </a>
+                    </div>
+                `;
+                
+                container.appendChild(newCard);
+            });
         }
 
-        function deleteLesson(btnElement) {
-            // رسالة تأكيد قبل الحذف
+        // حذف حصة وتحديث التخزين
+        function deleteLesson(id) {
             if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة؟')) {
-                // البحث عن الكارت الحاوي للزر وحذفه
-                const card = btnElement.closest('.portal-card');
-                if (card) {
-                    card.remove();
-                }
+                lessons = lessons.filter(l => l.id !== id);
+                saveLessonsToStorage();
+                renderLessons();
+            }
+        }
+
+        // حفظ القائمة في localStorage
+        function saveLessonsToStorage() {
+            try {
+                localStorage.setItem('teacher_lessons', JSON.stringify(lessons));
+            } catch(e) {
+                console.warn('فشل الحفظ في الذاكرة المحلية', e);
             }
         }
     </script>
