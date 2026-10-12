@@ -636,7 +636,7 @@
             });
         }
 
-        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية)
+        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية والترجمة)
         function openGroupModal(lessonId) {
             const savedState = sessionStorage.getItem('lessonState_' + lessonId);
             const modal = document.getElementById('groupModal');
@@ -658,6 +658,16 @@
                 const monthsStr = data.g_months && data.g_months.length > 0 ? data.g_months.join('، ') : 'غير محدد';
                 const repeatStr = data.g_repeat_weekly ? '✅ نعم (مكرر أسبوعياً)' : '❌ لا (مرة واحدة)';
 
+                // ✅ ترجمة قيم الفئة
+                let genderText = 'مختلط'; // القيمة الافتراضية
+                if(data.g_gender === 'g_boys') genderText = 'أولاد فقط';
+                else if(data.g_gender === 'g_girls') genderText = 'بنات فقط';
+
+                // ✅ ترجمة قيم المكان
+                let locText = 'السنتر'; // القيمة الافتراضية
+                if(data.g_loc === 'l_teach') locText = 'بيت المستر';
+                else if(data.g_loc === 'l_stud') locText = 'منزل الطالب';
+
                 contentEl.innerHTML = `
                     <p>👤 <b>اسم المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
                     <p>🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
@@ -666,7 +676,7 @@
                     <p>🔄 <b>التكرار أسبوعياً:</b> ${repeatStr}</p>
                     <p>🔢 <b>عدد الطلاب المطلوب:</b> ${data.g_count || 'غير محدد'} طالب</p>
                     <p>⏰ <b>المواعيد:</b> من ${startTime12} إلى ${endTime12}</p>
-                    <p>🎓 <b>الفئة:</b> ${data.g_gender || 'مختلط'} | 📍 <b>المكان:</b> ${data.g_loc || 'السنتر'}</p>
+                    <p>🎓 <b>الفئة:</b> ${genderText} | 📍 <b>المكان:</b> ${locText}</p>
                     <p>📍 <b>العنوان التفصيلي:</b> ${data.m_address || 'لم يتم تحديد الموقع بدقة'}</p>
                 `;
             } else {
