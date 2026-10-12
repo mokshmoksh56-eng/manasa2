@@ -17,45 +17,6 @@
         body { background: #F1F5F9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
         /* ============================================ */
-        /* ✅ شريط التحكم العلوي (Sticky Status Bar) */
-        /* ============================================ */
-        .top-status-bar {
-            position: sticky; top: 0; z-index: 9999;
-            padding: 12px 20px; display: flex; justify-content: space-between; align-items: center;
-            backdrop-filter: blur(12px); border-bottom: 2px solid;
-            transition: all 0.4s ease; box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-        }
-        .top-status-bar.hidden-mode {
-            background: rgba(254, 242, 242, 0.95); border-bottom-color: #FECACA;
-        }
-        .top-status-bar.published-mode {
-            background: rgba(236, 253, 245, 0.95); border-bottom-color: #A7F3D0;
-        }
-
-        .status-text { display: flex; flex-direction: column; }
-        .status-title { font-size: 16px; font-weight: 900; transition: color 0.3s; }
-        .status-desc { font-size: 12px; font-weight: 700; color: #64748B; }
-
-        .hidden-mode .status-title { color: #DC2626; } /* أحمر للإخفاء */
-        .published-mode .status-title { color: #059669; } /* أخضر للنشر */
-
-        /* مفتاح النشر (Toggle Switch) */
-        .switch { position: relative; display: inline-block; width: 56px; height: 32px; flex-shrink: 0; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider {
-            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-            background-color: #EF4444; transition: .4s; border-radius: 34px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.1);
-        }
-        .slider:before {
-            position: absolute; content: ""; height: 24px; width: 24px; left: 4px; bottom: 4px;
-            background-color: white; transition: .4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-        input:checked + .slider { background-color: #10B981; }
-        input:checked + .slider:before { transform: translateX(-24px); }
-
-        /* ============================================ */
         /* ✅ الهيدر */
         /* ============================================ */
         .hero-banner {
@@ -102,33 +63,43 @@
         /* ============================================ */
         .map-wrapper {
             position: relative; border-radius: 12px; overflow: hidden; border: 2px solid #E2E8F0; width: 100%; height: 260px;
-            transition: all 0.4s ease;
+            transition: all 0.4s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         #static-map { width: 100%; height: 100%; z-index: 1; transition: filter 0.4s ease; }
         
-        /* طبقة حجب الخريطة عند الإخفاء */
+        /* طبقة حجب الخريطة عند الإخفاء (قابلة للضغط للتفعيل) */
         .map-hidden-overlay {
             position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75);
             z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: white; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; backdrop-filter: blur(3px);
+            color: white; opacity: 0; pointer-events: none; transition: all 0.4s ease; backdrop-filter: blur(4px);
+            cursor: pointer; text-align: center;
         }
         .is-hidden .map-hidden-overlay { opacity: 1; pointer-events: all; }
-        .is-hidden #static-map { filter: grayscale(1) blur(4px); } /* تغبيش الخريطة */
+        .is-hidden #static-map { filter: grayscale(1) blur(5px); } /* تغبيش الخريطة */
 
-        .map-hidden-overlay i { font-size: 32px; margin-bottom: 8px; font-style: normal; }
-        .map-hidden-overlay h4 { font-size: 18px; font-weight: 900; margin: 0; color: #FCA5A5; }
-        .map-hidden-overlay p { font-size: 13px; font-weight: 700; color: #E2E8F0; margin-top: 4px; }
+        .map-hidden-overlay:hover { background: rgba(15, 23, 42, 0.85); }
+        .map-hidden-overlay:hover i { transform: scale(1.1) translateY(-5px); text-shadow: 0 10px 20px rgba(239, 68, 68, 0.5); }
+        .map-hidden-overlay i { font-size: 45px; margin-bottom: 10px; font-style: normal; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .map-hidden-overlay h4 { font-size: 20px; font-weight: 900; margin: 0; color: #FCA5A5; }
+        .map-hidden-overlay p { font-size: 13px; font-weight: 800; color: #fff; margin-top: 8px; background: rgba(255,255,255,0.15); padding: 6px 18px; border-radius: 99px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        /* زر فتح خرائط جوجل من الأعلى */
-        .map-action-btn {
-            position: absolute; top: 15px; right: 15px; z-index: 500;
-            background: #fff; color: #0F2D5C; padding: 8px 16px; border-radius: 99px;
-            font-size: 13px; font-weight: 900; display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15); text-decoration: none; transition: 0.3s;
-            border: 2px solid #E2E8F0; cursor: pointer;
+        /* أزرار التحكم داخل الخريطة (عند النشر) */
+        .map-controls {
+            position: absolute; top: 15px; left: 15px; right: 15px;
+            display: flex; justify-content: space-between; gap: 10px; z-index: 500;
+            opacity: 1; transition: 0.4s ease; pointer-events: none;
         }
-        .map-action-btn:hover { background: #0F2D5C; color: #fff; border-color: #0F2D5C; }
-        .is-hidden .map-action-btn { display: none; } /* إخفاء الزر إذا كانت محجوبة */
+        .is-hidden .map-controls { opacity: 0; visibility: hidden; }
+        
+        .map-action-btn {
+            pointer-events: auto; background: #fff; padding: 8px 16px; border-radius: 99px;
+            font-size: 13px; font-weight: 900; display: flex; align-items: center; gap: 6px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 2px solid #E2E8F0; cursor: pointer; transition: 0.3s;
+        }
+        .btn-hide-map { color: #DC2626; border-color: #FECACA; }
+        .btn-hide-map:hover { background: #DC2626; color: white; border-color: #DC2626; transform: translateY(-2px); }
+        .btn-open-map { color: #0F2D5C; border-color: #BFDBFE; }
+        .btn-open-map:hover { background: #0F2D5C; color: white; border-color: #0F2D5C; transform: translateY(-2px); }
 
         /* تصميم النقطة (Marker) داخل الخريطة */
         .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
@@ -174,6 +145,8 @@
 
         @media (max-width: 600px) {
             .report-grid { grid-template-columns: 1fr; gap: 15px; }
+            .map-controls { flex-direction: row; gap: 8px; }
+            .map-action-btn { font-size: 11px; padding: 6px 12px; }
             .fab-container {
                 bottom: 20px; left: 50%; transform: translateX(-50%);
                 width: 92%; justify-content: space-between;
@@ -184,18 +157,6 @@
     </style>
 </head>
 <body>
-
-    <!-- ✅ شريط التفعيل والإخفاء (مثبت بالأعلى) -->
-    <div class="top-status-bar hidden-mode" id="statusBanner">
-        <div class="status-text">
-            <span class="status-title" id="statusTitle">المجموعة مخفية 🚫</span>
-            <span class="status-desc" id="statusDesc">الطلاب لا يمكنهم رؤية المجموعة.</span>
-        </div>
-        <label class="switch">
-            <input type="checkbox" id="publishToggle" onchange="togglePublish()">
-            <span class="slider"></span>
-        </label>
-    </div>
 
     <!-- ✅ الهيدر -->
     <section class="hero-banner">
@@ -261,7 +222,7 @@
                 </div>
             </div>
 
-            <!-- 3. الموقع والخريطة (مع تأثيرات التخفي) -->
+            <!-- 3. الموقع والخريطة (مع تأثيرات التخفي التفاعلية) -->
             <div class="report-card full-width">
                 <div class="card-header"><span>📍</span> الموقع الجغرافي للدرس</div>
                 <div class="data-row" style="border: none; padding-bottom: 10px;">
@@ -269,19 +230,26 @@
                     <span class="data-value" id="val-address">--</span>
                 </div>
                 
+                <!-- حاوية الخريطة -->
                 <div class="map-wrapper is-hidden" id="mapWrapper">
-                    <!-- طبقة الحجب عند الإخفاء -->
-                    <div class="map-hidden-overlay">
+                    
+                    <!-- أزرار التحكم داخل الخريطة (تظهر عند النشر فقط) -->
+                    <div class="map-controls">
+                        <button class="map-action-btn btn-open-map" onclick="openInGoogleMaps()">
+                            📍 فتح في خرائط جوجل
+                        </button>
+                        <button class="map-action-btn btn-hide-map" onclick="togglePublish(false)">
+                            🚫 إخفاء الموقع
+                        </button>
+                    </div>
+
+                    <!-- طبقة الحجب عند الإخفاء (قابلة للضغط للنشر) -->
+                    <div class="map-hidden-overlay" onclick="togglePublish(true)" title="اضغط هنا لنشر الموقع">
                         <i>🔒</i>
                         <h4>الموقع محجوب عن الطلاب</h4>
-                        <p>قم بنشر المجموعة من الشريط العلوي ليظهر الموقع</p>
+                        <p>اضغط هنا لتفعيل وإظهار الموقع للطلاب</p>
                     </div>
                     
-                    <!-- زر فتح الموقع في الخرائط (يظهر فقط عند النشر) -->
-                    <button class="map-action-btn" onclick="openInGoogleMaps()">
-                        📍 فتح في خرائط جوجل
-                    </button>
-
                     <div id="static-map"></div>
                 </div>
             </div>
@@ -328,11 +296,9 @@
 
             loadActualData();
 
-            const savedPublishState = sessionStorage.getItem('publishState_' + currentLessonId);
-            if (savedPublishState === 'true') {
-                document.getElementById('publishToggle').checked = true;
-            }
-            togglePublish(); 
+            // فحص حالة النشر عند فتح الصفحة
+            const savedPublishState = sessionStorage.getItem('publishState_' + currentLessonId) === 'true';
+            togglePublish(savedPublishState); 
         };
 
         function loadActualData() {
@@ -461,25 +427,22 @@
             }
         }
 
-        function togglePublish() {
-            const isPublished = document.getElementById('publishToggle').checked;
-            const banner = document.getElementById('statusBanner');
-            const title = document.getElementById('statusTitle');
-            const desc = document.getElementById('statusDesc');
+        // دالة التبديل بين النشر والإخفاء بناءً على أزرار الخريطة
+        function togglePublish(forceState = null) {
+            let isPublished;
+            if (forceState !== null) {
+                isPublished = forceState;
+            } else {
+                const current = sessionStorage.getItem('publishState_' + currentLessonId) === 'true';
+                isPublished = !current;
+            }
+
             const mapWrap = document.getElementById('mapWrapper');
 
             if (isPublished) {
-                banner.classList.remove('hidden-mode');
-                banner.classList.add('published-mode');
-                title.innerHTML = 'المجموعة منشورة ✅';
-                desc.innerHTML = 'الطلاب يرون هذه المجموعة ويمكنهم الحجز.';
-                mapWrap.classList.remove('is-hidden'); // إزالة حجب الخريطة
+                mapWrap.classList.remove('is-hidden'); // إزالة حجب الخريطة وإظهار أزرار التحكم
             } else {
-                banner.classList.remove('published-mode');
-                banner.classList.add('hidden-mode');
-                title.innerHTML = 'المجموعة مخفية 🚫';
-                desc.innerHTML = 'الطلاب لا يمكنهم رؤية أو حجز مقاعدهم.';
-                mapWrap.classList.add('is-hidden'); // تفعيل حجب الخريطة
+                mapWrap.classList.add('is-hidden'); // تفعيل حجب الخريطة (الغشاوة والقفل)
             }
 
             updateMapMarker(isPublished);
