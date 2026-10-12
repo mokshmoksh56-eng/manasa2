@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تقرير الحصة - منصة احجزلى</title>
+    <title>بيانات الحصة - منصة احجزلى</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -29,10 +29,6 @@
             height: 40px; background: #F1F5F9; border-radius: 50% 50% 0 0;
         }
         .lesson-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
-        .lesson-id-badge {
-            background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px;
-            font-size: 14px; font-weight: 800; display: inline-block; backdrop-filter: blur(5px);
-        }
 
         /* ============================================ */
         /* ✅ بطاقات التقرير */
@@ -160,8 +156,7 @@
 
     <!-- ✅ الهيدر -->
     <section class="hero-banner">
-        <div class="lesson-title" id="reportTitle">تقرير المجموعة</div>
-        <div class="lesson-id-badge" id="lessonIdDisplay">الكود: #--</div>
+        <div class="lesson-title" id="reportTitle">بيانات الحصة الحالية</div>
     </section>
 
     <!-- ✅ تقرير البيانات -->
@@ -291,9 +286,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
-            document.getElementById('reportTitle').innerText = `تقرير مجموعة #${currentLessonId}`;
-            document.getElementById('lessonIdDisplay').innerText = `كود المجموعة: ${currentLessonId}`;
-
             loadActualData();
 
             // فحص حالة النشر عند فتح الصفحة
