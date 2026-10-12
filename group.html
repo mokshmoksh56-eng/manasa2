@@ -114,8 +114,8 @@
 
         /* ----- ستايل الساعة الرقمية الواقعية جداً ----- */
         .realistic-clock-wrapper {
-            background-color: #050a15; /* لون شاشة داكن */
-            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.4) 2px, rgba(0, 0, 0, 0.4) 4px); /* خطوط الشاشة */
+            background-color: #050a15; 
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.4) 2px, rgba(0, 0, 0, 0.4) 4px); 
             border: 4px solid #1e293b;
             border-radius: 12px;
             padding: 12px 10px;
@@ -129,7 +129,6 @@
             overflow: hidden;
             transition: all 0.3s;
         }
-        /* انعكاس زجاجي على الشاشة */
         .realistic-clock-wrapper::before {
             content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
             background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
@@ -142,9 +141,9 @@
             border: 1px solid rgba(0, 255, 204, 0.2);
             border-radius: 6px;
             padding: 5px 0;
-            font-family: 'Share Tech Mono', monospace; /* خط ديجيتال */
+            font-family: 'Share Tech Mono', monospace; 
             font-size: 26px;
-            color: #00ffcc; /* إضاءة سيان */
+            color: #00ffcc; 
             text-shadow: 0 0 10px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.4);
             text-align: center; text-align-last: center;
             cursor: pointer; outline: none; 
@@ -152,7 +151,6 @@
         }
         .time-unit:focus { border-color: #00ffcc; background: rgba(15, 23, 42, 0.9); }
         
-        /* لون القوائم المنسدلة من الداخل لتناسب الشاشة */
         .time-unit option {
             background: #0f172a;
             color: #00ffcc;
@@ -172,7 +170,7 @@
         @keyframes digitalBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
 
         .ampm-unit { 
-            color: #f59e0b; /* إضاءة برتقالي */
+            color: #f59e0b; 
             border-color: rgba(245, 158, 11, 0.2);
             text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
             font-family: 'Cairo', sans-serif;
@@ -200,6 +198,19 @@
             transition: all 0.2s;
         }
         .locate-btn:hover { background: #e0f2f0; transform: scale(1.05); }
+
+        /* ✅ رسالة تأكيد الموقع بجانب زر الـ GPS */
+        .locate-success-msg {
+            position: absolute; bottom: 20px; left: 70px; z-index: 400;
+            background: #10B981; color: #fff; padding: 6px 14px; border-radius: 8px;
+            font-size: 12px; font-weight: 800; opacity: 0; visibility: hidden; pointer-events: none;
+            transform: translateX(-15px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            display: flex; align-items: center; gap: 5px;
+        }
+        .locate-success-msg.show {
+            opacity: 1; visibility: visible; transform: translateX(0);
+        }
 
         .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .btn-next, .btn-prev {
@@ -260,6 +271,7 @@
             .radio-grid label { padding: 10px 2px; font-size: 11px; }
             .days-grid, .months-grid { grid-template-columns: repeat(3, 1fr); }
             .time-unit { font-size: 22px; }
+            .locate-success-msg { font-size: 11px; left: 65px; padding: 5px 10px; }
         }
     </style>
 </head>
@@ -493,6 +505,8 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                     </svg>
                 </button>
+                <!-- ✅ رسالة تأكيد تحديد المكان -->
+                <div id="locateSuccessMsg" class="locate-success-msg">تم تحديد المكان ✔</div>
             </div>
             
             <div class="form-group" style="margin-top: 15px;">
@@ -956,6 +970,16 @@
                     if (data && data.display_name) {
                         document.getElementById('m_address').value = data.display_name;
                         playSuccessSound(); // تشغيل صوت تأكيد النجاح عند جلب العنوان
+                        
+                        // ✅ إظهار رسالة التأكيد بجوار أيقونة الـ GPS
+                        const successMsg = document.getElementById('locateSuccessMsg');
+                        successMsg.classList.add('show');
+                        
+                        // إخفاء الرسالة بعد 3 ثواني
+                        setTimeout(() => {
+                            successMsg.classList.remove('show');
+                        }, 3000);
+                        
                     } else {
                         document.getElementById('m_address').value = "لم نتمكن من تحديد اسم الشارع، يمكنك كتابته يدوياً.";
                     }
