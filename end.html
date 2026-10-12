@@ -340,8 +340,13 @@
                     document.getElementById('val-address').innerText = fullAddress;
                 }
 
-                if(state.g_start) document.getElementById('val-start').innerText = formatTime(state.g_start);
-                if(state.g_end) document.getElementById('val-end').innerText = formatTime(state.g_end);
+                // عرض بيانات الساعة الرقمية المخصصة
+                if(state.start_hour && state.start_min && state.start_ampm) {
+                    document.getElementById('val-start').innerText = `${state.start_hour}:${state.start_min} ${state.start_ampm}`;
+                }
+                if(state.end_hour && state.end_min && state.end_ampm) {
+                    document.getElementById('val-end').innerText = `${state.end_hour}:${state.end_min} ${state.end_ampm}`;
+                }
 
                 if(state.lat && state.lng) {
                     mapLat = state.lat;
@@ -380,17 +385,6 @@
                 autoClose: false, 
                 closeOnClick: false 
             }).openPopup();
-        }
-
-        function formatTime(timeStr) {
-            if(!timeStr) return '--:--';
-            let [hours, minutes] = timeStr.split(':');
-            hours = parseInt(hours);
-            const ampm = hours >= 12 ? 'م' : 'ص';
-            hours = hours % 12;
-            hours = hours ? hours : 12; 
-            const paddedHours = hours < 10 ? '0' + hours : hours;
-            return `${paddedHours}:${minutes} ${ampm}`;
         }
 
         function togglePublish() {
