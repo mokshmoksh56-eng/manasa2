@@ -636,7 +636,7 @@
             });
         }
 
-        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية والترجمة)
+        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية والترجمة والمادة/الصف)
         function openGroupModal(lessonId) {
             const savedState = sessionStorage.getItem('lessonState_' + lessonId);
             const modal = document.getElementById('groupModal');
@@ -668,9 +668,17 @@
                 if(data.g_loc === 'l_teach') locText = 'بيت المستر';
                 else if(data.g_loc === 'l_stud') locText = 'منزل الطالب';
 
+                // ✅ استخراج الصف والمادة
+                const gradeStr = data.s_grade || 'غير محدد';
+                const subjectsStr = data.selectedSubjects && data.selectedSubjects.length > 0 
+                                    ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ') 
+                                    : 'غير محدد';
+
                 contentEl.innerHTML = `
                     <p>👤 <b>اسم المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
                     <p>🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
+                    <p>👑 <b>الصف الدراسي:</b> ${gradeStr}</p>
+                    <p>📚 <b>المادة:</b> ${subjectsStr}</p>
                     <p>📅 <b>أيام الحصص:</b> ${daysStr}</p>
                     <p>🗓️ <b>الشهور الميلادية:</b> ${monthsStr}</p>
                     <p>🔄 <b>التكرار أسبوعياً:</b> ${repeatStr}</p>
