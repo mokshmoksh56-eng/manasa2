@@ -489,14 +489,14 @@
             } else {
                 const current = sessionStorage.getItem('publishState_' + currentLessonId) === 'true';
                 isPublished = !current;
-                
-                // تشغيل الصوت المناسب بناءً على الحالة الجديدة (فقط إذا لم يكن تحميل أولي للصفحة)
-                if (!initialLoad) {
-                    if (isPublished) {
-                        playSuccessSound(); // صوت الإظهار/التفعيل
-                    } else {
-                        playDeepSound(); // صوت الإخفاء
-                    }
+            }
+
+            // تم نقل تشغيل الصوت خارج جملة (else) حتى يعمل دائماً سواء استخدمنا (forceState) أم لا
+            if (!initialLoad) {
+                if (isPublished) {
+                    playSuccessSound(); // صوت الإظهار/التفعيل
+                } else {
+                    playDeepSound(); // صوت الإخفاء
                 }
             }
 
