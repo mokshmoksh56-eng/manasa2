@@ -237,18 +237,19 @@
         .card.status-empty .completion-badge { background: #ef4444; }
 
         /* ========================================================= */
-        /* ✅ الطبقة الشفافة التي تضمن عمل الرابط بشكل قاطع */
+        /* ✅ زر الطبقة الشفافة لحل مشكلة الفتح بشكل نهائي */
         /* ========================================================= */
-        .click-layer {
+        .click-shield-btn {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 100; /* تجعلها فوق كل شيء في المربع */
+            background: transparent;
+            border: none;
+            z-index: 1000;
             cursor: pointer;
-            text-decoration: none;
-            background: rgba(0, 0, 0, 0); /* شفافة تماماً */
+            outline: none;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -278,13 +279,57 @@
 
         .footer-btn-primary { background: var(--header-grad); color: #fff; }
         .footer-btn-secondary { background: #334155; color: #cbd5e1; }
+
+        /* ========================================================= */
+        /* 📱 التصميم المتجاوب للموبايل (Mobile Responsive) */
+        /* ========================================================= */
+        @media (max-width: 768px) {
+            .cards-container { 
+                grid-template-columns: repeat(3, 1fr); /* إبقاء الكروت 3 بجوار بعض */
+                gap: 8px; /* تقليل المسافة لتناسب الشاشة الصغيرة */
+            }
+            .card {
+                aspect-ratio: 1 / 1; /* الحفاظ على الشكل المربع */
+                height: auto; 
+                border-radius: 10px; /* تقليل التدوير قليلاً */
+            }
+            .card-icon {
+                width: 32px;
+                height: 32px;
+                font-size: 16px; /* تصغير الأيقونة والرقم */
+                margin-bottom: 5px;
+            }
+            .card-title {
+                font-size: 11px; /* تصغير الخط ليناسب الشاشة */
+            }
+            .completion-badge {
+                font-size: 8px; /* تصغير حجم الشارة لتناسب المربع الصغير */
+                padding: 3px 4px;
+                top: 5px;
+                left: 5px;
+                right: 5px;
+                line-height: 1.2;
+            }
+            .footer-actions {
+                flex-direction: column; /* ترتيب أزرار الفوتر تحت بعض */
+            }
+            .footer-btn {
+                width: 100%;
+                padding: 14px 16px;
+                font-size: 14px;
+            }
+            .info-bar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
     </style>
 </head>
 <body>
 
 <header class="header-soft">
     <div class="header-actions">
-        <!-- تم تغيير وجهة الزر ليقوم فقط بتحديث نفس الصفحة بدلاً من الانتقال لـ index.html -->
+        <!-- الزر يقوم بتحديث الصفحة -->
         <button class="header-btn" onclick="location.reload()">🏠</button>
     </div>
     <h1 id="page-header-title">
@@ -314,8 +359,8 @@
             <div class="card-icon">1</div>
             <div class="card-title">الخطوة الأولى</div>
         </div>
-        <!-- الطبقة الشفافة كـ رابط مباشر -->
-        <a href="mester1.html" class="click-layer"></a>
+        <!-- زر اللمس الشفاف -->
+        <button class="click-shield-btn" onclick="window.location.href='mester1.html'"></button>
     </div>
     
     <!-- كارت الخطوة الثانية -->
@@ -326,8 +371,8 @@
             <div class="card-icon">2</div>
             <div class="card-title">الخطوة الثانية</div>
         </div>
-        <!-- الطبقة الشفافة كـ رابط مباشر -->
-        <a href="mester2.html" class="click-layer"></a>
+        <!-- زر اللمس الشفاف -->
+        <button class="click-shield-btn" onclick="window.location.href='mester2.html'"></button>
     </div>
     
     <!-- كارت الخطوة الثالثة -->
@@ -338,8 +383,8 @@
             <div class="card-icon">3</div>
             <div class="card-title">الخطوة الثالثة</div>
         </div>
-        <!-- الطبقة الشفافة كـ رابط مباشر -->
-        <a href="mester3.html" class="click-layer"></a>
+        <!-- زر اللمس الشفاف (الحل لمشكلة الخريطة) -->
+        <button class="click-shield-btn" onclick="window.location.href='mester3.html'"></button>
     </div>
 </div>
 
