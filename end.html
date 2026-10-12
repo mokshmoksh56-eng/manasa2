@@ -77,12 +77,28 @@
         .map-hidden-overlay:hover i { transform: scale(1.1) translateY(-5px); text-shadow: 0 10px 20px rgba(239, 68, 68, 0.5); }
         .map-hidden-overlay i { font-size: 45px; margin-bottom: 10px; font-style: normal; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
         .map-hidden-overlay h4 { font-size: 20px; font-weight: 900; margin: 0; color: #FCA5A5; }
-        .map-hidden-overlay p { font-size: 13px; font-weight: 800; color: #fff; margin-top: 8px; background: rgba(255,255,255,0.15); padding: 6px 18px; border-radius: 99px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        
+        /* زر التفعيل الأخضر داخل طبقة الحجب */
+        .map-hidden-overlay p { 
+            font-size: 15px; 
+            font-weight: 900; 
+            color: #fff; 
+            margin-top: 15px; 
+            background: #10B981; /* اللون الأخضر */
+            padding: 10px 28px; 
+            border-radius: 99px; 
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); 
+            transition: all 0.3s ease;
+        }
+        .map-hidden-overlay:hover p {
+            background: #059669; /* أخضر أغمق عند التمرير */
+            transform: scale(1.05);
+        }
 
         /* أزرار التحكم داخل الخريطة (عند النشر) */
         .map-controls {
             position: absolute; top: 15px; left: 15px; right: 15px;
-            display: flex; justify-content: space-between; gap: 10px; z-index: 500;
+            display: flex; justify-content: flex-end; gap: 10px; z-index: 500;
             opacity: 1; transition: 0.4s ease; pointer-events: none;
         }
         .is-hidden .map-controls { opacity: 0; visibility: hidden; }
@@ -94,8 +110,6 @@
         }
         .btn-hide-map { color: #DC2626; border-color: #FECACA; }
         .btn-hide-map:hover { background: #DC2626; color: white; border-color: #DC2626; transform: translateY(-2px); }
-        .btn-open-map { color: #0F2D5C; border-color: #BFDBFE; }
-        .btn-open-map:hover { background: #0F2D5C; color: white; border-color: #0F2D5C; transform: translateY(-2px); }
 
         /* تصميم النقطة (Marker) داخل الخريطة */
         .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
@@ -141,8 +155,8 @@
 
         @media (max-width: 600px) {
             .report-grid { grid-template-columns: 1fr; gap: 15px; }
-            .map-controls { flex-direction: row; gap: 8px; }
-            .map-action-btn { font-size: 11px; padding: 6px 12px; }
+            .map-controls { flex-direction: row; justify-content: flex-end; }
+            .map-action-btn { font-size: 12px; padding: 8px 16px; }
             .fab-container {
                 bottom: 20px; left: 50%; transform: translateX(-50%);
                 width: 92%; justify-content: space-between;
@@ -230,19 +244,16 @@
                     
                     <!-- أزرار التحكم داخل الخريطة (تظهر عند النشر فقط) -->
                     <div class="map-controls">
-                        <button class="map-action-btn btn-open-map" onclick="openInGoogleMaps()">
-                            📍 فتح في خرائط جوجل
-                        </button>
                         <button class="map-action-btn btn-hide-map" onclick="togglePublish(false)">
                             🚫 إخفاء الموقع
                         </button>
                     </div>
 
                     <!-- طبقة الحجب عند الإخفاء (قابلة للضغط للنشر) -->
-                    <div class="map-hidden-overlay" onclick="togglePublish(true)" title="اضغط هنا لنشر الموقع">
+                    <div class="map-hidden-overlay" onclick="togglePublish(true)" title="اضغط هنا لتفعيل الموقع">
                         <i>🔒</i>
                         <h4>الموقع محجوب عن الطلاب</h4>
-                        <p>اضغط هنا لتفعيل وإظهار الموقع للطلاب</p>
+                        <p>اضغط هنا لتفعيل الموقع</p>
                     </div>
                     
                     <div id="static-map"></div>
@@ -286,7 +297,6 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
-            // ✅ تم تصحيح الجافا سكريبت لمنع ظهور الشباك أو كلمة كود المجموعة
             document.getElementById('reportTitle').innerText = `بيانات مجموعة ${currentLessonId}`;
 
             loadActualData();
@@ -442,12 +452,6 @@
 
             updateMapMarker(isPublished);
             sessionStorage.setItem('publishState_' + currentLessonId, isPublished);
-        }
-
-        // فتح الموقع في تطبيق خرائط جوجل
-        function openInGoogleMaps() {
-            const url = `https://www.google.com/maps?q=${currentLat},${currentLng}`;
-            window.open(url, '_blank');
         }
 
         function editLesson() {
