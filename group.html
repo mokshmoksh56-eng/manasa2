@@ -827,6 +827,15 @@
                 });
         }
 
+        // دالة مساعدة لتحويل الوقت إلى دقائق لمقارنة التعارض بسهولة
+        function timeToMinutes(hour, min, ampm) {
+            let h = parseInt(hour, 10);
+            let m = parseInt(min, 10);
+            if (ampm === 'م' && h !== 12) h += 12;
+            if (ampm === 'ص' && h === 12) h = 0;
+            return h * 60 + m;
+        }
+
         function finishSetup() {
             const address = document.getElementById('m_address').value.trim();
 
@@ -835,13 +844,62 @@
                 return; 
             }
 
-            // هنا يتم تجميع الوقت ليصبح (مثال: "02:30 م") ويمكنك إرساله لقاعدة البيانات
-            const finalStartTime = `${document.getElementById('start_hour').value}:${document.getElementById('start_min').value} ${document.getElementById('start_ampm').value}`;
-            const finalEndTime = `${document.getElementById('end_hour').value}:${document.getElementById('end_min').value} ${document.getElementById('end_ampm').value}`;
-            
-            console.log("موعد البداية:", finalStartTime);
-            console.log("موعد النهاية:", finalEndTime);
+            // تجميع الأيام المحددة
+            const selectedDays = [];
+            ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) selectedDays.push(el.value);
+            });
 
+            if (selectedDays.length === 0) {
+                alert("⚠️ برجاء تحديد يوم واحد على الأقل للحصة.");
+                return;
+            }
+
+            // تحويل الأوقات للدقائق للتحقق من الترتيب والتعارض
+            const curStart = timeToMinutes(
+                document.getElementById('start_hour').value,
+                document.getElementById('start_min').value,
+                document.getElementById('start_ampm').value
+            );
+            const curEnd = timeToMinutes(
+                document.getElementById('end_hour').value,
+                document.getElementById('end_min').value,
+                document.getElementById('end_ampm').value
+            );
+
+            // 1. التأكد أن وقت النهاية بعد وقت البداية
+            if (curStart >= curEnd) {
+                alert("⚠️ موعد الانصراف يجب أن يكون بعد موعد الحضور.");
+                return;
+            }
+
+            // 2. فحص التعارض مع المجموعات الأخرى المحفوظة
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
+                
+                // البحث في المجموعات الأخرى فقط وتجاهل المجموعة الحالية
+                if (key.startsWith('lessonState_') && key !== 'lessonState_' + currentLessonId) {
+                    const otherState = JSON.parse(sessionStorage.getItem(key));
+                    const otherDays = otherState.g_days || [];
+                    
+                    // استخراج الأيام المشتركة بين المجموعة الحالية والمجموعة القديمة
+                    const commonDays = selectedDays.filter(day => otherDays.includes(day));
+                    
+                    if (commonDays.length > 0 && otherState.start_hour && otherState.end_hour) {
+                        const otherStart = timeToMinutes(otherState.start_hour, otherState.start_min, otherState.start_ampm);
+                        const otherEnd = timeToMinutes(otherState.end_hour, otherState.end_min, otherState.end_ampm);
+                        
+                        // شرط تداخل الفترات الزمنية
+                        if (curStart < otherEnd && curEnd > otherStart) {
+                            alert(`⚠️ لا يمكن الحفظ! يوجد تعارض في المواعيد.\nالمجموعة (${otherState.g_name || 'أخرى'}) محجوزة في نفس الأيام (${commonDays.join('، ')}) وفي وقت متداخل.\n\nبرجاء تغيير الوقت أو الأيام لتتمكن من الحفظ.`);
+                            return; // إيقاف الحفظ وعدم استكمال العملية
+                        }
+                    }
+                }
+            }
+
+            // إذا لم يكن هناك تعارض، يتم الحفظ بشكل طبيعي
             saveState();
 
             const modal = document.getElementById('successModal');
