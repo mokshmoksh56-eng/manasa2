@@ -90,7 +90,7 @@
         .badge-value { background: #F1F5F9; padding: 4px 12px; border-radius: 8px; border: 1px solid #E2E8F0; }
 
         /* ============================================ */
-        /* ✅ إعدادات الخريطة */
+        /* ✅ إعدادات الخريطة وتأثيرات الأيقونات */
         /* ============================================ */
         .map-wrapper {
             position: relative; border-radius: 12px; overflow: hidden; border: 2px solid #E2E8F0; width: 100%; height: 260px;
@@ -100,6 +100,39 @@
         .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
         .leaflet-popup-content { margin: 12px 15px; font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.6;}
         .leaflet-popup-tip { box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+
+        /* أيقونة الحالة المخفية (قفل) */
+        .marker-hidden {
+            background-color: #EF4444;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            box-shadow: 0 4px 10px rgba(239, 68, 68, 0.5);
+            font-size: 14px;
+        }
+
+        /* أيقونة الحالة المنشورة (نبض أخضر) */
+        .marker-published {
+            background-color: #10B981;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid white;
+            box-shadow: 0 0 0 rgba(16, 185, 129, 0.7);
+            font-size: 16px;
+            animation: pulse-green 1.5s infinite;
+        }
+
+        @keyframes pulse-green {
+            0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+        }
 
         /* ============================================ */
         /* ✅ أزرار الإجراءات العائمة (FAB Container) */
@@ -253,6 +286,9 @@
         let currentLessonId = '1';
         let staticMap = null;
         let staticMarker = null;
+        let teacherNameGlob = "المعلم"; // لحفظ اسم المعلم لاستخدامه في الخريطة
+        let currentLat = 30.0444;
+        let currentLng = 31.2357;
         
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
@@ -271,15 +307,12 @@
             const savedPublishState = sessionStorage.getItem('publishState_' + currentLessonId);
             if (savedPublishState === 'true') {
                 document.getElementById('publishToggle').checked = true;
-                togglePublish(); 
             }
+            togglePublish(); // تحديث الخريطة والحالة بناءً على الزر
         };
 
         function loadActualData() {
             const savedData = sessionStorage.getItem('lessonState_' + currentLessonId);
-            let mapLat = 30.0444; 
-            let mapLng = 31.2357;
-            let teacherName = "المعلم";
 
             if (savedData) {
                 const state = JSON.parse(savedData);
@@ -288,7 +321,7 @@
                 
                 if(state.g_teacher) {
                     document.getElementById('val-teacher').innerText = state.g_teacher;
-                    teacherName = state.g_teacher;
+                    teacherNameGlob = state.g_teacher;
                 }
                 
                 if(state.g_count) document.getElementById('val-count').innerText = `${state.g_count} طالب`;
@@ -349,15 +382,15 @@
                 }
 
                 if(state.lat && state.lng) {
-                    mapLat = state.lat;
-                    mapLng = state.lng;
+                    currentLat = state.lat;
+                    currentLng = state.lng;
                 }
             }
 
-            initStaticMap(mapLat, mapLng, teacherName);
+            initStaticMap();
         }
 
-        function initStaticMap(lat, lng, teacherName) {
+        function initStaticMap() {
             const mapOptions = {
                 zoomControl: false,
                 dragging: false,
@@ -368,17 +401,50 @@
                 touchZoom: false
             };
 
-            staticMap = L.map('static-map', mapOptions).setView([lat, lng], 16); 
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(staticMap);
-            
-            staticMarker = L.marker([lat, lng]).addTo(staticMap);
+            if (!staticMap) {
+                staticMap = L.map('static-map', mapOptions).setView([currentLat, currentLng], 16); 
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(staticMap);
+            } else {
+                staticMap.setView([currentLat, currentLng], 16);
+            }
+        }
 
-            const popupContent = `
-                <div>
-                    <strong style="color:#0F2D5C; font-size:15px; display:block; margin-bottom:4px;">👨‍🏫 أ/ ${teacherName}</strong>
-                    <span style="color:#10B981; font-size:13px; font-weight:800;">أنت هنا الآن، وهذا الموقع ظاهر للطلبة 📍</span>
-                </div>
-            `;
+        // تحديث الماركر بناءً على حالة النشر
+        function updateMapMarker(isPublished) {
+            if (staticMarker) {
+                staticMap.removeLayer(staticMarker);
+            }
+
+            let iconHtml, popupContent;
+
+            if (isPublished) {
+                // أيقونة خضراء تنبض
+                iconHtml = `<div class="marker-published">📍</div>`;
+                popupContent = `
+                    <div>
+                        <strong style="color:#0F2D5C; font-size:15px; display:block; margin-bottom:4px;">👨‍🏫 أ/ ${teacherNameGlob}</strong>
+                        <span style="color:#10B981; font-size:13px; font-weight:800;">تم النشر! الموقع ظاهر للطلاب الآن 🟢</span>
+                    </div>
+                `;
+            } else {
+                // أيقونة حمراء قفل
+                iconHtml = `<div class="marker-hidden">🔒</div>`;
+                popupContent = `
+                    <div>
+                        <strong style="color:#0F2D5C; font-size:15px; display:block; margin-bottom:4px;">👨‍🏫 أ/ ${teacherNameGlob}</strong>
+                        <span style="color:#EF4444; font-size:13px; font-weight:800;">المجموعة مخفية. الموقع محجوب 🔴</span>
+                    </div>
+                `;
+            }
+
+            const customIcon = L.divIcon({
+                className: 'custom-leaflet-marker',
+                html: iconHtml,
+                iconSize: [36, 36],
+                iconAnchor: [18, 18]
+            });
+
+            staticMarker = L.marker([currentLat, currentLng], { icon: customIcon }).addTo(staticMap);
             
             staticMarker.bindPopup(popupContent, { 
                 closeButton: false, 
@@ -402,6 +468,9 @@
                 title.innerHTML = 'المجموعة مخفية 🚫';
                 desc.innerHTML = 'الطلاب لا يمكنهم رؤية أو حجز هذه المجموعة حالياً.';
             }
+
+            // تحديث شكل الخريطة
+            updateMapMarker(isPublished);
 
             sessionStorage.setItem('publishState_' + currentLessonId, isPublished);
         }
