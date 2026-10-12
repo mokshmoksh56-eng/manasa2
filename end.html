@@ -21,148 +21,136 @@
         /* ============================================ */
         .hero-banner {
             background: linear-gradient(135deg, #0F2D5C, #1E40AF);
-            color: white; padding: 40px 20px 60px; text-align: center;
+            color: white; padding: 30px 15px 50px; text-align: center;
             position: relative; overflow: hidden;
         }
         .hero-banner::after {
             content: ''; position: absolute; bottom: -20px; left: 0; right: 0;
             height: 40px; background: #F1F5F9; border-radius: 50% 50% 0 0;
         }
-        .lesson-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
+        .lesson-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
 
         /* ============================================ */
         /* ✅ بطاقات التقرير */
         /* ============================================ */
-        .report-container { max-width: 800px; margin: -20px auto 0; width: 100%; padding: 0 15px 100px; position: relative; z-index: 10; }
-        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .report-container { max-width: 800px; margin: -20px auto 0; width: 100%; padding: 0 10px 80px; position: relative; z-index: 10; }
+        .report-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         
         .report-card {
-            background: #fff; border-radius: 16px; padding: 20px;
+            background: #fff; border-radius: 14px; padding: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #E2E8F0;
         }
         .report-card.full-width { grid-column: 1 / -1; }
         
         .card-header {
-            display: flex; align-items: center; gap: 8px; margin-bottom: 15px;
-            font-size: 16px; font-weight: 900; color: #0F2D5C; border-bottom: 2px dashed #E2E8F0; padding-bottom: 10px;
+            display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
+            font-size: 15px; font-weight: 900; color: #0F2D5C; border-bottom: 2px dashed #E2E8F0; padding-bottom: 8px;
         }
 
-        .data-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .data-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid #F1F5F9; }
         .data-row:last-child { border-bottom: none; }
-        .data-label { color: #64748B; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .data-value { color: #1E293B; font-size: 14px; font-weight: 900; text-align: left;}
+        .data-label { color: #64748B; font-size: 12px; font-weight: 800; display: flex; align-items: center; gap: 4px; }
+        .data-value { color: #1E293B; font-size: 13px; font-weight: 900; text-align: left; }
         
-        .badge-value { background: #F1F5F9; padding: 4px 12px; border-radius: 8px; border: 1px solid #E2E8F0; }
+        .badge-value { background: #F1F5F9; padding: 3px 10px; border-radius: 6px; border: 1px solid #E2E8F0; }
 
         /* ============================================ */
-        /* ✅ إعدادات الخريطة وتأثيرات الإخفاء والإظهار */
+        /* ✅ إعدادات الخريطة وتأثيرات الإخفاء والإظهار للموبايل الصغير */
         /* ============================================ */
         .map-wrapper {
-            position: relative; border-radius: 12px; overflow: hidden; border: 2px solid #E2E8F0; width: 100%; height: 260px;
+            position: relative; border-radius: 12px; overflow: hidden; border: 2px solid #E2E8F0; width: 100%; height: 240px;
             transition: all 0.4s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         #static-map { width: 100%; height: 100%; z-index: 1; transition: filter 0.4s ease; }
         
-        /* طبقة حجب الخريطة عند الإخفاء (قابلة للضغط للتفعيل) */
+        /* طبقة حجب الخريطة عند الإخفاء */
         .map-hidden-overlay {
-            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.75);
+            position: absolute; inset: 0; background: rgba(15, 23, 42, 0.78);
             z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;
             color: white; opacity: 0; pointer-events: none; transition: all 0.4s ease; backdrop-filter: blur(4px);
-            cursor: pointer; text-align: center;
+            cursor: pointer; text-align: center; padding: 15px;
         }
         .is-hidden .map-hidden-overlay { opacity: 1; pointer-events: all; }
-        .is-hidden #static-map { filter: grayscale(1) blur(5px); } /* تغبيش الخريطة */
+        .is-hidden #static-map { filter: grayscale(1) blur(5px); }
 
-        .map-hidden-overlay:hover { background: rgba(15, 23, 42, 0.85); }
-        .map-hidden-overlay:hover i { transform: scale(1.1) translateY(-5px); text-shadow: 0 10px 20px rgba(239, 68, 68, 0.5); }
-        .map-hidden-overlay i { font-size: 45px; margin-bottom: 10px; font-style: normal; transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .map-hidden-overlay h4 { font-size: 20px; font-weight: 900; margin: 0; color: #FCA5A5; }
+        .map-hidden-overlay i { font-size: 36px; margin-bottom: 6px; font-style: normal; }
+        .map-hidden-overlay h4 { font-size: 16px; font-weight: 900; margin: 0; color: #FCA5A5; }
         
-        /* زر التفعيل الأخضر داخل طبقة الحجب */
+        /* زر التفعيل الأخضر (Bold) */
         .map-hidden-overlay p { 
-            font-size: 15px; 
+            font-size: 14px; 
             font-weight: 900; 
             color: #fff; 
-            margin-top: 15px; 
-            background: #10B981; /* اللون الأخضر */
-            padding: 10px 28px; 
+            margin-top: 12px; 
+            background: #10B981; 
+            padding: 8px 20px; 
             border-radius: 99px; 
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); 
-            transition: all 0.3s ease;
-        }
-        .map-hidden-overlay:hover p {
-            background: #059669; /* أخضر أغمق عند التمرير */
-            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); 
         }
 
         /* أزرار التحكم داخل الخريطة (عند النشر) */
         .map-controls {
-            position: absolute; top: 15px; left: 15px; right: 15px;
-            display: flex; justify-content: flex-end; gap: 10px; z-index: 500;
+            position: absolute; top: 10px; left: 10px; right: 10px;
+            display: flex; justify-content: flex-end; z-index: 500;
             opacity: 1; transition: 0.4s ease; pointer-events: none;
         }
         .is-hidden .map-controls { opacity: 0; visibility: hidden; }
         
+        /* زر إخفاء الموقع عن الطلاب (Bold وصغير للموبايل) */
         .map-action-btn {
-            pointer-events: auto; background: #fff; padding: 8px 16px; border-radius: 99px;
-            font-size: 13px; font-weight: 900; display: flex; align-items: center; gap: 6px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15); border: 2px solid #E2E8F0; cursor: pointer; transition: 0.3s;
+            pointer-events: auto; background: #fff; padding: 6px 14px; border-radius: 99px;
+            font-size: 12px; font-weight: 900; display: flex; align-items: center; gap: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 2px solid #FECACA; cursor: pointer; transition: 0.3s;
+            color: #DC2626;
         }
-        .btn-hide-map { color: #DC2626; border-color: #FECACA; }
-        .btn-hide-map:hover { background: #DC2626; color: white; border-color: #DC2626; transform: translateY(-2px); }
+        .map-action-btn:hover { background: #DC2626; color: white; border-color: #DC2626; }
 
         /* تصميم النقطة (Marker) داخل الخريطة */
         .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-        .leaflet-popup-content { margin: 12px 15px; font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.6;}
+        .leaflet-popup-content { margin: 10px 12px; font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 12px;}
         
         .marker-published {
             background-color: #10B981; color: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
-            border: 3px solid white; font-size: 16px;
+            border: 3px solid white; font-size: 14px;
             animation: pulse-green 1.5s infinite;
         }
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(16, 185, 129, 0); }
+            70% { box-shadow: 0 0 0 12px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
         /* ============================================ */
-        /* ✅ أزرار الإجراءات العائمة (FAB Container) */
+        /* ✅ أزرار الإجراءات العائمة (FAB Container) للموبايل */
         /* ============================================ */
         .fab-container {
-            position: fixed; bottom: 30px; left: 30px;
-            display: flex; gap: 12px; z-index: 100;
+            position: fixed; bottom: 15px; left: 15px; right: 15px;
+            display: flex; gap: 10px; z-index: 100; justify-content: space-between;
         }
 
         .fab-btn {
-            color: white; padding: 14px 24px; border-radius: 99px; font-size: 15px; font-weight: 900;
-            display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;
+            color: white; padding: 12px 16px; border-radius: 99px; font-size: 13px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
+            transition: all 0.3s; cursor: pointer; flex: 1;
         }
         
         .fab-home {
             background: linear-gradient(135deg, #0F2D5C, #1E40AF);
-            box-shadow: 0 10px 25px rgba(15, 45, 92, 0.4); border: 2px solid #BFDBFE;
+            box-shadow: 0 8px 20px rgba(15, 45, 92, 0.3); border: 2px solid #BFDBFE;
         }
-        .fab-home:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(15, 45, 92, 0.5); }
 
         .fab-edit {
             background: linear-gradient(135deg, #F59E0B, #D97706);
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); border: 2px solid #FEF3C7;
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.3); border: 2px solid #FEF3C7;
         }
-        .fab-edit:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5); }
 
-        @media (max-width: 600px) {
-            .report-grid { grid-template-columns: 1fr; gap: 15px; }
-            .map-controls { flex-direction: row; justify-content: flex-end; }
-            .map-action-btn { font-size: 12px; padding: 8px 16px; }
-            .fab-container {
-                bottom: 20px; left: 50%; transform: translateX(-50%);
-                width: 92%; justify-content: space-between;
-            }
-            .fab-btn { flex: 1; padding: 12px 10px; font-size: 14px; }
-            .fab-home:hover, .fab-edit:hover { transform: translateY(-3px); }
+        @media (min-width: 768px) {
+            .report-grid { grid-template-columns: 1fr 1fr; }
+            .report-card.full-width { grid-column: 1 / -1; }
+            .fab-container { left: 30px; right: auto; width: auto; }
+            .fab-btn { flex: unset; padding: 14px 24px; font-size: 15px; }
+            .lesson-title { font-size: 28px; }
         }
     </style>
 </head>
@@ -231,10 +219,10 @@
                 </div>
             </div>
 
-            <!-- 3. الموقع والخريطة (مع تأثيرات التخفي التفاعلية) -->
+            <!-- 3. الموقع والخريطة (مع تحكم الخريطة المباشر) -->
             <div class="report-card full-width">
                 <div class="card-header"><span>📍</span> الموقع الجغرافي للدرس</div>
-                <div class="data-row" style="border: none; padding-bottom: 10px;">
+                <div class="data-row" style="border: none; padding-bottom: 8px;">
                     <span class="data-label" id="val-loc-type">🏢 المكان:</span>
                     <span class="data-value" id="val-address">--</span>
                 </div>
@@ -244,16 +232,16 @@
                     
                     <!-- أزرار التحكم داخل الخريطة (تظهر عند النشر فقط) -->
                     <div class="map-controls">
-                        <button class="map-action-btn btn-hide-map" onclick="togglePublish(false)">
-                            🚫 إخفاء الموقع
+                        <button class="map-action-btn" onclick="togglePublish(false)">
+                            <b>إخفاء الموقع عن الطلاب</b>
                         </button>
                     </div>
 
-                    <!-- طبقة الحجب عند الإخفاء (قابلة للضغط للنشر) -->
+                    <!-- طبقة الحجب عند الإخفاء (قابلة للضغط لتفعيل الموقع) -->
                     <div class="map-hidden-overlay" onclick="togglePublish(true)" title="اضغط هنا لتفعيل الموقع">
                         <i>🔒</i>
                         <h4>الموقع محجوب عن الطلاب</h4>
-                        <p>اضغط هنا لتفعيل الموقع</p>
+                        <p><b>اضغط هنا لتفعيل الموقع</b></p>
                     </div>
                     
                     <div id="static-map"></div>
@@ -266,14 +254,14 @@
     <!-- ✅ أزرار الإجراءات العائمة -->
     <div class="fab-container">
         <button class="fab-btn fab-home" onclick="window.location.href='index2.html'">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125H2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
             الرئيسية
         </button>
         
         <button class="fab-btn fab-edit" onclick="editLesson()">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
             </svg>
             تعديل
@@ -301,7 +289,6 @@
 
             loadActualData();
 
-            // فحص حالة النشر عند فتح الصفحة
             const savedPublishState = sessionStorage.getItem('publishState_' + currentLessonId) === 'true';
             togglePublish(savedPublishState); 
         };
@@ -406,20 +393,19 @@
             }
 
             if (isPublished) {
-                // تظهر نقطة خضراء تنبض فقط إذا كانت منشورة
                 const iconHtml = `<div class="marker-published">📍</div>`;
                 const popupContent = `
                     <div>
-                        <strong style="color:#0F2D5C; font-size:15px; display:block; margin-bottom:4px;">👨‍🏫 أ/ ${teacherNameGlob}</strong>
-                        <span style="color:#10B981; font-size:13px; font-weight:800;">الموقع ظاهر للطلاب الآن 🟢</span>
+                        <strong style="color:#0F2D5C; font-size:13px; display:block; margin-bottom:2px;">👨‍🏫 أ/ ${teacherNameGlob}</strong>
+                        <span style="color:#10B981; font-size:12px; font-weight:800;">الموقع ظاهر للطلاب الآن 🟢</span>
                     </div>
                 `;
 
                 const customIcon = L.divIcon({
                     className: 'custom-leaflet-marker',
                     html: iconHtml,
-                    iconSize: [36, 36],
-                    iconAnchor: [18, 18]
+                    iconSize: [34, 34],
+                    iconAnchor: [17, 17]
                 });
 
                 staticMarker = L.marker([currentLat, currentLng], { icon: customIcon }).addTo(staticMap);
@@ -432,7 +418,6 @@
             }
         }
 
-        // دالة التبديل بين النشر والإخفاء بناءً على أزرار الخريطة
         function togglePublish(forceState = null) {
             let isPublished;
             if (forceState !== null) {
@@ -445,9 +430,9 @@
             const mapWrap = document.getElementById('mapWrapper');
 
             if (isPublished) {
-                mapWrap.classList.remove('is-hidden'); // إزالة حجب الخريطة وإظهار أزرار التحكم
+                mapWrap.classList.remove('is-hidden'); 
             } else {
-                mapWrap.classList.add('is-hidden'); // تفعيل حجب الخريطة (الغشاوة والقفل)
+                mapWrap.classList.add('is-hidden'); 
             }
 
             updateMapMarker(isPublished);
