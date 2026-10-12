@@ -210,8 +210,15 @@
             document.getElementById('reportTitle').innerText = `تقرير مجموعة #${currentLessonId}`;
             document.getElementById('lessonIdDisplay').innerText = `كود المجموعة: ${currentLessonId}`;
 
-            // سحب البيانات من الذاكرة وعرضها
+            // 1. سحب البيانات من الذاكرة وعرضها
             loadActualData();
+
+            // 2. استرجاع حالة النشر (الإظهار والإخفاء) عند عمل ريفريش
+            const savedPublishState = sessionStorage.getItem('publishState_' + currentLessonId);
+            if (savedPublishState === 'true') {
+                document.getElementById('publishToggle').checked = true;
+                togglePublish(); // لتحديث النصوص والألوان
+            }
         };
 
         // ==========================================
@@ -295,7 +302,7 @@
         }
 
         // ==========================================
-        // ✅ التحكم في حالة النشر (الإظهار والإخفاء)
+        // ✅ التحكم في حالة النشر وحفظها في الذاكرة
         // ==========================================
         function togglePublish() {
             const isPublished = document.getElementById('publishToggle').checked;
@@ -312,12 +319,25 @@
                 title.innerHTML = 'المجموعة مخفية 🚫';
                 desc.innerHTML = 'الطلاب لا يمكنهم رؤية أو حجز هذه المجموعة حالياً.';
             }
+
+            // حفظ الحالة لتبقى كما هي عند عمل ريفريش
+            sessionStorage.setItem('publishState_' + currentLessonId, isPublished);
         }
 
         // ==========================================
-        // ✅ زر التعديل الذكي
+        // ✅ زر التعديل والعودة للخطوة الأولى
         // ==========================================
         function editLesson() {
+            // إجبار صفحة group.html على فتح الخطوة 1 عن طريق تعديل الذاكرة قبل الانتقال
+            const stateKey = 'lessonState_' + currentLessonId;
+            const savedState = sessionStorage.getItem(stateKey);
+            if (savedState) {
+                let stateObj = JSON.parse(savedState);
+                stateObj.step = 1; // تعيين الخطوة إلى 1
+                sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
+            }
+            
+            // الانتقال لصفحة التعديل
             window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
         }
 
