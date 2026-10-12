@@ -212,12 +212,12 @@
             align-items: center;
             justify-content: space-between;
             gap: 18px;
-            cursor: pointer;
             overflow: hidden;
             min-height: 200px;
+            background: #FFFFFF;
         }
 
-        /* ✅ زر الحذف (محتفظ به لاستخدامه مع الكروت المضافة ديناميكياً) */
+        /* ✅ زر الحذف */
         .btn-delete {
             position: absolute;
             top: 15px;
@@ -250,6 +250,7 @@
             flex-direction: column;
             text-align: center;
             box-shadow: none;
+            cursor: pointer;
         }
         .card-add-new:hover {
             border-color: var(--primary-600);
@@ -282,7 +283,7 @@
             font-weight: 800;
         }
 
-        /* ✅ صندوق صورة الكارت — دائري وأنيق (محتفظ به) */
+        /* ✅ صندوق صورة الكارت — دائري وأنيق */
         .card-image-box {
             flex-shrink: 0;
             width: 140px;
@@ -321,7 +322,7 @@
             transform: scale(1.05) rotate(-3deg);
         }
 
-        /* النص (محتفظ به) */
+        /* النص */
         .card-text {
             display: flex;
             flex-direction: column;
@@ -344,7 +345,7 @@
             margin-bottom: 16px;
         }
 
-        /* النمط الأول للكروت الأزرق (محتفظ به) */
+        /* النمط الأول للكروت الأزرق */
         .card-teacher {
             background: linear-gradient(135deg, #F0F7FF 0%, #FFFFFF 100%);
             border: 3px solid #BFDBFE;
@@ -362,7 +363,7 @@
             box-shadow: 0 10px 22px -8px rgba(37, 99, 235, 0.6);
         }
 
-        /* النمط الثاني للكروت الأخضر (محتفظ به) */
+        /* النمط الثاني للكروت الأخضر */
         .card-student {
             background: linear-gradient(135deg, #F0FDF8 0%, #FFFFFF 100%);
             border: 3px solid #A7F3D0;
@@ -392,6 +393,7 @@
             transition: all 0.3s;
             z-index: 10;
             white-space: nowrap;
+            text-decoration: none;
         }
         .portal-card:hover .btn-go {
             padding: 12px 34px;
@@ -487,20 +489,18 @@
     <!-- ✅ قسم البطاقات (جداول الحصص) -->
     <section class="cards-section">
         <div class="container mx-auto max-w-5xl">
-            <!-- يتم وضع الكروت بداخل هذا الـ Grid -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
+            <!-- تم إضافة ID للجريد ليتم إضافة الكروت بداخله -->
+            <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
                 
-                <!-- ✅ كارت إنشاء حصة جديدة فقط -->
-                <a href="./create-lesson.html" class="portal-card card-add-new">
+                <!-- ✅ كارت إنشاء حصة جديدة (يعمل بـ JavaScript) -->
+                <div onclick="createNewLesson()" class="portal-card card-add-new">
                     <div class="icon-plus">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
                     <h2>إنشاء حصة جديدة</h2>
-                </a>
-
-                <!-- عند إضافة حصص جديدة لاحقاً، ستظهر هنا بجوار الكارت السابق -->
+                </div>
 
             </div>
         </div>
@@ -510,6 +510,60 @@
     <footer class="py-6 text-center text-slate-400 font-bold text-sm">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
+
+    <!-- ✅ سكريبت التفاعل (إضافة وحذف الحصص) -->
+    <script>
+        let lessonCounter = 0;
+
+        function createNewLesson() {
+            lessonCounter++;
+            const container = document.getElementById('lessonsContainer');
+            
+            // التبديل بين التصميمين (الأزرق والأخضر) ليعطي مظهراً جذاباً
+            const isBlue = lessonCounter % 2 !== 0;
+            const cardStyle = isBlue ? 'card-teacher' : 'card-student';
+            const imgName = isBlue ? 'teacher.png' : 'student.png';
+
+            // إنشاء عنصر الكارت الجديد
+            const newCard = document.createElement('div');
+            newCard.className = `portal-card ${cardStyle} animate-fade-in`;
+            
+            newCard.innerHTML = `
+                <!-- زر الحذف -->
+                <button class="btn-delete" title="حذف الحصة" onclick="deleteLesson(this)">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                <div class="card-image-box">
+                    <!-- إذا لم تكن الصور متاحة يمكنك تغيير المسار -->
+                    <img src="./${imgName}" alt="صورة الحصة">
+                </div>
+                <div class="card-text">
+                    <h2>حصة رقم ${lessonCounter}</h2>
+                    <p>محتوى الحصة وتفاصيل الشرح الخاصة بالدرس الجديد يتم إضافتها هنا.</p>
+                    <a href="./lesson${lessonCounter}.html" class="btn-go">
+                        دخول الحصة <span>➔</span>
+                    </a>
+                </div>
+            `;
+            
+            // إضافة الكارت الجديد في نهاية الجريد
+            container.appendChild(newCard);
+        }
+
+        function deleteLesson(btnElement) {
+            // رسالة تأكيد قبل الحذف
+            if(confirm('هل أنت متأكد من رغبتك في حذف هذه الحصة؟')) {
+                // البحث عن الكارت الحاوي للزر وحذفه
+                const card = btnElement.closest('.portal-card');
+                if (card) {
+                    card.remove();
+                }
+            }
+        }
+    </script>
 
     <script>
         if ('serviceWorker' in navigator) {
