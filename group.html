@@ -7,6 +7,8 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- خط مخصص للساعة الرقمية الواقعية -->
+    <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
     
     <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
@@ -110,6 +112,76 @@
             border-width: 2px;
         }
 
+        /* ----- ستايل الساعة الرقمية الواقعية جداً ----- */
+        .realistic-clock-wrapper {
+            background-color: #050a15; /* لون شاشة داكن */
+            background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.4) 2px, rgba(0, 0, 0, 0.4) 4px); /* خطوط الشاشة */
+            border: 4px solid #1e293b;
+            border-radius: 12px;
+            padding: 12px 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            direction: ltr;
+            box-shadow: inset 0 0 20px #000, 0 8px 20px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        /* انعكاس زجاجي على الشاشة */
+        .realistic-clock-wrapper::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 50%;
+            background: linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .realistic-clock-wrapper:focus-within { border-color: var(--c-main); box-shadow: inset 0 0 20px #000, 0 0 0 4px var(--c-light); }
+        
+        .time-unit {
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid rgba(0, 255, 204, 0.2);
+            border-radius: 6px;
+            padding: 5px 0;
+            font-family: 'Share Tech Mono', monospace; /* خط ديجيتال */
+            font-size: 26px;
+            color: #00ffcc; /* إضاءة سيان */
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.4);
+            text-align: center; text-align-last: center;
+            cursor: pointer; outline: none; 
+            appearance: none; -webkit-appearance: none; width: 34%; transition: all 0.2s;
+        }
+        .time-unit:focus { border-color: #00ffcc; background: rgba(15, 23, 42, 0.9); }
+        
+        /* لون القوائم المنسدلة من الداخل لتناسب الشاشة */
+        .time-unit option {
+            background: #0f172a;
+            color: #00ffcc;
+            font-family: 'Cairo', sans-serif;
+            text-shadow: none;
+            font-size: 16px;
+        }
+
+        .time-colon {
+            font-family: 'Share Tech Mono', monospace;
+            font-size: 26px;
+            color: #00ffcc;
+            text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
+            padding-bottom: 4px;
+            animation: digitalBlink 1s infinite step-start;
+        }
+        @keyframes digitalBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0.1; } }
+
+        .ampm-unit { 
+            color: #f59e0b; /* إضاءة برتقالي */
+            border-color: rgba(245, 158, 11, 0.2);
+            text-shadow: 0 0 10px rgba(245, 158, 11, 0.8);
+            font-family: 'Cairo', sans-serif;
+            font-size: 16px; font-weight: 900;
+            width: 25%;
+        }
+        .ampm-unit:focus { border-color: #f59e0b; }
+        .ampm-unit option { color: #f59e0b; }
+
         .subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .chip {
             background: var(--c-light); color: var(--c-dark); padding: 6px 12px; border-radius: 20px;
@@ -175,6 +247,7 @@
             .grid-2 { grid-template-columns: 1fr; }
             .radio-grid label { padding: 10px 2px; font-size: 11px; }
             .days-grid, .months-grid { grid-template-columns: repeat(3, 1fr); }
+            .time-unit { font-size: 22px; }
         }
     </style>
 </head>
@@ -348,15 +421,31 @@
                 </div>
             </div>
 
-            <!-- أوقات الحصة -->
+            <!-- أوقات الحصة بالساعة الرقمية الواقعية جداً -->
             <div class="grid-2" style="margin-top: 15px;">
                 <div class="form-group">
                     <label>⏰ من الساعة</label>
-                    <input type="time" id="g_start" class="form-control">
+                    <div class="realistic-clock-wrapper">
+                        <select id="start_hour" class="time-unit"></select>
+                        <span class="time-colon">:</span>
+                        <select id="start_min" class="time-unit"></select>
+                        <select id="start_ampm" class="time-unit ampm-unit">
+                            <option value="ص">ص</option>
+                            <option value="م">م</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>⏰ إلى الساعة</label>
-                    <input type="time" id="g_end" class="form-control">
+                    <div class="realistic-clock-wrapper">
+                        <select id="end_hour" class="time-unit"></select>
+                        <span class="time-colon">:</span>
+                        <select id="end_min" class="time-unit"></select>
+                        <select id="end_ampm" class="time-unit ampm-unit">
+                            <option value="ص">ص</option>
+                            <option value="م">م</option>
+                        </select>
+                    </div>
                 </div>
             </div>
 
@@ -408,7 +497,34 @@
             }
         });
 
-        // ✅ حفظ الحالة مع خيار التكرار الأسبوعي (بيانات كل مجموعة منعزلة بمعرفها lessonId لمنع تداخل المواعيد)
+        // توليد بيانات الساعة الرقمية (1-12) والدقائق (كل 5 دقائق)
+        function populateTimeSelectors() {
+            let hoursHTML = '';
+            for(let i=1; i<=12; i++) {
+                let val = i < 10 ? '0'+i : i;
+                hoursHTML += `<option value="${val}">${val}</option>`;
+            }
+            document.getElementById('start_hour').innerHTML = hoursHTML;
+            document.getElementById('end_hour').innerHTML = hoursHTML;
+            
+            // تعيين الساعة 2 كموعد بداية و 4 كموعد نهاية افتراضياً
+            document.getElementById('start_hour').value = '02';
+            document.getElementById('end_hour').value = '04';
+
+            let minsHTML = '';
+            for(let i=0; i<60; i+=5) {
+                let val = i < 10 ? '0'+i : i;
+                minsHTML += `<option value="${val}">${val}</option>`;
+            }
+            document.getElementById('start_min').innerHTML = minsHTML;
+            document.getElementById('end_min').innerHTML = minsHTML;
+            
+            // تعيين (م) مساءً بشكل افتراضي
+            document.getElementById('start_ampm').value = 'م';
+            document.getElementById('end_ampm').value = 'م';
+        }
+
+        // حفظ الحالة
         function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
@@ -428,8 +544,15 @@
                 g_center: document.getElementById('g_center').value,
                 g_teacher: document.getElementById('g_teacher').value,
                 g_count: document.getElementById('g_count').value,
-                g_start: document.getElementById('g_start').value,
-                g_end: document.getElementById('g_end').value,
+                
+                // حفظ قيم الساعة الرقمية المخصصة
+                start_hour: document.getElementById('start_hour').value,
+                start_min: document.getElementById('start_min').value,
+                start_ampm: document.getElementById('start_ampm').value,
+                end_hour: document.getElementById('end_hour').value,
+                end_min: document.getElementById('end_min').value,
+                end_ampm: document.getElementById('end_ampm').value,
+
                 g_days: selectedDays,
                 g_months: selectedMonths,
                 g_repeat_weekly: document.getElementById('g_repeat_weekly').checked,
@@ -445,7 +568,7 @@
             sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
         }
 
-        // ✅ استرجاع الحالة وخيار التكرار الأسبوعي
+        // استرجاع الحالة
         function loadState() {
             const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
@@ -455,8 +578,14 @@
                 if(state.g_center) document.getElementById('g_center').value = state.g_center;
                 if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher;
                 if(state.g_count) document.getElementById('g_count').value = state.g_count;
-                if(state.g_start) document.getElementById('g_start').value = state.g_start;
-                if(state.g_end) document.getElementById('g_end').value = state.g_end;
+                
+                // استرجاع بيانات الساعة الرقمية
+                if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
+                if(state.start_min) document.getElementById('start_min').value = state.start_min;
+                if(state.start_ampm) document.getElementById('start_ampm').value = state.start_ampm;
+                if(state.end_hour) document.getElementById('end_hour').value = state.end_hour;
+                if(state.end_min) document.getElementById('end_min').value = state.end_min;
+                if(state.end_ampm) document.getElementById('end_ampm').value = state.end_ampm;
                 
                 if(state.g_days && Array.isArray(state.g_days)) {
                     state.g_days.forEach(day => {
@@ -525,6 +654,9 @@
             
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
+
+            // تجهيز قوائم الساعة الرقمية أولاً
+            populateTimeSelectors();
 
             loadState();
 
@@ -696,19 +828,19 @@
         }
 
         function finishSetup() {
-            const gStart = document.getElementById('g_start').value;
-            const gEnd = document.getElementById('g_end').value;
             const address = document.getElementById('m_address').value.trim();
-
-            if (!gStart || !gEnd) {
-                alert("⚠️ برجاء تحديد موعد بداية ونهاية الحصة.");
-                return;
-            }
 
             if (!address || address.includes("جاري")) {
                 alert("⚠️ برجاء التأكد من كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
                 return; 
             }
+
+            // هنا يتم تجميع الوقت ليصبح (مثال: "02:30 م") ويمكنك إرساله لقاعدة البيانات
+            const finalStartTime = `${document.getElementById('start_hour').value}:${document.getElementById('start_min').value} ${document.getElementById('start_ampm').value}`;
+            const finalEndTime = `${document.getElementById('end_hour').value}:${document.getElementById('end_min').value} ${document.getElementById('end_ampm').value}`;
+            
+            console.log("موعد البداية:", finalStartTime);
+            console.log("موعد النهاية:", finalEndTime);
 
             saveState();
 
