@@ -217,48 +217,48 @@
             background: #FFFFFF;
         }
 
-        /* ✅ أزرار البطاقة (حذف + تعديل الاسم) */
+        /* ✅ أزرار البطاقة الكلاسيكية الأنيقة (حذف + تعديل الاسم) */
         .card-actions {
             position: absolute;
-            top: 15px;
-            left: 15px;
+            top: 18px;
+            left: 18px;
             display: flex;
             gap: 8px;
             z-index: 20;
         }
         
         .action-btn {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px; /* مربع بحواف ناعمة للتصميم الكلاسيكي */
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(4px);
+            color: #64748B; /* لون رمادي هادئ */
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
+            border: 1px solid #CBD5E1;
             cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .btn-delete {
-            background: #FEE2E2;
-            color: #EF4444;
-        }
-        .btn-delete:hover {
-            background: #EF4444;
-            color: #FFFFFF;
-            transform: scale(1.15) rotate(90deg);
-            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
         }
 
-        .btn-edit-name {
-            background: #E0E7FF;
-            color: #4F46E5;
+        .action-btn:hover {
+            transform: translateY(-2px);
         }
+
         .btn-edit-name:hover {
-            background: #4F46E5;
-            color: #FFFFFF;
-            transform: scale(1.15);
-            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
+            background: #EFF6FF;
+            border-color: #93C5FD;
+            color: #2563EB; /* أزرق كلاسيكي عند الوقوف */
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
+        }
+        
+        .btn-delete:hover {
+            background: #FEF2F2;
+            border-color: #FCA5A5;
+            color: #DC2626; /* أحمر كلاسيكي عند الوقوف */
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
         }
 
         /* ✅ كارت إضافة مجموعة جديدة */
@@ -486,7 +486,7 @@
             .hero-subtitle { font-size: 13px; margin-top: 18px; }
 
             .portal-card { padding: 18px 15px; gap: 12px; min-height: 160px; }
-            .card-actions { top: 10px; left: 10px; }
+            .card-actions { top: 12px; left: 12px; }
             .action-btn { width: 30px; height: 30px; }
             
             .card-add-new .icon-plus { width: 50px; height: 50px; font-size: 24px; }
@@ -575,7 +575,7 @@
         <div class="custom-modal">
             <div class="modal-icon icon-warning">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                 </svg>
             </div>
             <h3>تأكيد الحذف</h3>
@@ -590,7 +590,7 @@
     <!-- ✅ سكريبت الحفظ واسترجاع البيانات والتحكم بالنوافذ -->
     <script>
         let lessons = [];
-        let activeLessonId = null; // متغير لحفظ الـ ID عند فتح النوافذ المنبثقة
+        let activeLessonId = null; 
 
         // عند تحميل الصفحة، استرجاع الحصص المحفوظة مسبقاً
         window.addEventListener('DOMContentLoaded', () => {
@@ -658,18 +658,20 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
-                // استخدام دالة فتح النوافذ المخصصة بدلاً من confirm و prompt الافتراضية
+                // إضافة الأزرار الكلاسيكية
                 newCard.innerHTML = `
                     <div class="card-actions">
-                        <button class="action-btn btn-delete" title="إلغاء وحذف المجموعة" onclick="openDeleteModal(${lesson.id})">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        <!-- زر تعديل الاسم (قلم) -->
+                        <button class="action-btn btn-edit-name" title="تغيير اسم المجموعة" onclick="openEditModal(${lesson.id}, '${lesson.title.replace(/'/g, "\\'")}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
                         </button>
-                        
-                        <button class="action-btn btn-edit-name" title="تغيير اسم المجموعة" onclick="openEditModal(${lesson.id}, '${lesson.title.replace(/'/g, "\\'")}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+
+                        <!-- زر الحذف (سلة مهملات) -->
+                        <button class="action-btn btn-delete" title="إلغاء وحذف المجموعة" onclick="openDeleteModal(${lesson.id})">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
                         </button>
                     </div>
@@ -715,7 +717,7 @@
             const inputField = document.getElementById('editNameInput');
             inputField.value = currentTitle;
             document.getElementById('modalEdit').classList.add('active');
-            inputField.focus(); // وضع المؤشر في خانة الكتابة تلقائياً
+            inputField.focus(); 
         }
 
         function confirmEditName() {
@@ -726,7 +728,6 @@
                     lessons[lessonIndex].title = newTitle;
                     saveLessonsToStorage();
                     
-                    // إذا كان هناك تقرير مسجل باسم قديم، نقوم بتحديث الاسم في التقرير أيضاً
                     const stateKey = 'lessonState_' + activeLessonId;
                     const savedState = sessionStorage.getItem(stateKey);
                     if (savedState) {
@@ -752,7 +753,6 @@
                 lessons = lessons.filter(l => l.id !== activeLessonId);
                 saveLessonsToStorage();
                 
-                // حذف التقرير وبيانات النشر الخاصة بها من الذاكرة
                 sessionStorage.removeItem('lessonState_' + activeLessonId);
                 sessionStorage.removeItem('publishState_' + activeLessonId);
                 
