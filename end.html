@@ -132,7 +132,7 @@
         .fab-btn {
             color: white; padding: 12px 16px; border-radius: 99px; font-size: 13px; font-weight: 900;
             display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none;
-            transition: all 0.3s; cursor: pointer; flex: 1;
+            transition: all 0.3s; cursor: pointer; flex: 1; border: none; outline: none;
         }
         
         .fab-home {
@@ -253,7 +253,7 @@
 
     <!-- ✅ أزرار الإجراءات العائمة -->
     <div class="fab-container">
-        <button class="fab-btn fab-home" onclick="window.location.href='index2.html'">
+        <button class="fab-btn fab-home" onclick="goToHome()">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125H2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
@@ -269,6 +269,70 @@
     </div>
 
     <script>
+        // ==========================================
+        // ✅ نظام الأصوات التفاعلي (Web Audio API)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function resumeAudio() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+        }
+
+        // 1. صوت "كليك" رفيع عام لجميع الأزرار
+        function playClickSound() {
+            resumeAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(2000, audioCtx.currentTime); 
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05); 
+        }
+
+        // 2. صوت إيجابي/تأكيد (عند تفعيل/إظهار الموقع للطلبة)
+        function playSuccessSound() {
+            resumeAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(900, audioCtx.currentTime + 0.1); 
+            gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.3);
+        }
+
+        // 3. صوت منخفض (عند إخفاء الموقع عن الطلبة)
+        function playDeepSound() {
+            resumeAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine'; 
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15); 
+            osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        // ربط صوت الكليك بجميع عناصر الصفحة القابلة للضغط (ما عدا أزرار الخريطة لأن لها أصوات مخصصة)
+        document.addEventListener('click', function(e) {
+            const clickable = e.target.closest('.fab-btn');
+            if (clickable) {
+                playClickSound();
+            }
+        });
+
+
+        // ==========================================
+        // بقية منطق الصفحة
+        // ==========================================
         let currentLessonId = '1';
         let staticMap = null;
         let staticMarker = null;
@@ -290,7 +354,7 @@
             loadActualData();
 
             const savedPublishState = sessionStorage.getItem('publishState_' + currentLessonId) === 'true';
-            togglePublish(savedPublishState); 
+            togglePublish(savedPublishState, true); // true = لا تشغل صوت عند التحميل الأول
         };
 
         function loadActualData() {
@@ -418,13 +482,22 @@
             }
         }
 
-        function togglePublish(forceState = null) {
+        function togglePublish(forceState = null, initialLoad = false) {
             let isPublished;
             if (forceState !== null) {
                 isPublished = forceState;
             } else {
                 const current = sessionStorage.getItem('publishState_' + currentLessonId) === 'true';
                 isPublished = !current;
+                
+                // تشغيل الصوت المناسب بناءً على الحالة الجديدة (فقط إذا لم يكن تحميل أولي للصفحة)
+                if (!initialLoad) {
+                    if (isPublished) {
+                        playSuccessSound(); // صوت الإظهار/التفعيل
+                    } else {
+                        playDeepSound(); // صوت الإخفاء
+                    }
+                }
             }
 
             const mapWrap = document.getElementById('mapWrapper');
@@ -447,7 +520,16 @@
                 stateObj.step = 1; 
                 sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
             }
-            window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
+            // نعطي الصوت فرصة للعمل قبل الانتقال
+            setTimeout(() => {
+                window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
+            }, 100);
+        }
+
+        function goToHome() {
+            setTimeout(() => {
+                window.location.href = 'index2.html';
+            }, 100);
         }
     </script>
 </body>
