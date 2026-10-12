@@ -93,22 +93,41 @@
         #static-map { width: 100%; height: 200px; border-radius: 12px; border: 2px solid #E2E8F0; pointer-events: none; }
 
         /* ============================================ */
-        /* ✅ زر التعديل الذكي العائم (Smart Edit FAB) */
+        /* ✅ أزرار الإجراءات العائمة (FAB Container) */
         /* ============================================ */
-        .fab-edit {
+        .fab-container {
             position: fixed; bottom: 30px; left: 30px;
-            background: linear-gradient(135deg, #F59E0B, #D97706); color: white;
-            padding: 14px 24px; border-radius: 99px; font-size: 15px; font-weight: 900;
-            display: flex; align-items: center; gap: 8px; text-decoration: none;
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 100; border: 2px solid #FEF3C7; cursor: pointer;
+            display: flex; gap: 12px; z-index: 100;
+        }
+
+        .fab-btn {
+            color: white; padding: 14px 24px; border-radius: 99px; font-size: 15px; font-weight: 900;
+            display: flex; align-items: center; justify-content: center; gap: 8px; text-decoration: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); cursor: pointer;
+        }
+        
+        /* زر الرئيسية */
+        .fab-home {
+            background: linear-gradient(135deg, #0F2D5C, #1E40AF);
+            box-shadow: 0 10px 25px rgba(15, 45, 92, 0.4); border: 2px solid #BFDBFE;
+        }
+        .fab-home:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(15, 45, 92, 0.5); }
+
+        /* زر التعديل */
+        .fab-edit {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); border: 2px solid #FEF3C7;
         }
         .fab-edit:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5); }
 
         @media (max-width: 600px) {
             .report-grid { grid-template-columns: 1fr; gap: 15px; }
-            .fab-edit { bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; justify-content: center; }
-            .fab-edit:hover { transform: translateX(-50%) translateY(-3px); }
+            .fab-container {
+                bottom: 20px; left: 50%; transform: translateX(-50%);
+                width: 92%; justify-content: space-between;
+            }
+            .fab-btn { flex: 1; padding: 12px 10px; font-size: 14px; }
+            .fab-home:hover, .fab-edit:hover { transform: translateY(-3px); }
         }
     </style>
 </head>
@@ -192,13 +211,24 @@
         </div>
     </div>
 
-    <!-- ✅ زر التعديل الذكي العائم -->
-    <button class="fab-edit" onclick="editLesson()">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-        </svg>
-        تعديل إعدادات الحصة
-    </button>
+    <!-- ✅ أزرار الإجراءات العائمة -->
+    <div class="fab-container">
+        <!-- زر الرئيسية -->
+        <button class="fab-btn fab-home" onclick="window.location.href='index2.html'">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+            </svg>
+            الرئيسية
+        </button>
+        
+        <!-- زر التعديل -->
+        <button class="fab-btn fab-edit" onclick="editLesson()">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+            </svg>
+            تعديل
+        </button>
+    </div>
 
     <script>
         let currentLessonId = '1';
