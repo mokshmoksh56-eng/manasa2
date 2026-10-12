@@ -52,6 +52,18 @@
             user-select: none;
             gap: 10px;
         }
+
+        .header-image {
+            height: 75px;
+            width: 75px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            margin-bottom: 5px;
+            z-index: 2;
+            background-color: #000; /* في حال كانت الصورة شفافة */
+        }
         
         .header-soft h1 { 
             font-size: 18px; 
@@ -246,6 +258,10 @@
         <!-- تحديث نفس الصفحة بدلاً من الانتقال لـ index.html -->
         <button class="header-btn" onclick="location.reload()">🏠</button>
     </div>
+    
+    <!-- صورة المستر المضافة للهيدر -->
+    <img src="teacher.png" alt="صورة المستر" class="header-image">
+
     <h1 id="page-header-title">
         <span>منصة المستر - إعداد الجداول</span>
         <span class="schedule-badge-header" id="headerScheduleBadge" style="display:none;">📋 جدول رقم 1</span>
