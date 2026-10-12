@@ -542,7 +542,7 @@
         }
 
         // ==========================================
-        // ✅ حفظ البيانات (التحقق النهائي)
+        // ✅ حفظ البيانات (التحقق النهائي) والانتقال
         // ==========================================
         function finishSetup() {
             const address = document.getElementById('m_address').value.trim();
@@ -551,10 +551,12 @@
                 return; 
             }
 
+            // التأكد من حفظ أحدث التعديلات والإحداثيات قبل الانتقال
+            saveState();
+
             alert("✅ تم حفظ إعدادات المجموعة بنجاح!");
             
-            // مسح الذاكرة المؤقتة بعد الانتهاء بنجاح
-            sessionStorage.removeItem('lessonState_' + currentLessonId);
+            // تم إزالة سطر sessionStorage.removeItem لكي تتمكن صفحة end.html من قراءة البيانات
             
             window.location.href = `end.html?lessonId=${currentLessonId}`; 
         }
