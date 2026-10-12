@@ -171,6 +171,18 @@
                     <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
                 </div>
             </div>
+
+            <!-- ✅ الإضافة الجديدة: اسم المستر والعدد المطلوب -->
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>👤 اسم المستر</label>
+                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
+                </div>
+                <div class="form-group">
+                    <label>🔢 العدد المطلوب للطلاب</label>
+                    <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
+                </div>
+            </div>
             
             <div class="grid-2">
                 <div class="form-group">
@@ -275,7 +287,7 @@
         let mapInitialized = false;
         let map, marker;
         
-        // قراءة رقم الحصة أو المجموعة ووضع التعديل من الرابط
+        // قراءة رقم الحصة ووضع التعديل من الرابط
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
@@ -298,7 +310,6 @@
             
             document.getElementById('progressFill').style.width = step === 2 ? '50%' : '100%';
 
-            // تهيئة الخريطة عند الوصول للخطوة 3 فقط
             if(step === 3 && !mapInitialized) {
                 setTimeout(initMap, 300);
             }
@@ -367,20 +378,17 @@
         // ✅ منطق الخطوة 3 (الخريطة)
         // ==========================================
         function initMap() {
-            map = L.map('map').setView([30.0444, 31.2357], 13); // القاهرة كمثال
+            map = L.map('map').setView([30.0444, 31.2357], 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
             marker = L.marker([30.0444, 31.2357], { draggable: true }).addTo(map);
             mapInitialized = true;
-            
-            // إصلاح حجم الخريطة عند ظهور الـ div
             map.invalidateSize();
         }
 
         // ==========================================
-        // ✅ حفظ وإنهاء والتوجيه إلى end.html
+        // ✅ حفظ البيانات والتوجيه لصفحة end.html
         // ==========================================
         function finishSetup() {
-            // رسالة نجاح سريعة والتوجيه لصفحة التقرير النهائية end.html
             alert("تم حفظ إعدادات المجموعة بنجاح!");
             window.location.href = `end.html?lessonId=${currentLessonId}`; 
         }
