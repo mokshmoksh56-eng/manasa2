@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>تقرير الحصة - منصة احجزلى</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS للخريطة -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <style>
+        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #F1F5F9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+        /* ============================================ */
+        /* ✅ الهيدر */
+        /* ============================================ */
+        .hero-banner {
+            background: linear-gradient(135deg, #0F2D5C, #1E40AF);
+            color: white; padding: 30px 20px 50px; text-align: center;
+            position: relative; overflow: hidden;
+        }
+        .hero-banner::after {
+            content: ''; position: absolute; bottom: -20px; left: 0; right: 0;
+            height: 40px; background: #F1F5F9; border-radius: 50% 50% 0 0;
+        }
+        .lesson-title { font-size: 28px; font-weight: 900; margin-bottom: 5px; }
+        .lesson-id-badge {
+            background: rgba(255,255,255,0.2); padding: 4px 12px; border-radius: 20px;
+            font-size: 14px; font-weight: 800; display: inline-block; backdrop-filter: blur(5px);
+        }
+
+        /* ============================================ */
+        /* ✅ شريط حالة النشر */
+        /* ============================================ */
+        .status-banner {
+            max-width: 800px; margin: -25px auto 20px; position: relative; z-index: 10;
+            background: #fff; border-radius: 16px; padding: 15px 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05); border-right: 5px solid #64748B;
+            transition: all 0.4s ease;
+        }
+        .status-banner.published { border-right-color: #10B981; }
+        
+        .status-text { display: flex; flex-direction: column; }
+        .status-title { font-size: 16px; font-weight: 900; color: #1E293B; }
+        .status-desc { font-size: 12px; font-weight: 700; color: #64748B; transition: color 0.3s; }
+        .status-banner.published .status-title { color: #065F46; }
+
+        /* مفتاح النشر (Toggle Switch) */
+        .switch { position: relative; display: inline-block; width: 54px; height: 30px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #CBD5E1; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px;
+            background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        input:checked + .slider { background-color: #10B981; }
+        input:checked + .slider:before { transform: translateX(-24px); }
+
+        /* ============================================ */
+        /* ✅ بطاقات التقرير */
+        /* ============================================ */
+        .report-container { max-width: 800px; margin: 0 auto; width: 100%; padding: 0 15px 100px; }
+        .report-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        
+        .report-card {
+            background: #fff; border-radius: 16px; padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.03); border: 1px solid #E2E8F0;
+        }
+        .report-card.full-width { grid-column: 1 / -1; }
+        
+        .card-header {
+            display: flex; align-items: center; gap: 8px; margin-bottom: 15px;
+            font-size: 16px; font-weight: 900; color: #0F2D5C; border-bottom: 2px dashed #E2E8F0; padding-bottom: 10px;
+        }
+
+        .data-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
+        .data-row:last-child { border-bottom: none; }
+        .data-label { color: #64748B; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
+        .data-value { color: #1E293B; font-size: 14px; font-weight: 900; }
+        
+        .badge-value { background: #F1F5F9; padding: 4px 12px; border-radius: 8px; border: 1px solid #E2E8F0; }
+
+        /* الخريطة الثابتة */
+        #static-map { width: 100%; height: 200px; border-radius: 12px; border: 2px solid #E2E8F0; pointer-events: none; /* يمنع التفاعل مع الخريطة */ }
+
+        /* ============================================ */
+        /* ✅ زر التعديل الذكي العائم (Smart Edit FAB) */
+        /* ============================================ */
+        .fab-edit {
+            position: fixed; bottom: 30px; left: 30px;
+            background: linear-gradient(135deg, #F59E0B, #D97706); color: white;
+            padding: 14px 24px; border-radius: 99px; font-size: 15px; font-weight: 900;
+            display: flex; align-items: center; gap: 8px; text-decoration: none;
+            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.4); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            z-index: 100; border: 2px solid #FEF3C7; cursor: pointer;
+        }
+        .fab-edit:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 15px 35px rgba(245, 158, 11, 0.5); }
+
+        @media (max-width: 600px) {
+            .report-grid { grid-template-columns: 1fr; gap: 15px; }
+            .fab-edit { bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; justify-content: center; }
+            .fab-edit:hover { transform: translateX(-50%) translateY(-3px); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ✅ الهيدر -->
+    <section class="hero-banner">
+        <div class="lesson-title" id="reportTitle">تقرير المجموعة</div>
+        <div class="lesson-id-badge" id="lessonIdDisplay">الكود: #--</div>
+    </section>
+
+    <!-- ✅ شريط حالة النشر -->
+    <div class="status-banner" id="statusBanner">
+        <div class="status-text">
+            <span class="status-title" id="statusTitle">المجموعة مخفية 🚫</span>
+            <span class="status-desc" id="statusDesc">الطلاب لا يمكنهم رؤية أو حجز هذه المجموعة حالياً.</span>
+        </div>
+        <label class="switch">
+            <input type="checkbox" id="publishToggle" onchange="togglePublish()">
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <!-- ✅ تقرير البيانات -->
+    <div class="report-container">
+        <div class="report-grid">
+            
+            <!-- 1. بيانات المجموعة الأساسية -->
+            <div class="report-card">
+                <div class="card-header"><span>📋</span> البيانات الأساسية</div>
+                <div class="data-row">
+                    <span class="data-label">👥 اسم المجموعة</span>
+                    <span class="data-value" id="val-groupName">مجموعة السبت</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">👤 المعلم</span>
+                    <span class="data-value" id="val-teacher">أ/ أحمد محمود</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">🔢 العدد الأقصى</span>
+                    <span class="data-value badge-value">25 طالب</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">🎓 الفئة</span>
+                    <span class="data-value">مختلط</span>
+                </div>
+            </div>
+
+            <!-- 2. المواعيد والمادة -->
+            <div class="report-card">
+                <div class="card-header"><span>⏰</span> المواعيد والمادة</div>
+                <div class="data-row">
+                    <span class="data-label">📚 المادة</span>
+                    <span class="data-value">الرياضيات</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">👑 الصف</span>
+                    <span class="data-value">الأول الثانوي</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">🟢 الحضور</span>
+                    <span class="data-value badge-value" style="color: #065F46; background: #D1FAE5; border-color: #A7F3D0;">04:00 م</span>
+                </div>
+                <div class="data-row">
+                    <span class="data-label">🔴 الانصراف</span>
+                    <span class="data-value badge-value" style="color: #991B1B; background: #FEE2E2; border-color: #FECACA;">06:00 م</span>
+                </div>
+            </div>
+
+            <!-- 3. الموقع والخريطة الثابتة -->
+            <div class="report-card full-width">
+                <div class="card-header"><span>📍</span> الموقع الجغرافي للدرس</div>
+                <div class="data-row" style="border: none; padding-bottom: 5px;">
+                    <span class="data-label">🏢 المكان:</span>
+                    <span class="data-value">سنتر النخبة التعليمي - شارع المحطة</span>
+                </div>
+                <!-- الخريطة الثابتة -->
+                <div id="static-map"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ✅ زر التعديل الذكي العائم -->
+    <button class="fab-edit" onclick="editLesson()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        </svg>
+        تعديل إعدادات الحصة
+    </button>
+
+    <script>
+        let currentLessonId = '1';
+        
+        window.onload = () => {
+            // جلب رقم الحصة من الرابط
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
+            
+            document.getElementById('reportTitle').innerText = `تقرير مجموعة #${currentLessonId}`;
+            document.getElementById('lessonIdDisplay').innerText = `كود المجموعة: ${currentLessonId}`;
+
+            initStaticMap();
+        };
+
+        // ==========================================
+        // ✅ التحكم في حالة النشر (الإظهار والإخفاء)
+        // ==========================================
+        function togglePublish() {
+            const isPublished = document.getElementById('publishToggle').checked;
+            const banner = document.getElementById('statusBanner');
+            const title = document.getElementById('statusTitle');
+            const desc = document.getElementById('statusDesc');
+
+            if (isPublished) {
+                banner.classList.add('published');
+                title.innerHTML = 'المجموعة منشورة للطلبة ✅';
+                desc.innerHTML = 'يمكن للطلاب الآن رؤية هذه المجموعة في البحث وحجز مقاعدهم.';
+            } else {
+                banner.classList.remove('published');
+                title.innerHTML = 'المجموعة مخفية 🚫';
+                desc.innerHTML = 'الطلاب لا يمكنهم رؤية أو حجز هذه المجموعة حالياً.';
+            }
+        }
+
+        // ==========================================
+        // ✅ زر التعديل الذكي
+        // ==========================================
+        function editLesson() {
+            // توجيه ذكي يعيد المعلم لصفحة الخطوات (group.html) مع نفس رقم الحصة
+            // ليعرف النظام أنه في وضع "التعديل" وليس "الإنشاء"
+            window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
+        }
+
+        // ==========================================
+        // ✅ تهيئة الخريطة الثابتة (للعرض فقط)
+        // ==========================================
+        function initStaticMap() {
+            // إعدادات تجعل الخريطة للعرض فقط (غير قابلة للتحريك أو التكبير)
+            const mapOptions = {
+                zoomControl: false,
+                dragging: false,
+                scrollWheelZoom: false,
+                doubleClickZoom: false,
+                boxZoom: false,
+                keyboard: false,
+                touchZoom: false
+            };
+
+            const map = L.map('static-map', mapOptions).setView([30.0444, 31.2357], 15); // إحداثيات افتراضية
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            
+            // إضافة ماركر ثابت بتصميم مميز
+            const marker = L.marker([30.0444, 31.2357], { interactive: false }).addTo(map);
+        }
+    </script>
+</body>
+</html>
