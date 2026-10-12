@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة احجزلى - إدارة الحصص</title>
+    <title>منصة احجزلى - إدارة المجموعات</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -242,7 +242,7 @@
             box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
         }
 
-        /* ✅ كارت إضافة حصة جديدة */
+        /* ✅ كارت إضافة حصة/مجموعة جديدة */
         .card-add-new {
             background: #F1F5F9;
             border: 3px dashed #CBD5E1;
@@ -475,7 +475,7 @@
             </div>
             
             <h1 class="hero-headline">
-                <span class="part-1">إدارة الحصص</span>
+                <span class="part-1">إدارة المجموعات</span>
                 <span class="dots">...</span>
                 <span class="part-2">تابع طلابك باحترافية</span>
             </h1>
@@ -486,20 +486,20 @@
         </div>
     </section>
 
-    <!-- ✅ قسم البطاقات (جداول الحصص) -->
+    <!-- ✅ قسم البطاقات (إدارة المجموعات والحصص) -->
     <section class="cards-section">
         <div class="container mx-auto max-w-5xl">
             <!-- تم إضافة ID للجريد ليتم إضافة الكروت بداخله -->
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
                 
-                <!-- ✅ كارت إنشاء حصة جديدة (يعمل بـ JavaScript) -->
+                <!-- ✅ كارت إنشاء مجموعة جديدة (يعمل بـ JavaScript) -->
                 <div onclick="createNewLesson()" class="portal-card card-add-new">
                     <div class="icon-plus">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
-                    <h2>إنشاء حصة جديدة</h2>
+                    <h2>إنشاء مجموعة جديدة</h2>
                 </div>
 
             </div>
@@ -511,7 +511,7 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- ✅ سكريبت التفاعل (إضافة وحذف الحصص) -->
+    <!-- ✅ سكريبت التفاعل (إضافة وحذف) مع الربط الذكي بالملف الجديد -->
     <script>
         let lessonCounter = 0;
 
@@ -530,21 +530,23 @@
             
             newCard.innerHTML = `
                 <!-- زر الحذف -->
-                <button class="btn-delete" title="حذف الحصة" onclick="deleteLesson(this)">
+                <button class="btn-delete" title="حذف المجموعة" onclick="deleteLesson(this)">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
 
                 <div class="card-image-box">
-                    <!-- إذا لم تكن الصور متاحة يمكنك تغيير المسار -->
+                    <!-- تأكد من وجود الصور في نفس المجلد -->
                     <img src="./${imgName}" alt="صورة الحصة">
                 </div>
                 <div class="card-text">
-                    <h2>حصة رقم ${lessonCounter}</h2>
-                    <p>محتوى الحصة وتفاصيل الشرح الخاصة بالدرس الجديد يتم إضافتها هنا.</p>
-                    <a href="./lesson${lessonCounter}.html" class="btn-go">
-                        دخول الحصة <span>➔</span>
+                    <h2>مجموعة رقم ${lessonCounter}</h2>
+                    <p>قم بالدخول لإعداد بيانات المجموعة (المواعيد، المادة، والموقع).</p>
+                    
+                    <!-- ✅ التعديل الجديد: التوجيه لملف group.html مع تمرير رقم المجموعة -->
+                    <a href="./group.html?lessonId=${lessonCounter}" class="btn-go">
+                        إعداد المجموعة <span>➔</span>
                     </a>
                 </div>
             `;
@@ -555,7 +557,7 @@
 
         function deleteLesson(btnElement) {
             // رسالة تأكيد قبل الحذف
-            if(confirm('هل أنت متأكد من رغبتك في حذف هذه الحصة؟')) {
+            if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة؟')) {
                 // البحث عن الكارت الحاوي للزر وحذفه
                 const card = btnElement.closest('.portal-card');
                 if (card) {
