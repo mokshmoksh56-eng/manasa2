@@ -128,12 +128,15 @@
         /* ========== شبكة المربعات ========== */
         .cards-container { 
             display: grid; 
+            /* الموبايل: عمودين */
             grid-template-columns: repeat(2, 1fr); 
             gap: 15px; 
         }
+
+        /* الشاشات المتوسطة والكبيرة: 3 أعمدة لتكون الملفات الثلاثة بجوار بعضها */
         @media (min-width: 768px) {
             .cards-container { 
-                grid-template-columns: repeat(4, 1fr); 
+                grid-template-columns: repeat(3, 1fr); 
             }
         }
         
@@ -147,6 +150,19 @@
             aspect-ratio: 1 / 1; 
             transition: all 0.3s ease;
             overflow: hidden; 
+        }
+
+        /* تخصيص كارت التقرير ليكون عريضاً بالأسفل */
+        #card-mester4 {
+            grid-column: 1 / -1; /* يمتد ليشمل كل الأعمدة في الصف */
+            aspect-ratio: auto; /* يلغي شرط المربع */
+            height: 180px; /* ارتفاع مناسب */
+        }
+
+        @media (min-width: 768px) {
+            #card-mester4 {
+                height: 220px; /* يزيد الارتفاع قليلاً في الشاشات الكبيرة */
+            }
         }
 
         .card:hover {
@@ -289,7 +305,7 @@
 
 <header class="header-soft">
     <div class="header-actions">
-        <!-- تم تغيير وجهة الزر ليقوم فقط بتحديث نفس الصفحة بدلاً من الانتقال لـ index.html -->
+        <!-- تحديث نفس الصفحة بدلاً من الانتقال لـ index.html -->
         <button class="header-btn" onclick="location.reload()">🏠</button>
     </div>
     <h1 id="page-header-title">
@@ -317,7 +333,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester1">جاري الفحص...</div>
             <div class="card-icon">1</div>
-            <div class="card-title">الخطوة الأولى</div>
+            <div class="card-title">الخطوة الأولى (البيانات)</div>
         </div>
         <!-- الطبقة الشفافة كـ رابط مباشر -->
         <a href="mester1.html" class="click-layer"></a>
@@ -329,7 +345,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester2">جاري الفحص...</div>
             <div class="card-icon">2</div>
-            <div class="card-title">الخطوة الثانية</div>
+            <div class="card-title">الخطوة الثانية (المواد)</div>
         </div>
         <!-- الطبقة الشفافة كـ رابط مباشر -->
         <a href="mester2.html" class="click-layer"></a>
@@ -341,7 +357,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester3">جاري الفحص...</div>
             <div class="card-icon">3</div>
-            <div class="card-title">الخطوة الثالثة</div>
+            <div class="card-title">الخطوة الثالثة (الموقع)</div>
         </div>
         <!-- الطبقة الشفافة كـ رابط مباشر -->
         <a href="mester3.html" class="click-layer"></a>
@@ -353,7 +369,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester4">جاري الفحص...</div>
             <div class="card-icon">4</div>
-            <div class="card-title">التقرير النهائي</div>
+            <div class="card-title">التقرير النهائي (للنشر)</div>
         </div>
         <a href="mester4.html" class="click-layer"></a>
     </div>
