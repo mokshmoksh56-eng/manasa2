@@ -217,29 +217,48 @@
             background: #FFFFFF;
         }
 
-        /* ✅ زر الحذف */
-        .btn-delete {
+        /* ✅ أزرار البطاقة (حذف + تعديل الاسم) */
+        .card-actions {
             position: absolute;
             top: 15px;
             left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+        }
+        
+        .action-btn {
             width: 36px;
             height: 36px;
-            background: #FEE2E2;
-            color: #EF4444;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             cursor: pointer;
-            z-index: 20;
             transition: all 0.3s ease;
+        }
+        
+        .btn-delete {
+            background: #FEE2E2;
+            color: #EF4444;
         }
         .btn-delete:hover {
             background: #EF4444;
             color: #FFFFFF;
             transform: scale(1.15) rotate(90deg);
             box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-edit-name {
+            background: #E0E7FF;
+            color: #4F46E5;
+        }
+        .btn-edit-name:hover {
+            background: #4F46E5;
+            color: #FFFFFF;
+            transform: scale(1.15);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
         }
 
         /* ✅ كارت إضافة مجموعة جديدة */
@@ -426,7 +445,9 @@
                 gap: 12px;
                 min-height: 160px;
             }
-            .btn-delete { top: 10px; left: 10px; width: 30px; height: 30px; }
+            .card-actions { top: 10px; left: 10px; }
+            .action-btn { width: 30px; height: 30px; }
+            
             .card-add-new .icon-plus { width: 50px; height: 50px; font-size: 24px; }
             
             .card-image-box {
@@ -581,12 +602,22 @@
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
                 newCard.innerHTML = `
-                    <!-- زر الحذف -->
-                    <button class="btn-delete" title="حذف المجموعة" onclick="deleteLesson(${lesson.id})">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    <!-- أزرار الإجراءات (حذف وتعديل الاسم) -->
+                    <div class="card-actions">
+                        <!-- زر الحذف -->
+                        <button class="action-btn btn-delete" title="إلغاء وحذف المجموعة" onclick="deleteLesson(${lesson.id})">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                        
+                        <!-- زر تعديل الاسم -->
+                        <button class="action-btn btn-edit-name" title="تغيير اسم المجموعة" onclick="editLessonName(${lesson.id}, '${lesson.title}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                        </button>
+                    </div>
 
                     <div class="card-image-box">
                         <img src="./${imgName}" alt="صورة الحصة">
@@ -604,15 +635,36 @@
             });
         }
 
-        // حذف حصة وتحديث التخزين
+        // ✅ تعديل اسم المجموعة
+        function editLessonName(id, currentTitle) {
+            const newTitle = prompt("أدخل الاسم الجديد للمجموعة:", currentTitle);
+            
+            // التأكد من إدخال اسم وعدم الإلغاء
+            if(newTitle !== null && newTitle.trim() !== "") {
+                const lessonIndex = lessons.findIndex(l => l.id === id);
+                if (lessonIndex !== -1) {
+                    lessons[lessonIndex].title = newTitle.trim();
+                    saveLessonsToStorage();
+                    renderLessons();
+                }
+            }
+        }
+
+        // ✅ حذف حصة مع رسالة تأكيد
         function deleteLesson(id) {
-            if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة والتقرير الخاص بها؟')) {
+            // رسالة تأكيد مزدوجة لتجنب الحذف بالخطأ
+            const isConfirmed = confirm('⚠️ تحذير: سيتم إلغاء هذه المجموعة بالكامل وحذف كافة بياناتها والتقارير الخاصة بها.\n\nهل أنت متأكد من رغبتك في الإلغاء؟');
+            
+            if(isConfirmed) {
                 lessons = lessons.filter(l => l.id !== id);
                 saveLessonsToStorage();
-                // حذف التقرير الخاص بها من الذاكرة
+                
+                // حذف التقرير وبيانات النشر الخاصة بها من الذاكرة
                 sessionStorage.removeItem('lessonState_' + id);
                 sessionStorage.removeItem('publishState_' + id);
+                
                 renderLessons();
+                alert("✅ تم إلغاء المجموعة وحذف بياناتها بنجاح.");
             }
         }
 
