@@ -233,6 +233,14 @@
     <script>
         let currentLessonId = '1';
         
+        // ==========================================
+        // ✅ منع الرجوع بالأسهم (Browser/Device Back Button)
+        // ==========================================
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, location.href);
+        });
+        
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
