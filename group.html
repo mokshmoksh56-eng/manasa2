@@ -298,9 +298,33 @@
         };
 
         // ==========================================
-        // ✅ التحكم في التنقل بين الخطوات
+        // ✅ التحكم في التنقل والتحقق من البيانات (Validation)
         // ==========================================
         function nextStep(step) {
+            // 🛑 التحقق من بيانات الخطوة 1 قبل الانتقال للخطوة 2
+            if (step === 2) {
+                const gName = document.getElementById('g_name').value.trim();
+                const gTeacher = document.getElementById('g_teacher').value.trim();
+                const gCount = document.getElementById('g_count').value.trim();
+                const gStart = document.getElementById('g_start').value;
+                const gEnd = document.getElementById('g_end').value;
+
+                // السنتر اختياري، لذلك لم نضعه في شرط التحقق
+                if (!gName || !gTeacher || !gCount || !gStart || !gEnd) {
+                    alert("⚠️ برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، العدد، ومواعيد البداية والنهاية).");
+                    return; // إيقاف الانتقال
+                }
+            }
+
+            // 🛑 التحقق من بيانات الخطوة 2 قبل الانتقال للخطوة 3
+            if (step === 3) {
+                if (selectedSubjects.length === 0) {
+                    alert("⚠️ برجاء إضافة مادة دراسية واحدة على الأقل قبل المتابعة.");
+                    return; // إيقاف الانتقال
+                }
+            }
+
+            // ✅ في حالة نجاح التحقق، يتم الانتقال للخطوة التالية
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
             
@@ -310,6 +334,7 @@
             
             document.getElementById('progressFill').style.width = step === 2 ? '50%' : '100%';
 
+            // تهيئة الخريطة عند الوصول للخطوة 3
             if(step === 3 && !mapInitialized) {
                 setTimeout(initMap, 300);
             }
@@ -360,9 +385,14 @@
             const grade = document.getElementById('s_grade').value;
             const subj = document.getElementById('s_subject').value;
             if(!subj) return;
-            selectedSubjects.push(`${grade} - ${subj}`);
+            
+            const newSubject = `${grade} - ${subj}`;
+            // منع تكرار نفس المادة
+            if (!selectedSubjects.includes(newSubject)) {
+                selectedSubjects.push(newSubject);
+                renderChips();
+            }
             document.getElementById('s_subject').value = '';
-            renderChips();
         }
 
         function renderChips() {
@@ -386,10 +416,17 @@
         }
 
         // ==========================================
-        // ✅ حفظ البيانات والتوجيه لصفحة end.html
+        // ✅ حفظ البيانات (مع التحقق النهائي)
         // ==========================================
         function finishSetup() {
-            alert("تم حفظ إعدادات المجموعة بنجاح!");
+            // 🛑 التحقق من إدخال العنوان التفصيلي
+            const address = document.getElementById('m_address').value.trim();
+            if (!address) {
+                alert("⚠️ برجاء كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
+                return; // إيقاف الحفظ
+            }
+
+            alert("✅ تم حفظ إعدادات المجموعة بنجاح!");
             window.location.href = `end.html?lessonId=${currentLessonId}`; 
         }
     </script>
