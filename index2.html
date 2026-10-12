@@ -441,6 +441,7 @@
             border-radius: 24px; padding: 25px; text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh; overflow-y: auto;
         }
         .modal-overlay.active .custom-modal { transform: translateY(0) scale(1); }
 
@@ -478,7 +479,7 @@
         .custom-input:focus { border-color: var(--primary-600); box-shadow: 0 0 0 4px #DBEAFE; }
 
         /* ============================================ */
-        /* الموبايل */
+        /* ✅ التجاوب مع شاشات الموبايل (Responsive) */
         /* ============================================ */
         @media (max-width: 768px) {
             .hero-banner {
@@ -513,28 +514,52 @@
             .btn-go { padding: 10px 20px; font-size: 12.5px; }
         }
 
+        /* ✅ شاشات الموبايل العادية (أقل من 480px) */
         @media (max-width: 480px) {
-            .hero-banner {
-                min-height: 280px;
-                padding: 25px 12px;
-            }
-            .hero-brand { font-size: 30px; }
-            .hero-headline { font-size: 16px; gap: 5px; }
-            .hero-headline .dots { font-size: 20px; }
-            .hero-subtitle { font-size: 12px; }
+            .hero-banner { min-height: 260px; padding: 20px 10px; }
+            .hero-brand { font-size: 28px; margin-bottom: 8px; }
+            .hero-headline { font-size: 15px; gap: 5px; margin-top: 16px; }
+            .hero-headline .dots { font-size: 18px; }
+            .hero-headline .part-1::before { font-size: 16px; top: -18px; }
+            .hero-subtitle { font-size: 11px; margin-top: 12px; }
 
-            .portal-card {
-                padding: 15px 12px;
-                gap: 10px;
-            }
-            .card-image-box {
-                width: 85px;
-                height: 85px;
-                padding: 5px;
-            }
-            .card-text h2 { font-size: 17px; }
-            .card-text p { font-size: 11px; }
-            .btn-go { padding: 8px 16px; font-size: 11.5px; }
+            .cards-section { padding: 15px 10px 30px; }
+            
+            .portal-card { padding: 12px 10px; gap: 8px; border-radius: 20px; min-height: 120px; }
+            .card-actions { top: 8px; left: 8px; gap: 5px; }
+            .btn-action { width: 28px; height: 28px; }
+            .btn-action svg { width: 14px !important; height: 14px !important; }
+            
+            .card-image-box { width: 75px; height: 75px; padding: 4px; border-width: 2px; }
+            
+            .card-text h2 { font-size: 15px; margin-bottom: 4px; }
+            .card-text p { font-size: 10.5px; margin-bottom: 8px; line-height: 1.4; }
+            .btn-go { padding: 8px 14px; font-size: 11px; }
+
+            .card-add-new .icon-plus { width: 45px; height: 45px; font-size: 20px; margin-bottom: 8px; }
+            .card-add-new h2 { font-size: 16px; }
+
+            /* تحسينات النوافذ المنبثقة للموبايل الصغير */
+            .custom-modal { padding: 15px; border-radius: 20px; width: 92%; }
+            .modal-icon { width: 50px; height: 50px; margin-bottom: 10px; }
+            .modal-icon svg { width: 24px !important; height: 24px !important; }
+            .modal-title { font-size: 18px; margin-bottom: 6px; }
+            .modal-desc { font-size: 12px; margin-bottom: 15px; }
+            .btn-modal { padding: 10px; font-size: 12px; border-radius: 10px; }
+            .custom-input { padding: 10px; font-size: 13px; margin-bottom: 8px; }
+            
+            #modalGroupName { font-size: 16px !important; }
+            #modalBodyContent { font-size: 12px !important; gap: 6px !important; }
+        }
+
+        /* ✅ شاشات الموبايل الصغيرة جداً (مثل iPhone SE - أقل من 360px) */
+        @media (max-width: 360px) {
+            .hero-brand { font-size: 24px; }
+            .hero-headline { font-size: 13px; }
+            .card-image-box { width: 65px; height: 65px; border-width: 1.5px; }
+            .card-text h2 { font-size: 14px; }
+            .btn-go { font-size: 10px; padding: 6px 12px; }
+            .portal-card { padding: 10px 8px; gap: 6px; }
         }
     </style>
 </head>
@@ -563,12 +588,12 @@
     <section class="cards-section">
         <div class="container mx-auto max-w-5xl">
             <!-- حاوية الكروت -->
-            <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
+            <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-6 w-full animate-fade-in delay-1">
                 
                 <!-- ✅ كارت إنشاء مجموعة جديدة -->
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 24px; height: 24px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
@@ -582,8 +607,11 @@
     <!-- ✅ نافذة تفاصيل المجموعة المنبثقة (Info Modal) -->
     <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
         <div class="custom-modal" style="text-align: right;" onclick="event.stopPropagation()">
+            <!-- عنوان النافذة مع الشارة (متجاوب للموبايل) -->
             <div style="border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 15px;">
-                <h3 id="modalGroupName" style="font-size: 20px; font-weight: 900; color: #0F2D5C; margin: 0;">اسم المجموعة</h3>
+                <h3 id="modalGroupName" style="font-size: 20px; font-weight: 900; color: #0F2D5C; margin: 0; display: flex; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    اسم المجموعة
+                </h3>
             </div>
             <div id="modalBodyContent" style="font-size: 14px; font-weight: 700; color: #475569; display: flex; flex-direction: column; gap: 10px; line-height: 1.6;">
                 <!-- يتم تعبئة البيانات تلقائياً -->
@@ -595,7 +623,7 @@
     <div id="deleteModal" class="modal-overlay" onclick="closeModal('deleteModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #FEE2E2; color: #EF4444;">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 36px; height: 36px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
             </div>
@@ -612,7 +640,7 @@
     <div id="renameModal" class="modal-overlay" onclick="closeModal('renameModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #E0E7FF; color: #4F46E5;">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 36px; height: 36px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                 </svg>
             </div>
@@ -720,7 +748,7 @@
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 24px; height: 24px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
@@ -747,12 +775,12 @@
                     <!-- ✅ أزرار الإجراءات (حذف وتعديل) -->
                     <div class="card-actions">
                         <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal(${lesson.id}, event)">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
                         </button>
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal(${lesson.id}, event)">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
                         </button>
@@ -858,29 +886,24 @@
             const nameEl = document.getElementById('modalGroupName');
             const contentEl = document.getElementById('modalBodyContent');
 
-            // تعديل تصميم الهيدر ليتناسب مع الشارة الجديدة
-            nameEl.style.display = 'flex';
-            nameEl.style.alignItems = 'center';
-            nameEl.style.flexWrap = 'wrap';
-
             if (savedState) {
                 const data = JSON.parse(savedState);
                 const groupName = data.g_name || `مجموعة رقم ${lessonId}`;
                 
-                // 2. تصميم الإشارة الخضراء أو الحمراء
+                // 2. تصميم الإشارة الخضراء أو الحمراء (متجاوب)
                 let statusBadge = isPublished ? 
-                    `<span style="font-size: 11px; background: #D1FAE5; color: #065F46; padding: 3px 8px; border-radius: 99px; margin-right: 10px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 5px; font-weight: 800;">
-                        <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
+                    `<span style="font-size: 10px; background: #D1FAE5; color: #065F46; padding: 3px 8px; border-radius: 99px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 4px; font-weight: 800; white-space: nowrap;">
+                        <span style="width: 6px; height: 6px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
                         الموقع ظاهر للطلبة
                     </span>` 
                     : 
-                    `<span style="font-size: 11px; background: #FEE2E2; color: #991B1B; padding: 3px 8px; border-radius: 99px; margin-right: 10px; border: 1px solid #FECACA; display: inline-flex; align-items: center; gap: 5px; font-weight: 800;">
-                        <span style="width: 8px; height: 8px; background: #EF4444; border-radius: 50%; display: inline-block;"></span>
+                    `<span style="font-size: 10px; background: #FEE2E2; color: #991B1B; padding: 3px 8px; border-radius: 99px; border: 1px solid #FECACA; display: inline-flex; align-items: center; gap: 4px; font-weight: 800; white-space: nowrap;">
+                        <span style="width: 6px; height: 6px; background: #EF4444; border-radius: 50%; display: inline-block;"></span>
                         الموقع مخفي عن الطلبة
                     </span>`;
 
                 // 3. وضع الاسم وبجواره الإشارة
-                nameEl.innerHTML = `${groupName} ${statusBadge}`;
+                nameEl.innerHTML = `<span>${groupName}</span> ${statusBadge}`;
                 
                 // عرض بيانات الساعة الرقمية المخصصة
                 const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? 
@@ -891,7 +914,7 @@
                 // استخراج الأيام، الشهور، والتكرار الأسبوعي الجديدة
                 const daysStr = data.g_days && data.g_days.length > 0 ? data.g_days.join('، ') : 'غير محدد';
                 const monthsStr = data.g_months && data.g_months.length > 0 ? data.g_months.join('، ') : 'غير محدد';
-                const repeatStr = data.g_repeat_weekly ? '✅ نعم (مكرر أسبوعياً)' : '❌ لا (مرة واحدة)';
+                const repeatStr = data.g_repeat_weekly ? '✅ نعم (مكرر)' : '❌ لا (مرة واحدة)';
 
                 // ✅ ترجمة قيم الفئة
                 let genderText = 'مختلط'; // القيمة الافتراضية
@@ -910,21 +933,21 @@
                                     : 'غير محدد';
 
                 contentEl.innerHTML = `
-                    <p>👤 <b>اسم المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
+                    <p>👤 <b>المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
                     <p>🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
-                    <p>👑 <b>الصف الدراسي:</b> ${gradeStr}</p>
+                    <p>👑 <b>الصف:</b> ${gradeStr}</p>
                     <p>📚 <b>المادة:</b> ${subjectsStr}</p>
                     <p>📅 <b>أيام الحصص:</b> ${daysStr}</p>
-                    <p>🗓️ <b>الشهور الميلادية:</b> ${monthsStr}</p>
+                    <p>🗓️ <b>الشهور:</b> ${monthsStr}</p>
                     <p>🔄 <b>التكرار أسبوعياً:</b> ${repeatStr}</p>
-                    <p>🔢 <b>عدد الطلاب المطلوب:</b> ${data.g_count || 'غير محدد'} طالب</p>
+                    <p>🔢 <b>الطلاب:</b> ${data.g_count || 'غير محدد'} طالب</p>
                     <p>⏰ <b>المواعيد:</b> من ${startTime12} إلى ${endTime12}</p>
                     <p>🎓 <b>الفئة:</b> ${genderText} | 📍 <b>المكان:</b> ${locText}</p>
-                    <p>📍 <b>العنوان التفصيلي:</b> ${data.m_address || 'لم يتم تحديد الموقع بدقة'}</p>
+                    <p>📍 <b>العنوان التفصيلي:</b> ${data.m_address || 'لم يتم تحديد الموقع'}</p>
                 `;
             } else {
                 nameEl.innerHTML = `مجموعة رقم ${lessonId}`;
-                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 15px 0;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد المجموعة" للبدء في إدخال المواعيد والمكان.</p>`;
+                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 15px 0;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد المجموعة" للبدء.</p>`;
             }
 
             modal.classList.add('active');
