@@ -571,6 +571,12 @@
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
 
+                // ✅ التحقق من وجود بيانات (تقرير) لهذه المجموعة في الذاكرة
+                const hasReport = sessionStorage.getItem('lessonState_' + lesson.id) !== null;
+                const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
+                const btnText = hasReport ? 'عرض تقرير المجموعة <span>➔</span>' : 'إعداد المجموعة <span>➔</span>';
+                const descText = hasReport ? 'تم إعداد هذه المجموعة بالفعل، يمكنك مراجعة تقريرها أو تعديله.' : 'قم بالدخول لإعداد بيانات المجموعة (المواعيد، المادة، والموقع).';
+
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
@@ -587,9 +593,9 @@
                     </div>
                     <div class="card-text">
                         <h2>${lesson.title}</h2>
-                        <p>قم بالدخول لإعداد بيانات المجموعة (المواعيد، المادة، والموقع).</p>
-                        <a href="./group.html?lessonId=${lesson.id}" class="btn-go">
-                            إعداد المجموعة <span>➔</span>
+                        <p>${descText}</p>
+                        <a href="${targetUrl}" class="btn-go">
+                            ${btnText}
                         </a>
                     </div>
                 `;
@@ -600,9 +606,12 @@
 
         // حذف حصة وتحديث التخزين
         function deleteLesson(id) {
-            if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة؟')) {
+            if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة والتقرير الخاص بها؟')) {
                 lessons = lessons.filter(l => l.id !== id);
                 saveLessonsToStorage();
+                // حذف التقرير الخاص بها من الذاكرة
+                sessionStorage.removeItem('lessonState_' + id);
+                sessionStorage.removeItem('publishState_' + id);
                 renderLessons();
             }
         }
