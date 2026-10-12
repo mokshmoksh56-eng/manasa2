@@ -16,9 +16,6 @@
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-        /* ============================================ */
-        /* ✅ تنبيه وضع التعديل (Edit Alert) */
-        /* ============================================ */
         .edit-alert {
             background: linear-gradient(135deg, #F59E0B, #D97706);
             color: #fff; text-align: center; padding: 12px 15px; font-size: 15px; font-weight: 800;
@@ -28,9 +25,6 @@
         }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* ============================================ */
-        /* ✅ الهيدر */
-        /* ============================================ */
         .hero-banner {
             position: relative; width: 100%; min-height: 250px;
             background-image: url('./teacher2.png'); background-size: cover; background-position: center;
@@ -45,9 +39,6 @@
         .hero-brand .accent { color: #F59E0B; }
         .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
 
-        /* ============================================ */
-        /* ✅ شريط التقدم */
-        /* ============================================ */
         .wizard-progress {
             display: flex; justify-content: space-between; align-items: center;
             max-width: 500px; margin: -30px auto 20px; position: relative; z-index: 10;
@@ -72,9 +63,6 @@
             height: 100%; background: #10B981; width: 0%; transition: width 0.4s ease;
         }
 
-        /* ============================================ */
-        /* ✅ حاوية الخطوات */
-        /* ============================================ */
         .step-content { display: none; max-width: 800px; margin: 0 auto; width: 100%; padding: 0 15px 40px; animation: fadeIn 0.4s ease; }
         .step-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -110,6 +98,19 @@
             border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); transform: translateY(-3px);
         }
 
+        /* شبكة أيام الأسبوع */
+        .days-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .days-grid input { display: none; }
+        .days-grid label {
+            display: flex; align-items: center; justify-content: center;
+            padding: 10px; border: 2px solid #E2E8F0; border-radius: 10px; cursor: pointer;
+            font-size: 12px; font-weight: 800; transition: all 0.2s; background: #F8FAFC; color: #475569;
+        }
+        .days-grid input:checked + label {
+            border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); font-weight: 900;
+            border-width: 2px;
+        }
+
         .subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .chip {
             background: var(--c-light); color: var(--c-dark); padding: 6px 12px; border-radius: 20px;
@@ -117,12 +118,11 @@
         }
         .chip span { cursor: pointer; color: #EF4444; }
 
-        /* حاوية الخريطة وزر تحديد الموقع */
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 2px solid var(--c-border); overflow: hidden; z-index: 1; }
         #map { width: 100%; height: 300px; }
         
         .locate-btn {
-            position: absolute; bottom: 15px; left: 15px; z-index: 400; /* فوق الخريطة */
+            position: absolute; bottom: 15px; left: 15px; z-index: 400;
             background: #fff; border: 2px solid #25968b; border-radius: 12px;
             width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
             cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: #1b736a;
@@ -140,9 +140,6 @@
         .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
         .btn-prev:hover { background: #CBD5E1; }
 
-        /* ============================================ */
-        /* ✅ تصميم نافذة الحفظ المخصصة (Success Modal) */
-        /* ============================================ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -178,13 +175,12 @@
         @media (max-width: 600px) {
             .grid-2 { grid-template-columns: 1fr; }
             .radio-grid label { padding: 10px 2px; font-size: 11px; }
-            .radio-grid label i { font-size: 20px; }
+            .days-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
 <body>
 
-    <!-- 🛑 شريط التنبيه بوضع التعديل (مخفي افتراضياً) -->
     <div id="editAlert" class="edit-alert" style="display: none;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -192,7 +188,6 @@
         <span>أنت الآن في وضع تعديل بيانات المجموعة</span>
     </div>
 
-    <!-- ✅ نافذة الحفظ المخصصة (مخفية افتراضياً) -->
     <div id="successModal" class="modal-overlay">
         <div class="success-modal">
             <div class="success-icon">
@@ -206,7 +201,6 @@
         </div>
     </div>
 
-    <!-- ✅ الهيدر -->
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">إعداد <span class="accent">المجموعة</span></div>
@@ -214,7 +208,6 @@
         </div>
     </section>
 
-    <!-- ✅ شريط التقدم -->
     <div class="wizard-progress">
         <div class="progress-line"><div class="progress-line-fill" id="progressFill"></div></div>
         <div class="step-indicator active" id="indicator1">
@@ -228,9 +221,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🛑 الخطوة 1: بيانات المجموعة (وردي) -->
-    <!-- ========================================== -->
+    <!-- الخطوة 1: بيانات المجموعة -->
     <div id="step1" class="step-content active theme-pink">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة (تُحفظ مع الجدول)</h3>
@@ -238,12 +229,46 @@
             <div class="grid-2">
                 <div class="form-group">
                     <label>👥 اسم المجموعة</label>
-                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة السبت">
+                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة السبت والأحد">
                 </div>
                 <div class="form-group">
                     <label>🏫 اسم السنتر (اختياري)</label>
                     <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
                 </div>
+            </div>
+
+            <!-- ✅ تحديد أيام الأسبوع -->
+            <div class="form-group">
+                <label>📅 أيام الحصص (اختر أيام الأسبوع)</label>
+                <div class="days-grid">
+                    <div><input type="checkbox" id="day_sat" value="السبت"><label for="day_sat">السبت</label></div>
+                    <div><input type="checkbox" id="day_sun" value="الأحد"><label for="day_sun">الأحد</label></div>
+                    <div><input type="checkbox" id="day_mon" value="الإثنين"><label for="day_mon">الإثنين</label></div>
+                    <div><input type="checkbox" id="day_tue" value="الثلاثاء"><label for="day_tue">الثلاثاء</label></div>
+                    <div><input type="checkbox" id="day_wed" value="الأربعاء"><label for="day_wed">الأربعاء</label></div>
+                    <div><input type="checkbox" id="day_thu" value="الخميس"><label for="day_thu">الخميس</label></div>
+                    <div><input type="checkbox" id="day_fri" value="الجمعة"><label for="day_fri">الجمعة</label></div>
+                </div>
+            </div>
+
+            <!-- ✅ تحديد الشهر الميلادي -->
+            <div class="form-group">
+                <label>🗓️ الشهر الميلادي</label>
+                <select id="g_month" class="form-control">
+                    <option value="">-- اختر الشهر الميلادي --</option>
+                    <option value="يناير">يناير</option>
+                    <option value="فبراير">فبراير</option>
+                    <option value="مارس">مارس</option>
+                    <option value="أبريل">أبريل</option>
+                    <option value="مايو">مايو</option>
+                    <option value="يونيو">يونيو</option>
+                    <option value="يوليو">يوليو</option>
+                    <option value="أغسطس">أغسطس</option>
+                    <option value="سبتمبر">سبتمبر</option>
+                    <option value="أكتوبر">أكتوبر</option>
+                    <option value="نوفمبر">نوفمبر</option>
+                    <option value="ديسمبر">ديسمبر</option>
+                </select>
             </div>
 
             <div class="grid-2">
@@ -292,9 +317,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🛑 الخطوة 2: المادة الدراسية (تركواز) -->
-    <!-- ========================================== -->
+    <!-- الخطوة 2: المادة الدراسية -->
     <div id="step2" class="step-content theme-turq">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
@@ -333,17 +356,13 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🛑 الخطوة 3: الموقع على الخريطة (أخضر) -->
-    <!-- ========================================== -->
+    <!-- الخطوة 3: الموقع على الخريطة -->
     <div id="step3" class="step-content theme-teal">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي</h3>
             
-            <!-- حاوية الخريطة وزر التحديد -->
             <div class="map-container">
                 <div id="map"></div>
-                <!-- أيقونة استرجاع الموقع الحالي -->
                 <button type="button" class="locate-btn" onclick="requestCurrentLocation()" title="انتقل إلى موقعي الحالي">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -374,9 +393,6 @@
         let selectedSubjects = [];
         let savedLat = null, savedLng = null;
 
-        // ==========================================
-        // ✅ منع تعليق نافذة الحفظ عند الرجوع بالمتصفح (Bfcache fix)
-        // ==========================================
         window.addEventListener('pageshow', function (event) {
             const modal = document.getElementById('successModal');
             if (modal) {
@@ -384,10 +400,14 @@
             }
         });
 
-        // ==========================================
-        // ✅ نظام الحفظ التلقائي لمنع فقدان البيانات عند الريفريش
-        // ==========================================
+        // ✅ حفظ الأيام والشهر ضمن حالة المجموعة
         function saveState() {
+            const selectedDays = [];
+            ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) selectedDays.push(el.value);
+            });
+
             const state = {
                 step: currentStepNumber,
                 g_name: document.getElementById('g_name').value,
@@ -396,6 +416,8 @@
                 g_count: document.getElementById('g_count').value,
                 g_start: document.getElementById('g_start').value,
                 g_end: document.getElementById('g_end').value,
+                g_days: selectedDays,
+                g_month: document.getElementById('g_month').value,
                 g_gender: document.querySelector('input[name="g_gender"]:checked')?.id,
                 g_loc: document.querySelector('input[name="g_loc"]:checked')?.id,
                 s_stage: document.getElementById('s_stage').value,
@@ -408,12 +430,12 @@
             sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
         }
 
+        // ✅ استرجاع الأيام والشهر عند إعادة التحميل
         function loadState() {
             const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
                 const state = JSON.parse(saved);
                 
-                // استرجاع المدخلات
                 if(state.g_name) document.getElementById('g_name').value = state.g_name;
                 if(state.g_center) document.getElementById('g_center').value = state.g_center;
                 if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher;
@@ -421,34 +443,42 @@
                 if(state.g_start) document.getElementById('g_start').value = state.g_start;
                 if(state.g_end) document.getElementById('g_end').value = state.g_end;
                 
-                // استرجاع الراديو
+                if(state.g_days && Array.isArray(state.g_days)) {
+                    state.g_days.forEach(day => {
+                        if(day === 'السبت') document.getElementById('day_sat').checked = true;
+                        if(day === 'الأحد') document.getElementById('day_sun').checked = true;
+                        if(day === 'الإثنين') document.getElementById('day_mon').checked = true;
+                        if(day === 'الثلاثاء') document.getElementById('day_tue').checked = true;
+                        if(day === 'الأربعاء') document.getElementById('day_wed').checked = true;
+                        if(day === 'الخميس') document.getElementById('day_thu').checked = true;
+                        if(day === 'الجمعة') document.getElementById('day_fri').checked = true;
+                    });
+                }
+                if(state.g_month) document.getElementById('g_month').value = state.g_month;
+
                 if(state.g_gender) document.getElementById(state.g_gender).checked = true;
                 if(state.g_loc) document.getElementById(state.g_loc).checked = true;
                 
-                // استرجاع القوائم (المرحلة والصف)
                 if(state.s_stage) {
                     document.getElementById('s_stage').value = state.s_stage;
-                    updateGrades(); // تفعيل الصفوف
+                    updateGrades();
                 }
                 if(state.s_grade) {
                     document.getElementById('s_grade').value = state.s_grade;
-                    updateSubjects(); // تفعيل المواد
+                    updateSubjects();
                 }
                 
-                // استرجاع المواد المحددة (الشرائح)
                 if(state.selectedSubjects) {
                     selectedSubjects = state.selectedSubjects;
                     renderChips();
                 }
 
-                // استرجاع الخريطة والعنوان
                 if(state.m_address) document.getElementById('m_address').value = state.m_address;
                 if(state.lat && state.lng) {
                     savedLat = state.lat;
                     savedLng = state.lng;
                 }
 
-                // استرجاع الخطوة الحالية دون إظهار التنبيهات
                 if(state.step && state.step > 1) {
                     nextStep(state.step, true);
                 }
@@ -459,28 +489,22 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
-            // ✅ تفعيل وضع التعديل إذا كان موجوداً في الرابط
             if(urlParams.has('mode') && urlParams.get('mode') === 'edit') {
                 isEditMode = true;
-                document.getElementById('editAlert').style.display = 'flex'; // إظهار شريط التنبيه
+                document.getElementById('editAlert').style.display = 'flex';
             }
             
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
 
-            // استعادة البيانات عند تحميل الصفحة
             loadState();
 
-            // إضافة مستمعات الأحداث للحفظ التلقائي عند كتابة أو تعديل أي شيء
             document.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('input', saveState);
                 el.addEventListener('change', saveState);
             });
         };
 
-        // ==========================================
-        // ✅ التنقل والتحقق
-        // ==========================================
         function nextStep(step, skipValidation = false) {
             if (!skipValidation) {
                 if (step === 2) {
@@ -506,7 +530,6 @@
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
             
-            // تحديث شريط التقدم
             for(let i=1; i<=3; i++){
                 let ind = document.getElementById(`indicator${i}`);
                 if(i < step) { ind.classList.remove('active'); ind.classList.add('completed'); }
@@ -517,21 +540,17 @@
             document.getElementById('progressFill').style.width = step === 1 ? '0%' : (step === 2 ? '50%' : '100%');
 
             currentStepNumber = step;
-            saveState(); // حفظ الخطوة الجديدة
+            saveState();
 
-            // تهيئة الخريطة
             if(step === 3 && !mapInitialized) {
                 setTimeout(initMap, 300);
             }
         }
 
         function prevStep(step) {
-            nextStep(step, true); // الرجوع لا يحتاج تحقق، لذا نمرر true
+            nextStep(step, true);
         }
 
-        // ==========================================
-        // ✅ منطق الخطوة 2 (المواد)
-        // ==========================================
         const curriculum = {
             primary: { grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم'] },
             prep: { grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
@@ -567,7 +586,7 @@
             if (!selectedSubjects.includes(newSubject)) {
                 selectedSubjects.push(newSubject);
                 renderChips();
-                saveState(); // حفظ بعد إضافة المادة
+                saveState();
             }
             document.getElementById('s_subject').value = '';
         }
@@ -583,14 +602,10 @@
         function removeSubj(idx) { 
             selectedSubjects.splice(idx, 1); 
             renderChips(); 
-            saveState(); // حفظ بعد الحذف
+            saveState();
         }
 
-        // ==========================================
-        // ✅ منطق الخطوة 3 (الخريطة والموقع التلقائي)
-        // ==========================================
         function initMap() {
-            // إذا كان هناك إحداثيات محفوظة من الريفريش، نستخدمها، وإلا نستخدم إحداثيات افتراضية
             let defaultLatLng = (savedLat && savedLng) ? [savedLat, savedLng] : [30.0444, 31.2357];
             
             map = L.map('map').setView(defaultLatLng, (savedLat ? 16 : 13));
@@ -599,12 +614,10 @@
             mapInitialized = true;
             map.invalidateSize();
 
-            // محاولة جلب موقع المستخدم التلقائي فقط إذا لم تكن هناك إحداثيات محفوظة مسبقاً
             if (!savedLat) {
                 requestCurrentLocation();
             }
 
-            // تحديث العنوان تلقائياً عند سحب الدبوس
             marker.on('dragend', function(e) {
                 const pos = marker.getLatLng();
                 document.getElementById('m_address').value = "جاري تحديث العنوان...";
@@ -612,7 +625,6 @@
             });
         }
 
-        // ✅ دالة تحديد الموقع عند الضغط على الأيقونة
         function requestCurrentLocation() {
             if (navigator.geolocation) {
                 document.getElementById('m_address').value = "جاري تحديد موقعك بدقة...";
@@ -628,10 +640,10 @@
                         fetchAddress(lat, lng);
                     },
                     function(error) {
-                        alert("⚠️ تعذر تحديد موقعك. يرجى التأكد من تفعيل خدمة الـ GPS (الموقع) في جهازك والموافقة على الصلاحية.");
+                        alert("⚠️ تعذر تحديد موقعك. يرجى التأكد من تفعيل خدمة الـ GPS في جهازك.");
                         document.getElementById('m_address').value = ""; 
                     },
-                    { enableHighAccuracy: true } // لطلب أقصى دقة ممكنة
+                    { enableHighAccuracy: true }
                 );
             } else {
                 alert("⚠️ متصفحك لا يدعم خاصية تحديد الموقع.");
@@ -648,7 +660,7 @@
                     } else {
                         document.getElementById('m_address').value = "لم نتمكن من تحديد اسم الشارع، يمكنك كتابته يدوياً.";
                     }
-                    saveState(); // حفظ الموقع الجديد
+                    saveState();
                 })
                 .catch(error => {
                     console.error("خطأ في جلب العنوان:", error);
@@ -656,27 +668,21 @@
                 });
         }
 
-        // ==========================================
-        // ✅ حفظ البيانات (التحقق النهائي) وعرض النافذة
-        // ==========================================
         function finishSetup() {
             const address = document.getElementById('m_address').value.trim();
-            if (!address || address === "جاري تحديد موقعك..." || address === "جاري تحديث العنوان..." || address === "جاري تحديد موقعك بدقة...") {
+            if (!address || address.includes("جاري")) {
                 alert("⚠️ برجاء التأكد من كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
                 return; 
             }
 
-            // التأكد من حفظ أحدث التعديلات
             saveState();
 
-            // إظهار نافذة الحفظ المخصصة بدلاً من رسالة المتصفح
             const modal = document.getElementById('successModal');
             const title = document.getElementById('successTitle');
             
             title.innerText = isEditMode ? "تم تحديث بيانات المجموعة بنجاح!" : "تم حفظ إعدادات المجموعة بنجاح!";
             modal.classList.add('active');
 
-            // الانتظار ثانية واحدة ثم الانتقال تلقائياً للصفحة النهائية
             setTimeout(() => {
                 window.location.href = `end.html?lessonId=${currentLessonId}`; 
             }, 1200);
