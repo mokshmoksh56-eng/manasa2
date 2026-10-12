@@ -110,15 +110,15 @@
             border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); transform: translateY(-3px);
         }
 
-        /* شبكة أيام الأسبوع */
-        .days-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
-        .days-grid input { display: none; }
-        .days-grid label {
+        /* شبكة الأيام والشهور */
+        .days-grid, .months-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+        .days-grid input, .months-grid input { display: none; }
+        .days-grid label, .months-grid label {
             display: flex; align-items: center; justify-content: center;
             padding: 10px; border: 2px solid #E2E8F0; border-radius: 10px; cursor: pointer;
             font-size: 12px; font-weight: 800; transition: all 0.2s; background: #F8FAFC; color: #475569;
         }
-        .days-grid input:checked + label {
+        .days-grid input:checked + label, .months-grid input:checked + label {
             border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); font-weight: 900;
             border-width: 2px;
         }
@@ -187,7 +187,7 @@
         @media (max-width: 600px) {
             .grid-2 { grid-template-columns: 1fr; }
             .radio-grid label { padding: 10px 2px; font-size: 11px; }
-            .days-grid { grid-template-columns: repeat(3, 1fr); }
+            .days-grid, .months-grid { grid-template-columns: repeat(3, 1fr); }
         }
     </style>
 </head>
@@ -238,7 +238,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 🛑 الخطوة 1: بيانات المجموعة (بدون أيام أو شهور) -->
+    <!-- 🛑 الخطوة 1: بيانات المجموعة الأساسية -->
     <!-- ========================================== -->
     <div id="step1" class="step-content active theme-pink">
         <div class="smart-card">
@@ -343,7 +343,7 @@
     </div>
 
     <!-- ========================================== -->
-    <!-- 🛑 الخطوة 3: الموقع الجغرافي + الأيام + الشهور الميلادية -->
+    <!-- 🛑 الخطوة 3: الموقع + الأيام + الشهور بنظام مربعات الاختيار -->
     <!-- ========================================== -->
     <div id="step3" class="step-content theme-teal">
         <div class="smart-card">
@@ -363,24 +363,23 @@
                 </div>
             </div>
 
-            <!-- ✅ الشهر الميلادي -->
+            <!-- ✅ الشهور الميلادية (مربعات اختيار مثل الأيام) -->
             <div class="form-group">
-                <label>🗓️ الشهر الميلادي</label>
-                <select id="g_month" class="form-control">
-                    <option value="">-- اختر الشهر الميلادي --</option>
-                    <option value="يناير">يناير</option>
-                    <option value="فبراير">فبراير</option>
-                    <option value="مارس">مارس</option>
-                    <option value="أبريل">أبريل</option>
-                    <option value="مايو">مايو</option>
-                    <option value="يونيو">يونيو</option>
-                    <option value="يوليو">يوليو</option>
-                    <option value="أغسطس">أغسطس</option>
-                    <option value="سبتمبر">سبتمبر</option>
-                    <option value="أكتوبر">أكتوبر</option>
-                    <option value="نوفمبر">نوفمبر</option>
-                    <option value="ديسمبر">ديسمبر</option>
-                </select>
+                <label>🗓️ الشهور الميلادية (اختر الشهر أو الشهور)</label>
+                <div class="months-grid">
+                    <div><input type="checkbox" id="m_jan" value="يناير"><label for="m_jan">يناير</label></div>
+                    <div><input type="checkbox" id="m_feb" value="فبراير"><label for="m_feb">فبراير</label></div>
+                    <div><input type="checkbox" id="m_mar" value="مارس"><label for="m_mar">مارس</label></div>
+                    <div><input type="checkbox" id="m_apr" value="أبريل"><label for="m_apr">أبريل</label></div>
+                    <div><input type="checkbox" id="m_may" value="مايو"><label for="m_may">مايو</label></div>
+                    <div><input type="checkbox" id="m_jun" value="يونيو"><label for="m_jun">يونيو</label></div>
+                    <div><input type="checkbox" id="m_jul" value="يوليو"><label for="m_jul">يوليو</label></div>
+                    <div><input type="checkbox" id="m_aug" value="أغسطس"><label for="m_aug">أغسطس</label></div>
+                    <div><input type="checkbox" id="m_sep" value="سبتمبر"><label for="m_sep">سبتمبر</label></div>
+                    <div><input type="checkbox" id="m_oct" value="أكتوبر"><label for="m_oct">أكتوبر</label></div>
+                    <div><input type="checkbox" id="m_nov" value="نوفمبر"><label for="m_nov">نوفمبر</label></div>
+                    <div><input type="checkbox" id="m_dec" value="ديسمبر"><label for="m_dec">ديسمبر</label></div>
+                </div>
             </div>
 
             <!-- الخريطة -->
@@ -423,12 +422,18 @@
             }
         });
 
-        // ✅ حفظ الحالة مع الأيام والشهر الميلادي من الخطوة الثالثة
+        // ✅ حفظ الحالة مع الأيام والشهور المتعددة
         function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
                 const el = document.getElementById(id);
                 if (el && el.checked) selectedDays.push(el.value);
+            });
+
+            const selectedMonths = [];
+            ['m_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) selectedMonths.push(el.value);
             });
 
             const state = {
@@ -440,7 +445,7 @@
                 g_start: document.getElementById('g_start').value,
                 g_end: document.getElementById('g_end').value,
                 g_days: selectedDays,
-                g_month: document.getElementById('g_month').value,
+                g_months: selectedMonths,
                 g_gender: document.querySelector('input[name="g_gender"]:checked')?.id,
                 g_loc: document.querySelector('input[name="g_loc"]:checked')?.id,
                 s_stage: document.getElementById('s_stage').value,
@@ -453,7 +458,7 @@
             sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
         }
 
-        // ✅ استرجاع البيانات والأيام والشهر الميلادي
+        // ✅ استرجاع الأيام والشهور المختارة
         function loadState() {
             const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
@@ -477,7 +482,17 @@
                         if(day === 'الجمعة') document.getElementById('day_fri').checked = true;
                     });
                 }
-                if(state.g_month) document.getElementById('g_month').value = state.g_month;
+
+                if(state.g_months && Array.isArray(state.g_months)) {
+                    const monthMap = {
+                        'يناير': 'm_jan', 'فبراير': 'm_feb', 'مارس': 'm_mar', 'أبريل': 'm_apr',
+                        'مايو': 'm_may', 'يونيو': 'm_jun', 'يوليو': 'm_jul', 'أغسطس': 'm_aug',
+                        'سبتمبر': 'm_sep', 'أكتوبر': 'm_oct', 'نوفمبر': 'm_nov', 'ديسمبر': 'm_dec'
+                    };
+                    state.g_months.forEach(m => {
+                        if(monthMap[m]) document.getElementById(monthMap[m]).checked = true;
+                    });
+                }
 
                 if(state.g_gender) document.getElementById(state.g_gender).checked = true;
                 if(state.g_loc) document.getElementById(state.g_loc).checked = true;
