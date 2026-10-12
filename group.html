@@ -375,6 +375,16 @@
         let savedLat = null, savedLng = null;
 
         // ==========================================
+        // ✅ منع تعليق نافذة الحفظ عند الرجوع بالمتصفح (Bfcache fix)
+        // ==========================================
+        window.addEventListener('pageshow', function (event) {
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        });
+
+        // ==========================================
         // ✅ نظام الحفظ التلقائي لمنع فقدان البيانات عند الريفريش
         // ==========================================
         function saveState() {
