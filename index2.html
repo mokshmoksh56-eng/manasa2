@@ -582,9 +582,8 @@
     <!-- ✅ نافذة تفاصيل المجموعة المنبثقة (Info Modal) -->
     <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
         <div class="custom-modal" style="text-align: right;" onclick="event.stopPropagation()">
-            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 15px;">
+            <div style="border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 15px;">
                 <h3 id="modalGroupName" style="font-size: 20px; font-weight: 900; color: #0F2D5C; margin: 0;">اسم المجموعة</h3>
-                <button onclick="closeModal('groupModal')" style="background: #FEE2E2; color: #EF4444; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
             </div>
             <div id="modalBodyContent" style="font-size: 14px; font-weight: 700; color: #475569; display: flex; flex-direction: column; gap: 10px; line-height: 1.6;">
                 <!-- يتم تعبئة البيانات تلقائياً -->
@@ -634,6 +633,46 @@
 
     <!-- ✅ السكريبتات والتفاعل -->
     <script>
+        // ==========================================
+        // ✅ إضافة تأثير الصوت المرتفع (Click Sound)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playHighPitchSound() {
+            // استئناف السياق الصوتي إذا كان معلقاً (خاصية الأمان في المتصفحات)
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine'; // نوع الموجة للحصول على صوت نقي
+            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); // 3000 هرتز لصوت رفيع جداً
+            
+            // عمل تلاشي سريع جداً للصوت (مثل صوت Pop أو Tick)
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05); // مدة الصوت جزء صغير جدا من الثانية
+        }
+
+        // تشغيل الصوت عند الضغط على أي زر، كارت، أو أيقونة في الصفحة
+        document.addEventListener('click', function(e) {
+            // حدد العناصر التي تريد أن يصدر منها الصوت عند الضغط
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal');
+            if (clickableElement) {
+                playHighPitchSound();
+            }
+        });
+
+        // ==========================================
+        // بقية سكريبتات الصفحة
+        // ==========================================
         let lessons = [];
         let itemToDelete = null;
         let itemToRename = null;
