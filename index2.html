@@ -217,48 +217,29 @@
             background: #FFFFFF;
         }
 
-        /* ✅ أزرار البطاقة الكلاسيكية الأنيقة (حذف + تعديل الاسم) */
-        .card-actions {
+        /* ✅ زر الحذف */
+        .btn-delete {
             position: absolute;
-            top: 18px;
-            left: 18px;
-            display: flex;
-            gap: 8px;
-            z-index: 20;
-        }
-        
-        .action-btn {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px; /* مربع بحواف ناعمة للتصميم الكلاسيكي */
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(4px);
-            color: #64748B; /* لون رمادي هادئ */
+            top: 15px;
+            left: 15px;
+            width: 36px;
+            height: 36px;
+            background: #FEE2E2;
+            color: #EF4444;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: 1px solid #CBD5E1;
+            border: none;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 2px 5px rgba(0,0,0,0.04);
+            z-index: 20;
+            transition: all 0.3s ease;
         }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-        }
-
-        .btn-edit-name:hover {
-            background: #EFF6FF;
-            border-color: #93C5FD;
-            color: #2563EB; /* أزرق كلاسيكي عند الوقوف */
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.15);
-        }
-        
         .btn-delete:hover {
-            background: #FEF2F2;
-            border-color: #FCA5A5;
-            color: #DC2626; /* أحمر كلاسيكي عند الوقوف */
-            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.15);
+            background: #EF4444;
+            color: #FFFFFF;
+            transform: scale(1.15) rotate(90deg);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
         }
 
         /* ✅ كارت إضافة مجموعة جديدة */
@@ -302,7 +283,7 @@
             font-weight: 800;
         }
 
-        /* ✅ صندوق صورة الكارت — دائري وأنيق */
+        /* ✅ صندوق صورة الكارت — دائري وأنيق وقابل للضغط */
         .card-image-box {
             flex-shrink: 0;
             width: 140px;
@@ -315,6 +296,7 @@
             z-index: 3;
             overflow: hidden;
             padding: 8px;
+            cursor: pointer;
         }
         .card-image-box img {
             width: 100%;
@@ -428,7 +410,7 @@
         .delay-1 { animation-delay: 0.2s; opacity: 0; }
 
         /* ============================================ */
-        /* ✅ تصميم النوافذ المنبثقة المخصصة (Modals) */
+        /* ✅ تصميم نافذة تفاصيل المجموعة (Modal) */
         /* ============================================ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -438,74 +420,65 @@
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
         
-        .custom-modal {
-            background: #fff; width: 90%; max-width: 400px;
-            border-radius: 20px; padding: 25px; text-align: center;
+        .success-modal {
+            background: #fff; width: 90%; max-width: 380px;
+            border-radius: 24px; padding: 25px 20px; text-align: right;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            transform: translateY(20px) scale(0.95); transition: all 0.3s ease;
+            transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .custom-modal { transform: translateY(0) scale(1); }
-
-        .custom-modal h3 { font-size: 20px; font-weight: 900; color: #1E293B; margin-bottom: 10px; }
-        .custom-modal p { font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 20px; line-height: 1.5; }
-        
-        .modal-input {
-            width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 12px;
-            font-size: 15px; font-weight: 800; color: #1E293B; margin-bottom: 20px;
-            text-align: center; outline: none; transition: all 0.3s; background: #F8FAFC;
-        }
-        .modal-input:focus { border-color: var(--primary-600); background: #fff; }
-
-        .modal-icon {
-            width: 60px; height: 60px; margin: 0 auto 15px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center; font-size: 28px;
-        }
-        .icon-warning { background: #FEF2F2; color: #EF4444; }
-        .icon-edit { background: #EFF6FF; color: #3B82F6; }
-
-        .modal-actions { display: flex; gap: 10px; }
-        .modal-btn {
-            flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 800;
-            cursor: pointer; border: none; transition: all 0.2s;
-        }
-        .btn-cancel { background: #F1F5F9; color: #475569; }
-        .btn-cancel:hover { background: #E2E8F0; }
-        .btn-save { background: linear-gradient(135deg, var(--primary-600), var(--primary-900)); color: white; }
-        .btn-save:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37,99,235,0.3); }
-        .btn-danger-confirm { background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; }
-        .btn-danger-confirm:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
+        .modal-overlay.active .success-modal { transform: translateY(0) scale(1); }
 
         /* ============================================ */
         /* الموبايل */
         /* ============================================ */
         @media (max-width: 768px) {
-            .hero-banner { min-height: 320px; padding: 30px 15px; }
+            .hero-banner {
+                min-height: 320px;
+                padding: 30px 15px;
+            }
             .hero-brand { font-size: 36px; }
             .hero-headline { font-size: 20px; gap: 6px; margin-top: 26px; }
             .hero-headline .dots { font-size: 24px; }
             .hero-subtitle { font-size: 13px; margin-top: 18px; }
 
-            .portal-card { padding: 18px 15px; gap: 12px; min-height: 160px; }
-            .card-actions { top: 12px; left: 12px; }
-            .action-btn { width: 30px; height: 30px; }
-            
+            .portal-card {
+                padding: 18px 15px;
+                gap: 12px;
+                min-height: 160px;
+            }
+            .btn-delete { top: 10px; left: 10px; width: 30px; height: 30px; }
             .card-add-new .icon-plus { width: 50px; height: 50px; font-size: 24px; }
             
-            .card-image-box { width: 100px; height: 100px; padding: 6px; border-width: 3px; }
+            .card-image-box {
+                width: 100px;
+                height: 100px;
+                padding: 6px;
+                border-width: 3px;
+            }
             .card-text h2 { font-size: 19px; margin-bottom: 6px; }
             .card-text p { font-size: 12px; margin-bottom: 12px; line-height: 1.55; }
             .btn-go { padding: 10px 20px; font-size: 12.5px; }
         }
 
         @media (max-width: 480px) {
-            .hero-banner { min-height: 280px; padding: 25px 12px; }
+            .hero-banner {
+                min-height: 280px;
+                padding: 25px 12px;
+            }
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 16px; gap: 5px; }
             .hero-headline .dots { font-size: 20px; }
             .hero-subtitle { font-size: 12px; }
 
-            .portal-card { padding: 15px 12px; gap: 10px; }
-            .card-image-box { width: 85px; height: 85px; padding: 5px; }
+            .portal-card {
+                padding: 15px 12px;
+                gap: 10px;
+            }
+            .card-image-box {
+                width: 85px;
+                height: 85px;
+                padding: 5px;
+            }
             .card-text h2 { font-size: 17px; }
             .card-text p { font-size: 11px; }
             .btn-go { padding: 8px 16px; font-size: 11.5px; }
@@ -538,59 +511,47 @@
         <div class="container mx-auto max-w-5xl">
             <!-- حاوية الكروت -->
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
-                <!-- الكروت ستتم إضافتها هنا بواسطة JavaScript -->
+                
+                <!-- ✅ كارت إنشاء مجموعة جديدة -->
+                <div onclick="createNewLesson(true)" class="portal-card card-add-new">
+                    <div class="icon-plus">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                    <h2>إنشاء مجموعة جديدة</h2>
+                </div>
+
             </div>
         </div>
     </section>
+
+    <!-- ✅ نافذة تفاصيل المجموعة المنبثقة (Modal) -->
+    <div id="groupModal" class="modal-overlay" onclick="closeGroupModal(event)">
+        <div class="success-modal" onclick="event.stopPropagation()">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 15px;">
+                <h3 id="modalGroupName" style="font-size: 20px; font-weight: 900; color: #0F2D5C; margin: 0;">اسم المجموعة</h3>
+                <button onclick="closeGroupModal()" style="background: #FEE2E2; color: #EF4444; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+            </div>
+            
+            <div id="modalBodyContent" style="font-size: 14px; font-weight: 700; color: #475569; display: flex; flex-direction: column; gap: 10px; line-height: 1.6;">
+                <!-- يتم تعبئة البيانات تلقائياً -->
+            </div>
+
+            <div style="margin-top: 20px; display: flex; gap: 10px;">
+                <a id="modalEditBtn" href="#" class="btn-go" style="flex: 1; justify-content: center; padding: 12px; font-size: 13.5px; background: linear-gradient(135deg, #2563EB, #0F2D5C);">تعديل البيانات ➔</a>
+            </div>
+        </div>
+    </div>
 
     <!-- الفوتر -->
     <footer class="py-6 text-center text-slate-400 font-bold text-sm">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- ============================================ -->
-    <!-- ✅ النوافذ المنبثقة المخصصة (Modals) -->
-    <!-- ============================================ -->
-
-    <!-- نافذة تعديل الاسم -->
-    <div id="modalEdit" class="modal-overlay">
-        <div class="custom-modal">
-            <div class="modal-icon icon-edit">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
-                </svg>
-            </div>
-            <h3>تعديل اسم المجموعة</h3>
-            <p>أدخل الاسم الجديد للمجموعة أدناه:</p>
-            <input type="text" id="editNameInput" class="modal-input" placeholder="اسم المجموعة">
-            <div class="modal-actions">
-                <button class="modal-btn btn-cancel" onclick="closeModals()">إلغاء</button>
-                <button class="modal-btn btn-save" onclick="confirmEditName()">حفظ التعديل</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- نافذة تأكيد الحذف -->
-    <div id="modalDelete" class="modal-overlay">
-        <div class="custom-modal">
-            <div class="modal-icon icon-warning">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                </svg>
-            </div>
-            <h3>تأكيد الحذف</h3>
-            <p>هل أنت متأكد من إلغاء هذه المجموعة؟<br>سيتم مسح كافة البيانات والتقارير الخاصة بها ولا يمكن التراجع.</p>
-            <div class="modal-actions">
-                <button class="modal-btn btn-cancel" onclick="closeModals()">تراجع</button>
-                <button class="modal-btn btn-danger-confirm" onclick="confirmDelete()">نعم، إلغاء المجموعة</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ سكريبت الحفظ واسترجاع البيانات والتحكم بالنوافذ -->
+    <!-- ✅ سكريبت الحفظ واسترجاع البيانات تلقائياً عند التحديث (Refresh) -->
     <script>
         let lessons = [];
-        let activeLessonId = null; 
 
         // عند تحميل الصفحة، استرجاع الحصص المحفوظة مسبقاً
         window.addEventListener('DOMContentLoaded', () => {
@@ -602,8 +563,6 @@
                 } catch(e) {
                     lessons = [];
                 }
-            } else {
-                renderLessons();
             }
         });
 
@@ -629,7 +588,6 @@
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
-            // كارت الإضافة الثابت
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
@@ -643,13 +601,11 @@
             
             container.innerHTML = addCardHTML;
 
-            // بناء كروت الحصص المخزنة
             lessons.forEach((lesson, index) => {
                 const isBlue = (index + 1) % 2 !== 0;
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
 
-                // التحقق من وجود تقرير
                 const hasReport = sessionStorage.getItem('lessonState_' + lesson.id) !== null;
                 const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
                 const btnText = hasReport ? 'عرض تقرير المجموعة <span>➔</span>' : 'إعداد المجموعة <span>➔</span>';
@@ -658,27 +614,19 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
-                // إضافة الأزرار الكلاسيكية
                 newCard.innerHTML = `
-                    <div class="card-actions">
-                        <!-- زر تعديل الاسم (قلم) -->
-                        <button class="action-btn btn-edit-name" title="تغيير اسم المجموعة" onclick="openEditModal(${lesson.id}, '${lesson.title.replace(/'/g, "\\'")}')">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
-                            </svg>
-                        </button>
+                    <!-- زر الحذف -->
+                    <button class="btn-delete" title="حذف المجموعة" onclick="deleteLesson(${lesson.id})">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
 
-                        <!-- زر الحذف (سلة مهملات) -->
-                        <button class="action-btn btn-delete" title="إلغاء وحذف المجموعة" onclick="openDeleteModal(${lesson.id})">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                            </svg>
-                        </button>
-                    </div>
-
-                    <div class="card-image-box">
+                    <!-- صندوق الصورة قابل للضغط لعرض تفاصيل المواعيد والمكان -->
+                    <div class="card-image-box" onclick="openGroupModal(${lesson.id})" title="اضغط لعرض تفاصيل المواعيد والمكان">
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
+
                     <div class="card-text">
                         <h2>${lesson.title}</h2>
                         <p>${descText}</p>
@@ -692,6 +640,53 @@
             });
         }
 
+        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة
+        function openGroupModal(lessonId) {
+            const savedState = sessionStorage.getItem('lessonState_' + lessonId);
+            const modal = document.getElementById('groupModal');
+            const nameEl = document.getElementById('modalGroupName');
+            const contentEl = document.getElementById('modalBodyContent');
+            const editBtn = document.getElementById('modalEditBtn');
+
+            if (savedState) {
+                const data = JSON.parse(savedState);
+                nameEl.innerText = data.g_name || `مجموعة رقم ${lessonId}`;
+                
+                contentEl.innerHTML = `
+                    <p>👤 <b>اسم المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
+                    <p>🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
+                    <p>🔢 <b>عدد الطلاب المطلوب:</b> ${data.g_count || 'غير محدد'} طالب</p>
+                    <p>⏰ <b>المواعيد:</b> من ${data.g_start || '--:--'} إلى ${data.g_end || '--:--'}</p>
+                    <p>🎓 <b>الفئة:</b> ${data.g_gender || 'مختلط'} | 📍 <b>المكان:</b> ${data.g_loc || 'السنتر'}</p>
+                    <p>📍 <b>العنوان التفصيلي:</b> ${data.m_address || 'لم يتم تحديد الموقع بدقة'}</p>
+                `;
+            } else {
+                nameEl.innerText = `مجموعة رقم ${lessonId}`;
+                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 15px 0;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد المجموعة" للبدء في إدخال المواعيد والمكان.</p>`;
+            }
+
+            editBtn.href = `./group.html?lessonId=${lessonId}&mode=edit`;
+            modal.classList.add('active');
+        }
+
+        // ✅ إغلاق النافذة المنبثقة
+        function closeGroupModal(e) {
+            if (!e || e.target.id === 'groupModal' || e.target.tagName === 'BUTTON') {
+                document.getElementById('groupModal').classList.remove('active');
+            }
+        }
+
+        // حذف حصة وتحديث التخزين
+        function deleteLesson(id) {
+            if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة والتقرير الخاص بها؟')) {
+                lessons = lessons.filter(l => l.id !== id);
+                saveLessonsToStorage();
+                sessionStorage.removeItem('lessonState_' + id);
+                sessionStorage.removeItem('publishState_' + id);
+                renderLessons();
+            }
+        }
+
         // حفظ القائمة في localStorage
         function saveLessonsToStorage() {
             try {
@@ -699,66 +694,6 @@
             } catch(e) {
                 console.warn('فشل الحفظ في الذاكرة المحلية', e);
             }
-        }
-
-        // ============================================
-        // ✅ وظائف النوافذ المنبثقة المخصصة (Modals Logic)
-        // ============================================
-
-        function closeModals() {
-            document.getElementById('modalEdit').classList.remove('active');
-            document.getElementById('modalDelete').classList.remove('active');
-            activeLessonId = null;
-        }
-
-        // --- التعديل ---
-        function openEditModal(id, currentTitle) {
-            activeLessonId = id;
-            const inputField = document.getElementById('editNameInput');
-            inputField.value = currentTitle;
-            document.getElementById('modalEdit').classList.add('active');
-            inputField.focus(); 
-        }
-
-        function confirmEditName() {
-            const newTitle = document.getElementById('editNameInput').value.trim();
-            if(newTitle !== "" && activeLessonId !== null) {
-                const lessonIndex = lessons.findIndex(l => l.id === activeLessonId);
-                if (lessonIndex !== -1) {
-                    lessons[lessonIndex].title = newTitle;
-                    saveLessonsToStorage();
-                    
-                    const stateKey = 'lessonState_' + activeLessonId;
-                    const savedState = sessionStorage.getItem(stateKey);
-                    if (savedState) {
-                        let stateObj = JSON.parse(savedState);
-                        stateObj.g_name = newTitle;
-                        sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
-                    }
-                    
-                    renderLessons();
-                }
-            }
-            closeModals();
-        }
-
-        // --- الحذف ---
-        function openDeleteModal(id) {
-            activeLessonId = id;
-            document.getElementById('modalDelete').classList.add('active');
-        }
-
-        function confirmDelete() {
-            if (activeLessonId !== null) {
-                lessons = lessons.filter(l => l.id !== activeLessonId);
-                saveLessonsToStorage();
-                
-                sessionStorage.removeItem('lessonState_' + activeLessonId);
-                sessionStorage.removeItem('publishState_' + activeLessonId);
-                
-                renderLessons();
-            }
-            closeModals();
         }
     </script>
 
