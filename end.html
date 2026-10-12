@@ -85,12 +85,12 @@
         .data-row { display: flex; justify-content: space-between; align-items: center; padding: 10px 0; border-bottom: 1px solid #F1F5F9; }
         .data-row:last-child { border-bottom: none; }
         .data-label { color: #64748B; font-size: 13px; font-weight: 800; display: flex; align-items: center; gap: 6px; }
-        .data-value { color: #1E293B; font-size: 14px; font-weight: 900; }
+        .data-value { color: #1E293B; font-size: 14px; font-weight: 900; text-align: left;}
         
         .badge-value { background: #F1F5F9; padding: 4px 12px; border-radius: 8px; border: 1px solid #E2E8F0; }
 
         /* الخريطة الثابتة */
-        #static-map { width: 100%; height: 200px; border-radius: 12px; border: 2px solid #E2E8F0; pointer-events: none; /* يمنع التفاعل مع الخريطة */ }
+        #static-map { width: 100%; height: 200px; border-radius: 12px; border: 2px solid #E2E8F0; pointer-events: none; }
 
         /* ============================================ */
         /* ✅ زر التعديل الذكي العائم (Smart Edit FAB) */
@@ -141,19 +141,19 @@
                 <div class="card-header"><span>📋</span> البيانات الأساسية</div>
                 <div class="data-row">
                     <span class="data-label">👥 اسم المجموعة</span>
-                    <span class="data-value" id="val-groupName">مجموعة السبت</span>
+                    <span class="data-value" id="val-groupName">--</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">👤 المعلم</span>
-                    <span class="data-value" id="val-teacher">أ/ أحمد محمود</span>
+                    <span class="data-value" id="val-teacher">--</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">🔢 العدد الأقصى</span>
-                    <span class="data-value badge-value">25 طالب</span>
+                    <span class="data-value badge-value" id="val-count">-- طالب</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">🎓 الفئة</span>
-                    <span class="data-value">مختلط</span>
+                    <span class="data-value" id="val-gender">--</span>
                 </div>
             </div>
 
@@ -162,19 +162,19 @@
                 <div class="card-header"><span>⏰</span> المواعيد والمادة</div>
                 <div class="data-row">
                     <span class="data-label">📚 المادة</span>
-                    <span class="data-value">الرياضيات</span>
+                    <span class="data-value" id="val-subject">--</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">👑 الصف</span>
-                    <span class="data-value">الأول الثانوي</span>
+                    <span class="data-value" id="val-grade">--</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">🟢 الحضور</span>
-                    <span class="data-value badge-value" style="color: #065F46; background: #D1FAE5; border-color: #A7F3D0;">04:00 م</span>
+                    <span class="data-value badge-value" id="val-start" style="color: #065F46; background: #D1FAE5; border-color: #A7F3D0;">--:--</span>
                 </div>
                 <div class="data-row">
                     <span class="data-label">🔴 الانصراف</span>
-                    <span class="data-value badge-value" style="color: #991B1B; background: #FEE2E2; border-color: #FECACA;">06:00 م</span>
+                    <span class="data-value badge-value" id="val-end" style="color: #991B1B; background: #FEE2E2; border-color: #FECACA;">--:--</span>
                 </div>
             </div>
 
@@ -182,8 +182,8 @@
             <div class="report-card full-width">
                 <div class="card-header"><span>📍</span> الموقع الجغرافي للدرس</div>
                 <div class="data-row" style="border: none; padding-bottom: 5px;">
-                    <span class="data-label">🏢 المكان:</span>
-                    <span class="data-value">سنتر النخبة التعليمي - شارع المحطة</span>
+                    <span class="data-label" id="val-loc-type">🏢 المكان:</span>
+                    <span class="data-value" id="val-address">--</span>
                 </div>
                 <!-- الخريطة الثابتة -->
                 <div id="static-map"></div>
@@ -204,15 +204,95 @@
         let currentLessonId = '1';
         
         window.onload = () => {
-            // جلب رقم الحصة من الرابط
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
             document.getElementById('reportTitle').innerText = `تقرير مجموعة #${currentLessonId}`;
             document.getElementById('lessonIdDisplay').innerText = `كود المجموعة: ${currentLessonId}`;
 
-            initStaticMap();
+            // سحب البيانات من الذاكرة وعرضها
+            loadActualData();
         };
+
+        // ==========================================
+        // ✅ جلب وعرض البيانات الفعلية من sessionStorage
+        // ==========================================
+        function loadActualData() {
+            const savedData = sessionStorage.getItem('lessonState_' + currentLessonId);
+            
+            // إحداثيات افتراضية في حالة عدم وجود موقع
+            let mapLat = 30.0444; 
+            let mapLng = 31.2357;
+
+            if (savedData) {
+                const state = JSON.parse(savedData);
+
+                // البيانات النصية الأساسية
+                if(state.g_name) document.getElementById('val-groupName').innerText = state.g_name;
+                if(state.g_teacher) document.getElementById('val-teacher').innerText = state.g_teacher;
+                if(state.g_count) document.getElementById('val-count').innerText = `${state.g_count} طالب`;
+                if(state.s_grade) document.getElementById('val-grade').innerText = state.s_grade;
+
+                // تنسيق الفئة المستهدفة
+                if(state.g_gender) {
+                    let genderText = 'مختلط';
+                    if(state.g_gender === 'g_boys') genderText = 'أولاد فقط';
+                    if(state.g_gender === 'g_girls') genderText = 'بنات فقط';
+                    document.getElementById('val-gender').innerText = genderText;
+                }
+
+                // تنسيق نوع المكان (سنتر، مستر، طالب)
+                if(state.g_loc) {
+                    let locLabel = '🏢 المكان:';
+                    if(state.g_loc === 'l_teach') locLabel = '🏠 منزل المعلم:';
+                    if(state.g_loc === 'l_stud') locLabel = '🚗 منزل الطالب:';
+                    document.getElementById('val-loc-type').innerText = locLabel;
+                }
+
+                // تنسيق المواد (استخراج اسم المادة من المصفوفة)
+                if(state.selectedSubjects && state.selectedSubjects.length > 0) {
+                    // يقوم بفصل "الصف - المادة" وعرض اسم المادة فقط
+                    const subjectsList = state.selectedSubjects.map(sub => sub.split(' - ')[1]).join('، ');
+                    document.getElementById('val-subject').innerText = subjectsList;
+                }
+
+                // تنسيق وعرض العنوان
+                if(state.m_address) {
+                    // إذا كان هناك اسم سنتر مضاف، يتم دمجه مع العنوان
+                    let fullAddress = state.m_address;
+                    if(state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
+                    document.getElementById('val-address').innerText = fullAddress;
+                }
+
+                // تنسيق الوقت ليكون 12 ساعة (ص/م)
+                if(state.g_start) document.getElementById('val-start').innerText = formatTime(state.g_start);
+                if(state.g_end) document.getElementById('val-end').innerText = formatTime(state.g_end);
+
+                // استخراج الإحداثيات للخريطة
+                if(state.lat && state.lng) {
+                    mapLat = state.lat;
+                    mapLng = state.lng;
+                }
+            }
+
+            // تشغيل الخريطة بعد تحديد الإحداثيات الفعلية
+            initStaticMap(mapLat, mapLng);
+        }
+
+        // ==========================================
+        // ✅ دالة لتحويل الوقت من 24h إلى 12h (ص/م)
+        // ==========================================
+        function formatTime(timeStr) {
+            if(!timeStr) return '--:--';
+            let [hours, minutes] = timeStr.split(':');
+            hours = parseInt(hours);
+            const ampm = hours >= 12 ? 'م' : 'ص';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // الساعة 0 تعني 12
+            // إضافة صفر على اليسار إذا كان الرقم أصغر من 10
+            const paddedHours = hours < 10 ? '0' + hours : hours;
+            return `${paddedHours}:${minutes} ${ampm}`;
+        }
 
         // ==========================================
         // ✅ التحكم في حالة النشر (الإظهار والإخفاء)
@@ -238,16 +318,13 @@
         // ✅ زر التعديل الذكي
         // ==========================================
         function editLesson() {
-            // توجيه ذكي يعيد المعلم لصفحة الخطوات (group.html) مع نفس رقم الحصة
-            // ليعرف النظام أنه في وضع "التعديل" وليس "الإنشاء"
             window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
         }
 
         // ==========================================
-        // ✅ تهيئة الخريطة الثابتة (للعرض فقط)
+        // ✅ تهيئة الخريطة الثابتة بناءً على الإحداثيات
         // ==========================================
-        function initStaticMap() {
-            // إعدادات تجعل الخريطة للعرض فقط (غير قابلة للتحريك أو التكبير)
+        function initStaticMap(lat, lng) {
             const mapOptions = {
                 zoomControl: false,
                 dragging: false,
@@ -258,12 +335,9 @@
                 touchZoom: false
             };
 
-            const map = L.map('static-map', mapOptions).setView([30.0444, 31.2357], 15); // إحداثيات افتراضية
-            
+            const map = L.map('static-map', mapOptions).setView([lat, lng], 16); 
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            
-            // إضافة ماركر ثابت بتصميم مميز
-            const marker = L.marker([30.0444, 31.2357], { interactive: false }).addTo(map);
+            L.marker([lat, lng], { interactive: false }).addTo(map);
         }
     </script>
 </body>
