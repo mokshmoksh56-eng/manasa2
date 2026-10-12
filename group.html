@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>إعدادات الحصة - منصة احجزلى</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Leaflet CSS للخريطة -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+
+    <style>
+        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
+
+        /* ============================================ */
+        /* ✅ الهيدر (نفس تصميم index2) */
+        /* ============================================ */
+        .hero-banner {
+            position: relative; width: 100%; min-height: 250px;
+            background-image: url('./teacher2.png'); background-size: cover; background-position: center;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 20px;
+        }
+        .hero-banner::before {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.95) 100%); z-index: 1;
+        }
+        .hero-content { position: relative; z-index: 3; text-align: center; max-width: 700px; width: 100%; }
+        .hero-brand { font-size: 36px; font-weight: 900; color: #0F172A; margin-bottom: 5px; }
+        .hero-brand .accent { color: #F59E0B; }
+        .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
+
+        /* ============================================ */
+        /* ✅ شريط التقدم الذكي (Wizard Progress) */
+        /* ============================================ */
+        .wizard-progress {
+            display: flex; justify-content: space-between; align-items: center;
+            max-width: 500px; margin: -30px auto 20px; position: relative; z-index: 10;
+            background: #fff; padding: 15px 25px; border-radius: 99px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+        .step-indicator {
+            display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; z-index: 2;
+        }
+        .step-dot {
+            width: 35px; height: 35px; border-radius: 50%; background: #E2E8F0; color: #64748B;
+            display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: 14px;
+            transition: all 0.4s ease;
+        }
+        .step-indicator.active .step-dot { background: #0F2D5C; color: #fff; transform: scale(1.1); box-shadow: 0 5px 15px rgba(15, 45, 92, 0.3); }
+        .step-indicator.completed .step-dot { background: #10B981; color: #fff; }
+        .step-label { font-size: 11px; font-weight: 800; color: #64748B; }
+        .step-indicator.active .step-label { color: #0F2D5C; }
+        .progress-line {
+            position: absolute; top: 32px; left: 40px; right: 40px; height: 3px; background: #E2E8F0; z-index: 1;
+        }
+        .progress-line-fill {
+            height: 100%; background: #10B981; width: 0%; transition: width 0.4s ease;
+        }
+
+        /* ============================================ */
+        /* ✅ حاوية الخطوات وتنسيقات الألوان المخصصة */
+        /* ============================================ */
+        .step-content { display: none; max-width: 800px; margin: 0 auto; width: 100%; padding: 0 15px 40px; animation: fadeIn 0.4s ease; }
+        .step-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* متغيرات الألوان لكل خطوة بناءً على طلبك */
+        .theme-pink { --c-main: #FF6B6B; --c-dark: #E03131; --c-light: #FFF5F5; --c-border: #FFC9C9; }
+        .theme-turq { --c-main: #00D2C6; --c-dark: #008B82; --c-light: #F2FDFD; --c-border: #A7EBE7; }
+        .theme-teal { --c-main: #25968b; --c-dark: #1b736a; --c-light: #e0f2f0; --c-border: #b2dfdb; }
+
+        /* الكارت العام لكل خطوة */
+        .smart-card {
+            background: #fff; border: 2px solid var(--c-border); border-top: 5px solid var(--c-main);
+            border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
+        }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 6px; }
+        .form-control {
+            width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 14px;
+            font-weight: 700; transition: all 0.3s; outline: none; background: #F8FAFC;
+        }
+        .form-control:focus { border-color: var(--c-main); background: #fff; box-shadow: 0 0 0 3px var(--c-light); }
+        
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        
+        /* تنسيقات الراديو (الفئات والمكان) */
+        .radio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .radio-grid input { display: none; }
+        .radio-grid label {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 15px 5px; border: 2px solid #E2E8F0; border-radius: 12px; cursor: pointer;
+            font-size: 12px; font-weight: 800; transition: all 0.2s; text-align: center;
+        }
+        .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
+        .radio-grid input:checked + label {
+            border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); transform: translateY(-3px);
+        }
+
+        /* تنسيقات شريحة المادة (Chips) */
+        .subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .chip {
+            background: var(--c-light); color: var(--c-dark); padding: 6px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 800; border: 1px solid var(--c-border); display: flex; align-items: center; gap: 8px;
+        }
+        .chip span { cursor: pointer; color: #EF4444; }
+
+        /* خريطة */
+        #map { width: 100%; height: 300px; border-radius: 12px; border: 2px solid var(--c-border); z-index: 1; }
+        
+        /* أزرار التنقل */
+        .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-next, .btn-prev {
+            flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 900;
+            display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .btn-next { background: linear-gradient(135deg, var(--c-main), var(--c-dark)); color: #fff; }
+        .btn-prev { background: #E2E8F0; color: #475569; flex: 0.4; }
+        .btn-next:hover { transform: translateY(-2px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
+        .btn-prev:hover { background: #CBD5E1; }
+
+        @media (max-width: 600px) {
+            .grid-2 { grid-template-columns: 1fr; }
+            .radio-grid label { padding: 10px 2px; font-size: 11px; }
+            .radio-grid label i { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ✅ الهيدر -->
+    <section class="hero-banner">
+        <div class="hero-content">
+            <div class="hero-brand">إعداد <span class="accent">الحصة</span></div>
+            <div class="hero-headline" id="lessonTitleDisplay">جاري الإعداد...</div>
+        </div>
+    </section>
+
+    <!-- ✅ شريط التقدم -->
+    <div class="wizard-progress">
+        <div class="progress-line"><div class="progress-line-fill" id="progressFill"></div></div>
+        <div class="step-indicator active" id="indicator1">
+            <div class="step-dot">1</div><div class="step-label">البيانات</div>
+        </div>
+        <div class="step-indicator" id="indicator2">
+            <div class="step-dot">2</div><div class="step-label">المادة</div>
+        </div>
+        <div class="step-indicator" id="indicator3">
+            <div class="step-dot">3</div><div class="step-label">الموقع</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 🛑 الخطوة 1: بيانات المجموعة (وردي) -->
+    <!-- ========================================== -->
+    <div id="step1" class="step-content active theme-pink">
+        <div class="smart-card">
+            <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة (تُحفظ مع الجدول)</h3>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>👥 اسم المجموعة</label>
+                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة السبت">
+                </div>
+                <div class="form-group">
+                    <label>🏫 اسم السنتر (اختياري)</label>
+                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>⏰ من الساعة</label>
+                    <input type="time" id="g_start" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>⏰ إلى الساعة</label>
+                    <input type="time" id="g_end" class="form-control">
+                </div>
+            </div>
+
+            <div class="form-group" style="margin-top: 15px;">
+                <label>🎓 الفئات المسموح بها</label>
+                <div class="radio-grid">
+                    <div><input type="radio" name="g_gender" id="g_mix" value="مختلط" checked><label for="g_mix"><i>👫</i> مختلط</label></div>
+                    <div><input type="radio" name="g_gender" id="g_boys" value="أولاد فقط"><label for="g_boys"><i>👨‍🎓</i> أولاد</label></div>
+                    <div><input type="radio" name="g_gender" id="g_girls" value="بنات فقط"><label for="g_girls"><i>👩‍🎓</i> بنات</label></div>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>📍 مكان الدرس الأساسي</label>
+                <div class="radio-grid">
+                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> السنتر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر"><label for="l_teach"><i>🏠</i> المستر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب"><label for="l_stud"><i>🚗</i> الطالب</label></div>
+                </div>
+            </div>
+            
+            <div class="nav-buttons">
+                <button class="btn-next" onclick="nextStep(2)">التالي: المادة الدراسية ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 🛑 الخطوة 2: المادة الدراسية (تركواز) -->
+    <!-- ========================================== -->
+    <div id="step2" class="step-content theme-turq">
+        <div class="smart-card">
+            <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
+            
+            <div class="form-group">
+                <label>🎓 المرحلة الدراسية</label>
+                <select id="s_stage" class="form-control" onchange="updateGrades()">
+                    <option value="">-- اختر المرحلة --</option>
+                    <option value="primary">🎒 المرحلة الابتدائية</option>
+                    <option value="prep">📐 المرحلة الإعدادية</option>
+                    <option value="secondary">🎓 المرحلة الثانوية</option>
+                </select>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>👑 الصف الدراسي</label>
+                    <select id="s_grade" class="form-control" disabled onchange="updateSubjects()">
+                        <option value="">-- اختر المرحلة أولاً --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>📖 المادة</label>
+                    <select id="s_subject" class="form-control" disabled onchange="addSubject()">
+                        <option value="">-- اختر الصف أولاً --</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="subjectChips" class="subject-chips"></div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep(1)">رجوع</button>
+                <button class="btn-next" onclick="nextStep(3)">التالي: تحديد الموقع ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- 🛑 الخطوة 3: الموقع على الخريطة (أخضر) -->
+    <!-- ========================================== -->
+    <div id="step3" class="step-content theme-teal">
+        <div class="smart-card">
+            <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي</h3>
+            
+            <div id="map"></div>
+            
+            <div class="form-group" style="margin-top: 15px;">
+                <label>🏠 العنوان التفصيلي (للتسهيل على الطالب)</label>
+                <input type="text" id="m_address" class="form-control" placeholder="أمام مسجد النور - الدور الثاني">
+            </div>
+
+            <div class="nav-buttons">
+                <button class="btn-prev" onclick="prevStep(2)">رجوع</button>
+                <button class="btn-next" onclick="finishSetup()">✅ إنهاء ودخول الحصة</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentLessonId = '1';
+        let mapInitialized = false;
+        let map, marker;
+        
+        // قراءة رقم الحصة من الرابط
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
+            document.getElementById('lessonTitleDisplay').innerText = `إعداد حصة رقم ${currentLessonId}`;
+        };
+
+        // ==========================================
+        // ✅ التحكم في التنقل بين الخطوات
+        // ==========================================
+        function nextStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            document.getElementById(`indicator${step}`).classList.add('active');
+            document.getElementById(`indicator${step-1}`).classList.remove('active');
+            document.getElementById(`indicator${step-1}`).classList.add('completed');
+            
+            document.getElementById('progressFill').style.width = step === 2 ? '50%' : '100%';
+
+            // تهيئة الخريطة عند الوصول للخطوة 3 فقط
+            if(step === 3 && !mapInitialized) {
+                setTimeout(initMap, 300);
+            }
+        }
+
+        function prevStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.getElementById(`step${step}`).classList.add('active');
+            
+            document.getElementById(`indicator${step}`).classList.add('active');
+            document.getElementById(`indicator${step+1}`).classList.remove('active');
+            document.getElementById(`indicator${step}`).classList.remove('completed');
+            
+            document.getElementById('progressFill').style.width = step === 1 ? '0%' : '50%';
+        }
+
+        // ==========================================
+        // ✅ منطق الخطوة 2 (المواد)
+        // ==========================================
+        const curriculum = {
+            primary: { grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم'] },
+            prep: { grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
+            secondary: { grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات'] }
+        };
+        let selectedSubjects = [];
+
+        function updateGrades() {
+            const stage = document.getElementById('s_stage').value;
+            const gSelect = document.getElementById('s_grade');
+            gSelect.innerHTML = '<option value="">-- اختر الصف --</option>';
+            if(stage) {
+                curriculum[stage].grades.forEach(g => gSelect.innerHTML += `<option value="${g}">${g}</option>`);
+                gSelect.disabled = false;
+            } else { gSelect.disabled = true; document.getElementById('s_subject').disabled = true; }
+        }
+
+        function updateSubjects() {
+            const stage = document.getElementById('s_stage').value;
+            const sSelect = document.getElementById('s_subject');
+            sSelect.innerHTML = '<option value="">-- اختر مادة --</option>';
+            if(stage && document.getElementById('s_grade').value) {
+                curriculum[stage].subjs.forEach(s => sSelect.innerHTML += `<option value="${s}">${s}</option>`);
+                sSelect.disabled = false;
+            } else { sSelect.disabled = true; }
+        }
+
+        function addSubject() {
+            const grade = document.getElementById('s_grade').value;
+            const subj = document.getElementById('s_subject').value;
+            if(!subj) return;
+            selectedSubjects.push(`${grade} - ${subj}`);
+            document.getElementById('s_subject').value = '';
+            renderChips();
+        }
+
+        function renderChips() {
+            const container = document.getElementById('subjectChips');
+            container.innerHTML = '';
+            selectedSubjects.forEach((s, idx) => {
+                container.innerHTML += `<div class="chip">${s} <span onclick="removeSubj(${idx})">✖</span></div>`;
+            });
+        }
+        function removeSubj(idx) { selectedSubjects.splice(idx, 1); renderChips(); }
+
+        // ==========================================
+        // ✅ منطق الخطوة 3 (الخريطة)
+        // ==========================================
+        function initMap() {
+            map = L.map('map').setView([30.0444, 31.2357], 13); // القاهرة كمثال
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+            marker = L.marker([30.0444, 31.2357], { draggable: true }).addTo(map);
+            mapInitialized = true;
+            
+            // إصلاح حجم الخريطة عند ظهور الـ div
+            map.invalidateSize();
+        }
+
+        // ==========================================
+        // ✅ إنهاء الإعدادات والذهاب لصفحة الحصة
+        // ==========================================
+        function finishSetup() {
+            // هنا يمكنك حفظ البيانات في localStorage
+            // ثم التوجيه للصفحة النهائية
+            alert("تم حفظ إعدادات الحصة بنجاح! جاري الدخول...");
+            window.location.href = `lesson${currentLessonId}.html`;
+        }
+    </script>
+</body>
+</html>
