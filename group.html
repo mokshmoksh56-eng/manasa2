@@ -280,7 +280,81 @@
         let mapInitialized = false;
         let map, marker;
         
-        // قراءة رقم الحصة ووضع التعديل
+        let currentStepNumber = 1;
+        let selectedSubjects = [];
+        let savedLat = null, savedLng = null;
+
+        // ==========================================
+        // ✅ نظام الحفظ التلقائي لمنع فقدان البيانات عند الريفريش
+        // ==========================================
+        function saveState() {
+            const state = {
+                step: currentStepNumber,
+                g_name: document.getElementById('g_name').value,
+                g_center: document.getElementById('g_center').value,
+                g_teacher: document.getElementById('g_teacher').value,
+                g_count: document.getElementById('g_count').value,
+                g_start: document.getElementById('g_start').value,
+                g_end: document.getElementById('g_end').value,
+                g_gender: document.querySelector('input[name="g_gender"]:checked')?.id,
+                g_loc: document.querySelector('input[name="g_loc"]:checked')?.id,
+                s_stage: document.getElementById('s_stage').value,
+                s_grade: document.getElementById('s_grade').value,
+                selectedSubjects: selectedSubjects,
+                m_address: document.getElementById('m_address').value,
+                lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
+                lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng
+            };
+            sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
+        }
+
+        function loadState() {
+            const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
+            if (saved) {
+                const state = JSON.parse(saved);
+                
+                // استرجاع المدخلات
+                if(state.g_name) document.getElementById('g_name').value = state.g_name;
+                if(state.g_center) document.getElementById('g_center').value = state.g_center;
+                if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher;
+                if(state.g_count) document.getElementById('g_count').value = state.g_count;
+                if(state.g_start) document.getElementById('g_start').value = state.g_start;
+                if(state.g_end) document.getElementById('g_end').value = state.g_end;
+                
+                // استرجاع الراديو
+                if(state.g_gender) document.getElementById(state.g_gender).checked = true;
+                if(state.g_loc) document.getElementById(state.g_loc).checked = true;
+                
+                // استرجاع القوائم (المرحلة والصف)
+                if(state.s_stage) {
+                    document.getElementById('s_stage').value = state.s_stage;
+                    updateGrades(); // تفعيل الصفوف
+                }
+                if(state.s_grade) {
+                    document.getElementById('s_grade').value = state.s_grade;
+                    updateSubjects(); // تفعيل المواد
+                }
+                
+                // استرجاع المواد المحددة (الشرائح)
+                if(state.selectedSubjects) {
+                    selectedSubjects = state.selectedSubjects;
+                    renderChips();
+                }
+
+                // استرجاع الخريطة والعنوان
+                if(state.m_address) document.getElementById('m_address').value = state.m_address;
+                if(state.lat && state.lng) {
+                    savedLat = state.lat;
+                    savedLng = state.lng;
+                }
+
+                // استرجاع الخطوة الحالية دون إظهار التنبيهات (تخطي التحقق)
+                if(state.step && state.step > 1) {
+                    nextStep(state.step, true);
+                }
+            }
+        }
+
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
@@ -288,56 +362,66 @@
             
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
+
+            // استعادة البيانات عند تحميل الصفحة
+            loadState();
+
+            // إضافة مستمعات الأحداث للحفظ التلقائي عند كتابة أو تعديل أي شيء
+            document.querySelectorAll('input, select').forEach(el => {
+                el.addEventListener('input', saveState);
+                el.addEventListener('change', saveState);
+            });
         };
 
         // ==========================================
-        // ✅ التحكم في التنقل والتحقق من البيانات 
+        // ✅ التنقل والتحقق
         // ==========================================
-        function nextStep(step) {
-            if (step === 2) {
-                const gName = document.getElementById('g_name').value.trim();
-                const gTeacher = document.getElementById('g_teacher').value.trim();
-                const gCount = document.getElementById('g_count').value.trim();
-                const gStart = document.getElementById('g_start').value;
-                const gEnd = document.getElementById('g_end').value;
+        function nextStep(step, skipValidation = false) {
+            if (!skipValidation) {
+                if (step === 2) {
+                    const gName = document.getElementById('g_name').value.trim();
+                    const gTeacher = document.getElementById('g_teacher').value.trim();
+                    const gCount = document.getElementById('g_count').value.trim();
+                    const gStart = document.getElementById('g_start').value;
+                    const gEnd = document.getElementById('g_end').value;
 
-                if (!gName || !gTeacher || !gCount || !gStart || !gEnd) {
-                    alert("⚠️ برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، العدد، ومواعيد البداية والنهاية).");
-                    return; 
+                    if (!gName || !gTeacher || !gCount || !gStart || !gEnd) {
+                        alert("⚠️ برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، العدد، ومواعيد البداية والنهاية).");
+                        return; 
+                    }
                 }
-            }
-
-            if (step === 3) {
-                if (selectedSubjects.length === 0) {
-                    alert("⚠️ برجاء إضافة مادة دراسية واحدة على الأقل قبل المتابعة.");
-                    return; 
+                if (step === 3) {
+                    if (selectedSubjects.length === 0) {
+                        alert("⚠️ برجاء إضافة مادة دراسية واحدة على الأقل قبل المتابعة.");
+                        return; 
+                    }
                 }
             }
 
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
             
-            document.getElementById(`indicator${step}`).classList.add('active');
-            document.getElementById(`indicator${step-1}`).classList.remove('active');
-            document.getElementById(`indicator${step-1}`).classList.add('completed');
+            // تحديث شريط التقدم
+            for(let i=1; i<=3; i++){
+                let ind = document.getElementById(`indicator${i}`);
+                if(i < step) { ind.classList.remove('active'); ind.classList.add('completed'); }
+                else if (i === step) { ind.classList.add('active'); ind.classList.remove('completed'); }
+                else { ind.classList.remove('active'); ind.classList.remove('completed'); }
+            }
             
-            document.getElementById('progressFill').style.width = step === 2 ? '50%' : '100%';
+            document.getElementById('progressFill').style.width = step === 1 ? '0%' : (step === 2 ? '50%' : '100%');
 
-            // تهيئة الخريطة عند الوصول للخطوة 3
+            currentStepNumber = step;
+            saveState(); // حفظ الخطوة الجديدة
+
+            // تهيئة الخريطة
             if(step === 3 && !mapInitialized) {
                 setTimeout(initMap, 300);
             }
         }
 
         function prevStep(step) {
-            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
-            document.getElementById(`step${step}`).classList.add('active');
-            
-            document.getElementById(`indicator${step}`).classList.add('active');
-            document.getElementById(`indicator${step+1}`).classList.remove('active');
-            document.getElementById(`indicator${step}`).classList.remove('completed');
-            
-            document.getElementById('progressFill').style.width = step === 1 ? '0%' : '50%';
+            nextStep(step, true); // الرجوع لا يحتاج تحقق، لذا نمرر true
         }
 
         // ==========================================
@@ -348,7 +432,6 @@
             prep: { grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
             secondary: { grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات'] }
         };
-        let selectedSubjects = [];
 
         function updateGrades() {
             const stage = document.getElementById('s_stage').value;
@@ -379,6 +462,7 @@
             if (!selectedSubjects.includes(newSubject)) {
                 selectedSubjects.push(newSubject);
                 renderChips();
+                saveState(); // حفظ بعد إضافة المادة
             }
             document.getElementById('s_subject').value = '';
         }
@@ -390,23 +474,28 @@
                 container.innerHTML += `<div class="chip">${s} <span onclick="removeSubj(${idx})">✖</span></div>`;
             });
         }
-        function removeSubj(idx) { selectedSubjects.splice(idx, 1); renderChips(); }
+        
+        function removeSubj(idx) { 
+            selectedSubjects.splice(idx, 1); 
+            renderChips(); 
+            saveState(); // حفظ بعد الحذف
+        }
 
         // ==========================================
         // ✅ منطق الخطوة 3 (الخريطة والموقع التلقائي)
         // ==========================================
         function initMap() {
-            // إحداثيات افتراضية للقاهرة كبداية
-            let defaultLatLng = [30.0444, 31.2357];
+            // إذا كان هناك إحداثيات محفوظة من الريفريش، نستخدمها، وإلا نستخدم إحداثيات افتراضية
+            let defaultLatLng = (savedLat && savedLng) ? [savedLat, savedLng] : [30.0444, 31.2357];
             
-            map = L.map('map').setView(defaultLatLng, 13);
+            map = L.map('map').setView(defaultLatLng, (savedLat ? 16 : 13));
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
             marker = L.marker(defaultLatLng, { draggable: true }).addTo(map);
             mapInitialized = true;
             map.invalidateSize();
 
-            // 1. محاولة جلب موقع المستخدم التلقائي (GPS)
-            if (navigator.geolocation) {
+            // محاولة جلب موقع المستخدم التلقائي فقط إذا لم تكن هناك إحداثيات محفوظة مسبقاً
+            if (!savedLat && navigator.geolocation) {
                 document.getElementById('m_address').value = "جاري تحديد موقعك...";
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
@@ -414,21 +503,19 @@
                         const lng = position.coords.longitude;
                         const newLatLng = new L.LatLng(lat, lng);
                         
-                        // نقل الخريطة والدبوس للموقع الجديد
                         map.setView(newLatLng, 16);
                         marker.setLatLng(newLatLng);
                         
-                        // جلب اسم الشارع/المنطقة
                         fetchAddress(lat, lng);
                     },
                     function(error) {
                         console.log("تم رفض أو فشل تحديد الموقع التلقائي.");
-                        document.getElementById('m_address').value = ""; // تفريغ الخانة في حالة الرفض
+                        document.getElementById('m_address').value = ""; 
                     }
                 );
             }
 
-            // 2. تحديث العنوان تلقائياً عند سحب الدبوس لأي مكان آخر
+            // تحديث العنوان تلقائياً عند سحب الدبوس
             marker.on('dragend', function(e) {
                 const pos = marker.getLatLng();
                 document.getElementById('m_address').value = "جاري تحديث العنوان...";
@@ -436,11 +523,8 @@
             });
         }
 
-        // دالة تحويل الإحداثيات إلى نص عربي (Reverse Geocoding) باستخدام Nominatim
         function fetchAddress(lat, lng) {
-            // إضافة accept-language=ar لضمان جلب العنوان باللغة العربية
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar`;
-            
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
@@ -449,6 +533,7 @@
                     } else {
                         document.getElementById('m_address').value = "لم نتمكن من تحديد اسم الشارع، يمكنك كتابته يدوياً.";
                     }
+                    saveState(); // حفظ الموقع الجديد
                 })
                 .catch(error => {
                     console.error("خطأ في جلب العنوان:", error);
@@ -467,6 +552,10 @@
             }
 
             alert("✅ تم حفظ إعدادات المجموعة بنجاح!");
+            
+            // مسح الذاكرة المؤقتة بعد الانتهاء بنجاح
+            sessionStorage.removeItem('lessonState_' + currentLessonId);
+            
             window.location.href = `end.html?lessonId=${currentLessonId}`; 
         }
     </script>
