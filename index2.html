@@ -428,58 +428,84 @@
         .delay-1 { animation-delay: 0.2s; opacity: 0; }
 
         /* ============================================ */
+        /* ✅ تصميم النوافذ المنبثقة المخصصة (Modals) */
+        /* ============================================ */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .custom-modal {
+            background: #fff; width: 90%; max-width: 400px;
+            border-radius: 20px; padding: 25px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px) scale(0.95); transition: all 0.3s ease;
+        }
+        .modal-overlay.active .custom-modal { transform: translateY(0) scale(1); }
+
+        .custom-modal h3 { font-size: 20px; font-weight: 900; color: #1E293B; margin-bottom: 10px; }
+        .custom-modal p { font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 20px; line-height: 1.5; }
+        
+        .modal-input {
+            width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 12px;
+            font-size: 15px; font-weight: 800; color: #1E293B; margin-bottom: 20px;
+            text-align: center; outline: none; transition: all 0.3s; background: #F8FAFC;
+        }
+        .modal-input:focus { border-color: var(--primary-600); background: #fff; }
+
+        .modal-icon {
+            width: 60px; height: 60px; margin: 0 auto 15px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 28px;
+        }
+        .icon-warning { background: #FEF2F2; color: #EF4444; }
+        .icon-edit { background: #EFF6FF; color: #3B82F6; }
+
+        .modal-actions { display: flex; gap: 10px; }
+        .modal-btn {
+            flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 800;
+            cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .btn-cancel { background: #F1F5F9; color: #475569; }
+        .btn-cancel:hover { background: #E2E8F0; }
+        .btn-save { background: linear-gradient(135deg, var(--primary-600), var(--primary-900)); color: white; }
+        .btn-save:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(37,99,235,0.3); }
+        .btn-danger-confirm { background: linear-gradient(135deg, #EF4444, #B91C1C); color: white; }
+        .btn-danger-confirm:hover { opacity: 0.9; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(239,68,68,0.3); }
+
+        /* ============================================ */
         /* الموبايل */
         /* ============================================ */
         @media (max-width: 768px) {
-            .hero-banner {
-                min-height: 320px;
-                padding: 30px 15px;
-            }
+            .hero-banner { min-height: 320px; padding: 30px 15px; }
             .hero-brand { font-size: 36px; }
             .hero-headline { font-size: 20px; gap: 6px; margin-top: 26px; }
             .hero-headline .dots { font-size: 24px; }
             .hero-subtitle { font-size: 13px; margin-top: 18px; }
 
-            .portal-card {
-                padding: 18px 15px;
-                gap: 12px;
-                min-height: 160px;
-            }
+            .portal-card { padding: 18px 15px; gap: 12px; min-height: 160px; }
             .card-actions { top: 10px; left: 10px; }
             .action-btn { width: 30px; height: 30px; }
             
             .card-add-new .icon-plus { width: 50px; height: 50px; font-size: 24px; }
             
-            .card-image-box {
-                width: 100px;
-                height: 100px;
-                padding: 6px;
-                border-width: 3px;
-            }
+            .card-image-box { width: 100px; height: 100px; padding: 6px; border-width: 3px; }
             .card-text h2 { font-size: 19px; margin-bottom: 6px; }
             .card-text p { font-size: 12px; margin-bottom: 12px; line-height: 1.55; }
             .btn-go { padding: 10px 20px; font-size: 12.5px; }
         }
 
         @media (max-width: 480px) {
-            .hero-banner {
-                min-height: 280px;
-                padding: 25px 12px;
-            }
+            .hero-banner { min-height: 280px; padding: 25px 12px; }
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 16px; gap: 5px; }
             .hero-headline .dots { font-size: 20px; }
             .hero-subtitle { font-size: 12px; }
 
-            .portal-card {
-                padding: 15px 12px;
-                gap: 10px;
-            }
-            .card-image-box {
-                width: 85px;
-                height: 85px;
-                padding: 5px;
-            }
+            .portal-card { padding: 15px 12px; gap: 10px; }
+            .card-image-box { width: 85px; height: 85px; padding: 5px; }
             .card-text h2 { font-size: 17px; }
             .card-text p { font-size: 11px; }
             .btn-go { padding: 8px 16px; font-size: 11.5px; }
@@ -512,17 +538,7 @@
         <div class="container mx-auto max-w-5xl">
             <!-- حاوية الكروت -->
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
-                
-                <!-- ✅ كارت إنشاء مجموعة جديدة -->
-                <div onclick="createNewLesson(true)" class="portal-card card-add-new">
-                    <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                        </svg>
-                    </div>
-                    <h2>إنشاء مجموعة جديدة</h2>
-                </div>
-
+                <!-- الكروت ستتم إضافتها هنا بواسطة JavaScript -->
             </div>
         </div>
     </section>
@@ -532,9 +548,49 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- ✅ سكريبت الحفظ واسترجاع البيانات تلقائياً عند التحديث (Refresh) -->
+    <!-- ============================================ -->
+    <!-- ✅ النوافذ المنبثقة المخصصة (Modals) -->
+    <!-- ============================================ -->
+
+    <!-- نافذة تعديل الاسم -->
+    <div id="modalEdit" class="modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-icon icon-edit">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                </svg>
+            </div>
+            <h3>تعديل اسم المجموعة</h3>
+            <p>أدخل الاسم الجديد للمجموعة أدناه:</p>
+            <input type="text" id="editNameInput" class="modal-input" placeholder="اسم المجموعة">
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeModals()">إلغاء</button>
+                <button class="modal-btn btn-save" onclick="confirmEditName()">حفظ التعديل</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تأكيد الحذف -->
+    <div id="modalDelete" class="modal-overlay">
+        <div class="custom-modal">
+            <div class="modal-icon icon-warning">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 32px; height: 32px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3>تأكيد الحذف</h3>
+            <p>هل أنت متأكد من إلغاء هذه المجموعة؟<br>سيتم مسح كافة البيانات والتقارير الخاصة بها ولا يمكن التراجع.</p>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeModals()">تراجع</button>
+                <button class="modal-btn btn-danger-confirm" onclick="confirmDelete()">نعم، إلغاء المجموعة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ سكريبت الحفظ واسترجاع البيانات والتحكم بالنوافذ -->
     <script>
         let lessons = [];
+        let activeLessonId = null; // متغير لحفظ الـ ID عند فتح النوافذ المنبثقة
 
         // عند تحميل الصفحة، استرجاع الحصص المحفوظة مسبقاً
         window.addEventListener('DOMContentLoaded', () => {
@@ -546,12 +602,13 @@
                 } catch(e) {
                     lessons = [];
                 }
+            } else {
+                renderLessons();
             }
         });
 
         // إنشاء حصة جديدة
         function createNewLesson(saveToStorage = true) {
-            // توليد معرف فريد أو رقم تسلسلي بناءً على الحصص الحالية
             const newId = lessons.length > 0 ? Math.max(...lessons.map(l => l.id)) + 1 : 1;
             
             const lessonData = {
@@ -572,7 +629,7 @@
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
-            // الاحتفاظ بكارت "إنشاء مجموعة جديدة" فقط، وإعادة بناء باقي الكروت
+            // كارت الإضافة الثابت
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
@@ -592,7 +649,7 @@
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
 
-                // ✅ التحقق من وجود بيانات (تقرير) لهذه المجموعة في الذاكرة
+                // التحقق من وجود تقرير
                 const hasReport = sessionStorage.getItem('lessonState_' + lesson.id) !== null;
                 const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
                 const btnText = hasReport ? 'عرض تقرير المجموعة <span>➔</span>' : 'إعداد المجموعة <span>➔</span>';
@@ -601,18 +658,16 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
+                // استخدام دالة فتح النوافذ المخصصة بدلاً من confirm و prompt الافتراضية
                 newCard.innerHTML = `
-                    <!-- أزرار الإجراءات (حذف وتعديل الاسم) -->
                     <div class="card-actions">
-                        <!-- زر الحذف -->
-                        <button class="action-btn btn-delete" title="إلغاء وحذف المجموعة" onclick="deleteLesson(${lesson.id})">
+                        <button class="action-btn btn-delete" title="إلغاء وحذف المجموعة" onclick="openDeleteModal(${lesson.id})">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                         
-                        <!-- زر تعديل الاسم -->
-                        <button class="action-btn btn-edit-name" title="تغيير اسم المجموعة" onclick="editLessonName(${lesson.id}, '${lesson.title}')">
+                        <button class="action-btn btn-edit-name" title="تغيير اسم المجموعة" onclick="openEditModal(${lesson.id}, '${lesson.title.replace(/'/g, "\\'")}')">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
                             </svg>
@@ -635,39 +690,6 @@
             });
         }
 
-        // ✅ تعديل اسم المجموعة
-        function editLessonName(id, currentTitle) {
-            const newTitle = prompt("أدخل الاسم الجديد للمجموعة:", currentTitle);
-            
-            // التأكد من إدخال اسم وعدم الإلغاء
-            if(newTitle !== null && newTitle.trim() !== "") {
-                const lessonIndex = lessons.findIndex(l => l.id === id);
-                if (lessonIndex !== -1) {
-                    lessons[lessonIndex].title = newTitle.trim();
-                    saveLessonsToStorage();
-                    renderLessons();
-                }
-            }
-        }
-
-        // ✅ حذف حصة مع رسالة تأكيد
-        function deleteLesson(id) {
-            // رسالة تأكيد مزدوجة لتجنب الحذف بالخطأ
-            const isConfirmed = confirm('⚠️ تحذير: سيتم إلغاء هذه المجموعة بالكامل وحذف كافة بياناتها والتقارير الخاصة بها.\n\nهل أنت متأكد من رغبتك في الإلغاء؟');
-            
-            if(isConfirmed) {
-                lessons = lessons.filter(l => l.id !== id);
-                saveLessonsToStorage();
-                
-                // حذف التقرير وبيانات النشر الخاصة بها من الذاكرة
-                sessionStorage.removeItem('lessonState_' + id);
-                sessionStorage.removeItem('publishState_' + id);
-                
-                renderLessons();
-                alert("✅ تم إلغاء المجموعة وحذف بياناتها بنجاح.");
-            }
-        }
-
         // حفظ القائمة في localStorage
         function saveLessonsToStorage() {
             try {
@@ -675,6 +697,68 @@
             } catch(e) {
                 console.warn('فشل الحفظ في الذاكرة المحلية', e);
             }
+        }
+
+        // ============================================
+        // ✅ وظائف النوافذ المنبثقة المخصصة (Modals Logic)
+        // ============================================
+
+        function closeModals() {
+            document.getElementById('modalEdit').classList.remove('active');
+            document.getElementById('modalDelete').classList.remove('active');
+            activeLessonId = null;
+        }
+
+        // --- التعديل ---
+        function openEditModal(id, currentTitle) {
+            activeLessonId = id;
+            const inputField = document.getElementById('editNameInput');
+            inputField.value = currentTitle;
+            document.getElementById('modalEdit').classList.add('active');
+            inputField.focus(); // وضع المؤشر في خانة الكتابة تلقائياً
+        }
+
+        function confirmEditName() {
+            const newTitle = document.getElementById('editNameInput').value.trim();
+            if(newTitle !== "" && activeLessonId !== null) {
+                const lessonIndex = lessons.findIndex(l => l.id === activeLessonId);
+                if (lessonIndex !== -1) {
+                    lessons[lessonIndex].title = newTitle;
+                    saveLessonsToStorage();
+                    
+                    // إذا كان هناك تقرير مسجل باسم قديم، نقوم بتحديث الاسم في التقرير أيضاً
+                    const stateKey = 'lessonState_' + activeLessonId;
+                    const savedState = sessionStorage.getItem(stateKey);
+                    if (savedState) {
+                        let stateObj = JSON.parse(savedState);
+                        stateObj.g_name = newTitle;
+                        sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
+                    }
+                    
+                    renderLessons();
+                }
+            }
+            closeModals();
+        }
+
+        // --- الحذف ---
+        function openDeleteModal(id) {
+            activeLessonId = id;
+            document.getElementById('modalDelete').classList.add('active');
+        }
+
+        function confirmDelete() {
+            if (activeLessonId !== null) {
+                lessons = lessons.filter(l => l.id !== activeLessonId);
+                saveLessonsToStorage();
+                
+                // حذف التقرير وبيانات النشر الخاصة بها من الذاكرة
+                sessionStorage.removeItem('lessonState_' + activeLessonId);
+                sessionStorage.removeItem('publishState_' + activeLessonId);
+                
+                renderLessons();
+            }
+            closeModals();
         }
     </script>
 
