@@ -426,7 +426,7 @@
         .delay-1 { animation-delay: 0.2s; opacity: 0; }
 
         /* ============================================ */
-        /* ✅ تصميم نافذة تفاصيل المجموعة (Modal) */
+        /* ✅ تصميم النوافذ المنبثقة (Modals) الشاملة */
         /* ============================================ */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -436,13 +436,46 @@
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
         
-        .success-modal {
-            background: #fff; width: 90%; max-width: 380px;
-            border-radius: 24px; padding: 25px 20px; text-align: right;
+        .custom-modal {
+            background: #fff; width: 90%; max-width: 400px;
+            border-radius: 24px; padding: 25px; text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .success-modal { transform: translateY(0) scale(1); }
+        .modal-overlay.active .custom-modal { transform: translateY(0) scale(1); }
+
+        .modal-icon {
+            width: 70px; height: 70px; margin: 0 auto 15px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+        @keyframes popIn {
+            0% { transform: scale(0); }
+            80% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .modal-title { font-size: 22px; font-weight: 900; margin-bottom: 8px; }
+        .modal-desc { font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 20px; line-height: 1.6;}
+        
+        .modal-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-modal {
+            flex: 1; padding: 12px; border-radius: 12px; font-size: 14px; font-weight: 900;
+            cursor: pointer; border: none; transition: all 0.2s;
+        }
+        .btn-cancel { background: #E2E8F0; color: #475569; }
+        .btn-cancel:hover { background: #CBD5E1; }
+        .btn-confirm-delete { background: #EF4444; color: #fff; }
+        .btn-confirm-delete:hover { background: #DC2626; }
+        .btn-confirm-save { background: var(--primary-600); color: #fff; }
+        .btn-confirm-save:hover { background: var(--primary-900); }
+
+        .custom-input {
+            width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 12px;
+            font-size: 15px; font-weight: 800; color: #1E293B; text-align: center;
+            outline: none; transition: all 0.3s; margin-bottom: 10px;
+        }
+        .custom-input:focus { border-color: var(--primary-600); box-shadow: 0 0 0 4px #DBEAFE; }
 
         /* ============================================ */
         /* الموبايل */
@@ -546,16 +579,50 @@
         </div>
     </section>
 
-    <!-- ✅ نافذة تفاصيل المجموعة المنبثقة (Modal) -->
-    <div id="groupModal" class="modal-overlay" onclick="closeGroupModal(event)">
-        <div class="success-modal" onclick="event.stopPropagation()">
+    <!-- ✅ نافذة تفاصيل المجموعة المنبثقة (Info Modal) -->
+    <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
+        <div class="custom-modal" style="text-align: right;" onclick="event.stopPropagation()">
             <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #F1F5F9; padding-bottom: 12px; margin-bottom: 15px;">
                 <h3 id="modalGroupName" style="font-size: 20px; font-weight: 900; color: #0F2D5C; margin: 0;">اسم المجموعة</h3>
-                <button onclick="closeGroupModal()" style="background: #FEE2E2; color: #EF4444; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
+                <button onclick="closeModal('groupModal')" style="background: #FEE2E2; color: #EF4444; border: none; width: 30px; height: 30px; border-radius: 50%; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center;">✕</button>
             </div>
-            
             <div id="modalBodyContent" style="font-size: 14px; font-weight: 700; color: #475569; display: flex; flex-direction: column; gap: 10px; line-height: 1.6;">
                 <!-- يتم تعبئة البيانات تلقائياً -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ نافذة تأكيد الحذف (Delete Modal) -->
+    <div id="deleteModal" class="modal-overlay" onclick="closeModal('deleteModal')">
+        <div class="custom-modal" onclick="event.stopPropagation()">
+            <div class="modal-icon" style="background: #FEE2E2; color: #EF4444;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 36px; height: 36px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+            </div>
+            <h3 class="modal-title" style="color: #991B1B;">تأكيد الحذف</h3>
+            <p class="modal-desc">هل أنت متأكد من رغبتك في حذف هذه المجموعة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal('deleteModal')">تراجع</button>
+                <button class="btn-modal btn-confirm-delete" id="confirmDeleteBtn">نعم، احذف المجموعة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ نافذة تعديل الاسم (Rename Modal) -->
+    <div id="renameModal" class="modal-overlay" onclick="closeModal('renameModal')">
+        <div class="custom-modal" onclick="event.stopPropagation()">
+            <div class="modal-icon" style="background: #E0E7FF; color: #4F46E5;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 36px; height: 36px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                </svg>
+            </div>
+            <h3 class="modal-title" style="color: #0F2D5C;">تعديل اسم المجموعة</h3>
+            <p class="modal-desc">قم بكتابة الاسم الجديد للمجموعة أدناه:</p>
+            <input type="text" id="newGroupNameInput" class="custom-input" placeholder="اسم المجموعة">
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal('renameModal')">إلغاء</button>
+                <button class="btn-modal btn-confirm-save" id="confirmRenameBtn">حفظ الاسم</button>
             </div>
         </div>
     </div>
@@ -565,9 +632,11 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- ✅ سكريبت الحفظ واسترجاع البيانات تلقائياً عند التحديث (Refresh) -->
+    <!-- ✅ السكريبتات والتفاعل -->
     <script>
         let lessons = [];
+        let itemToDelete = null;
+        let itemToRename = null;
 
         // عند تحميل الصفحة، استرجاع الحصص المحفوظة مسبقاً
         window.addEventListener('DOMContentLoaded', () => {
@@ -581,6 +650,11 @@
                 }
             }
         });
+
+        // دالة عامة لإغلاق النوافذ المنبثقة
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
 
         // إنشاء حصة جديدة
         function createNewLesson(saveToStorage = true) {
@@ -633,12 +707,12 @@
                 newCard.innerHTML = `
                     <!-- ✅ أزرار الإجراءات (حذف وتعديل) -->
                     <div class="card-actions">
-                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="deleteLesson(${lesson.id}, event)">
+                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal(${lesson.id}, event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
                         </button>
-                        <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="renameLesson(${lesson.id}, event)">
+                        <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal(${lesson.id}, event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
@@ -663,33 +737,78 @@
             });
         }
 
-        // ✅ وظيفة تغيير اسم المجموعة
-        function renameLesson(id, event) {
+        // ==========================================
+        // وظائف نافذة الحذف المخصصة
+        // ==========================================
+        function openDeleteModal(id, event) {
             if (event) event.stopPropagation();
-            
-            const lesson = lessons.find(l => l.id === id);
-            if (!lesson) return;
+            itemToDelete = id;
+            document.getElementById('deleteModal').classList.add('active');
+        }
 
-            const newName = prompt('أدخل الاسم الجديد للمجموعة:', lesson.title);
-            
-            if (newName !== null && newName.trim() !== '') {
-                lesson.title = newName.trim();
+        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            if(itemToDelete !== null) {
+                lessons = lessons.filter(l => l.id !== itemToDelete);
                 saveLessonsToStorage();
-                
-                // تحديث الاسم أيضاً داخل بيانات تقرير المجموعة إن وُجد
-                const stateKey = 'lessonState_' + id;
-                const savedState = sessionStorage.getItem(stateKey);
-                if (savedState) {
-                    let stateObj = JSON.parse(savedState);
-                    stateObj.g_name = lesson.title;
-                    sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
-                }
-                
+                sessionStorage.removeItem('lessonState_' + itemToDelete);
+                sessionStorage.removeItem('publishState_' + itemToDelete);
                 renderLessons();
+                closeModal('deleteModal');
+                itemToDelete = null;
+            }
+        });
+
+        // ==========================================
+        // وظائف نافذة تعديل الاسم المخصصة
+        // ==========================================
+        function openRenameModal(id, event) {
+            if (event) event.stopPropagation();
+            itemToRename = id;
+            const lesson = lessons.find(l => l.id === id);
+            
+            if (lesson) {
+                const inputField = document.getElementById('newGroupNameInput');
+                inputField.value = lesson.title;
+                document.getElementById('renameModal').classList.add('active');
+                setTimeout(() => inputField.focus(), 100); // التركيز التلقائي
             }
         }
 
-        // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية والترجمة والمادة/الصف)
+        document.getElementById('confirmRenameBtn').addEventListener('click', function() {
+            const newName = document.getElementById('newGroupNameInput').value;
+            
+            if(itemToRename !== null && newName.trim() !== '') {
+                const lesson = lessons.find(l => l.id === itemToRename);
+                if (lesson) {
+                    lesson.title = newName.trim();
+                    saveLessonsToStorage();
+                    
+                    // تحديث الاسم أيضاً داخل بيانات تقرير المجموعة إن وُجد
+                    const stateKey = 'lessonState_' + itemToRename;
+                    const savedState = sessionStorage.getItem(stateKey);
+                    if (savedState) {
+                        let stateObj = JSON.parse(savedState);
+                        stateObj.g_name = lesson.title;
+                        sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
+                    }
+                    
+                    renderLessons();
+                }
+            }
+            closeModal('renameModal');
+            itemToRename = null;
+        });
+
+        // السماح بالضغط على Enter للحفظ
+        document.getElementById('newGroupNameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('confirmRenameBtn').click();
+            }
+        });
+
+        // ==========================================
+        // وظائف نافذة تفاصيل المجموعة
+        // ==========================================
         function openGroupModal(lessonId) {
             const savedState = sessionStorage.getItem('lessonState_' + lessonId);
             const modal = document.getElementById('groupModal');
@@ -746,26 +865,6 @@
             }
 
             modal.classList.add('active');
-        }
-
-        // ✅ إغلاق النافذة المنبثقة
-        function closeGroupModal(e) {
-            if (!e || e.target.id === 'groupModal' || e.target.tagName === 'BUTTON') {
-                document.getElementById('groupModal').classList.remove('active');
-            }
-        }
-
-        // ✅ حذف حصة وتحديث التخزين
-        function deleteLesson(id, event) {
-            if (event) event.stopPropagation();
-
-            if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة والتقرير الخاص بها؟')) {
-                lessons = lessons.filter(l => l.id !== id);
-                saveLessonsToStorage();
-                sessionStorage.removeItem('lessonState_' + id);
-                sessionStorage.removeItem('publishState_' + id);
-                renderLessons();
-            }
         }
 
         // حفظ القائمة في localStorage
