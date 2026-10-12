@@ -662,36 +662,59 @@
     <!-- ✅ السكريبتات والتفاعل -->
     <script>
         // ==========================================
-        // ✅ إضافة تأثير الصوت المرتفع (Click Sound)
+        // ✅ إضافة تأثيرات الصوت (الرفيع والعريض)
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
+        // 1. الصوت الرفيع العادي (للأزرار العادية)
         function playHighPitchSound() {
-            // استئناف السياق الصوتي إذا كان معلقاً (خاصية الأمان في المتصفحات)
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            
+            if (audioCtx.state === 'suspended') audioCtx.resume();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
-            osc.type = 'sine'; // نوع الموجة للحصول على صوت نقي
-            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); // 3000 هرتز لصوت رفيع جداً
+            osc.type = 'sine'; 
+            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); 
             
-            // عمل تلاشي سريع جداً للصوت (مثل صوت Pop أو Tick)
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
             
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.05); // مدة الصوت جزء صغير جدا من الثانية
+            osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // تشغيل الصوت عند الضغط على أي زر، كارت، أو أيقونة في الصفحة
+        // 2. الصوت العريض/الضخم (خاص بأزرار الحذف)
+        function playDeepSound() {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine'; 
+            // يبدأ التردد من 150 هرتز وينزل بسرعة إلى 40 هرتز (صوت ضربة أو Thud)
+            osc.frequency.setValueAtTime(150, audioCtx.currentTime); 
+            osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.15);
+            
+            // رفع مستوى الصوت قليلاً ليكون واضحاً ثم التلاشي
+            gain.gain.setValueAtTime(0.15, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15); 
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
+
+        // تشغيل الصوت المناسب عند الضغط
         document.addEventListener('click', function(e) {
-            // حدد العناصر التي تريد أن يصدر منها الصوت عند الضغط
+            // التحقق أولاً إذا كان الزر المَضغوط يخص عملية الحذف (يأخذ الصوت العريض)
+            const deleteElement = e.target.closest('.btn-delete, .btn-confirm-delete');
+            if (deleteElement) {
+                playDeepSound();
+                return; // إيقاف التنفيذ هنا حتى لا يتم تشغيل الصوت الرفيع أيضاً
+            }
+
+            // إذا لم يكن زر حذف، يتم تشغيل الصوت الرفيع العادي
             const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal');
             if (clickableElement) {
                 playHighPitchSound();
