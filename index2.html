@@ -537,10 +537,6 @@
             <div id="modalBodyContent" style="font-size: 14px; font-weight: 700; color: #475569; display: flex; flex-direction: column; gap: 10px; line-height: 1.6;">
                 <!-- يتم تعبئة البيانات تلقائياً -->
             </div>
-
-            <div style="margin-top: 20px; display: flex; gap: 10px;">
-                <a id="modalEditBtn" href="#" class="btn-go" style="flex: 1; justify-content: center; padding: 12px; font-size: 13.5px; background: linear-gradient(135deg, #2563EB, #0F2D5C);">تعديل البيانات ➔</a>
-            </div>
         </div>
     </div>
 
@@ -640,23 +636,37 @@
             });
         }
 
+        // ✅ تحويل الوقت من نظام 24 ساعة إلى نظام 12 ساعة مع (صباحاً / مساءً)
+        function formatTimeTo12Hour(timeStr) {
+            if (!timeStr) return '--:--';
+            let parts = timeStr.split(':');
+            let hours = parseInt(parts[0], 10);
+            let minutes = parts[1];
+            let period = hours >= 12 ? 'مساءً' : 'صباحاً';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // الساعة 0 تصبح 12
+            return `${hours}:${minutes} ${period}`;
+        }
+
         // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة
         function openGroupModal(lessonId) {
             const savedState = sessionStorage.getItem('lessonState_' + lessonId);
             const modal = document.getElementById('groupModal');
             const nameEl = document.getElementById('modalGroupName');
             const contentEl = document.getElementById('modalBodyContent');
-            const editBtn = document.getElementById('modalEditBtn');
 
             if (savedState) {
                 const data = JSON.parse(savedState);
                 nameEl.innerText = data.g_name || `مجموعة رقم ${lessonId}`;
                 
+                const startTime12 = formatTimeTo12Hour(data.g_start);
+                const endTime12 = formatTimeTo12Hour(data.g_end);
+
                 contentEl.innerHTML = `
                     <p>👤 <b>اسم المستر:</b> ${data.g_teacher || 'غير محدد'}</p>
                     <p>🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
                     <p>🔢 <b>عدد الطلاب المطلوب:</b> ${data.g_count || 'غير محدد'} طالب</p>
-                    <p>⏰ <b>المواعيد:</b> من ${data.g_start || '--:--'} إلى ${data.g_end || '--:--'}</p>
+                    <p>⏰ <b>المواعيد:</b> من ${startTime12} إلى ${endTime12}</p>
                     <p>🎓 <b>الفئة:</b> ${data.g_gender || 'مختلط'} | 📍 <b>المكان:</b> ${data.g_loc || 'السنتر'}</p>
                     <p>📍 <b>العنوان التفصيلي:</b> ${data.m_address || 'لم يتم تحديد الموقع بدقة'}</p>
                 `;
@@ -665,7 +675,6 @@
                 contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 15px 0;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد المجموعة" للبدء في إدخال المواعيد والمكان.</p>`;
             }
 
-            editBtn.href = `./group.html?lessonId=${lessonId}&mode=edit`;
             modal.classList.add('active');
         }
 
