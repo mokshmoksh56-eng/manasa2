@@ -117,8 +117,19 @@
         }
         .chip span { cursor: pointer; color: #EF4444; }
 
-        #map { width: 100%; height: 300px; border-radius: 12px; border: 2px solid var(--c-border); z-index: 1; }
+        /* حاوية الخريطة وزر تحديد الموقع */
+        .map-container { position: relative; width: 100%; border-radius: 12px; border: 2px solid var(--c-border); overflow: hidden; z-index: 1; }
+        #map { width: 100%; height: 300px; }
         
+        .locate-btn {
+            position: absolute; bottom: 15px; left: 15px; z-index: 400; /* فوق الخريطة */
+            background: #fff; border: 2px solid #25968b; border-radius: 12px;
+            width: 45px; height: 45px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); color: #1b736a;
+            transition: all 0.2s;
+        }
+        .locate-btn:hover { background: #e0f2f0; transform: scale(1.05); }
+
         .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .btn-next, .btn-prev {
             flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 900;
@@ -280,7 +291,17 @@
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي</h3>
             
-            <div id="map"></div>
+            <!-- حاوية الخريطة وزر التحديد -->
+            <div class="map-container">
+                <div id="map"></div>
+                <!-- أيقونة استرجاع الموقع الحالي -->
+                <button type="button" class="locate-btn" onclick="requestCurrentLocation()" title="انتقل إلى موقعي الحالي">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                    </svg>
+                </button>
+            </div>
             
             <div class="form-group" style="margin-top: 15px;">
                 <label>🏠 العنوان التفصيلي (للتسهيل على الطالب)</label>
@@ -520,8 +541,22 @@
             map.invalidateSize();
 
             // محاولة جلب موقع المستخدم التلقائي فقط إذا لم تكن هناك إحداثيات محفوظة مسبقاً
-            if (!savedLat && navigator.geolocation) {
-                document.getElementById('m_address').value = "جاري تحديد موقعك...";
+            if (!savedLat) {
+                requestCurrentLocation();
+            }
+
+            // تحديث العنوان تلقائياً عند سحب الدبوس
+            marker.on('dragend', function(e) {
+                const pos = marker.getLatLng();
+                document.getElementById('m_address').value = "جاري تحديث العنوان...";
+                fetchAddress(pos.lat, pos.lng);
+            });
+        }
+
+        // ✅ دالة تحديد الموقع عند الضغط على الأيقونة
+        function requestCurrentLocation() {
+            if (navigator.geolocation) {
+                document.getElementById('m_address').value = "جاري تحديد موقعك بدقة...";
                 navigator.geolocation.getCurrentPosition(
                     function(position) {
                         const lat = position.coords.latitude;
@@ -534,18 +569,14 @@
                         fetchAddress(lat, lng);
                     },
                     function(error) {
-                        console.log("تم رفض أو فشل تحديد الموقع التلقائي.");
+                        alert("⚠️ تعذر تحديد موقعك. يرجى التأكد من تفعيل خدمة الـ GPS (الموقع) في جهازك والموافقة على الصلاحية.");
                         document.getElementById('m_address').value = ""; 
-                    }
+                    },
+                    { enableHighAccuracy: true } // لطلب أقصى دقة ممكنة
                 );
+            } else {
+                alert("⚠️ متصفحك لا يدعم خاصية تحديد الموقع.");
             }
-
-            // تحديث العنوان تلقائياً عند سحب الدبوس
-            marker.on('dragend', function(e) {
-                const pos = marker.getLatLng();
-                document.getElementById('m_address').value = "جاري تحديث العنوان...";
-                fetchAddress(pos.lat, pos.lng);
-            });
         }
 
         function fetchAddress(lat, lng) {
@@ -571,7 +602,7 @@
         // ==========================================
         function finishSetup() {
             const address = document.getElementById('m_address').value.trim();
-            if (!address || address === "جاري تحديد موقعك..." || address === "جاري تحديث العنوان...") {
+            if (!address || address === "جاري تحديد موقعك..." || address === "جاري تحديث العنوان..." || address === "جاري تحديد موقعك بدقة...") {
                 alert("⚠️ برجاء التأكد من كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
                 return; 
             }
