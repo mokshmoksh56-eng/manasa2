@@ -246,17 +246,6 @@
                     <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
                 </div>
             </div>
-            
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>⏰ من الساعة</label>
-                    <input type="time" id="g_start" class="form-control">
-                </div>
-                <div class="form-group">
-                    <label>⏰ إلى الساعة</label>
-                    <input type="time" id="g_end" class="form-control">
-                </div>
-            </div>
 
             <div class="form-group" style="margin-top: 15px;">
                 <label>🎓 الفئات المسموح بها</label>
@@ -356,6 +345,18 @@
                     <div><input type="checkbox" id="m_oct" value="أكتوبر"><label for="m_oct">أكتوبر</label></div>
                     <div><input type="checkbox" id="m_nov" value="نوفمبر"><label for="m_nov">نوفمبر</label></div>
                     <div><input type="checkbox" id="m_dec" value="ديسمبر"><label for="m_dec">ديسمبر</label></div>
+                </div>
+            </div>
+
+            <!-- أوقات الحصة -->
+            <div class="grid-2" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label>⏰ من الساعة</label>
+                    <input type="time" id="g_start" class="form-control">
+                </div>
+                <div class="form-group">
+                    <label>⏰ إلى الساعة</label>
+                    <input type="time" id="g_end" class="form-control">
                 </div>
             </div>
 
@@ -539,11 +540,9 @@
                     const gName = document.getElementById('g_name').value.trim();
                     const gTeacher = document.getElementById('g_teacher').value.trim();
                     const gCount = document.getElementById('g_count').value.trim();
-                    const gStart = document.getElementById('g_start').value;
-                    const gEnd = document.getElementById('g_end').value;
 
-                    if (!gName || !gTeacher || !gCount || !gStart || !gEnd) {
-                        alert("⚠️ برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، العدد، ومواعيد البداية والنهاية).");
+                    if (!gName || !gTeacher || !gCount) {
+                        alert("⚠️ برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، والعدد).");
                         return; 
                     }
                 }
@@ -697,7 +696,15 @@
         }
 
         function finishSetup() {
+            const gStart = document.getElementById('g_start').value;
+            const gEnd = document.getElementById('g_end').value;
             const address = document.getElementById('m_address').value.trim();
+
+            if (!gStart || !gEnd) {
+                alert("⚠️ برجاء تحديد موعد بداية ونهاية الحصة.");
+                return;
+            }
+
             if (!address || address.includes("جاري")) {
                 alert("⚠️ برجاء التأكد من كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
                 return; 
