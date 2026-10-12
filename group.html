@@ -16,9 +16,6 @@
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
-        /* ============================================ */
-        /* ✅ تنبيه وضع التعديل (Edit Alert) */
-        /* ============================================ */
         .edit-alert {
             background: linear-gradient(135deg, #F59E0B, #D97706);
             color: #fff; text-align: center; padding: 12px 15px; font-size: 15px; font-weight: 800;
@@ -28,9 +25,6 @@
         }
         @keyframes slideDown { from { transform: translateY(-100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-        /* ============================================ */
-        /* ✅ الهيدر */
-        /* ============================================ */
         .hero-banner {
             position: relative; width: 100%; min-height: 250px;
             background-image: url('./teacher2.png'); background-size: cover; background-position: center;
@@ -45,9 +39,6 @@
         .hero-brand .accent { color: #F59E0B; }
         .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
 
-        /* ============================================ */
-        /* ✅ شريط التقدم */
-        /* ============================================ */
         .wizard-progress {
             display: flex; justify-content: space-between; align-items: center;
             max-width: 500px; margin: -30px auto 20px; position: relative; z-index: 10;
@@ -72,9 +63,6 @@
             height: 100%; background: #10B981; width: 0%; transition: width 0.4s ease;
         }
 
-        /* ============================================ */
-        /* ✅ حاوية الخطوات */
-        /* ============================================ */
         .step-content { display: none; max-width: 800px; margin: 0 auto; width: 100%; padding: 0 15px 40px; animation: fadeIn 0.4s ease; }
         .step-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -110,7 +98,6 @@
             border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); transform: translateY(-3px);
         }
 
-        /* شبكة الأيام والشهور */
         .days-grid, .months-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .days-grid input, .months-grid input { display: none; }
         .days-grid label, .months-grid label {
@@ -193,7 +180,6 @@
 </head>
 <body>
 
-    <!-- 🛑 شريط التنبيه بوضع التعديل -->
     <div id="editAlert" class="edit-alert" style="display: none;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -201,7 +187,6 @@
         <span>أنت الآن في وضع تعديل بيانات المجموعة</span>
     </div>
 
-    <!-- ✅ نافذة الحفظ المخصصة -->
     <div id="successModal" class="modal-overlay">
         <div class="success-modal">
             <div class="success-icon">
@@ -215,7 +200,6 @@
         </div>
     </div>
 
-    <!-- ✅ الهيدر -->
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">إعداد <span class="accent">المجموعة</span></div>
@@ -223,7 +207,6 @@
         </div>
     </section>
 
-    <!-- ✅ شريط التقدم -->
     <div class="wizard-progress">
         <div class="progress-line"><div class="progress-line-fill" id="progressFill"></div></div>
         <div class="step-indicator active" id="indicator1">
@@ -237,9 +220,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🛑 الخطوة 1: بيانات المجموعة الأساسية -->
-    <!-- ========================================== -->
+    <!-- الخطوة 1 -->
     <div id="step1" class="step-content active theme-pink">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة الأساسية</h3>
@@ -301,9 +282,7 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🛑 الخطوة 2: المادة الدراسية -->
-    <!-- ========================================== -->
+    <!-- الخطوة 2 -->
     <div id="step2" class="step-content theme-turq">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
@@ -342,14 +321,12 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- 🛑 الخطوة 3: الموقع + الأيام + الشهور بنظام مربعات الاختيار -->
-    <!-- ========================================== -->
+    <!-- الخطوة 3 -->
     <div id="step3" class="step-content theme-teal">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي وجدول المواعيد</h3>
             
-            <!-- ✅ أيام الأسبوع -->
+            <!-- أيام الأسبوع -->
             <div class="form-group">
                 <label>📅 أيام الحصص (اختر أيام الأسبوع)</label>
                 <div class="days-grid">
@@ -363,7 +340,7 @@
                 </div>
             </div>
 
-            <!-- ✅ الشهور الميلادية (مربعات اختيار مثل الأيام) -->
+            <!-- الشهور الميلادية -->
             <div class="form-group">
                 <label>🗓️ الشهور الميلادية (اختر الشهر أو الشهور)</label>
                 <div class="months-grid">
@@ -380,6 +357,14 @@
                     <div><input type="checkbox" id="m_nov" value="نوفمبر"><label for="m_nov">نوفمبر</label></div>
                     <div><input type="checkbox" id="m_dec" value="ديسمبر"><label for="m_dec">ديسمبر</label></div>
                 </div>
+            </div>
+
+            <!-- ✅ خيار تكرار الحصة أسبوعياً -->
+            <div class="form-group" style="background: #F0FDF8; padding: 12px; border-radius: 10px; border: 1.5px solid #A7F3D0; display: flex; align-items: center; gap: 12px;">
+                <input type="checkbox" id="g_repeat_weekly" style="width: 22px; height: 22px; accent-color: var(--c-main); cursor: pointer;">
+                <label for="g_repeat_weekly" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 800; color: #064E3B;">
+                    🔄 تكرار الحصة تلقائياً كل أسبوع (في نفس المواعيد والأيام المحددة)
+                </label>
             </div>
 
             <!-- الخريطة -->
@@ -422,7 +407,7 @@
             }
         });
 
-        // ✅ حفظ الحالة مع الأيام والشهور المتعددة
+        // ✅ حفظ الحالة مع خيار التكرار الأسبوعي (بيانات كل مجموعة منعزلة بمعرفها lessonId لمنع تداخل المواعيد)
         function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
@@ -446,6 +431,7 @@
                 g_end: document.getElementById('g_end').value,
                 g_days: selectedDays,
                 g_months: selectedMonths,
+                g_repeat_weekly: document.getElementById('g_repeat_weekly').checked,
                 g_gender: document.querySelector('input[name="g_gender"]:checked')?.id,
                 g_loc: document.querySelector('input[name="g_loc"]:checked')?.id,
                 s_stage: document.getElementById('s_stage').value,
@@ -458,7 +444,7 @@
             sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
         }
 
-        // ✅ استرجاع الأيام والشهور المختارة
+        // ✅ استرجاع الحالة وخيار التكرار الأسبوعي
         function loadState() {
             const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
@@ -492,6 +478,10 @@
                     state.g_months.forEach(m => {
                         if(monthMap[m]) document.getElementById(monthMap[m]).checked = true;
                     });
+                }
+
+                if(state.g_repeat_weekly !== undefined) {
+                    document.getElementById('g_repeat_weekly').checked = state.g_repeat_weekly;
                 }
 
                 if(state.g_gender) document.getElementById(state.g_gender).checked = true;
