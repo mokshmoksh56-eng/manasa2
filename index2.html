@@ -217,29 +217,45 @@
             background: #FFFFFF;
         }
 
-        /* ✅ زر الحذف */
-        .btn-delete {
+        /* ✅ أزرار الإجراءات (تعديل وحذف) */
+        .card-actions {
             position: absolute;
             top: 15px;
             left: 15px;
+            display: flex;
+            gap: 8px;
+            z-index: 20;
+        }
+        .btn-action {
             width: 36px;
             height: 36px;
-            background: #FEE2E2;
-            color: #EF4444;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             border: none;
             cursor: pointer;
-            z-index: 20;
             transition: all 0.3s ease;
+        }
+        .btn-delete {
+            background: #FEE2E2;
+            color: #EF4444;
         }
         .btn-delete:hover {
             background: #EF4444;
             color: #FFFFFF;
-            transform: scale(1.15) rotate(90deg);
+            transform: scale(1.15) rotate(15deg);
             box-shadow: 0 5px 15px rgba(239, 68, 68, 0.4);
+        }
+        .btn-edit {
+            background: #E0E7FF;
+            color: #4F46E5;
+        }
+        .btn-edit:hover {
+            background: #4F46E5;
+            color: #FFFFFF;
+            transform: scale(1.15) rotate(-15deg);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4);
         }
 
         /* ✅ كارت إضافة مجموعة جديدة */
@@ -446,7 +462,11 @@
                 gap: 12px;
                 min-height: 160px;
             }
-            .btn-delete { top: 10px; left: 10px; width: 30px; height: 30px; }
+            
+            .card-actions { top: 10px; left: 10px; gap: 6px; }
+            .btn-action { width: 32px; height: 32px; }
+            .btn-action svg { width: 16px !important; height: 16px !important; }
+            
             .card-add-new .icon-plus { width: 50px; height: 50px; font-size: 24px; }
             
             .card-image-box {
@@ -611,12 +631,19 @@
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
                 newCard.innerHTML = `
-                    <!-- زر الحذف -->
-                    <button class="btn-delete" title="حذف المجموعة" onclick="deleteLesson(${lesson.id})">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                    <!-- ✅ أزرار الإجراءات (حذف وتعديل) -->
+                    <div class="card-actions">
+                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="deleteLesson(${lesson.id}, event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                            </svg>
+                        </button>
+                        <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="renameLesson(${lesson.id}, event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
+                            </svg>
+                        </button>
+                    </div>
 
                     <!-- صندوق الصورة قابل للضغط لعرض تفاصيل المواعيد والمكان -->
                     <div class="card-image-box" onclick="openGroupModal(${lesson.id})" title="اضغط لعرض تفاصيل المواعيد والمكان">
@@ -634,6 +661,32 @@
                 
                 container.appendChild(newCard);
             });
+        }
+
+        // ✅ وظيفة تغيير اسم المجموعة
+        function renameLesson(id, event) {
+            if (event) event.stopPropagation();
+            
+            const lesson = lessons.find(l => l.id === id);
+            if (!lesson) return;
+
+            const newName = prompt('أدخل الاسم الجديد للمجموعة:', lesson.title);
+            
+            if (newName !== null && newName.trim() !== '') {
+                lesson.title = newName.trim();
+                saveLessonsToStorage();
+                
+                // تحديث الاسم أيضاً داخل بيانات تقرير المجموعة إن وُجد
+                const stateKey = 'lessonState_' + id;
+                const savedState = sessionStorage.getItem(stateKey);
+                if (savedState) {
+                    let stateObj = JSON.parse(savedState);
+                    stateObj.g_name = lesson.title;
+                    sessionStorage.setItem(stateKey, JSON.stringify(stateObj));
+                }
+                
+                renderLessons();
+            }
         }
 
         // ✅ فتح نافذة تفاصيل المجموعة عند الضغط على الصورة وعرض البيانات المحدثة (محدثة لدعم الساعة الرقمية والترجمة والمادة/الصف)
@@ -702,8 +755,10 @@
             }
         }
 
-        // حذف حصة وتحديث التخزين
-        function deleteLesson(id) {
+        // ✅ حذف حصة وتحديث التخزين
+        function deleteLesson(id, event) {
+            if (event) event.stopPropagation();
+
             if(confirm('هل أنت متأكد من رغبتك في حذف هذه المجموعة والتقرير الخاص بها؟')) {
                 lessons = lessons.filter(l => l.id !== id);
                 saveLessonsToStorage();
