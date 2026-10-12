@@ -17,7 +17,7 @@
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
         /* ============================================ */
-        /* ✅ الهيدر (نفس تصميم index2) */
+        /* ✅ الهيدر */
         /* ============================================ */
         .hero-banner {
             position: relative; width: 100%; min-height: 250px;
@@ -34,7 +34,7 @@
         .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
 
         /* ============================================ */
-        /* ✅ شريط التقدم الذكي (Wizard Progress) */
+        /* ✅ شريط التقدم */
         /* ============================================ */
         .wizard-progress {
             display: flex; justify-content: space-between; align-items: center;
@@ -61,18 +61,16 @@
         }
 
         /* ============================================ */
-        /* ✅ حاوية الخطوات وتنسيقات الألوان المخصصة */
+        /* ✅ حاوية الخطوات */
         /* ============================================ */
         .step-content { display: none; max-width: 800px; margin: 0 auto; width: 100%; padding: 0 15px 40px; animation: fadeIn 0.4s ease; }
         .step-content.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* متغيرات الألوان لكل خطوة */
         .theme-pink { --c-main: #FF6B6B; --c-dark: #E03131; --c-light: #FFF5F5; --c-border: #FFC9C9; }
         .theme-turq { --c-main: #00D2C6; --c-dark: #008B82; --c-light: #F2FDFD; --c-border: #A7EBE7; }
         .theme-teal { --c-main: #25968b; --c-dark: #1b736a; --c-light: #e0f2f0; --c-border: #b2dfdb; }
 
-        /* الكارت العام لكل خطوة */
         .smart-card {
             background: #fff; border: 2px solid var(--c-border); border-top: 5px solid var(--c-main);
             border-radius: 16px; padding: 20px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
@@ -88,7 +86,6 @@
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        /* تنسيقات الراديو (الفئات والمكان) */
         .radio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .radio-grid input { display: none; }
         .radio-grid label {
@@ -101,7 +98,6 @@
             border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); transform: translateY(-3px);
         }
 
-        /* تنسيقات شريحة المادة (Chips) */
         .subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .chip {
             background: var(--c-light); color: var(--c-dark); padding: 6px 12px; border-radius: 20px;
@@ -109,10 +105,8 @@
         }
         .chip span { cursor: pointer; color: #EF4444; }
 
-        /* خريطة */
         #map { width: 100%; height: 300px; border-radius: 12px; border: 2px solid var(--c-border); z-index: 1; }
         
-        /* أزرار التنقل */
         .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .btn-next, .btn-prev {
             flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 900;
@@ -172,7 +166,6 @@
                 </div>
             </div>
 
-            <!-- ✅ الإضافة الجديدة: اسم المستر والعدد المطلوب -->
             <div class="grid-2">
                 <div class="form-group">
                     <label>👤 اسم المستر</label>
@@ -271,7 +264,7 @@
             
             <div class="form-group" style="margin-top: 15px;">
                 <label>🏠 العنوان التفصيلي (للتسهيل على الطالب)</label>
-                <input type="text" id="m_address" class="form-control" placeholder="أمام مسجد النور - الدور الثاني">
+                <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
             </div>
 
             <div class="nav-buttons">
@@ -287,7 +280,7 @@
         let mapInitialized = false;
         let map, marker;
         
-        // قراءة رقم الحصة ووضع التعديل من الرابط
+        // قراءة رقم الحصة ووضع التعديل
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
@@ -298,10 +291,9 @@
         };
 
         // ==========================================
-        // ✅ التحكم في التنقل والتحقق من البيانات (Validation)
+        // ✅ التحكم في التنقل والتحقق من البيانات 
         // ==========================================
         function nextStep(step) {
-            // 🛑 التحقق من بيانات الخطوة 1 قبل الانتقال للخطوة 2
             if (step === 2) {
                 const gName = document.getElementById('g_name').value.trim();
                 const gTeacher = document.getElementById('g_teacher').value.trim();
@@ -309,22 +301,19 @@
                 const gStart = document.getElementById('g_start').value;
                 const gEnd = document.getElementById('g_end').value;
 
-                // السنتر اختياري، لذلك لم نضعه في شرط التحقق
                 if (!gName || !gTeacher || !gCount || !gStart || !gEnd) {
                     alert("⚠️ برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، العدد، ومواعيد البداية والنهاية).");
-                    return; // إيقاف الانتقال
+                    return; 
                 }
             }
 
-            // 🛑 التحقق من بيانات الخطوة 2 قبل الانتقال للخطوة 3
             if (step === 3) {
                 if (selectedSubjects.length === 0) {
                     alert("⚠️ برجاء إضافة مادة دراسية واحدة على الأقل قبل المتابعة.");
-                    return; // إيقاف الانتقال
+                    return; 
                 }
             }
 
-            // ✅ في حالة نجاح التحقق، يتم الانتقال للخطوة التالية
             document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
             document.getElementById(`step${step}`).classList.add('active');
             
@@ -387,7 +376,6 @@
             if(!subj) return;
             
             const newSubject = `${grade} - ${subj}`;
-            // منع تكرار نفس المادة
             if (!selectedSubjects.includes(newSubject)) {
                 selectedSubjects.push(newSubject);
                 renderChips();
@@ -405,25 +393,77 @@
         function removeSubj(idx) { selectedSubjects.splice(idx, 1); renderChips(); }
 
         // ==========================================
-        // ✅ منطق الخطوة 3 (الخريطة)
+        // ✅ منطق الخطوة 3 (الخريطة والموقع التلقائي)
         // ==========================================
         function initMap() {
-            map = L.map('map').setView([30.0444, 31.2357], 13);
+            // إحداثيات افتراضية للقاهرة كبداية
+            let defaultLatLng = [30.0444, 31.2357];
+            
+            map = L.map('map').setView(defaultLatLng, 13);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-            marker = L.marker([30.0444, 31.2357], { draggable: true }).addTo(map);
+            marker = L.marker(defaultLatLng, { draggable: true }).addTo(map);
             mapInitialized = true;
             map.invalidateSize();
+
+            // 1. محاولة جلب موقع المستخدم التلقائي (GPS)
+            if (navigator.geolocation) {
+                document.getElementById('m_address').value = "جاري تحديد موقعك...";
+                navigator.geolocation.getCurrentPosition(
+                    function(position) {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        const newLatLng = new L.LatLng(lat, lng);
+                        
+                        // نقل الخريطة والدبوس للموقع الجديد
+                        map.setView(newLatLng, 16);
+                        marker.setLatLng(newLatLng);
+                        
+                        // جلب اسم الشارع/المنطقة
+                        fetchAddress(lat, lng);
+                    },
+                    function(error) {
+                        console.log("تم رفض أو فشل تحديد الموقع التلقائي.");
+                        document.getElementById('m_address').value = ""; // تفريغ الخانة في حالة الرفض
+                    }
+                );
+            }
+
+            // 2. تحديث العنوان تلقائياً عند سحب الدبوس لأي مكان آخر
+            marker.on('dragend', function(e) {
+                const pos = marker.getLatLng();
+                document.getElementById('m_address').value = "جاري تحديث العنوان...";
+                fetchAddress(pos.lat, pos.lng);
+            });
+        }
+
+        // دالة تحويل الإحداثيات إلى نص عربي (Reverse Geocoding) باستخدام Nominatim
+        function fetchAddress(lat, lng) {
+            // إضافة accept-language=ar لضمان جلب العنوان باللغة العربية
+            const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar`;
+            
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.display_name) {
+                        document.getElementById('m_address').value = data.display_name;
+                    } else {
+                        document.getElementById('m_address').value = "لم نتمكن من تحديد اسم الشارع، يمكنك كتابته يدوياً.";
+                    }
+                })
+                .catch(error => {
+                    console.error("خطأ في جلب العنوان:", error);
+                    document.getElementById('m_address').value = "";
+                });
         }
 
         // ==========================================
-        // ✅ حفظ البيانات (مع التحقق النهائي)
+        // ✅ حفظ البيانات (التحقق النهائي)
         // ==========================================
         function finishSetup() {
-            // 🛑 التحقق من إدخال العنوان التفصيلي
             const address = document.getElementById('m_address').value.trim();
-            if (!address) {
-                alert("⚠️ برجاء كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
-                return; // إيقاف الحفظ
+            if (!address || address === "جاري تحديد موقعك..." || address === "جاري تحديث العنوان...") {
+                alert("⚠️ برجاء التأكد من كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
+                return; 
             }
 
             alert("✅ تم حفظ إعدادات المجموعة بنجاح!");
