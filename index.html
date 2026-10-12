@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة احجزلى - الرئيسية</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = { corePlugins: { preflight: true } }
+    </script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0A1E3F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="احجزلى">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
+    
+    <style>
+        :root {
+            --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
+            --emerald-900:#064E3B; --emerald-600:#10B981;
+        }
+        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: #F8FAFC;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* ============================================ */
+        /* ✅ الهيدر العلوي */
+        /* ============================================ */
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            min-height: 380px;
+            background-image: url('./teacher2.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            padding: 40px 20px;
+        }
+
+        .hero-banner::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, 
+                rgba(255, 255, 255, 0.72) 0%, 
+                rgba(255, 255, 255, 0.85) 50%, 
+                rgba(255, 255, 255, 0.95) 100%);
+            z-index: 1;
+        }
+
+        .hero-banner::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(180deg, transparent 0%, #F8FAFC 100%);
+            z-index: 2;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            text-align: center;
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .hero-brand {
+            font-size: 48px;
+            font-weight: 900;
+            color: #0F172A;
+            letter-spacing: -1px;
+            line-height: 1;
+            margin-bottom: 12px;
+            display: inline-block;
+            position: relative;
+        }
+        .hero-brand .accent {
+            color: #F59E0B;
+            position: relative;
+        }
+        .hero-brand .accent::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, #F59E0B, #FCD34D);
+            border-radius: 999px;
+            animation: underlineExpand 1s cubic-bezier(0.34, 1.56, 0.64, 1) 0.3s backwards;
+        }
+        @keyframes underlineExpand {
+            from { transform: scaleX(0); transform-origin: right; }
+            to { transform: scaleX(1); transform-origin: right; }
+        }
+
+        .hero-headline {
+            font-size: 26px;
+            font-weight: 900;
+            color: #1E293B;
+            line-height: 1.4;
+            margin-top: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            position: relative;
+        }
+        .hero-headline .part-1 {
+            color: #1E293B;
+            position: relative;
+        }
+        .hero-headline .part-1::before {
+            content: '📍';
+            position: absolute;
+            top: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 20px;
+            animation: bouncePin 2s ease-in-out infinite;
+        }
+        @keyframes bouncePin {
+            0%, 100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(-5px); }
+        }
+        .hero-headline .dots {
+            color: #F59E0B;
+            font-size: 32px;
+            line-height: 0.5;
+            letter-spacing: 2px;
+            animation: dotsPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes dotsPulse {
+            0%, 100% { opacity: 0.4; transform: translateY(0); }
+            50% { opacity: 1; transform: translateY(-3px); }
+        }
+        .hero-headline .part-2 {
+            background: linear-gradient(90deg, #F59E0B 0%, #D97706 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            position: relative;
+            font-weight: 900;
+        }
+        .hero-headline .part-2::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #F59E0B, transparent);
+            animation: lineSlide 2s ease-in-out infinite;
+        }
+        @keyframes lineSlide {
+            0%, 100% { opacity: 0.4; transform: scaleX(0.7); }
+            50% { opacity: 1; transform: scaleX(1); }
+        }
+
+        .hero-subtitle {
+            font-size: 15px;
+            font-weight: 700;
+            color: #475569;
+            margin-top: 22px;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.7;
+        }
+        .hero-subtitle .highlight {
+            color: #10B981;
+            font-weight: 900;
+        }
+
+        /* ============================================ */
+        /* ✅ البطاقات */
+        /* ============================================ */
+        .cards-section {
+            background: #F8FAFC;
+            padding: 20px 20px 40px;
+            flex: 1;
+        }
+
+        .portal-card {
+            position: relative;
+            border-radius: 28px;
+            padding: 25px 22px;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 15px 35px -15px rgba(0,0,0,0.1);
+            text-decoration: none;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            cursor: pointer;
+            overflow: hidden;
+            min-height: 200px;
+        }
+
+        /* ✅ صندوق صورة المعلم/الطالب — دائري وأنيق */
+        .card-image-box {
+            flex-shrink: 0;
+            width: 140px;
+            height: 140px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 3;
+            overflow: hidden;
+            padding: 8px;
+        }
+
+        .card-image-box img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: block;
+            border-radius: 50%;
+        }
+
+        .card-teacher .card-image-box {
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
+            border: 4px solid #BFDBFE;
+            box-shadow: 0 10px 25px -10px rgba(37, 99, 235, 0.5);
+        }
+
+        .card-student .card-image-box {
+            background: linear-gradient(135deg, #ECFDF5 0%, #D1FAE5 100%);
+            border: 4px solid #A7F3D0;
+            box-shadow: 0 10px 25px -10px rgba(16, 185, 129, 0.5);
+        }
+
+        .portal-card:hover .card-image-box img {
+            transform: scale(1.12);
+        }
+
+        .portal-card:hover .card-image-box {
+            transform: scale(1.05) rotate(-3deg);
+        }
+
+        /* النص */
+        .card-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: right;
+            z-index: 5;
+            flex: 1;
+            min-width: 0;
+        }
+        .card-text h2 {
+            font-size: 24px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            line-height: 1.2;
+        }
+        .card-text p {
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        /* كارت المعلم */
+        .card-teacher {
+            background: linear-gradient(135deg, #F0F7FF 0%, #FFFFFF 100%);
+            border: 3px solid #BFDBFE;
+            border-bottom: 8px solid var(--primary-600);
+        }
+        .card-teacher:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 60px -20px rgba(37, 99, 235, 0.4);
+            border-color: var(--primary-600);
+        }
+        .card-teacher h2 { color: #0F2D5C; }
+        .card-teacher p { color: #475569; }
+        .card-teacher .btn-go {
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
+            box-shadow: 0 10px 22px -8px rgba(37, 99, 235, 0.6);
+        }
+
+        /* كارت الطالب */
+        .card-student {
+            background: linear-gradient(135deg, #F0FDF8 0%, #FFFFFF 100%);
+            border: 3px solid #A7F3D0;
+            border-bottom: 8px solid var(--emerald-600);
+        }
+        .card-student:hover {
+            transform: translateY(-8px) scale(1.01);
+            box-shadow: 0 30px 60px -20px rgba(16, 185, 129, 0.4);
+            border-color: var(--emerald-600);
+        }
+        .card-student h2 { color: #064E3B; }
+        .card-student p { color: #475569; }
+        .card-student .btn-go {
+            background: linear-gradient(135deg, var(--emerald-600), var(--emerald-900));
+            box-shadow: 0 10px 22px -8px rgba(16, 185, 129, 0.6);
+        }
+
+        .btn-go {
+            padding: 12px 26px;
+            border-radius: 999px;
+            font-size: 14.5px;
+            font-weight: 900;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            z-index: 10;
+            white-space: nowrap;
+        }
+        .portal-card:hover .btn-go {
+            padding: 12px 34px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .delay-1 { animation-delay: 0.2s; opacity: 0; }
+
+        /* ============================================ */
+        /* الموبايل */
+        /* ============================================ */
+        @media (max-width: 768px) {
+            .hero-banner {
+                min-height: 320px;
+                padding: 30px 15px;
+            }
+            .hero-brand { font-size: 36px; }
+            .hero-headline { font-size: 20px; gap: 6px; margin-top: 26px; }
+            .hero-headline .dots { font-size: 24px; }
+            .hero-subtitle { font-size: 13px; margin-top: 18px; }
+
+            .portal-card {
+                padding: 18px 15px;
+                gap: 12px;
+                min-height: 160px;
+            }
+            .card-image-box {
+                width: 100px;
+                height: 100px;
+                padding: 6px;
+                border-width: 3px;
+            }
+            .card-text h2 { font-size: 19px; margin-bottom: 6px; }
+            .card-text p { font-size: 12px; margin-bottom: 12px; line-height: 1.55; }
+            .btn-go { padding: 10px 20px; font-size: 12.5px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-banner {
+                min-height: 280px;
+                padding: 25px 12px;
+            }
+            .hero-brand { font-size: 30px; }
+            .hero-headline { font-size: 16px; gap: 5px; }
+            .hero-headline .dots { font-size: 20px; }
+            .hero-subtitle { font-size: 12px; }
+
+            .portal-card {
+                padding: 15px 12px;
+                gap: 10px;
+            }
+            .card-image-box {
+                width: 85px;
+                height: 85px;
+                padding: 5px;
+            }
+            .card-text h2 { font-size: 17px; }
+            .card-text p { font-size: 11px; }
+            .btn-go { padding: 8px 16px; font-size: 11.5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ✅ الهيدر العلوي -->
+    <section class="hero-banner">
+        <div class="hero-content">
+            <div class="hero-brand">
+                منصة <span class="accent">احجزلى</span>
+            </div>
+            
+            <h1 class="hero-headline">
+                <span class="part-1">حدد موقعك</span>
+                <span class="dots">...</span>
+                <span class="part-2">وانطلق نحو التفوق</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                ابحث عن أفضل المعلمين في منطقتك بالـ GPS، <span class="highlight">واستعد لرحلة تعليمية استثنائية</span>
+            </p>
+        </div>
+    </section>
+
+    <!-- ✅ قسم البطاقات -->
+    <section class="cards-section">
+        <div class="container mx-auto max-w-5xl">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
+                
+                <!-- ✅ كارت المعلم مع صورة teacher.png -->
+                <a href="./mester.html" class="portal-card card-teacher">
+                    <div class="card-image-box">
+                        <img src="./teacher.png" alt="صورة المعلم">
+                    </div>
+                    <div class="card-text">
+                        <h2>بوابة المعلم</h2>
+                        <p>أنشئ مجموعاتك، حدد مواعيدك، وتابع الحضور والمدفوعات لطلابك بسهولة.</p>
+                        <div class="btn-go">
+                            دخول المعلمين <span>➔</span>
+                        </div>
+                    </div>
+                </a>
+
+                <!-- ✅ كارت الطالب مع صورة student.png -->
+                <a href="./talep.html" class="portal-card card-student">
+                    <div class="card-image-box">
+                        <img src="./student.png" alt="صورة الطالب">
+                    </div>
+                    <div class="card-text">
+                        <h2>بوابة الطالب</h2>
+                        <p>ابحث عن أفضل المعلمين في منطقتك، واحجز مكانك بضغطة زر.</p>
+                        <div class="btn-go">
+                            دخول الطلاب <span>➔</span>
+                        </div>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- الفوتر -->
+    <footer class="py-6 text-center text-slate-400 font-bold text-sm">
+        <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
+    </footer>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('SW registered'))
+                    .catch((e) => console.log('SW failed:', e));
+            });
+        }
+    </script>
+</body>
+</html>

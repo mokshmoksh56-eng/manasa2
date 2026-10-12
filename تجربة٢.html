@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة المستر - إعداد الجداول | azemaa proo</title>
+    
+    <meta name="theme-color" content="#6e8efb">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root { 
+            --bg-main: #000000; 
+            --card-bg: #1e293b; 
+            --text-color: #f1f5f9; 
+            --header-grad: linear-gradient(135deg, #8ba4f9 0%, #6e8efb 50%, #a777e3 100%); 
+            --cloud-blue: #00a8ff; 
+            --card-radius: 15px; 
+        }
+        
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, 'Cairo', sans-serif;
+        }
+        
+        body { 
+            margin: 0; 
+            padding: 10px; 
+            background: var(--bg-main); 
+            color: var(--text-color); 
+            transition: 0.3s; 
+            -webkit-tap-highlight-color: transparent; 
+            min-height: 100vh;
+        }
+
+        /* ========== الهيدر الناعم ========== */
+        .header-soft { 
+            position: relative; 
+            background: var(--header-grad); 
+            color: #fff; 
+            padding: 20px 15px; 
+            border-radius: var(--card-radius); 
+            display: flex; 
+            flex-direction: column;
+            justify-content: center; 
+            align-items: center; 
+            margin-bottom: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); 
+            user-select: none;
+            gap: 10px;
+        }
+        
+        .header-soft h1 { 
+            font-size: 18px; 
+            font-weight: bold; 
+            margin: 0;
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 8px; 
+            flex-wrap: wrap; 
+            text-align: center;
+        }
+
+        .header-actions {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            gap: 6px;
+            z-index: 5;
+        }
+
+        .header-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .header-btn:hover { background: rgba(255,255,255,0.35); }
+
+        .schedule-badge-header {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        /* ========== شريط المعلومات ========== */
+        .info-bar {
+            background: var(--card-bg);
+            border: 2px solid #334155;
+            border-radius: var(--card-radius);
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .info-bar-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            font-weight: bold;
+            color: #94a3b8;
+        }
+
+        .info-bar-text .highlight {
+            color: var(--cloud-blue);
+        }
+
+        /* ========== شبكة المربعات بالمعاينة المصغرة ========== */
+        .cards-container { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 15px; 
+        }
+        
+        .card { 
+            background: var(--card-bg); 
+            border-radius: var(--card-radius); 
+            position: relative; 
+            border: 2px solid #334155; 
+            text-decoration: none; 
+            color: var(--text-color);
+            aspect-ratio: 1 / 1; 
+            transition: all 0.3s ease;
+            cursor: pointer;
+            overflow: hidden; 
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 168, 255, 0.2);
+            border-color: var(--cloud-blue);
+        }
+
+        .card iframe {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300%; 
+            height: 300%;
+            transform: scale(0.3333); 
+            transform-origin: top right;
+            border: none;
+            pointer-events: none; 
+            z-index: 1;
+            background: #fff;
+        }
+
+        /* === لون الطبقة الشفافة ثابت === */
+        .card-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(30, 41, 59, 0.85); /* لون داكن ثابت */
+            z-index: 2; 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover .card-overlay { background: rgba(30, 41, 59, 0.5); }
+
+        /* === دائرة الرقم === */
+        .card-icon {
+            font-size: 22px;
+            font-weight: 900;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #334155; /* لون رصاصي افتراضي */
+            color: #fff;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            transition: all 0.3s ease;
+        }
+
+        /* تلوين الرقم فقط حسب الحالة */
+        .card.status-completed .card-icon { 
+            background: #10b981; /* أخضر */
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.6); 
+        }
+        .card.status-warning .card-icon { background: #f59e0b; /* برتقالي */ }
+        .card.status-empty .card-icon { background: #ef4444; /* أحمر */ }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: bold;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+
+        /* شارة التنبيه على الكارت من الخارج */
+        .completion-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            right: 8px;
+            text-align: center;
+            padding: 4px 6px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+            z-index: 5;
+            color: #fff;
+            transition: all 0.3s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            background: #334155; 
+        }
+
+        .card.status-completed .completion-badge { background: #10b981; }
+        .card.status-warning .completion-badge { background: #f59e0b; color: #fff; }
+        .card.status-empty .completion-badge { background: #ef4444; }
+
+        /* ========== الفوتر ========== */
+        .footer-actions {
+            margin-top: 25px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .footer-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: none;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .footer-btn-primary { background: var(--header-grad); color: #fff; }
+        .footer-btn-secondary { background: #334155; color: #cbd5e1; }
+
+        /* ========== التوست ========== */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--header-grad);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            z-index: 100000;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            opacity: 0;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+
+<header class="header-soft">
+    <div class="header-actions">
+        <button class="header-btn" onclick="window.location.href='index.html'">🏠</button>
+    </div>
+    <h1 id="page-header-title">
+        <span>منصة المستر - إعداد الجداول</span>
+        <span class="schedule-badge-header" id="headerScheduleBadge" style="display:none;">📋 جدول رقم 1</span>
+    </h1>
+</header>
+
+<div class="info-bar">
+    <div class="info-bar-text">
+        <span>📋</span>
+        <span>أنت في</span>
+        <span class="highlight" id="activeScheduleInfo">وضع الإعداد</span>
+    </div>
+    <div class="info-bar-text">
+        <span>💡</span>
+        <span>اضغط على المربع للانتقال للخطوة</span>
+    </div>
+</div>
+
+<!-- المربعات مع معاينة الصفحات الداخلية -->
+<div class="cards-container">
+    <a href="mester1.html" class="card" id="card-mester1">
+        <iframe src="mester1.html" tabindex="-1"></iframe>
+        <div class="card-overlay">
+            <div class="completion-badge" id="badge-mester1">جاري الفحص...</div>
+            <div class="card-icon">1</div> <!-- تم تغيير الإيموجي لرقم داخل دائرة -->
+            <div class="card-title">الخطوة الأولى</div>
+        </div>
+    </a>
+    
+    <a href="mester2.html" class="card" id="card-mester2">
+        <iframe src="mester2.html" tabindex="-1"></iframe>
+        <div class="card-overlay">
+            <div class="card-icon">2</div>
+            <div class="card-title">الخطوة الثانية</div>
+        </div>
+    </a>
+    
+    <a href="mester3.html" class="card" id="card-mester3">
+        <iframe src="mester3.html" tabindex="-1"></iframe>
+        <div class="card-overlay">
+            <div class="card-icon">3</div>
+            <div class="card-title">الخطوة الثالثة</div>
+        </div>
+    </a>
+</div>
+
+<div class="footer-actions">
+    <button class="footer-btn footer-btn-primary" onclick="openAllSequentially()">
+        <span>🚀</span>
+        <span>فتح جميع الخطوات في نوافذ جديدة</span>
+    </button>
+    <button class="footer-btn footer-btn-secondary" onclick="clearAllData()">
+        <span>🗑</span>
+        <span>مسح البيانات المحفوظة</span>
+    </button>
+</div>
+
+<div class="toast" id="toast">
+    <span>✅</span>
+    <span id="toastMessage">تم الحفظ</span>
+</div>
+
+<script>
+    // ==========================================
+    // 📋 معلومات الجدول والوظائف الأساسية
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+        updateActiveScheduleInfo();
+        checkMester1Status(); 
+    });
+
+    // يتم الفحص كل ثانية لكي تتحدث الحالة فوراً إذا تم التعديل
+    setInterval(checkMester1Status, 1000);
+
+    // ==========================================
+    // 🔍 دالة فحص اكتمال الخطوة الأولى (8 خانات)
+    // ==========================================
+    function checkMester1Status() {
+        try {
+            const rawData = localStorage.getItem('schedule_fixed_data');
+            let filledCount = 0;
+            const totalFields = 8;
+            
+            if (rawData) {
+                const data = JSON.parse(rawData);
+                
+                // فحص الخانات الثمانية بالترتيب
+                if (data.groupName && data.groupName.trim() !== '') filledCount++;
+                if (data.centerName && data.centerName.trim() !== '') filledCount++;
+                if (data.teacherName && data.teacherName.trim() !== '') filledCount++;
+                if (data.studentsCount && data.studentsCount > 0) filledCount++;
+                if (data.startTime && data.startTime.trim() !== '') filledCount++;
+                if (data.endTime && data.endTime.trim() !== '') filledCount++;
+                if (data.genderAllowed && data.genderAllowed.trim() !== '') filledCount++;
+                if (data.location && data.location.trim() !== '') filledCount++;
+            }
+
+            const card = document.getElementById('card-mester1');
+            const badge = document.getElementById('badge-mester1');
+
+            if (!card || !badge) return;
+
+            // تنظيف الحالات القديمة
+            card.classList.remove('status-completed', 'status-warning', 'status-empty');
+
+            // تطبيق الحالة الجديدة (ستؤثر على الرقم والشريط العلوي فقط)
+            if (filledCount === totalFields) {
+                card.classList.add('status-completed');
+                badge.textContent = `✅ مكتمل إجبارياً (${totalFields}/${totalFields})`;
+            } else if (filledCount > 0) {
+                card.classList.add('status-warning');
+                badge.textContent = `⚠️ ناقص (${filledCount}/${totalFields})`;
+            } else {
+                card.classList.add('status-empty');
+                badge.textContent = `❌ لم يتم إدخال بيانات`;
+            }
+        } catch (e) {
+            console.error('خطأ أثناء فحص البيانات:', e);
+        }
+    }
+
+    function updateActiveScheduleInfo() {
+        const activeId = localStorage.getItem('active_schedule_id');
+        const schedulesRaw = localStorage.getItem('teacher_schedules_list');
+        
+        if (activeId && schedulesRaw) {
+            try {
+                const schedules = JSON.parse(schedulesRaw);
+                const activeSch = schedules.find(s => s.id === activeId);
+                if (activeSch) {
+                    const infoEl = document.getElementById('activeScheduleInfo');
+                    if (infoEl) infoEl.textContent = `جدول رقم ${activeSch.number}`;
+                    
+                    const headerBadge = document.getElementById('headerScheduleBadge');
+                    if (headerBadge) {
+                        headerBadge.textContent = `📋 جدول رقم ${activeSch.number}`;
+                        headerBadge.style.display = 'inline-flex';
+                    }
+                    document.title = `منصة المستر - جدول رقم ${activeSch.number}`;
+                }
+            } catch(e) {}
+        }
+    }
+
+    function openAllSequentially() {
+        const urls = ['mester1.html', 'mester2.html', 'mester3.html'];
+        if (confirm('سيتم فتح 3 صفحات جديدة بالترتيب. هل أنت متأكد؟')) {
+            urls.forEach((url, index) => {
+                setTimeout(() => { window.open(url, '_blank'); }, index * 300);
+            });
+            showToast('تم فتح جميع الصفحات');
+        }
+    }
+
+    function clearAllData() {
+        if (confirm('⚠️ سيتم مسح جميع البيانات المحفوظة:\n\n• بيانات المجموعة\n• المواد المختارة\n• المواعيد\n\nهل أنت متأكد؟')) {
+            const keysToRemove = ['schedule_fixed_data','schedule_subjects','local_groups_storage','active_schedule_id','teacher_schedules_list'];
+            keysToRemove.forEach(key => localStorage.removeItem(key));
+            showToast('تم مسح جميع البيانات');
+            setTimeout(() => { location.reload(); }, 1500);
+        }
+    }
+
+    let toastTimer = null;
+    function showToast(message) {
+        const toast = document.getElementById('toast');
+        const msgEl = document.getElementById('toastMessage');
+        msgEl.textContent = message; toast.classList.add('show');
+        clearTimeout(toastTimer);
+        toastTimer = setTimeout(() => { toast.classList.remove('show'); }, 2500);
+    }
+
+    (function initClickSound() {
+        let audioCtx = null;
+        let lastClickTime = 0;
+        function getCtx() {
+            if (!audioCtx) { try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) { return null; } }
+            if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+            return audioCtx;
+        }
+        function playClick() {
+            const nowTime = Date.now();
+            if (nowTime - lastClickTime < 150) return;
+            lastClickTime = nowTime;
+            const ctx = getCtx();
+            if (!ctx) return;
+            try {
+                const now = ctx.currentTime; const osc = ctx.createOscillator(); const gain = ctx.createGain();
+                osc.connect(gain); gain.connect(ctx.destination);
+                osc.frequency.value = 880; gain.gain.value = 0.12; osc.type = 'sine';
+                osc.start(now); gain.gain.exponentialRampToValueAtTime(0.00001, now + 0.12); osc.stop(now + 0.12);
+            } catch(e) {}
+        }
+        document.addEventListener('click', (e) => {
+            if (e.target.closest('button') || e.target.closest('.footer-btn') || e.target.closest('.header-btn') || e.target.closest('.card')) { playClick(); }
+        }, { passive: true });
+        document.addEventListener('touchstart', () => getCtx(), { once: true, passive: true });
+    })();
+</script>
+
+</body>
+</html>
