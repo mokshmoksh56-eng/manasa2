@@ -20,7 +20,7 @@
 
         .edit-alert {
             background: linear-gradient(135deg, #F59E0B, #D97706);
-            color: #fff; text-align: center; padding: 12px 15px; font-size: 15px; font-weight: 800;
+            color: #fff; text-align: center; padding: 12px 15px; font-size: 15px; font-weight: 900;
             position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
             display: flex; align-items: center; justify-content: center; gap: 8px;
             animation: slideDown 0.4s ease-out;
@@ -56,7 +56,7 @@
         }
         .step-indicator.active .step-dot { background: #0F2D5C; color: #fff; transform: scale(1.1); box-shadow: 0 5px 15px rgba(15, 45, 92, 0.3); }
         .step-indicator.completed .step-dot { background: #10B981; color: #fff; }
-        .step-label { font-size: 11px; font-weight: 800; color: #64748B; }
+        .step-label { font-size: 12px; font-weight: 900; color: #64748B; }
         .step-indicator.active .step-label { color: #0F2D5C; }
         .progress-line {
             position: absolute; top: 32px; left: 40px; right: 40px; height: 3px; background: #E2E8F0; z-index: 1;
@@ -79,10 +79,10 @@
         }
         
         .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 13px; font-weight: 800; color: #1E293B; margin-bottom: 6px; }
+        .form-group label { display: block; font-size: 14px; font-weight: 900; color: #1E293B; margin-bottom: 6px; }
         .form-control {
             width: 100%; padding: 12px; border: 1px solid #E2E8F0; border-radius: 10px; font-size: 14px;
-            font-weight: 700; transition: all 0.3s; outline: none; background: #F8FAFC;
+            font-weight: 800; transition: all 0.3s; outline: none; background: #F8FAFC;
         }
         .form-control:focus { border-color: var(--c-main); background: #fff; box-shadow: 0 0 0 3px var(--c-light); }
         
@@ -93,7 +93,7 @@
         .radio-grid label {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 15px 5px; border: 2px solid #E2E8F0; border-radius: 12px; cursor: pointer;
-            font-size: 12px; font-weight: 800; transition: all 0.2s; text-align: center;
+            font-size: 13px; font-weight: 900; transition: all 0.2s; text-align: center;
         }
         .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
         .radio-grid input:checked + label {
@@ -105,7 +105,7 @@
         .days-grid label, .months-grid label {
             display: flex; align-items: center; justify-content: center;
             padding: 10px; border: 2px solid #E2E8F0; border-radius: 10px; cursor: pointer;
-            font-size: 12px; font-weight: 800; transition: all 0.2s; background: #F8FAFC; color: #475569;
+            font-size: 13px; font-weight: 800; transition: all 0.2s; background: #F8FAFC; color: #475569;
         }
         .days-grid input:checked + label, .months-grid input:checked + label {
             border-color: var(--c-main); background: var(--c-light); color: var(--c-dark); font-weight: 900;
@@ -143,6 +143,7 @@
             padding: 5px 0;
             font-family: 'Share Tech Mono', monospace; 
             font-size: 26px;
+            font-weight: bold;
             color: #00ffcc; 
             text-shadow: 0 0 10px rgba(0, 255, 204, 0.8), 0 0 20px rgba(0, 255, 204, 0.4);
             text-align: center; text-align-last: center;
@@ -157,11 +158,13 @@
             font-family: 'Cairo', sans-serif;
             text-shadow: none;
             font-size: 16px;
+            font-weight: 800;
         }
 
         .time-colon {
             font-family: 'Share Tech Mono', monospace;
             font-size: 26px;
+            font-weight: bold;
             color: #00ffcc;
             text-shadow: 0 0 10px rgba(0, 255, 204, 0.8);
             padding-bottom: 4px;
@@ -178,12 +181,12 @@
             width: 25%;
         }
         .ampm-unit:focus { border-color: #f59e0b; }
-        .ampm-unit option { color: #f59e0b; }
+        .ampm-unit option { color: #f59e0b; font-weight: 900; }
 
         .subject-chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
         .chip {
             background: var(--c-light); color: var(--c-dark); padding: 6px 12px; border-radius: 20px;
-            font-size: 12px; font-weight: 800; border: 1px solid var(--c-border); display: flex; align-items: center; gap: 8px;
+            font-size: 13px; font-weight: 900; border: 1px solid var(--c-border); display: flex; align-items: center; gap: 8px;
         }
         .chip span { cursor: pointer; color: #EF4444; }
 
@@ -203,7 +206,7 @@
         .locate-success-msg {
             position: absolute; bottom: 20px; left: 70px; z-index: 400;
             background: #10B981; color: #fff; padding: 6px 14px; border-radius: 8px;
-            font-size: 12px; font-weight: 800; opacity: 0; visibility: hidden; pointer-events: none;
+            font-size: 13px; font-weight: 900; opacity: 0; visibility: hidden; pointer-events: none;
             transform: translateX(-15px); transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
             display: flex; align-items: center; gap: 5px;
@@ -214,7 +217,7 @@
 
         .nav-buttons { display: flex; gap: 10px; margin-top: 20px; }
         .btn-next, .btn-prev {
-            flex: 1; padding: 14px; border-radius: 12px; font-size: 15px; font-weight: 900;
+            flex: 1; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 900;
             display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; border: none; transition: all 0.2s;
         }
         .btn-next { background: linear-gradient(135deg, var(--c-main), var(--c-dark)); color: #fff; }
@@ -253,25 +256,85 @@
         }
 
         .success-modal h3 { font-size: 22px; font-weight: 900; color: #1E293B; margin-bottom: 8px; }
-        .success-modal p { font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 0; }
-        .loader-dots { margin-top: 15px; font-size: 24px; color: #10B981; letter-spacing: 2px; animation: dotsPulse 1.5s infinite; }
+        .success-modal p { font-size: 14px; font-weight: 900; color: #64748B; margin-bottom: 0; }
+        .loader-dots { margin-top: 15px; font-size: 24px; color: #10B981; font-weight: 900; letter-spacing: 2px; animation: dotsPulse 1.5s infinite; }
 
         /* ✅ نافذة الخطأ/التعارض */
         .error-icon { background: #FEE2E2; color: #EF4444; }
         .error-modal h3 { color: #991B1B; }
-        .error-modal p { color: #475569; font-size: 14px; line-height: 1.6; margin-bottom: 20px; }
+        .error-modal p { color: #475569; font-size: 14px; font-weight: 900; line-height: 1.6; margin-bottom: 20px; }
         .btn-close-error {
             background: #EF4444; color: #fff; border: none; padding: 10px 25px; border-radius: 12px;
             font-size: 15px; font-weight: 900; cursor: pointer; transition: all 0.2s; width: 100%;
         }
         .btn-close-error:hover { background: #DC2626; transform: translateY(-2px); }
 
-        @media (max-width: 600px) {
-            .grid-2 { grid-template-columns: 1fr; }
-            .radio-grid label { padding: 10px 2px; font-size: 11px; }
-            .days-grid, .months-grid { grid-template-columns: repeat(3, 1fr); }
-            .time-unit { font-size: 22px; }
-            .locate-success-msg { font-size: 11px; left: 65px; padding: 5px 10px; }
+
+        /* ========================================= */
+        /* ✅ التوافق مع شاشات الموبايل (Responsive) */
+        /* ========================================= */
+        @media (max-width: 768px) {
+            .hero-brand { font-size: 30px; }
+            .hero-headline { font-size: 18px; }
+            .smart-card { padding: 15px; }
+        }
+
+        @media (max-width: 480px) {
+            .hero-banner { min-height: 200px; padding: 15px 10px; }
+            .hero-brand { font-size: 26px; }
+            .hero-headline { font-size: 16px; margin-top: 5px; }
+            
+            .wizard-progress { padding: 10px 15px; margin: -20px auto 15px; }
+            .step-dot { width: 30px; height: 30px; font-size: 13px; }
+            .step-label { font-size: 10px; }
+            .progress-line { top: 25px; left: 30px; right: 30px; }
+
+            .grid-2 { grid-template-columns: 1fr; gap: 10px; }
+            
+            .form-group label { font-size: 12px; }
+            .form-control { padding: 10px; font-size: 13px; }
+
+            .radio-grid label { padding: 10px 2px; font-size: 11px; border-radius: 8px; }
+            .radio-grid label i { font-size: 20px; }
+            
+            .days-grid, .months-grid { grid-template-columns: repeat(3, 1fr); gap: 5px; }
+            .days-grid label, .months-grid label { padding: 8px; font-size: 11px; border-radius: 8px; }
+
+            /* تصغير الساعة الرقمية للشاشات الصغيرة */
+            .realistic-clock-wrapper { padding: 8px 5px; gap: 2px; }
+            .time-unit { font-size: 20px; padding: 3px 0; border-radius: 4px; }
+            .time-colon { font-size: 20px; }
+            .ampm-unit { font-size: 13px; }
+
+            #map { height: 200px; }
+            .locate-btn { width: 38px; height: 38px; bottom: 10px; left: 10px; }
+            .locate-btn svg { width: 18px; height: 18px; }
+            .locate-success-msg { font-size: 11px; left: 55px; bottom: 15px; padding: 5px 10px; }
+
+            .btn-next, .btn-prev { padding: 12px; font-size: 14px; }
+            .success-modal { padding: 25px 15px; width: 95%; }
+            .success-modal h3 { font-size: 18px; }
+            .success-modal p { font-size: 12px; }
+            .success-icon { width: 60px; height: 60px; }
+            .success-icon svg { width: 30px; height: 30px; }
+        }
+
+        /* ✅ الموبايلات الصغيرة جداً (iPhone SE) */
+        @media (max-width: 360px) {
+            .hero-brand { font-size: 22px; }
+            .hero-headline { font-size: 14px; }
+            .step-dot { width: 25px; height: 25px; font-size: 12px; }
+            .step-label { font-size: 9px; }
+            .progress-line { top: 22px; }
+            
+            .form-control { font-size: 12px; padding: 8px; }
+            .form-group label { font-size: 11px; }
+
+            .time-unit { font-size: 16px; }
+            .time-colon { font-size: 16px; }
+            .ampm-unit { font-size: 11px; }
+            
+            .btn-next, .btn-prev { padding: 10px; font-size: 12px; }
         }
     </style>
 </head>
@@ -491,7 +554,7 @@
             <!-- ✅ خيار تكرار الحصة أسبوعياً -->
             <div class="form-group" style="background: #F0FDF8; padding: 12px; border-radius: 10px; border: 1.5px solid #A7F3D0; display: flex; align-items: center; gap: 12px;">
                 <input type="checkbox" id="g_repeat_weekly" style="width: 22px; height: 22px; accent-color: var(--c-main); cursor: pointer;">
-                <label for="g_repeat_weekly" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 800; color: #064E3B;">
+                <label for="g_repeat_weekly" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #064E3B;">
                     🔄 تكرار الحصة تلقائياً كل أسبوع (في نفس المواعيد والأيام المحددة)
                 </label>
             </div>
