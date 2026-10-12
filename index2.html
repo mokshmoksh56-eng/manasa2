@@ -47,7 +47,7 @@
             flex-direction: column;
             justify-content: center; 
             align-items: center; 
-            margin-bottom: 12px;
+            margin-bottom: 20px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15); 
             user-select: none;
             gap: 10px;
@@ -98,46 +98,11 @@
             white-space: nowrap;
         }
 
-        /* ========== شريط المعلومات ========== */
-        .info-bar {
-            background: var(--card-bg);
-            border: 2px solid #334155;
-            border-radius: var(--card-radius);
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .info-bar-text {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 13px;
-            font-weight: bold;
-            color: #94a3b8;
-        }
-
-        .info-bar-text .highlight {
-            color: var(--cloud-blue);
-        }
-
         /* ========== شبكة المربعات ========== */
         .cards-container { 
             display: grid; 
-            /* الموبايل: عمودين */
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; 
-        }
-
-        /* الشاشات المتوسطة والكبيرة: 3 أعمدة لتكون الملفات الثلاثة بجوار بعضها */
-        @media (min-width: 768px) {
-            .cards-container { 
-                grid-template-columns: repeat(3, 1fr); 
-            }
+            grid-template-columns: repeat(3, 1fr); /* 3 كروت بجوار بعضها دائمًا */
+            gap: 12px; 
         }
         
         .card { 
@@ -147,7 +112,7 @@
             border: 2px solid #334155; 
             text-decoration: none; 
             color: var(--text-color);
-            aspect-ratio: 1 / 1; 
+            aspect-ratio: 2 / 3; /* يجعل الكروت الثلاثة الأولى طويلة (شكل طولي) */
             transition: all 0.3s ease;
             overflow: hidden; 
         }
@@ -155,13 +120,13 @@
         /* تخصيص كارت التقرير ليكون عريضاً بالأسفل */
         #card-mester4 {
             grid-column: 1 / -1; /* يمتد ليشمل كل الأعمدة في الصف */
-            aspect-ratio: auto; /* يلغي شرط المربع */
-            height: 180px; /* ارتفاع مناسب */
+            aspect-ratio: auto; /* يلغي شرط الطول المطبق على الكروت السابقة */
+            height: 200px; /* ارتفاع مناسب للشاشات الصغيرة */
         }
 
         @media (min-width: 768px) {
             #card-mester4 {
-                height: 220px; /* يزيد الارتفاع قليلاً في الشاشات الكبيرة */
+                height: 240px; /* يزيد الارتفاع قليلاً في الشاشات الكبيرة */
             }
         }
 
@@ -272,33 +237,6 @@
             background: rgba(0, 0, 0, 0); /* شفافة تماماً */
             -webkit-tap-highlight-color: transparent;
         }
-
-        /* ========== الفوتر ========== */
-        .footer-actions {
-            margin-top: 25px;
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .footer-btn {
-            flex: 1;
-            min-width: 140px;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: none;
-            font-size: 13px;
-            font-weight: bold;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-
-        .footer-btn-primary { background: var(--header-grad); color: #fff; }
-        .footer-btn-secondary { background: #334155; color: #cbd5e1; }
     </style>
 </head>
 <body>
@@ -314,18 +252,6 @@
     </h1>
 </header>
 
-<div class="info-bar">
-    <div class="info-bar-text">
-        <span>📋</span>
-        <span>أنت في</span>
-        <span class="highlight" id="activeScheduleInfo">وضع الإعداد</span>
-    </div>
-    <div class="info-bar-text">
-        <span>💡</span>
-        <span>اضغط على المربع للانتقال للخطوة</span>
-    </div>
-</div>
-
 <div class="cards-container">
     <!-- كارت الخطوة الأولى -->
     <div class="card" id="card-mester1">
@@ -333,7 +259,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester1">جاري الفحص...</div>
             <div class="card-icon">1</div>
-            <div class="card-title">الخطوة الأولى (البيانات)</div>
+            <div class="card-title">البيانات</div>
         </div>
         <!-- الطبقة الشفافة كـ رابط مباشر -->
         <a href="mester1.html" class="click-layer"></a>
@@ -345,7 +271,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester2">جاري الفحص...</div>
             <div class="card-icon">2</div>
-            <div class="card-title">الخطوة الثانية (المواد)</div>
+            <div class="card-title">المواد</div>
         </div>
         <!-- الطبقة الشفافة كـ رابط مباشر -->
         <a href="mester2.html" class="click-layer"></a>
@@ -357,7 +283,7 @@
         <div class="card-overlay">
             <div class="completion-badge" id="badge-mester3">جاري الفحص...</div>
             <div class="card-icon">3</div>
-            <div class="card-title">الخطوة الثالثة (الموقع)</div>
+            <div class="card-title">الموقع</div>
         </div>
         <!-- الطبقة الشفافة كـ رابط مباشر -->
         <a href="mester3.html" class="click-layer"></a>
@@ -373,17 +299,6 @@
         </div>
         <a href="mester4.html" class="click-layer"></a>
     </div>
-</div>
-
-<div class="footer-actions">
-    <button class="footer-btn footer-btn-primary" onclick="openAllSequentially()">
-        <span>🚀</span>
-        <span>فتح جميع الخطوات في نوافذ جديدة</span>
-    </button>
-    <button class="footer-btn footer-btn-secondary" onclick="clearAllData()">
-        <span>🗑</span>
-        <span>مسح البيانات المحفوظة</span>
-    </button>
 </div>
 
 <script>
@@ -548,8 +463,6 @@
                 const schedules = JSON.parse(schedulesRaw);
                 const activeSch = schedules.find(s => s.id === activeId);
                 if (activeSch) {
-                    const infoEl = document.getElementById('activeScheduleInfo');
-                    if (infoEl) infoEl.textContent = `جدول رقم ${activeSch.number}`;
                     const headerBadge = document.getElementById('headerScheduleBadge');
                     if (headerBadge) {
                         headerBadge.textContent = `📋 جدول رقم ${activeSch.number}`;
@@ -559,28 +472,6 @@
                 }
             } catch(e) {}
         }
-    }
-    
-    function clearAllData() {
-        if (confirm('⚠️ سيتم مسح جميع البيانات المحفوظة:\n\n• بيانات المجموعة\n• المواد المختارة\n• المواعيد\n• الموقع\n\nهل أنت متأكد؟')) {
-            const keysToRemove = [
-                'schedule_fixed_data',
-                'schedule_subjects',
-                'selected_location_data',
-                'local_groups_storage',
-                'active_schedule_id',
-                'teacher_schedules_list'
-            ];
-            keysToRemove.forEach(key => localStorage.removeItem(key));
-            setTimeout(() => { location.reload(); }, 500);
-        }
-    }
-
-    function openAllSequentially() {
-        window.open('mester1.html', '_blank');
-        setTimeout(() => window.open('mester2.html', '_blank'), 500);
-        setTimeout(() => window.open('mester3.html', '_blank'), 1000);
-        setTimeout(() => window.open('mester4.html', '_blank'), 1500);
     }
 </script>
 </body>
