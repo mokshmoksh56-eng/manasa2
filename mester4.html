@@ -1,982 +1,311 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, viewport-fit=cover">
-<title>تحديد الموقع الجغرافي - الخريطة التفاعلية</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
-<style>
-    :root {
-        --primary-teal: #25968b;
-        --dark-teal: #1b736a;
-        --light-teal: #e0f2f0;
-        --border-teal: #b2dfdb;
-        --bg-color: #f7f9fa;
-        --text-dark: #2c3e50;
-        --text-gray: #64748b;
-        --white: #ffffff;
-    }
-
-    * { 
-        box-sizing: border-box; 
-        margin: 0; 
-        padding: 0; 
-        font-family: 'Cairo', sans-serif; 
-        font-weight: 700; 
-        -webkit-tap-highlight-color: transparent;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>تقرير الدرس - جاهز للنشر</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
-    html, body {
-        overflow-x: hidden;
-        width: 100%;
-    }
-    
-    body { 
-        background: var(--bg-color); 
-        padding: 20px 12px 50px; 
-        color: var(--text-dark);
-        font-size: 14px;
-        min-height: 100vh;
-    }
+    <!-- Leaflet CSS للخريطة -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
-    /* ========== الهيدر ========== */
-    .page-header {
-        background: linear-gradient(135deg, #25968b, #1b736a);
-        color: #fff;
-        padding: 16px 18px;
-        border-radius: 14px;
-        margin-bottom: 16px;
-        box-shadow: 0 8px 25px -8px rgba(37, 150, 139, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-    }
-
-    .page-header h1 {
-        font-size: 17px;
-        font-weight: 900;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        margin: 0;
-    }
-
-    .page-header .subtitle {
-        font-size: 11.5px;
-        opacity: 0.9;
-        font-weight: 700;
-        margin-top: 3px;
-    }
-
-    .header-btn {
-        background: rgba(255,255,255,0.2);
-        border: none;
-        color: #fff;
-        padding: 8px 14px;
-        border-radius: 10px;
-        font-family: 'Cairo', sans-serif;
-        font-size: 12px;
-        font-weight: 900;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-        transition: all 0.2s;
-        white-space: nowrap;
-    }
-
-    .header-btn:hover {
-        background: rgba(255,255,255,0.35);
-    }
-
-    /* ========== الحاوية الرئيسية ========== */
-    .main-container {
-        width: 100%;
-        max-width: 900px;
-        margin: 0 auto;
-    }
-
-    .map-card {
-        background: var(--white);
-        border-radius: 14px;
-        padding: 16px 14px;
-        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
-        border-top: 4px solid var(--primary-teal);
-        margin-bottom: 16px;
-    }
-
-    .section-title {
-        font-size: 14.5px;
-        font-weight: 900;
-        color: var(--dark-teal);
-        margin-bottom: 12px;
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        border-bottom: 2px dashed #e2e8f0;
-        padding-bottom: 10px;
-        flex-wrap: wrap;
-    }
-
-    .section-title .badge {
-        background: linear-gradient(135deg, #F59E0B, #D97706);
-        color: #fff;
-        padding: 3px 10px;
-        border-radius: 20px;
-        font-size: 10px;
-        font-weight: 900;
-    }
-
-    /* ========== الخريطة ========== */
-    #map-container { 
-        width: 100%; 
-        height: 320px; 
-        border-radius: 12px; 
-        overflow: hidden; 
-        border: 2px solid #e2e8f0; 
-        position: relative; 
-        margin-bottom: 12px; 
-        z-index: 1; 
-        box-shadow: inset 0 5px 15px rgba(0,0,0,0.08);
-    }
-    
-    #map { 
-        width: 100%; 
-        height: 100%; 
-    }
-
-    .map-overlay-hint {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(255, 255, 255, 0.95);
-        padding: 12px 20px;
-        border-radius: 12px;
-        font-size: 12.5px;
-        font-weight: 900;
-        color: #25968b;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-        z-index: 500;
-        pointer-events: none;
-        text-align: center;
-        line-height: 1.6;
-    }
-
-    /* ========== زر GPS ========== */
-    .btn-gps { 
-        background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
-        color: var(--white); 
-        border: none; 
-        padding: 14px 18px; 
-        border-radius: 12px; 
-        font-weight: 900; 
-        font-size: 14px; 
-        cursor: pointer; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-        gap: 8px;
-        font-family: 'Cairo', sans-serif; 
-        width: 100%; 
-        white-space: nowrap;
-        box-shadow: 0 6px 18px -4px rgba(37, 150, 139, 0.5);
-        transition: all 0.25s ease;
-    }
-
-    .btn-gps:hover { 
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -4px rgba(37, 150, 139, 0.7);
-    }
-
-    .btn-gps:active { 
-        transform: scale(0.98); 
-    }
-
-    .btn-gps:disabled { 
-        opacity: 0.8; 
-        cursor: not-allowed; 
-        transform: none;
-    }
-
-    /* ========== معلومات الموقع ========== */
-    .location-info-box {
-        background: linear-gradient(135deg, #F0F9FF, #E0F2FE);
-        border: 2px solid #0284C7;
-        border-radius: 12px;
-        padding: 14px;
-        margin-top: 14px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .location-info-box::before {
-        content: '';
-        position: absolute;
-        top: 0; right: 0; left: 0;
-        height: 3px;
-        background: linear-gradient(90deg, #0284C7, #0369A1);
-    }
-
-    .location-info-title {
-        font-size: 12px;
-        font-weight: 900;
-        color: #075985;
-        margin-bottom: 8px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-    }
-
-    .location-info-value {
-        font-size: 13.5px;
-        font-weight: 900;
-        color: #075985;
-        background: #fff;
-        padding: 10px 12px;
-        border-radius: 8px;
-        border: 1px solid #BAE6FD;
-        word-break: break-word;
-        line-height: 1.5;
-        text-align: center;
-        min-height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* ========== الإحداثيات ========== */
-    .coords-display {
-        background: #1e293b;
-        color: #00E5FF;
-        padding: 12px 14px;
-        border-radius: 10px;
-        font-family: 'Courier New', monospace;
-        font-size: 12.5px;
-        font-weight: 900;
-        text-align: center;
-        margin-top: 12px;
-        letter-spacing: 0.5px;
-        direction: ltr;
-        word-break: break-all;
-        min-height: 42px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    /* ========== العنوان التفصيلي ========== */
-    .detailed-address-box {
-        background: linear-gradient(160deg, #FFFBEB 0%, #FEF3C7 100%);
-        border: 2px dashed #FCD34D;
-        border-radius: 12px;
-        padding: 14px;
-        margin-top: 14px;
-    }
-
-    .detailed-address-box .label-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        margin-bottom: 10px;
-        font-size: 12.5px;
-        font-weight: 900;
-        color: #92400E;
-        flex-wrap: wrap;
-    }
-
-    .detailed-address-box .label-row .badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 3px;
-        background: linear-gradient(135deg, #F59E0B, #D97706);
-        color: #fff;
-        padding: 3px 8px;
-        border-radius: 6px;
-        font-size: 9.5px;
-        font-weight: 900;
-    }
-
-    .form-control {
-        width: 100%;
-        padding: 12px 14px;
-        border: 1px solid #FCD34D;
-        border-top: 2px solid #F59E0B;
-        border-radius: 10px;
-        font-size: 13.5px;
-        font-family: 'Cairo', sans-serif;
-        font-weight: 800;
-        color: var(--text-dark);
-        background: #fff;
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        outline: none;
-    }
-
-    .form-control:focus {
-        border-color: #F59E0B;
-        box-shadow: 0 8px 15px rgba(245, 158, 11, 0.15), 0 0 0 4px rgba(245, 158, 11, 0.1);
-    }
-
-    .hint-text {
-        font-size: 11px;
-        color: #92400E;
-        margin-top: 8px;
-        font-weight: 700;
-        display: flex;
-        align-items: flex-start;
-        gap: 5px;
-        opacity: 0.85;
-        line-height: 1.5;
-    }
-
-    /* ========== أزرار الإجراءات ========== */
-    .actions-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-        margin-top: 16px;
-    }
-
-    .btn-action {
-        padding: 13px 16px;
-        border-radius: 11px;
-        border: none;
-        font-family: 'Cairo', sans-serif;
-        font-size: 13px;
-        font-weight: 900;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        transition: all 0.2s;
-    }
-
-    .btn-save {
-        background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
-        color: #fff;
-        box-shadow: 0 6px 18px -4px rgba(37, 150, 139, 0.5);
-    }
-
-    .btn-save:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 10px 25px -4px rgba(37, 150, 139, 0.7);
-    }
-
-    .btn-clear {
-        background: #f1f5f9;
-        color: #64748b;
-        border: 1px solid #cbd5e1;
-    }
-
-    .btn-clear:hover {
-        background: #e2e8f0;
-        color: #475569;
-    }
-
-    /* ========== التوست ========== */
-    .toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%) translateY(100px);
-        background: linear-gradient(135deg, var(--primary-teal), var(--dark-teal));
-        color: #fff;
-        padding: 12px 24px;
-        border-radius: 12px;
-        font-size: 13px;
-        font-weight: 900;
-        z-index: 100000;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-        opacity: 0;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .toast.show {
-        transform: translateX(-50%) translateY(0);
-        opacity: 1;
-    }
-
-    /* ========== Responsive ========== */
-    @media (min-width: 480px) {
-        #map-container { 
-            height: 400px; 
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #8b5cf6;
+            --bg-color: #f8fafc;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
         }
-        
-        .page-header h1 {
-            font-size: 20px;
-        }
-    }
 
-    @media (max-width: 359px) {
-        .page-header h1 {
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Cairo', sans-serif;
+            font-weight: 700;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            padding: 20px;
+            color: var(--text-dark);
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+        }
+
+        .report-container {
+            width: 100%;
+            max-width: 500px;
+            background: #ffffff;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(99, 102, 241, 0.15);
+            overflow: hidden;
+            border: 2px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .report-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: #fff;
+            text-align: center;
+            padding: 24px 20px;
+            position: relative;
+        }
+
+        .report-header h1 {
+            font-size: 22px;
+            font-weight: 900;
+            margin-bottom: 5px;
+        }
+
+        .report-header p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .report-content {
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .info-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px;
+            background: #f1f5f9;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .info-icon {
+            font-size: 24px;
+            background: #fff;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            flex-shrink: 0;
+        }
+
+        .info-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            font-weight: 800;
+        }
+
+        .info-value {
+            font-size: 15px;
+            color: var(--text-dark);
+            font-weight: 900;
+        }
+
+        .map-section {
+            padding: 0 20px 20px;
+        }
+
+        .map-title {
             font-size: 14px;
+            font-weight: 900;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-dark);
         }
-        
-        #map-container {
-            height: 260px;
+
+        #static-map {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            z-index: 1;
         }
-        
-        .actions-row {
-            grid-template-columns: 1fr;
+
+        .missing-data {
+            text-align: center;
+            padding: 30px;
+            color: #ef4444;
+            font-weight: 900;
+            font-size: 16px;
         }
-    }
 
-    /* ========== تخصيص Leaflet ========== */
-    .leaflet-control-custom button:hover {
-        background: #f1f5f9 !important;
-    }
+        .btn-publish {
+            margin: 0 20px 20px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: #fff;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 900;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            transition: transform 0.2s;
+        }
 
-    .leaflet-popup-content-wrapper {
-        border-radius: 10px;
-    }
-
-    .leaflet-popup-content {
-        margin: 8px 12px;
-    }
-</style>
+        .btn-publish:hover {
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
 
-<div class="main-container">
-
-    <!-- ========== الهيدر ========== -->
-    <div class="page-header">
-        <div>
-            <h1>
-                <span>🗺️</span>
-                <span>تحديد الموقع الجغرافي</span>
-            </h1>
-            <div class="subtitle">📍 اضغط على الخريطة أو استخدم زر GPS</div>
-        </div>
-        <button class="header-btn" onclick="window.history.back()">
-            <span>↩</span>
-            <span>رجوع</span>
-        </button>
+    <div class="report-container" id="report-container">
+        <!-- سيتم ملء البيانات هنا بواسطة الجافاسكربت -->
     </div>
 
-    <!-- ========== كارت الخريطة ========== -->
-    <div class="map-card">
-        
-        <div class="section-title">
-            <span>📍</span>
-            <span>الموقع الجغرافي</span>
-            <span class="badge">تفاعلي</span>
-        </div>
-
-        <!-- الخريطة -->
-        <div id="map-container">
-            <div id="map"></div>
-            <div class="map-overlay-hint" id="mapOverlayHint">
-                👇 اضغط على "📍 اضغط للتحديد"<br>أو حدد موقعك على الخريطة
-            </div>
-        </div>
-
-        <!-- زر GPS -->
-        <button class="btn-gps" id="custom-gps-btn" type="button" onclick="getLocation(event)">
-            📍 اضغط للتحديد
-        </button>
-
-        <!-- معلومات الموقع -->
-        <div class="location-info-box">
-            <div class="location-info-title">
-                <span>🏠</span>
-                <span>العنوان المكتشف</span>
-            </div>
-            <div class="location-info-value" id="location-text">
-                لم يتم تحديد الموقع بعد
-            </div>
-        </div>
-
-        <!-- الإحداثيات -->
-        <div class="coords-display" id="coords-display">
-            📌 الإحداثيات: --
-        </div>
-
-        <!-- العنوان التفصيلي -->
-        <div class="detailed-address-box">
-            <div class="label-row">
-                <span>🏠</span>
-                <span>العنوان التفصيلي</span>
-                <span class="badge">✨ مهم</span>
-            </div>
-            <input 
-                type="text" 
-                id="detailed-address" 
-                class="form-control" 
-                placeholder="أمام مسجد النور - الدور الثاني - شقة 5"
-                maxlength="150"
-            >
-            <div class="hint-text">
-                <span>💡</span>
-                <span>تفاصيل تساعد الطالب (علامة مميزة، الدور، الشقة...)</span>
-            </div>
-        </div>
-
-        <!-- أزرار الإجراءات -->
-        <div class="actions-row">
-            <button class="btn-action btn-save" onclick="saveLocation()">
-                <span>💾</span>
-                <span>حفظ الموقع</span>
-            </button>
-            <button class="btn-action btn-clear" onclick="clearLocation()">
-                <span>🗑</span>
-                <span>مسح</span>
-            </button>
-        </div>
-
-    </div>
-
-</div>
-
-<!-- ========== التوست ========== -->
-<div class="toast" id="toast">
-    <span>✅</span>
-    <span id="toastMessage">تم الحفظ</span>
-</div>
-
-<script>
-    // ==========================================
-    // 🗺️ متغيرات الخريطة
-    // ==========================================
-    let map, marker;
-    let currentLat = null;
-    let currentLng = null;
-    let currentStreet = '';
-
-    // ==========================================
-    // 🗺️ تهيئة الخريطة
-    // ==========================================
-    function initMap() {
-        // إنشاء الخريطة
-        map = L.map('map', { 
-            zoomControl: true,
-            attributionControl: true
-        }).setView([26.8206, 30.8025], 5.5);
-
-        // إضافة طبقة OpenStreetMap
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap',
-            maxZoom: 19
-        }).addTo(map);
-
-        // زر GPS مخصص
-        const gpsControl = L.control({ position: 'topleft' });
-        gpsControl.onAdd = function(map) {
-            const div = L.DomUtil.create('div', 'leaflet-bar leaflet-control leaflet-control-custom');
-            div.innerHTML = `<button type="button" style="background:#fff; border:none; width:34px; height:34px; cursor:pointer; font-size:17px; border-radius:6px; display:flex; align-items:center; justify-content:center;" title="مكاني" onclick="getLocation(event)">🎯</button>`;
-            return div;
-        };
-        gpsControl.addTo(map);
-
-        // إنشاء الماركر
-        marker = L.marker([26.8206, 30.8025], { 
-            draggable: true,
-            autoPan: true
-        }).addTo(map);
-
-        // حدث الضغط على الخريطة
-        map.on('click', function(e) {
-            const lat = e.latlng.lat;
-            const lng = e.latlng.lng;
-            marker.setLatLng([lat, lng]);
-            updateLocationInput(lat, lng, true);
+    <script>
+        window.addEventListener('DOMContentLoaded', () => {
+            generateReport();
         });
 
-        // حدث سحب الماركر
-        marker.on('dragend', function(e) {
-            const pos = marker.getLatLng();
-            updateLocationInput(pos.lat, pos.lng, true);
-        });
-
-        // فتح popup عند الضغط على الماركر
-        marker.on('click', function(e) {
-            if (currentStreet) {
-                marker.bindPopup(`
-                    <div style='text-align:center; font-family:Cairo; font-weight:900; color:#1b736a; font-size:12px; padding:4px;'>
-                        📍 ${currentStreet}
-                    </div>
-                `).openPopup();
-            }
-        });
-    }
-
-    // ==========================================
-    // 🎯 إخفاء التلميح
-    // ==========================================
-    function hideMapHint() {
-        const hint = document.getElementById('mapOverlayHint');
-        if (hint) {
-            hint.style.transition = 'opacity 0.3s ease';
-            hint.style.opacity = '0';
-            setTimeout(() => {
-                if (hint.parentNode) hint.remove();
-            }, 300);
-        }
-    }
-
-    // ==========================================
-    // 🌍 جلب اسم الشارع من الإحداثيات
-    // ==========================================
-    async function getStreetName(lat, lng) {
-        try {
-            const response = await fetch(
-                `https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=${lat}&lon=${lng}&accept-language=ar`
-            );
-            const data = await response.json();
+        function generateReport() {
+            const container = document.getElementById('report-container');
             
-            if (data && data.address) {
-                const road = data.address.road || 
-                            data.address.pedestrian || 
-                            data.address.footway || 
-                            data.address.path || 
-                            data.address.street || '';
-                const neighbourhood = data.address.neighbourhood || 
-                                     data.address.suburb || 
-                                     data.address.city_district || '';
-                const city = data.address.city || 
-                            data.address.town || 
-                            data.address.village || 
-                            data.address.state || '';
-                
-                const addressParts = [road, neighbourhood, city].filter(Boolean);
-                
-                if (addressParts.length > 0) {
-                    return addressParts.join('، ');
-                }
-                
-                if (data.display_name) {
-                    return data.display_name.split(',').slice(0, 3).join('، ');
-                }
+            // جلب البيانات من الخطوات السابقة
+            const fixedDataRaw = localStorage.getItem('schedule_fixed_data');
+            const subjectsDataRaw = localStorage.getItem('schedule_subjects');
+            const locationDataRaw = localStorage.getItem('selected_location_data');
+
+            if (!fixedDataRaw || !subjectsDataRaw) {
+                container.innerHTML = `
+                    <div class="missing-data">
+                        ⚠️ الرجاء إكمال الخطوة الأولى (البيانات) والثانية (المواد) لرؤية التقرير.
+                    </div>`;
+                return;
             }
-        } catch (err) {
-            console.warn('فشل جلب اسم الشارع:', err);
-        }
-        return '';
-    }
 
-    // ==========================================
-    // 📍 تحديث معلومات الموقع
-    // ==========================================
-    async function updateLocationInput(lat, lng, showPopup = false) {
-        // حفظ الإحداثيات
-        currentLat = lat;
-        currentLng = lng;
+            const fixedData = JSON.parse(fixedDataRaw);
+            const subjectsData = JSON.parse(subjectsDataRaw);
+            const locData = locationDataRaw ? JSON.parse(locationDataRaw) : null;
 
-        // تحديث عرض الإحداثيات
-        const coordsDisplay = document.getElementById('coords-display');
-        coordsDisplay.textContent = `📌 الإحداثيات: ${lat.toFixed(6)}, ${lng.toFixed(6)}`;
+            // تجميع أسماء المواد
+            const subjectNames = subjectsData.map(s => s.subject).join('، ');
+            const stageInfo = subjectsData.length > 0 ? `${subjectsData[0].stageName} - ${subjectsData[0].grade}` : '';
 
-        // تحديث نص الموقع
-        const txt = document.getElementById('location-text');
-        txt.textContent = '⏳ جاري تحديد الشارع...';
-        txt.style.color = '#d97706';
-
-        // إخفاء التلميح
-        hideMapHint();
-
-        // جلب اسم الشارع
-        const street = await getStreetName(lat, lng);
-        currentStreet = street || '';
-
-        // تحديث العرض
-        if (street) {
-            txt.textContent = `📍 ${street}`;
-            txt.style.color = '#075985';
-        } else {
-            txt.textContent = `تم تأكيد: ${lat.toFixed(5)}, ${lng.toFixed(5)}`;
-            txt.style.color = '#075985';
-        }
-
-        // إظهار popup على الماركر
-        if (showPopup) {
-            const popupText = street ? `📍 ${street}` : '✅ تم تأكيد الموقع';
-            marker.bindPopup(`
-                <div style='text-align:center; font-family:Cairo; font-weight:900; color:#1b736a; font-size:12px; padding:4px;'>
-                    ${popupText}
+            // تحويل صيغة الوقت لشكل جميل
+            const startTime = fixedData.startTime || 'غير محدد';
+            const endTime = fixedData.endTime || 'غير محدد';
+            
+            // بناء الواجهة
+            container.innerHTML = `
+                <div class="report-header">
+                    <h1>إعلان موعد الدرس 📢</h1>
+                    <p>أهلاً بكم طلابنا الأعزاء، ننتظركم في الموعد المحدد</p>
                 </div>
-            `).openPopup();
-        }
-    }
 
-    // ==========================================
-    // 📍 تحديد الموقع بواسطة GPS
-    // ==========================================
-    window.getLocation = function(e) {
-        if (e) e.preventDefault();
+                <div class="report-content">
+                    
+                    <div class="info-row">
+                        <div class="info-icon">👨‍🏫</div>
+                        <div class="info-details">
+                            <span class="info-label">المعلم / المجموعة</span>
+                            <span class="info-value">مستر ${fixedData.teacherName || 'غير مسجل'} - ${fixedData.groupName || 'مجموعة'}</span>
+                        </div>
+                    </div>
 
-        const btn = document.getElementById('custom-gps-btn');
-        const textDisplay = document.getElementById('location-text');
-        
-        // بدء العد التنازلي
-        let counter = 3;
-        btn.disabled = true;
-        btn.style.background = 'linear-gradient(135deg, #94a3b8, #64748b)';
-        btn.innerHTML = `⏳ تحديد... ${counter}`;
+                    <div class="info-row">
+                        <div class="info-icon">📚</div>
+                        <div class="info-details">
+                            <span class="info-label">المادة والمرحلة</span>
+                            <span class="info-value">${subjectNames} (${stageInfo})</span>
+                        </div>
+                    </div>
 
-        const countdownInterval = setInterval(() => {
-            counter--;
-            if (counter > 0) {
-                btn.innerHTML = `⏳ تحديد... ${counter}`;
+                    <div class="info-row">
+                        <div class="info-icon">⏰</div>
+                        <div class="info-details">
+                            <span class="info-label">موعد الدرس</span>
+                            <span class="info-value">من ${startTime} إلى ${endTime}</span>
+                        </div>
+                    </div>
+
+                    <div class="info-row">
+                        <div class="info-icon">📍</div>
+                        <div class="info-details">
+                            <span class="info-label">مكان الدرس</span>
+                            <span class="info-value">${fixedData.location || 'السنتر'} ${fixedData.centerName ? `(${fixedData.centerName})` : ''}</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="map-section" id="map-section">
+                    <div class="map-title">🗺️ خريطة الموقع</div>
+                    <div id="static-map"></div>
+                </div>
+
+                <button class="btn-publish" onclick="window.print()">
+                    <span>🖨️</span> طباعة / حفظ كصورة
+                </button>
+            `;
+
+            // إضافة الخريطة الثابتة إذا كانت الإحداثيات موجودة
+            if (locData && locData.lat && locData.lng) {
+                initStaticMap(locData.lat, locData.lng, locData.street);
             } else {
-                btn.innerHTML = `⏳ جلب الإشارة...`;
+                document.getElementById('map-section').innerHTML = `
+                    <div class="map-title">🗺️ خريطة الموقع</div>
+                    <div style="text-align:center; padding: 20px; background: #f1f5f9; border-radius: 12px; color: #64748b; font-weight: 800;">
+                        لم يتم تحديد موقع على الخريطة ❌
+                    </div>`;
             }
-        }, 1000);
-
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
-                // نجاح
-                position => {
-                    setTimeout(async () => {
-                        clearInterval(countdownInterval);
-                        
-                        const lat = position.coords.latitude;
-                        const lng = position.coords.longitude;
-
-                        // تحديث الزر
-                        btn.innerHTML = '✅ تم التحديد';
-                        btn.style.background = 'linear-gradient(135deg, #16a34a, #22c55e)';
-                        btn.disabled = false;
-
-                        textDisplay.textContent = '⏳ تحديد الشارع...';
-
-                        // تحريك الماركر
-                        marker.setLatLng([lat, lng]);
-                        map.flyTo([lat, lng], 17, { 
-                            animate: true, 
-                            duration: 1.5 
-                        });
-
-                        // إخفاء التلميح
-                        hideMapHint();
-
-                        // تحديث معلومات الموقع
-                        await updateLocationInput(lat, lng, false);
-
-                        // إظهار popup بعد تحريك الخريطة
-                        setTimeout(() => {
-                            const popupText = currentStreet 
-                                ? `📍 ${currentStreet}` 
-                                : '✅ موقعك الحالي';
-                            
-                            marker.bindPopup(`
-                                <div style='text-align:center; font-family:Cairo; font-weight:900; color:#1b736a; font-size:12px; padding:4px;'>
-                                    ${popupText}
-                                </div>
-                            `).openPopup();
-                        }, 1600);
-
-                        showToast('تم تحديد موقعك بنجاح');
-
-                    }, Math.max(0, (counter + 1) * 1000));
-                },
-                // خطأ
-                error => {
-                    clearInterval(countdownInterval);
-                    
-                    btn.innerHTML = '❌ فشل التحديد';
-                    btn.style.background = 'linear-gradient(135deg, #dc2626, #ef4444)';
-                    btn.disabled = false;
-
-                    textDisplay.textContent = 'فعّل GPS في هاتفك';
-                    textDisplay.style.color = '#dc2626';
-
-                    showToast('فشل تحديد الموقع - فعّل GPS');
-                },
-                { 
-                    enableHighAccuracy: true, 
-                    timeout: 15000, 
-                    maximumAge: 0 
-                }
-            );
-        } else {
-            clearInterval(countdownInterval);
-            btn.innerHTML = '❌ غير مدعوم';
-            btn.disabled = false;
-            showToast('المتصفح لا يدعم تحديد الموقع');
-        }
-    };
-
-    // ==========================================
-    // 💾 حفظ الموقع
-    // ==========================================
-    window.saveLocation = function() {
-        if (!currentLat || !currentLng) {
-            showToast('⚠ حدد الموقع أولاً');
-            return;
         }
 
-        const detailedAddress = document.getElementById('detailed-address').value.trim();
+        function initStaticMap(lat, lng, streetName) {
+            // الخريطة الثابتة (يتم تعطيل كل أدوات التحكم والتحريك)
+            const map = L.map('static-map', {
+                center: [lat, lng],
+                zoom: 16,
+                zoomControl: false,       // إخفاء أزرار الزووم
+                dragging: false,          // منع السحب
+                scrollWheelZoom: false,   // منع زووم البكرة
+                doubleClickZoom: false,   // منع زووم الدبل كليك
+                boxZoom: false,
+                keyboard: false,
+                touchZoom: false
+            });
 
-        const locationData = {
-            lat: currentLat,
-            lng: currentLng,
-            coords: `${currentLat.toFixed(6)},${currentLng.toFixed(6)}`,
-            street: currentStreet,
-            detailedAddress: detailedAddress,
-            fullAddress: [currentStreet, detailedAddress].filter(Boolean).join(' - '),
-            savedAt: Date.now()
-        };
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap'
+            }).addTo(map);
 
-        // حفظ في localStorage
-        try {
-            localStorage.setItem('selected_location_data', JSON.stringify(locationData));
-            showToast('تم حفظ الموقع بنجاح ✅');
-            console.log('✅ تم حفظ الموقع:', locationData);
-        } catch(e) {
-            console.error('فشل الحفظ:', e);
-            showToast('❌ فشل الحفظ');
-        }
-    };
-
-    // ==========================================
-    // 🗑 مسح الموقع
-    // ==========================================
-    window.clearLocation = function() {
-        if (!confirm('هل تريد مسح الموقع المحدد؟')) return;
-
-        currentLat = null;
-        currentLng = null;
-        currentStreet = '';
-
-        // إعادة الماركر للموقع الافتراضي
-        marker.setLatLng([26.8206, 30.8025]);
-        map.setView([26.8206, 30.8025], 5.5);
-
-        // مسح العرض
-        document.getElementById('location-text').textContent = 'لم يتم تحديد الموقع بعد';
-        document.getElementById('location-text').style.color = '#64748b';
-        document.getElementById('coords-display').textContent = '📌 الإحداثيات: --';
-        document.getElementById('detailed-address').value = '';
-
-        // إزالة popup
-        marker.closePopup();
-
-        // مسح من localStorage
-        try {
-            localStorage.removeItem('selected_location_data');
-        } catch(e) {}
-
-        showToast('تم مسح الموقع');
-    };
-
-    // ==========================================
-    // 📢 التوست
-    // ==========================================
-    let toastTimer = null;
-
-    function showToast(message) {
-        const toast = document.getElementById('toast');
-        const msgEl = document.getElementById('toastMessage');
-
-        msgEl.textContent = message;
-        toast.classList.add('show');
-
-        clearTimeout(toastTimer);
-        toastTimer = setTimeout(() => {
-            toast.classList.remove('show');
-        }, 2500);
-    }
-
-    // ==========================================
-    // 🚀 التهيئة
-    // ==========================================
-    window.addEventListener('DOMContentLoaded', () => {
-        initMap();
-
-        // استرجاع الموقع المحفوظ إن وجد
-        try {
-            const saved = localStorage.getItem('selected_location_data');
-            if (saved) {
-                const data = JSON.parse(saved);
-                if (data.lat && data.lng) {
-                    currentLat = data.lat;
-                    currentLng = data.lng;
-                    currentStreet = data.street || '';
-
-                    marker.setLatLng([data.lat, data.lng]);
-                    map.setView([data.lat, data.lng], 16);
-
-                    document.getElementById('location-text').textContent = 
-                        data.street ? `📍 ${data.street}` : `تم تأكيد: ${data.lat.toFixed(5)}, ${data.lng.toFixed(5)}`;
-                    document.getElementById('coords-display').textContent = 
-                        `📌 الإحداثيات: ${data.lat.toFixed(6)}, ${data.lng.toFixed(6)}`;
-                    
-                    if (data.detailedAddress) {
-                        document.getElementById('detailed-address').value = data.detailedAddress;
-                    }
-
-                    hideMapHint();
-                }
+            const marker = L.marker([lat, lng]).addTo(map);
+            
+            if (streetName) {
+                marker.bindPopup(`<div style="font-family:Cairo; font-weight:bold; text-align:center;">${streetName}</div>`).openPopup();
+            } else {
+                marker.bindPopup(`<div style="font-family:Cairo; font-weight:bold; text-align:center;">موقع الدرس</div>`).openPopup();
             }
-        } catch(e) {
-            console.warn('فشل استرجاع الموقع المحفوظ:', e);
         }
-    });
-
-    // ==========================================
-    // 🔊 صوت الضغط
-    // ==========================================
-    (function initClickSound() {
-        let audioCtx = null;
-
-        function getCtx() {
-            if (!audioCtx) {
-                try {
-                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                } catch (e) { return null; }
-            }
-            if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
-            return audioCtx;
-        }
-
-        function playClick() {
-            const ctx = getCtx();
-            if (!ctx) return;
-
-            const now = ctx.currentTime;
-            const osc = ctx.createOscillator();
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(1800, now);
-            osc.frequency.exponentialRampToValueAtTime(2700, now + 0.035);
-
-            const gain = ctx.createGain();
-            gain.gain.setValueAtTime(0, now);
-            gain.gain.linearRampToValueAtTime(0.08, now + 0.004);
-            gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
-
-            const filter = ctx.createBiquadFilter();
-            filter.type = 'highpass';
-            filter.frequency.value = 1000;
-
-            osc.connect(filter);
-            filter.connect(gain);
-            gain.connect(ctx.destination);
-
-            osc.start(now);
-            osc.stop(now + 0.05);
-        }
-
-        document.addEventListener('click', (e) => {
-            if (e.target.closest('button') || e.target.closest('.btn-action')) {
-                playClick();
-            }
-        }, { passive: true });
-
-        document.addEventListener('touchstart', () => getCtx(), { once: true, passive: true });
-    })();
-</script>
-
+    </script>
 </body>
 </html>
