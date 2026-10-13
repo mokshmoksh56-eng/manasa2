@@ -289,11 +289,13 @@
 
             loadActualData();
 
+            // استخدام localStorage للتحقق من حالة إظهار الخريطة
             const savedPublishState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
             togglePublish(savedPublishState); 
         };
 
         function loadActualData() {
+            // استخدام localStorage
             const savedData = localStorage.getItem('lessonState_' + currentLessonId);
 
             if (savedData) {
@@ -423,6 +425,7 @@
             if (forceState !== null) {
                 isPublished = forceState;
             } else {
+                // استخدام localStorage
                 const current = localStorage.getItem('publishState_' + currentLessonId) === 'true';
                 isPublished = !current;
             }
@@ -436,11 +439,14 @@
             }
 
             updateMapMarker(isPublished);
+            
+            // استخدام localStorage لحفظ حالة إظهار الخريطة
             localStorage.setItem('publishState_' + currentLessonId, isPublished);
         }
 
         function editLesson() {
             const stateKey = 'lessonState_' + currentLessonId;
+            // استخدام localStorage
             const savedState = localStorage.getItem(stateKey);
             if (savedState) {
                 let stateObj = JSON.parse(savedState);
