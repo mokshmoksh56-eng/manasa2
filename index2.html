@@ -482,6 +482,37 @@
         .custom-input:focus { border-color: var(--primary-600); box-shadow: 0 0 0 4px #DBEAFE; }
 
         /* ============================================ */
+        /* ✅ زر الرجوع للرئيسية */
+        /* ============================================ */
+        .btn-back-home {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary-900);
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            z-index: 10;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid #E2E8F0;
+        }
+
+        .btn-back-home:hover {
+            background: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px -10px rgba(37, 99, 235, 0.3);
+            border-color: var(--primary-600);
+            color: var(--primary-600);
+        }
+
+        /* ============================================ */
         /* الموبايل */
         /* ============================================ */
         @media (max-width: 768px) {
@@ -515,6 +546,14 @@
             .card-text h2 { font-size: 19px; margin-bottom: 6px; }
             .card-text p { font-size: 12px; margin-bottom: 12px; line-height: 1.55; }
             .btn-go { padding: 10px 20px; font-size: 12.5px; }
+
+            /* تعديل الزر لشاشات الموبايل */
+            .btn-back-home {
+                top: 15px;
+                right: 15px;
+                padding: 8px 16px;
+                font-size: 13px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -546,6 +585,15 @@
 
     <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
+
+        <!-- ✅ زر الرجوع للرئيسية -->
+        <a href="./index.html" class="btn-back-home">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+            الرئيسية
+        </a>
+
         <div class="hero-content">
             <div class="hero-brand">
                 منصة <span class="accent">احجزلى</span>
@@ -668,7 +716,7 @@
         // تشغيل الصوت عند الضغط على أي زر، كارت، أو أيقونة في الصفحة
         document.addEventListener('click', function(e) {
             // حدد العناصر التي تريد أن يصدر منها الصوت عند الضغط
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-back-home');
             if (clickableElement) {
                 playHighPitchSound();
             }
