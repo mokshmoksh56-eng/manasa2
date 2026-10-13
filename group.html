@@ -17,6 +17,13 @@
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* ✅ منع إيماءات اللمس (السحب الجانبي للرجوع) في الهواتف */
+        html, body {
+            overscroll-behavior-x: none;
+            touch-action: pan-y;
+        }
+
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
 
         .edit-alert {
@@ -612,6 +619,9 @@
     </div>
 
     <script>
+        // ==========================================
+        // ✅ إضافة تأثيرات الصوت
+        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function resumeAudio() {
@@ -678,6 +688,9 @@
             }
         });
 
+        // ==========================================
+        // بقية سكريبتات الصفحة
+        // ==========================================
         let currentLessonId = '1';
         let isEditMode = false;
         let mapInitialized = false;
@@ -686,6 +699,12 @@
         let currentStepNumber = 1;
         let selectedSubjects = [];
         let savedLat = null, savedLng = null;
+
+        // ✅ منع زر الرجوع في المتصفح أو الهاتف
+        history.pushState(null, null, location.href);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, location.href);
+        });
 
         window.addEventListener('pageshow', function (event) {
             const successModal = document.getElementById('successModal');
