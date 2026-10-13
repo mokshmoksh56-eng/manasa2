@@ -45,7 +45,7 @@
             display: flex; justify-content: space-between; align-items: center;
             max-width: 500px; margin: -30px auto 20px; position: relative; z-index: 10;
             background: #fff; padding: 15px 25px; border-radius: 99px; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
-            border-bottom: 4px solid #334155; /* الخط السفلي لشريط التقدم */
+            border-bottom: 4px solid #334155;
         }
         .step-indicator {
             display: flex; flex-direction: column; align-items: center; gap: 5px; position: relative; z-index: 2;
@@ -74,23 +74,21 @@
         .theme-turq { --c-main: #00D2C6; --c-dark: #008B82; --c-light: #F2FDFD; --c-border: #A7EBE7; }
         .theme-teal { --c-main: #25968b; --c-dark: #1b736a; --c-light: #e0f2f0; --c-border: #b2dfdb; }
 
-        /* ✅ تحديث البطاقات (الكروت) لتكون بارزة بخط سفلي سميك */
         .smart-card {
             background: #fff; 
             border: 1.5px solid #E2E8F0; 
             border-top: 5px solid var(--c-main);
-            border-bottom: 6px solid #334155; /* الخط السفلي الأساسي */
+            border-bottom: 6px solid #334155; 
             border-radius: 16px; padding: 20px; box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
         }
         
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 14px; font-weight: 900; color: #1E293B; margin-bottom: 6px; }
         
-        /* ✅ تحديث حقول الإدخال والقوائم لتكون بخط سفلي بارز */
         .form-control {
             width: 100%; padding: 12px; 
             border: 1.5px solid #CBD5E1; 
-            border-bottom: 4px solid #334155; /* الخط السفلي البارز */
+            border-bottom: 4px solid #334155; 
             border-radius: 10px; font-size: 14px; color: #1E293B;
             font-weight: 900; transition: all 0.3s; outline: none; background: #FFFFFF;
         }
@@ -102,14 +100,13 @@
         
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        /* ✅ تحديث أزرار الاختيار (راديو) لتكون مربعات بارزة */
         .radio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
         .radio-grid input { display: none; }
         .radio-grid label {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             padding: 15px 5px; 
             border: 1.5px solid #CBD5E1; 
-            border-bottom: 4px solid #334155; /* الخط السفلي البارز */
+            border-bottom: 4px solid #334155; 
             border-radius: 12px; cursor: pointer;
             font-size: 13px; font-weight: 900; transition: all 0.2s; text-align: center; background: #FFFFFF; color: #1E293B;
         }
@@ -118,18 +115,17 @@
             border-color: var(--c-main); 
             border-bottom-color: var(--c-dark); 
             background: var(--c-light); color: var(--c-dark); 
-            transform: translateY(2px); /* حركة الضغط لأسفل */
-            border-bottom-width: 2px; margin-bottom: 2px; /* تعويض المسافة */
+            transform: translateY(2px); 
+            border-bottom-width: 2px; margin-bottom: 2px; 
         }
 
-        /* ✅ تحديث أزرار الأيام والشهور */
         .days-grid, .months-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .days-grid input, .months-grid input { display: none; }
         .days-grid label, .months-grid label {
             display: flex; align-items: center; justify-content: center;
             padding: 10px; 
             border: 1.5px solid #CBD5E1; 
-            border-bottom: 4px solid #334155; /* الخط السفلي البارز */
+            border-bottom: 4px solid #334155; 
             border-radius: 10px; cursor: pointer;
             font-size: 13px; font-weight: 900; transition: all 0.2s; background: #FFFFFF; color: #475569;
         }
@@ -137,16 +133,15 @@
             border-color: var(--c-main); 
             border-bottom-color: var(--c-dark); 
             background: var(--c-light); color: var(--c-dark); 
-            transform: translateY(2px); /* حركة الضغط لأسفل */
+            transform: translateY(2px); 
             border-bottom-width: 2px; margin-bottom: 2px;
         }
 
-        /* ----- ستايل الساعة الرقمية الواقعية جداً ----- */
         .realistic-clock-wrapper {
             background-color: #050a15; 
             background-image: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 0, 0, 0.4) 2px, rgba(0, 0, 0, 0.4) 4px); 
             border: 4px solid #1e293b;
-            border-bottom: 6px solid #0f172a; /* الخط السفلي للساعة */
+            border-bottom: 6px solid #0f172a; 
             border-radius: 12px;
             padding: 12px 10px;
             display: flex;
@@ -232,7 +227,6 @@
         }
         .locate-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-        /* ✅ رسالة تأكيد الموقع بجانب زر الـ GPS */
         .locate-success-msg {
             position: absolute; bottom: 20px; left: 70px; z-index: 400;
             background: #10B981; color: #fff; padding: 6px 14px; border-radius: 8px; border-bottom: 3px solid #065F46;
@@ -254,9 +248,6 @@
         .btn-prev { background: #E2E8F0; color: #475569; flex: 0.4; border: 1px solid #CBD5E1; border-bottom: 4px solid #94A3B8; }
         .btn-next:active, .btn-prev:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-        /* ========================================= */
-        /* ✅ تصميم النوافذ المنبثقة (Modals) */
-        /* ========================================= */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
@@ -289,7 +280,6 @@
         .success-modal p { font-size: 14px; font-weight: 900; color: #64748B; margin-bottom: 0; }
         .loader-dots { margin-top: 15px; font-size: 24px; color: #10B981; font-weight: 900; letter-spacing: 2px; animation: dotsPulse 1.5s infinite; }
 
-        /* ✅ نافذة الخطأ/التعارض */
         .error-icon { background: #FEE2E2; color: #EF4444; border-bottom-color: #B91C1C; }
         .error-modal h3 { color: #991B1B; }
         .error-modal p { color: #475569; font-size: 14px; font-weight: 900; line-height: 1.6; margin-bottom: 20px; }
@@ -300,10 +290,6 @@
         }
         .btn-close-error:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-
-        /* ========================================= */
-        /* ✅ التوافق مع شاشات الموبايل (Responsive) */
-        /* ========================================= */
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 18px; }
@@ -331,7 +317,6 @@
             .days-grid, .months-grid { grid-template-columns: repeat(3, 1fr); gap: 5px; }
             .days-grid label, .months-grid label { padding: 8px; font-size: 11px; border-radius: 8px; }
 
-            /* تصغير الساعة الرقمية للشاشات الصغيرة */
             .realistic-clock-wrapper { padding: 8px 5px; gap: 2px; }
             .time-unit { font-size: 20px; padding: 3px 0; border-radius: 4px; }
             .time-colon { font-size: 20px; }
@@ -350,7 +335,6 @@
             .success-icon svg { width: 30px; height: 30px; }
         }
 
-        /* ✅ الموبايلات الصغيرة جداً (iPhone SE) */
         @media (max-width: 360px) {
             .hero-brand { font-size: 22px; }
             .hero-headline { font-size: 14px; }
@@ -378,7 +362,6 @@
         <span>أنت الآن في وضع تعديل بيانات المجموعة</span>
     </div>
 
-    <!-- ✅ نافذة الحفظ بنجاح -->
     <div id="successModal" class="modal-overlay">
         <div class="success-modal">
             <div class="success-icon">
@@ -392,7 +375,6 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة التعارض (Error Modal) المخصصة -->
     <div id="errorModal" class="modal-overlay">
         <div class="success-modal error-modal">
             <div class="success-icon error-icon">
@@ -582,7 +564,6 @@
                 </div>
             </div>
 
-            <!-- ✅ خيار تكرار الحصة أسبوعياً بخط سفلي بارز -->
             <div class="form-group" style="background: #F0FDF8; padding: 12px; border-radius: 10px; border: 1.5px solid #A7F3D0; border-bottom: 4px solid #059669; display: flex; align-items: center; gap: 12px; transition: transform 0.2s; cursor: pointer;">
                 <input type="checkbox" id="g_repeat_weekly" style="width: 22px; height: 22px; accent-color: var(--c-main); cursor: pointer;">
                 <label for="g_repeat_weekly" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #064E3B;">
@@ -599,13 +580,20 @@
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                     </svg>
                 </button>
-                <!-- ✅ رسالة تأكيد تحديد المكان -->
                 <div id="locateSuccessMsg" class="locate-success-msg">تم تحديد المكان ✔</div>
             </div>
             
             <div class="form-group" style="margin-top: 15px;">
                 <label>🏠 العنوان التفصيلي (للتسهيل على الطالب)</label>
                 <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
+            </div>
+
+            <!-- الكود الجديد: خيار إظهار الخريطة للطلاب -->
+            <div class="form-group" style="background: #F0F9FF; padding: 12px; border-radius: 10px; border: 1.5px solid #BAE6FD; border-bottom: 4px solid #0284C7; display: flex; align-items: center; gap: 12px; transition: transform 0.2s; cursor: pointer; margin-top: 15px;">
+                <input type="checkbox" id="g_publish_map" checked style="width: 22px; height: 22px; accent-color: #0284C7; cursor: pointer;">
+                <label for="g_publish_map" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #075985;">
+                    👁️ إظهار موقع الدرس للطلاب على الخريطة
+                </label>
             </div>
 
             <div class="nav-buttons">
@@ -616,9 +604,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // ✅ نظام الأصوات التفاعلي الشامل (Web Audio API)
-        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function resumeAudio() {
@@ -627,7 +612,6 @@
             }
         }
 
-        // 1. صوت "كليك" رفيع عام لجميع الأزرار والحقول
         function playClickSound() {
             resumeAudio();
             const osc = audioCtx.createOscillator();
@@ -640,7 +624,6 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.05); 
         }
 
-        // 2. صوت "تيك" للعد التنازلي
         function playTickSound() {
             resumeAudio();
             const osc = audioCtx.createOscillator();
@@ -653,7 +636,6 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.1);
         }
 
-        // 3. صوت نجاح وتأكيد (للموقع أو الحفظ)
         function playSuccessSound() {
             resumeAudio();
             const osc = audioCtx.createOscillator();
@@ -661,13 +643,12 @@
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sine';
             osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(900, audioCtx.currentTime + 0.1); // نغمة ترتفع للأعلى
+            osc.frequency.setValueAtTime(900, audioCtx.currentTime + 0.1); 
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
         }
 
-        // 4. صوت خطأ أو تنبيه
         function playErrorSound() {
             resumeAudio();
             const osc = audioCtx.createOscillator();
@@ -675,25 +656,20 @@
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2); // نغمة تنزل للأسفل
+            osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2); 
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
             osc.start(); osc.stop(audioCtx.currentTime + 0.2);
         }
 
-        // ربط صوت الكليك بجميع عناصر الصفحة القابلة للضغط
         document.addEventListener('click', function(e) {
             const clickable = e.target.closest('button, input, select, label, .step-indicator, .chip, .time-unit');
             if (clickable) {
-                // منع تشغيل صوت الكليك العادي إذا كان الزر المَضغوط هو زر تحديد الموقع (لأن له صوت وتأثير خاص به)
                 if (clickable.closest('.locate-btn')) return;
                 playClickSound();
             }
         });
 
-        // ==========================================
-        // باقي منطق وعمليات الصفحة
-        // ==========================================
         let currentLessonId = '1';
         let isEditMode = false;
         let mapInitialized = false;
@@ -710,14 +686,12 @@
             if (errorModal) errorModal.classList.remove('active');
         });
 
-        // دالة إظهار الخطأ المخصصة
         function showError(message) {
-            playErrorSound(); // تشغيل صوت الخطأ عند ظهوره
+            playErrorSound(); 
             document.getElementById('errorDesc').innerHTML = message;
             document.getElementById('errorModal').classList.add('active');
         }
 
-        // توليد بيانات الساعة الرقمية (1-12) والدقائق (كل 5 دقائق)
         function populateTimeSelectors() {
             let hoursHTML = '';
             for(let i=1; i<=12; i++) {
@@ -727,7 +701,6 @@
             document.getElementById('start_hour').innerHTML = hoursHTML;
             document.getElementById('end_hour').innerHTML = hoursHTML;
             
-            // تعيين الساعة 2 كموعد بداية و 4 كموعد نهاية افتراضياً
             document.getElementById('start_hour').value = '02';
             document.getElementById('end_hour').value = '04';
 
@@ -739,7 +712,6 @@
             document.getElementById('start_min').innerHTML = minsHTML;
             document.getElementById('end_min').innerHTML = minsHTML;
             
-            // تعيين (م) مساءً بشكل افتراضي
             document.getElementById('start_ampm').value = 'م';
             document.getElementById('end_ampm').value = 'م';
         }
@@ -764,15 +736,12 @@
                 g_center: document.getElementById('g_center').value,
                 g_teacher: document.getElementById('g_teacher').value,
                 g_count: document.getElementById('g_count').value,
-                
-                // حفظ قيم الساعة الرقمية المخصصة
                 start_hour: document.getElementById('start_hour').value,
                 start_min: document.getElementById('start_min').value,
                 start_ampm: document.getElementById('start_ampm').value,
                 end_hour: document.getElementById('end_hour').value,
                 end_min: document.getElementById('end_min').value,
                 end_ampm: document.getElementById('end_ampm').value,
-
                 g_days: selectedDays,
                 g_months: selectedMonths,
                 g_repeat_weekly: document.getElementById('g_repeat_weekly').checked,
@@ -782,15 +751,25 @@
                 s_grade: document.getElementById('s_grade').value,
                 selectedSubjects: selectedSubjects,
                 m_address: document.getElementById('m_address').value,
+                
+                // حفظ حالة الظهور للطلاب
+                g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
+                
                 lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
                 lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng
             };
-            sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
+            
+            // استخدام localStorage بدلاً من sessionStorage
+            localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
+            
+            // مزامنة حالة النشر مباشرة ليقرأها ملف end.html والقوائم الأخرى
+            localStorage.setItem('publishState_' + currentLessonId, state.g_publish_map);
         }
 
         // استرجاع الحالة
         function loadState() {
-            const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
+            // استخدام localStorage
+            const saved = localStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
                 const state = JSON.parse(saved);
                 
@@ -799,7 +778,6 @@
                 if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher;
                 if(state.g_count) document.getElementById('g_count').value = state.g_count;
                 
-                // استرجاع بيانات الساعة الرقمية
                 if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
                 if(state.start_min) document.getElementById('start_min').value = state.start_min;
                 if(state.start_ampm) document.getElementById('start_ampm').value = state.start_ampm;
@@ -852,6 +830,12 @@
                 }
 
                 if(state.m_address) document.getElementById('m_address').value = state.m_address;
+                
+                // استرجاع حالة النشر للطلاب
+                if(state.g_publish_map !== undefined) {
+                    document.getElementById('g_publish_map').checked = state.g_publish_map;
+                }
+
                 if(state.lat && state.lng) {
                     savedLat = state.lat;
                     savedLng = state.lng;
@@ -875,7 +859,6 @@
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
 
-            // تجهيز قوائم الساعة الرقمية أولاً
             populateTimeSelectors();
 
             loadState();
@@ -1004,18 +987,14 @@
             });
         }
 
-        // ==========================================
-        // ✅ نظام العد التنازلي وتحديد الموقع
-        // ==========================================
         let isLocating = false;
         function requestCurrentLocation() {
-            if (isLocating) return; // لمنع الضغط المتكرر
+            if (isLocating) return; 
             isLocating = true;
             
             const addressInput = document.getElementById('m_address');
             let count = 3;
             
-            // بدء العد التنازلي المرئي والصوتي
             addressInput.value = `جاري تحديد الموقع في ${count}...`;
             playTickSound();
 
@@ -1053,7 +1032,7 @@
                         isLocating = false;
                     }
                 }
-            }, 800); // 800 ملي ثانية لكل عده ليكون التجاوب أسرع ومريح
+            }, 800); 
         }
 
         function fetchAddress(lat, lng) {
@@ -1063,13 +1042,11 @@
                 .then(data => {
                     if (data && data.display_name) {
                         document.getElementById('m_address').value = data.display_name;
-                        playSuccessSound(); // تشغيل صوت تأكيد النجاح عند جلب العنوان
+                        playSuccessSound(); 
                         
-                        // ✅ إظهار رسالة التأكيد بجوار أيقونة الـ GPS
                         const successMsg = document.getElementById('locateSuccessMsg');
                         successMsg.classList.add('show');
                         
-                        // إخفاء الرسالة بعد 3 ثواني
                         setTimeout(() => {
                             successMsg.classList.remove('show');
                         }, 3000);
@@ -1085,7 +1062,6 @@
                 });
         }
 
-        // دالة مساعدة لتحويل الوقت إلى دقائق لمقارنة التعارض بسهولة
         function timeToMinutes(hour, min, ampm) {
             let h = parseInt(hour, 10);
             let m = parseInt(min, 10);
@@ -1102,7 +1078,6 @@
                 return; 
             }
 
-            // تجميع الأيام المحددة
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
                 const el = document.getElementById(id);
@@ -1114,7 +1089,6 @@
                 return;
             }
 
-            // تحويل الأوقات للدقائق للتحقق من الترتيب والتعارض
             const curStart = timeToMinutes(
                 document.getElementById('start_hour').value,
                 document.getElementById('start_min').value,
@@ -1126,38 +1100,33 @@
                 document.getElementById('end_ampm').value
             );
 
-            // 1. التأكد أن وقت النهاية بعد وقت البداية
             if (curStart >= curEnd) {
                 showError("موعد الانصراف يجب أن يكون بعد موعد الحضور.");
                 return;
             }
 
-            // 2. فحص التعارض مع المجموعات الأخرى المحفوظة
-            for (let i = 0; i < sessionStorage.length; i++) {
-                const key = sessionStorage.key(i);
+            // فحص التعارض مع المجموعات الأخرى المحفوظة (استخدام localStorage بدلاً من sessionStorage)
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
                 
-                // البحث في المجموعات الأخرى فقط وتجاهل المجموعة الحالية
                 if (key.startsWith('lessonState_') && key !== 'lessonState_' + currentLessonId) {
-                    const otherState = JSON.parse(sessionStorage.getItem(key));
+                    const otherState = JSON.parse(localStorage.getItem(key));
                     const otherDays = otherState.g_days || [];
                     
-                    // استخراج الأيام المشتركة بين المجموعة الحالية والمجموعة القديمة
                     const commonDays = selectedDays.filter(day => otherDays.includes(day));
                     
                     if (commonDays.length > 0 && otherState.start_hour && otherState.end_hour) {
                         const otherStart = timeToMinutes(otherState.start_hour, otherState.start_min, otherState.start_ampm);
                         const otherEnd = timeToMinutes(otherState.end_hour, otherState.end_min, otherState.end_ampm);
                         
-                        // شرط تداخل الفترات الزمنية
                         if (curStart < otherEnd && curEnd > otherStart) {
                             showError(`عذراً، هذه المجموعة تتعارض مع (<b>${otherState.g_name || 'مجموعة أخرى'}</b>) في نفس الأيام (<b>${commonDays.join('، ')}</b>).<br><br>الرجاء تعديل المواعيد لتتمكن من الحفظ.`);
-                            return; // إيقاف الحفظ وعدم استكمال العملية
+                            return; 
                         }
                     }
                 }
             }
 
-            // إذا لم يكن هناك تعارض، يتم الحفظ بشكل طبيعي
             saveState();
 
             const modal = document.getElementById('successModal');
@@ -1166,7 +1135,7 @@
             title.innerText = isEditMode ? "تم تحديث بيانات المجموعة بنجاح!" : "تم حفظ إعدادات المجموعة بنجاح!";
             modal.classList.add('active');
             
-            playSuccessSound(); // تشغيل صوت النجاح عند إتمام الحفظ
+            playSuccessSound(); 
 
             setTimeout(() => {
                 window.location.href = `end.html?lessonId=${currentLessonId}`; 
