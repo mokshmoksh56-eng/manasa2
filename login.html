@@ -460,26 +460,13 @@
         </button>
     </div>
 
-    <!-- حاوية الملف الشخصي (تظهر بعد تسجيل الدخول) -->
-    <div id="profileContainer" class="auth-container" style="display: none; text-align: center;">
-        <div style="width: 80px; height: 80px; margin: 0 auto 15px; border-radius: 50%; overflow: hidden; border: 4px solid #BFDBFE; box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.3); background: #000;">
-            <img id="profileImage" src="" alt="صورة الملف الشخصي" style="width: 100%; height: 100%; object-fit: cover; object-position: top;">
-        </div>
-        <h2 id="profileName" style="font-size: 22px; font-weight: 900; color: #0F2D5C; margin-bottom: 5px;">مرحباً</h2>
-        <p id="profilePhone" style="font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 25px;"></p>
-
-        <a href="./index2.html" class="btn-submit" style="text-decoration: none;">
-            الذهاب لإدارة المجموعات
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-        </a>
-    </div>
-
     <script>
         // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
         window.onload = function() {
             const loggedInTeacher = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacher) {
-                showProfile(JSON.parse(loggedInTeacher));
+                // ✅ إذا كان مسجل دخول بالفعل، يتم توجيهه مباشرة لصفحة إدارة المجموعات
+                window.location.href = './index2.html';
             } else {
                 // إظهار أزرار التحكم عند عدم وجود تسجيل دخول
                 document.getElementById('actionButtonsContainer').style.display = 'flex';
@@ -550,7 +537,8 @@
             localStorage.setItem('rememberedPhone', phone);
 
             showAlert('تم إنشاء الحساب بنجاح!', false);
-            setTimeout(() => { showProfile(accountData); }, 1000);
+            // ✅ التوجيه مباشرة لصفحة إدارة المجموعات بعد التسجيل
+            setTimeout(() => { window.location.href = './index2.html'; }, 1000);
         }
 
         function handleLogin() {
@@ -575,29 +563,8 @@
             // حفظ الرقم للتذكر
             localStorage.setItem('rememberedPhone', phone);
             
-            showProfile(savedData);
-        }
-
-        function showProfile(data) {
-            document.getElementById('authFormsContainer').style.display = 'none';
-            document.getElementById('profileContainer').style.display = 'block';
-            
-            // ✅ إخفاء أزرار التحكم (تسجيل خروج / حذف حساب) بعد تسجيل الدخول
-            document.getElementById('actionButtonsContainer').style.display = 'none';
-            
-            // تغيير الصورة بناءً على اللقب المختار
-            const profileImageContainer = document.getElementById('profileImage').parentElement;
-            
-            if (data.title === 'مستر') {
-                document.getElementById('profileImage').src = './teacher.png';
-                profileImageContainer.style.borderColor = '#BFDBFE'; // إطار أزرق للمستر
-            } else {
-                document.getElementById('profileImage').src = './miss.png';
-                profileImageContainer.style.borderColor = '#FBCFE8'; // إطار وردي للمس
-            }
-            
-            document.getElementById('profileName').textContent = `${data.title} / ${data.name}`;
-            document.getElementById('profilePhone').textContent = `رقم الحساب: ${data.phone}`;
+            // ✅ التوجيه مباشرة لصفحة إدارة المجموعات بعد تسجيل الدخول
+            window.location.href = './index2.html';
         }
 
         function handleLogout() {
