@@ -785,12 +785,12 @@
                 lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
                 lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng
             };
-            localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
+            sessionStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
         }
 
         // استرجاع الحالة
         function loadState() {
-            const saved = localStorage.getItem('lessonState_' + currentLessonId);
+            const saved = sessionStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
                 const state = JSON.parse(saved);
                 
@@ -1133,12 +1133,12 @@
             }
 
             // 2. فحص التعارض مع المجموعات الأخرى المحفوظة
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
+            for (let i = 0; i < sessionStorage.length; i++) {
+                const key = sessionStorage.key(i);
                 
                 // البحث في المجموعات الأخرى فقط وتجاهل المجموعة الحالية
                 if (key.startsWith('lessonState_') && key !== 'lessonState_' + currentLessonId) {
-                    const otherState = JSON.parse(localStorage.getItem(key));
+                    const otherState = JSON.parse(sessionStorage.getItem(key));
                     const otherDays = otherState.g_days || [];
                     
                     // استخراج الأيام المشتركة بين المجموعة الحالية والمجموعة القديمة
