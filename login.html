@@ -92,39 +92,42 @@
         }
 
         /* ============================================ */
-        /* ✅ زر الرجوع (سهم لـ index.html) */
+        /* ✅ زر الرجوع (سهم لليمين) */
         /* ============================================ */
-        .back-button {
+        .back-btn {
             position: absolute;
             top: 20px;
             right: 20px;
             z-index: 20;
             width: 44px;
             height: 44px;
+            border-radius: 50%;
             background: rgba(255, 255, 255, 0.95);
             border: 2px solid #E2E8F0;
-            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            color: #0F2D5C;
         }
 
-        .back-button:hover {
+        .back-btn:hover {
             background: #FFFFFF;
-            transform: translateX(3px);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
             border-color: var(--primary-600);
+            color: var(--primary-600);
         }
 
-        .back-button svg {
+        .back-btn:active {
+            transform: translateY(0);
+        }
+
+        .back-btn svg {
             width: 22px;
             height: 22px;
-            color: var(--primary-600);
-            transition: color 0.3s;
         }
 
         /* ============================================ */
@@ -260,15 +263,15 @@
 
         /* التأثيرات لـ (مس) - وردي (Pink) */
         .radio-input[value="مس"]:checked + .radio-label {
-            background: #FDF2F8;
-            border-color: #EC4899;
-            color: #DB2777;
+            background: #FDF2F8; /* خلفية وردية فاتحة */
+            border-color: #EC4899; /* حواف وردية */
+            color: #DB2777; /* نص وردي داكن */
             transform: translateY(-2px);
         }
         .radio-input[value="مس"]:checked + .radio-label .avatar-img {
             border-color: #EC4899;
             transform: scale(1.15);
-            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4);
+            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4); /* ظل وردي */
         }
 
         /* ============================================ */
@@ -391,7 +394,7 @@
             .btn-logout, .btn-delete-small {
                 width: 100%;
             }
-            .back-button {
+            .back-btn {
                 top: 15px;
                 right: 15px;
                 width: 40px;
@@ -402,15 +405,15 @@
 </head>
 <body>
 
-    <!-- زر الرجوع لـ index.html (سهم يشير لليمين) -->
-    <a href="./index.html" class="back-button" title="رجوع">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-        </svg>
-    </a>
-
     <!-- الهيدر -->
     <section class="hero-banner">
+        <!-- ✅ سهم الرجوع لـ login.html -->
+        <a href="./login.html" class="back-btn" title="رجوع">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+        </a>
+
         <div class="hero-content">
             <div class="hero-brand">
                 بوابة <span class="accent">المعلمين</span>
@@ -517,6 +520,7 @@
         <h2 id="profileName" style="font-size: 22px; font-weight: 900; color: #0F2D5C; margin-bottom: 5px;">مرحباً</h2>
         <p id="profilePhone" style="font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 25px;"></p>
 
+        <!-- ✅ زر الذهاب لإدارة المجموعات مع سهم لليمين -->
         <a href="./index2.html" class="btn-submit" style="text-decoration: none;">
             الذهاب لإدارة المجموعات
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
