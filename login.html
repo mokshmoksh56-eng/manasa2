@@ -170,7 +170,7 @@
         }
 
         /* ============================================ */
-        /* ✅ تنسيق اختيار اللقب بالصور الجديدة (تم التكبير) */
+        /* ✅ تنسيق اختيار اللقب بالصور الجديدة */
         /* ============================================ */
         .radio-group {
             display: flex;
@@ -183,7 +183,7 @@
             align-items: center;
             justify-content: center;
             gap: 12px;
-            padding: 12px 15px; /* تم تكبير الحواف الداخلية هنا */
+            padding: 12px 15px;
             background: #F1F5F9;
             border: 2px solid #E2E8F0;
             border-radius: 14px;
@@ -191,13 +191,12 @@
             font-weight: 800;
             color: #475569;
             transition: all 0.3s;
-            font-size: 17px; /* تم تكبير الخط */
+            font-size: 17px;
         }
         
-        /* تنسيق الأفاتار الصغير داخل الزر */
         .avatar-img {
-            width: 48px; /* تم تكبير الصورة */
-            height: 48px; /* تم تكبير الصورة */
+            width: 48px; 
+            height: 48px; 
             border-radius: 50%;
             object-fit: cover;
             object-position: top; 
@@ -210,17 +209,30 @@
             display: none;
         }
         
-        /* التأثيرات عند اختيار الزر */
-        .radio-input:checked + .radio-label {
+        /* التأثيرات لـ (مستر) - أزرق */
+        .radio-input[value="مستر"]:checked + .radio-label {
             background: #EFF6FF;
             border-color: var(--primary-600);
             color: var(--primary-600);
-            transform: translateY(-2px); /* تأثير ارتفاع بسيط عند التحديد */
+            transform: translateY(-2px);
         }
-        .radio-input:checked + .radio-label .avatar-img {
+        .radio-input[value="مستر"]:checked + .radio-label .avatar-img {
             border-color: var(--primary-600);
-            transform: scale(1.15); /* تكبير الصورة بشكل ملحوظ عند الاختيار */
+            transform: scale(1.15);
             box-shadow: 0 5px 12px rgba(37, 99, 235, 0.4);
+        }
+
+        /* التأثيرات لـ (مس) - وردي (Pink) */
+        .radio-input[value="مس"]:checked + .radio-label {
+            background: #FDF2F8; /* خلفية وردية فاتحة */
+            border-color: #EC4899; /* حواف وردية */
+            color: #DB2777; /* نص وردي داكن */
+            transform: translateY(-2px);
+        }
+        .radio-input[value="مس"]:checked + .radio-label .avatar-img {
+            border-color: #EC4899;
+            transform: scale(1.15);
+            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4); /* ظل وردي */
         }
 
         /* ============================================ */
@@ -568,7 +580,15 @@
             document.getElementById('profileContainer').style.display = 'block';
             
             // تغيير الصورة بناءً على اللقب المختار
-            document.getElementById('profileImage').src = data.title === 'مستر' ? './teacher.png' : './miss.png';
+            const profileImageContainer = document.getElementById('profileImage').parentElement;
+            
+            if (data.title === 'مستر') {
+                document.getElementById('profileImage').src = './teacher.png';
+                profileImageContainer.style.borderColor = '#BFDBFE'; // إطار أزرق للمستر
+            } else {
+                document.getElementById('profileImage').src = './miss.png';
+                profileImageContainer.style.borderColor = '#FBCFE8'; // إطار وردي للمس
+            }
             
             document.getElementById('profileName').textContent = `${data.title} / ${data.name}`;
             document.getElementById('profilePhone').textContent = `رقم الحساب: ${data.phone}`;
