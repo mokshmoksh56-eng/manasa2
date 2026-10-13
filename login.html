@@ -312,6 +312,47 @@
         /* ============================================ */
         /* ✅ رسائل الخطأ والنجاح */
         /* ============================================ */
+        /* هنا التعديل الجديد لصندوق الحوار المخصص (Custom Modal) */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+        .custom-modal {
+            background: #fff;
+            padding: 20px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 350px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .custom-modal p {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1E293B;
+            margin-bottom: 20px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .modal-buttons button {
+            padding: 8px 20px;
+            border-radius: 8px;
+            font-weight: 700;
+            cursor: pointer;
+            border: none;
+        }
+        .btn-confirm { background: #DC2626; color: #fff; }
+        .btn-cancel { background: #E2E8F0; color: #475569; }
+        
+
         .alert-msg {
             padding: 12px;
             border-radius: 10px;
@@ -455,7 +496,7 @@
         <button class="btn-logout" onclick="handleLogout()">
             تسجيل خروج
         </button>
-        <button class="btn-delete-small" onclick="confirmDeleteAccount()">
+        <button class="btn-delete-small" onclick="showCustomConfirm()">
             حذف الحساب
         </button>
     </div>
@@ -473,6 +514,18 @@
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
     </div>
+
+    <!-- صندوق الحوار المخصص لحذف الحساب -->
+    <div id="customConfirmModal" class="modal-overlay">
+        <div class="custom-modal">
+            <p>هل أنت متأكد؟ سيتم حذف البيانات فقط</p>
+            <div class="modal-buttons">
+                <button class="btn-confirm" onclick="executeDeleteAccount()">حسناً</button>
+                <button class="btn-cancel" onclick="closeCustomConfirm()">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
 
     <script>
         // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
@@ -603,27 +656,37 @@
             localStorage.removeItem('loggedInTeacher');
             window.location.href = './index.html'; 
         }
+        
+        // إظهار صندوق الحوار المخصص
+        function showCustomConfirm() {
+            document.getElementById('customConfirmModal').style.display = 'flex';
+        }
+        
+        // إغلاق صندوق الحوار المخصص
+        function closeCustomConfirm() {
+            document.getElementById('customConfirmModal').style.display = 'none';
+        }
 
-        // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل
-        function confirmDeleteAccount() {
-            if (confirm('هل أنت متأكد؟ سيتم حذف البيانات فقط')) {
-                const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
-                if (loggedIn && loggedIn.phone) {
-                    
-                    // الاحتفاظ برقم الموبايل فقط
-                    localStorage.setItem('rememberedPhone', loggedIn.phone);
-                    
-                    // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
-                    localStorage.removeItem('teacherAccount_' + loggedIn.phone);
-                    
-                    // تسجيل الخروج وإنهاء الجلسة
-                    localStorage.removeItem('loggedInTeacher'); 
-                    
-                    alert('تم حذف البيانات فقط');
-                    window.location.href = './index.html';
-                } else {
-                    alert('لا يوجد حساب مسجل حالياً.');
-                }
+        // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل (عبر صندوق الحوار المخصص)
+        function executeDeleteAccount() {
+            closeCustomConfirm(); // إغلاق الصندوق
+            const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
+            if (loggedIn && loggedIn.phone) {
+                
+                // الاحتفاظ برقم الموبايل فقط
+                localStorage.setItem('rememberedPhone', loggedIn.phone);
+                
+                // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
+                localStorage.removeItem('teacherAccount_' + loggedIn.phone);
+                
+                // تسجيل الخروج وإنهاء الجلسة
+                localStorage.removeItem('loggedInTeacher'); 
+                
+                // يمكنك استخدام alert هنا أو custom alert إذا أردت
+                alert('تم حذف البيانات فقط');
+                window.location.href = './index.html';
+            } else {
+                alert('لا يوجد حساب مسجل حالياً.');
             }
         }
     </script>
