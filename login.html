@@ -121,7 +121,7 @@
             padding: 10px;
             font-size: 15px;
             font-weight: 800;
-            color: #4ADE80; /* لون أخضر فاتح للتبويب غير النشط */
+            color: #64748B;
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -129,7 +129,7 @@
 
         .auth-tab.active {
             background: #FFFFFF;
-            color: #16A34A; /* لون أخضر داكن/أساسي للتبويب النشط */
+            color: var(--primary-600);
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
@@ -312,47 +312,6 @@
         /* ============================================ */
         /* ✅ رسائل الخطأ والنجاح */
         /* ============================================ */
-        /* هنا التعديل الجديد لصندوق الحوار المخصص (Custom Modal) */
-        .modal-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: none;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
-        .custom-modal {
-            background: #fff;
-            padding: 20px;
-            border-radius: 15px;
-            width: 90%;
-            max-width: 350px;
-            text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-        }
-        .custom-modal p {
-            font-size: 15px;
-            font-weight: 700;
-            color: #1E293B;
-            margin-bottom: 20px;
-        }
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-        }
-        .modal-buttons button {
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-weight: 700;
-            cursor: pointer;
-            border: none;
-        }
-        .btn-confirm { background: #DC2626; color: #fff; }
-        .btn-cancel { background: #E2E8F0; color: #475569; }
-        
-
         .alert-msg {
             padding: 12px;
             border-radius: 10px;
@@ -491,12 +450,12 @@
         </div>
     </div>
 
-    <!-- أزرار التحكم الخارجية ظاهرة دائماً (تسجيل خروج / حذف حساب) -->
-    <div class="action-buttons-container">
+    <!-- أزرار التحكم الخارجية (تسجيل خروج / حذف حساب) - تظهر فقط قبل تسجيل الدخول -->
+    <div id="actionButtonsContainer" class="action-buttons-container">
         <button class="btn-logout" onclick="handleLogout()">
             تسجيل خروج
         </button>
-        <button class="btn-delete-small" onclick="showCustomConfirm()">
+        <button class="btn-delete-small" onclick="confirmDeleteAccount()">
             حذف الحساب
         </button>
     </div>
@@ -515,18 +474,6 @@
         </a>
     </div>
 
-    <!-- صندوق الحوار المخصص لحذف الحساب -->
-    <div id="customConfirmModal" class="modal-overlay">
-        <div class="custom-modal">
-            <p>هل أنت متأكد؟ سيتم حذف الحساب</p>
-            <div class="modal-buttons">
-                <button class="btn-confirm" onclick="executeDeleteAccount()">حسناً</button>
-                <button class="btn-cancel" onclick="closeCustomConfirm()">إلغاء</button>
-            </div>
-        </div>
-    </div>
-
-
     <script>
         // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
         window.onload = function() {
@@ -534,6 +481,9 @@
             if (loggedInTeacher) {
                 showProfile(JSON.parse(loggedInTeacher));
             } else {
+                // إظهار أزرار التحكم عند عدم وجود تسجيل دخول
+                document.getElementById('actionButtonsContainer').style.display = 'flex';
+                
                 // إذا لم يكن مسجلاً للدخول، تفقد إذا كان هناك رقم موبايل محفوظ وقم بملئه تلقائياً
                 const rememberedPhone = localStorage.getItem('rememberedPhone');
                 if (rememberedPhone) {
@@ -632,6 +582,9 @@
             document.getElementById('authFormsContainer').style.display = 'none';
             document.getElementById('profileContainer').style.display = 'block';
             
+            // ✅ إخفاء أزرار التحكم (تسجيل خروج / حذف حساب) بعد تسجيل الدخول
+            document.getElementById('actionButtonsContainer').style.display = 'none';
+            
             // تغيير الصورة بناءً على اللقب المختار
             const profileImageContainer = document.getElementById('profileImage').parentElement;
             
@@ -656,37 +609,27 @@
             localStorage.removeItem('loggedInTeacher');
             window.location.href = './index.html'; 
         }
-        
-        // إظهار صندوق الحوار المخصص
-        function showCustomConfirm() {
-            document.getElementById('customConfirmModal').style.display = 'flex';
-        }
-        
-        // إغلاق صندوق الحوار المخصص
-        function closeCustomConfirm() {
-            document.getElementById('customConfirmModal').style.display = 'none';
-        }
 
-        // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل (عبر صندوق الحوار المخصص)
-        function executeDeleteAccount() {
-            closeCustomConfirm(); // إغلاق الصندوق
-            const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
-            if (loggedIn && loggedIn.phone) {
-                
-                // الاحتفاظ برقم الموبايل فقط
-                localStorage.setItem('rememberedPhone', loggedIn.phone);
-                
-                // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
-                localStorage.removeItem('teacherAccount_' + loggedIn.phone);
-                
-                // تسجيل الخروج وإنهاء الجلسة
-                localStorage.removeItem('loggedInTeacher'); 
-                
-                // يمكنك استخدام alert هنا أو custom alert إذا أردت
-                alert('تم حذف الحساب بنجاح');
-                window.location.href = './index.html';
-            } else {
-                alert('لا يوجد حساب مسجل حالياً.');
+        // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل
+        function confirmDeleteAccount() {
+            if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ (سيتم مسح جميع بياناتك، وسيتم الاحتفاظ برقم الموبايل فقط)')) {
+                const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
+                if (loggedIn && loggedIn.phone) {
+                    
+                    // الاحتفاظ برقم الموبايل فقط
+                    localStorage.setItem('rememberedPhone', loggedIn.phone);
+                    
+                    // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
+                    localStorage.removeItem('teacherAccount_' + loggedIn.phone);
+                    
+                    // تسجيل الخروج وإنهاء الجلسة
+                    localStorage.removeItem('loggedInTeacher'); 
+                    
+                    alert('تم مسح بيانات الحساب بنجاح، مع الاحتفاظ برقم الموبايل.');
+                    window.location.href = './index.html';
+                } else {
+                    alert('لا يوجد حساب مسجل حالياً.');
+                }
             }
         }
     </script>
