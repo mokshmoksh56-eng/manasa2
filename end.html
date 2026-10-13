@@ -14,6 +14,13 @@
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* ✅ منع إيماءات اللمس (السحب الجانبي للرجوع) في الهواتف */
+        html, body {
+            overscroll-behavior-x: none;
+            touch-action: pan-y;
+        }
+
         body { background: #F1F5F9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
         /* ============================================ */
@@ -232,13 +239,14 @@
                     
                     <!-- أزرار التحكم داخل الخريطة (تظهر عند النشر فقط) -->
                     <div class="map-controls">
-                        <button class="map-action-btn" onclick="togglePublish(false)">
+                        <!-- زر الإخفاء صنفناه بـ clickable-element لتشغيل الصوت -->
+                        <button class="map-action-btn clickable-element" onclick="togglePublish(false)">
                             <b>إخفاء الموقع عن الطلاب</b>
                         </button>
                     </div>
 
-                    <!-- طبقة الحجب عند الإخفاء (قابلة للضغط لتفعيل الموقع) -->
-                    <div class="map-hidden-overlay" onclick="togglePublish(true)" title="اضغط هنا لتفعيل الموقع">
+                    <!-- طبقة الحجب عند الإخفاء (قابلة للضغط لتفعيل الموقع) صنفناها بـ clickable-element لتشغيل الصوت -->
+                    <div class="map-hidden-overlay clickable-element" onclick="togglePublish(true)" title="اضغط هنا لتفعيل الموقع">
                         <i>🔒</i>
                         <h4>الموقع محجوب عن الطلاب</h4>
                         <p><b>اضغط هنا لتفعيل الموقع</b></p>
@@ -253,14 +261,16 @@
 
     <!-- ✅ أزرار الإجراءات العائمة -->
     <div class="fab-container">
-        <button class="fab-btn fab-home" onclick="window.location.href='index2.html'">
+        <!-- زر إدارة الحصص صنفناه بـ clickable-element لتشغيل الصوت -->
+        <button class="fab-btn fab-home clickable-element" onclick="window.location.href='index2.html'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125H2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
-            الرئيسية
+            إدارة الحصص
         </button>
         
-        <button class="fab-btn fab-edit" onclick="editLesson()">
+        <!-- زر التعديل صنفناه بـ clickable-element لتشغيل الصوت -->
+        <button class="fab-btn fab-edit clickable-element" onclick="editLesson()">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
             </svg>
@@ -268,7 +278,45 @@
         </button>
     </div>
 
+    <!-- ✅ السكريبتات -->
     <script>
+        // ==========================================
+        // ✅ إضافة تأثير الصوت المرتفع (Click Sound)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playHighPitchSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); // صوت رفيع
+            
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        // تشغيل الصوت عند الضغط على الأزرار المحددة
+        document.addEventListener('click', function(e) {
+            const clickableElement = e.target.closest('.clickable-element');
+            if (clickableElement) {
+                playHighPitchSound();
+            }
+        });
+
+        // ==========================================
+        // بقية سكريبتات الصفحة
+        // ==========================================
         let currentLessonId = '1';
         let staticMap = null;
         let staticMarker = null;
@@ -276,6 +324,7 @@
         let currentLat = 30.0444;
         let currentLng = 31.2357;
         
+        // ✅ منع زر الرجوع في المتصفح أو الهاتف
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, location.href);
@@ -289,11 +338,13 @@
 
             loadActualData();
 
+            // استخدام localStorage للتحقق من حالة إظهار الخريطة
             const savedPublishState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
             togglePublish(savedPublishState); 
         };
 
         function loadActualData() {
+            // استخدام localStorage
             const savedData = localStorage.getItem('lessonState_' + currentLessonId);
 
             if (savedData) {
@@ -388,71 +439,6 @@
         }
 
         function updateMapMarker(isPublished) {
-            if (staticMarker) {
-                staticMap.removeLayer(staticMarker);
-            }
-
-            if (isPublished) {
-                const iconHtml = `<div class="marker-published">📍</div>`;
-                const popupContent = `
-                    <div>
-                        <strong style="color:#0F2D5C; font-size:13px; display:block; margin-bottom:2px;">👨‍🏫 أ/ ${teacherNameGlob}</strong>
-                        <span style="color:#10B981; font-size:12px; font-weight:800;">الموقع ظاهر للطلاب الآن 🟢</span>
-                    </div>
-                `;
-
-                const customIcon = L.divIcon({
-                    className: 'custom-leaflet-marker',
-                    html: iconHtml,
-                    iconSize: [34, 34],
-                    iconAnchor: [17, 17]
-                });
-
-                staticMarker = L.marker([currentLat, currentLng], { icon: customIcon }).addTo(staticMap);
-                
-                staticMarker.bindPopup(popupContent, { 
-                    closeButton: false, 
-                    autoClose: false, 
-                    closeOnClick: false 
-                }).openPopup();
-            }
-        }
-
-        function togglePublish(forceState = null) {
-            let isPublished;
-            if (forceState !== null) {
-                isPublished = forceState;
-            } else {
-                const current = localStorage.getItem('publishState_' + currentLessonId) === 'true';
-                isPublished = !current;
-            }
-
-            const mapWrap = document.getElementById('mapWrapper');
-
-            if (isPublished) {
-                mapWrap.classList.remove('is-hidden'); 
-            } else {
-                mapWrap.classList.add('is-hidden'); 
-            }
-
-            updateMapMarker(isPublished);
-            localStorage.setItem('publishState_' + currentLessonId, isPublished);
-        }
-
-        function editLesson() {
-            const stateKey = 'lessonState_' + currentLessonId;
-            const savedState = localStorage.getItem(stateKey);
-            if (savedState) {
-                let stateObj = JSON.parse(savedState);
-                stateObj.step = 1; 
-                localStorage.setItem(stateKey, JSON.stringify(stateObj));
-            }
-            window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
-        }
-    </script>
-</body>
-</html>
-ublished) {
             if (staticMarker) {
                 staticMap.removeLayer(staticMarker);
             }
