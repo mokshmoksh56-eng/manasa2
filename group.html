@@ -8,8 +8,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- ✅ خط Orbitron المخصص للساعة الرقمية (بدون شرطة داخل الصفر) -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
+    <!-- ✅ خط Rajdhani المخصص للساعة الرقمية (شكل LCD كلاسيكي بدون شرطة داخل الصفر) -->
+    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
     
     <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
@@ -138,7 +138,7 @@
             border-bottom-width: 2px; margin-bottom: 2px;
         }
 
-        /* ----- ستايل الساعة الرقمية الواقعية جداً (ستايل LCD الكلاسيكي بخط Orbitron) ----- */
+        /* ----- ستايل الساعة الرقمية الواقعية جداً (شكل LCD بدون شرطة الصفر) ----- */
         .realistic-clock-wrapper {
             background-color: #b5c6b3; 
             border: 4px solid #1e293b; 
@@ -170,10 +170,10 @@
             border: 1px solid transparent;
             border-radius: 6px;
             padding: 5px 0;
-            font-family: 'Orbitron', sans-serif; /* ✅ استخدام الخط الجديد */
-            font-size: 30px;
+            font-family: 'Rajdhani', sans-serif; /* ✅ استخدام خط Rajdhani لصفر مفرغ وشكل رقمي كلاسيكي */
+            font-size: 32px;
             font-weight: 700;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
             color: #1a1c1a; 
             text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3); 
             text-align: center; text-align-last: center;
@@ -195,8 +195,8 @@
         }
 
         .time-colon {
-            font-family: 'Orbitron', sans-serif; /* ✅ استخدام الخط الجديد */
-            font-size: 30px;
+            font-family: 'Rajdhani', sans-serif; /* ✅ توافق الخط */
+            font-size: 32px;
             font-weight: 700;
             color: #1a1c1a;
             text-shadow: 1px 1px 0px rgba(255, 255, 255, 0.3);
