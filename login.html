@@ -450,10 +450,10 @@
         </div>
     </div>
 
-    <!-- أزرار التحكم الخارجية (تسجيل خروج / حذف حساب) - تظهر فقط قبل تسجيل الدخول -->
+    <!-- أزرار التحكم الخارجية (تسجيل خروج / حذف حساب) -->
     <div id="actionButtonsContainer" class="action-buttons-container">
         <button class="btn-logout" onclick="handleLogout()">
-            تسجيل خروج
+            الرجوع للرئيسية
         </button>
         <button class="btn-delete-small" onclick="confirmDeleteAccount()">
             حذف الحساب
@@ -463,20 +463,24 @@
     <script>
         // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
         window.onload = function() {
+            // مسح حالة "تسجيل الدخول النشط" لمنع الدخول التلقائي (السريع)
             const loggedInTeacher = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacher) {
-                // ✅ إذا كان مسجل دخول بالفعل، يتم توجيهه مباشرة لصفحة إدارة المجموعات
-                window.location.href = './index2.html';
-            } else {
-                // إظهار أزرار التحكم عند عدم وجود تسجيل دخول
-                document.getElementById('actionButtonsContainer').style.display = 'flex';
-                
-                // إذا لم يكن مسجلاً للدخول، تفقد إذا كان هناك رقم موبايل محفوظ وقم بملئه تلقائياً
-                const rememberedPhone = localStorage.getItem('rememberedPhone');
-                if (rememberedPhone) {
-                    document.getElementById('loginPhone').value = rememberedPhone;
-                    document.getElementById('regPhone').value = rememberedPhone;
+                const loggedIn = JSON.parse(loggedInTeacher);
+                if (loggedIn && loggedIn.phone) {
+                    localStorage.setItem('rememberedPhone', loggedIn.phone);
                 }
+                localStorage.removeItem('loggedInTeacher');
+            }
+
+            // إظهار أزرار التحكم
+            document.getElementById('actionButtonsContainer').style.display = 'flex';
+            
+            // استرجاع رقم الموبايل المحفوظ وملء الحقل تلقائياً (يحفظ الرقم فقط)
+            const rememberedPhone = localStorage.getItem('rememberedPhone');
+            if (rememberedPhone) {
+                document.getElementById('loginPhone').value = rememberedPhone;
+                document.getElementById('regPhone').value = rememberedPhone;
             }
         };
 
@@ -568,34 +572,28 @@
         }
 
         function handleLogout() {
-            // حفظ الرقم قبل الخروج للراحة عند الدخول مرة أخرى
-            const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
-            if (loggedIn && loggedIn.phone) {
-                localStorage.setItem('rememberedPhone', loggedIn.phone);
-            }
-            localStorage.removeItem('loggedInTeacher');
+            // توجيه المستخدم لـ index.html بدلاً من تسجيل الخروج لأنه تم إلغاؤه في اللود
             window.location.href = './index.html'; 
         }
 
         // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل
         function confirmDeleteAccount() {
             if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ (سيتم مسح جميع بياناتك، وسيتم الاحتفاظ برقم الموبايل فقط)')) {
-                const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
-                if (loggedIn && loggedIn.phone) {
-                    
+                // نبحث عن الحساب المرتبط بالرقم المكتوب حاليا في المربع
+                const currentPhone = document.getElementById('loginPhone').value.trim();
+                
+                if (currentPhone && localStorage.getItem('teacherAccount_' + currentPhone)) {
                     // الاحتفاظ برقم الموبايل فقط
-                    localStorage.setItem('rememberedPhone', loggedIn.phone);
+                    localStorage.setItem('rememberedPhone', currentPhone);
                     
                     // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
-                    localStorage.removeItem('teacherAccount_' + loggedIn.phone);
-                    
-                    // تسجيل الخروج وإنهاء الجلسة
+                    localStorage.removeItem('teacherAccount_' + currentPhone);
                     localStorage.removeItem('loggedInTeacher'); 
                     
                     alert('تم مسح بيانات الحساب بنجاح، مع الاحتفاظ برقم الموبايل.');
                     window.location.href = './index.html';
                 } else {
-                    alert('لا يوجد حساب مسجل حالياً.');
+                    alert('لا يوجد حساب مسجل لهذا الرقم حالياً.');
                 }
             }
         }
