@@ -303,7 +303,7 @@
             font-weight: 800;
         }
 
-        /* ✅ صندوق صورة الكارت — دائري وأنيق وقابل للضغط */
+        /* ✅ صندوق صورة الكارت */
         .card-image-box {
             flex-shrink: 0;
             width: 140px;
@@ -570,7 +570,7 @@
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
                 
                 <!-- ✅ كارت إنشاء مجموعة جديدة -->
-                <div onclick="createNewLesson(true)" class="portal-card card-add-new">
+                <div onclick="playClickSound(); createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -606,7 +606,7 @@
             <h3 class="modal-title" style="color: #991B1B;">تأكيد الحذف</h3>
             <p class="modal-desc">هل أنت متأكد من رغبتك في حذف هذه المجموعة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.</p>
             <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('deleteModal')">تراجع</button>
+                <button class="btn-modal btn-cancel" onclick="playClickSound(); closeModal('deleteModal')">تراجع</button>
                 <button class="btn-modal btn-confirm-delete" id="confirmDeleteBtn">نعم، احذف المجموعة</button>
             </div>
         </div>
@@ -624,7 +624,7 @@
             <p class="modal-desc">قم بكتابة الاسم الجديد للمجموعة أدناه:</p>
             <input type="text" id="newGroupNameInput" class="custom-input" placeholder="اسم المجموعة">
             <div class="modal-actions">
-                <button class="btn-modal btn-cancel" onclick="closeModal('renameModal')">إلغاء</button>
+                <button class="btn-modal btn-cancel" onclick="playClickSound(); closeModal('renameModal')">إلغاء</button>
                 <button class="btn-modal btn-confirm-save" id="confirmRenameBtn">حفظ الاسم</button>
             </div>
         </div>
@@ -635,44 +635,55 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- ✅ السكريبتات والتفاعل -->
+    <!-- ✅ السكريبتات والتفاعل والصوتيات -->
     <script>
         // ==========================================
-        // ✅ إضافة تأثير الصوت المرتفع (Click Sound)
+        // ✅ نظام الأصوات المخصص للموبايل
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-        function playHighPitchSound() {
-            // استئناف السياق الصوتي إذا كان معلقاً (خاصية الأمان في المتصفحات)
+        function resumeAudio() {
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
-            
+        }
+
+        // 1. صوت "كليك" رفيع وخفيف (للتعديل والأزرار العامة)
+        function playClickSound() {
+            resumeAudio();
             const osc = audioCtx.createOscillator();
             const gain = audioCtx.createGain();
-            
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
-            osc.type = 'sine'; // نوع الموجة للحصول على صوت نقي
-            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); // 3000 هرتز لصوت رفيع جداً
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(2500, audioCtx.currentTime); // تردد عالي ليكون رفيعاً
             
-            // عمل تلاشي سريع جداً للصوت (مثل صوت Pop أو Tick)
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
             
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.05); // مدة الصوت جزء صغير جدا من الثانية
+            osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // تشغيل الصوت عند الضغط على أي زر، كارت، أو أيقونة في الصفحة
-        document.addEventListener('click', function(e) {
-            // حدد العناصر التي تريد أن يصدر منها الصوت عند الضغط
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal');
-            if (clickableElement) {
-                playHighPitchSound();
-            }
-        });
+        // 2. صوت "خطأ/حذف" مميز (لزر الحذف)
+        function playDeleteSound() {
+            resumeAudio();
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(300, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.15); // نزول في التردد
+            
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime); 
+            gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.15); 
+            
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.15);
+        }
 
         // ==========================================
         // بقية سكريبتات الصفحة
@@ -722,7 +733,7 @@
             const container = document.getElementById('lessonsContainer');
             
             const addCardHTML = `
-                <div onclick="createNewLesson(true)" class="portal-card card-add-new">
+                <div onclick="playClickSound(); createNewLesson(true)" class="portal-card card-add-new">
                     <div class="icon-plus">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -747,30 +758,29 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
-                // تم تبديل ترتيب الأزرار هنا (أصبح زر التعديل هو الأول على اليمين ثم زر الحذف)
+                // تم ربط الأصوات بالأزرار هنا (التعديل = كليك رفيع، الحذف = صوت مميز)
                 newCard.innerHTML = `
                     <div class="card-actions">
-                        <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal(${lesson.id}, event)">
+                        <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="playClickSound(); openRenameModal(${lesson.id}, event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" />
                             </svg>
                         </button>
-                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal(${lesson.id}, event)">
+                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="playDeleteSound(); openDeleteModal(${lesson.id}, event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                             </svg>
                         </button>
                     </div>
 
-                    <!-- صندوق الصورة قابل للضغط لعرض تفاصيل المواعيد والمكان -->
-                    <div class="card-image-box" onclick="openGroupModal(${lesson.id})" title="اضغط لعرض تفاصيل المواعيد والمكان">
+                    <div class="card-image-box" onclick="playClickSound(); openGroupModal(${lesson.id})" title="اضغط لعرض تفاصيل المواعيد والمكان">
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
 
                     <div class="card-text">
                         <h2>${lesson.title}</h2>
                         <p>${descText}</p>
-                        <a href="${targetUrl}" class="btn-go">
+                        <a href="${targetUrl}" class="btn-go" onclick="playClickSound()">
                             ${btnText}
                         </a>
                     </div>
@@ -790,6 +800,7 @@
         }
 
         document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+            playClickSound(); // صوت عند التأكيد
             if(itemToDelete !== null) {
                 lessons = lessons.filter(l => l.id !== itemToDelete);
                 saveLessonsToStorage();
@@ -815,11 +826,12 @@
                 const inputField = document.getElementById('newGroupNameInput');
                 inputField.value = lesson.title;
                 document.getElementById('renameModal').classList.add('active');
-                setTimeout(() => inputField.focus(), 100); // التركيز التلقائي
+                setTimeout(() => inputField.focus(), 100); 
             }
         }
 
         document.getElementById('confirmRenameBtn').addEventListener('click', function() {
+            playClickSound(); // صوت عند التأكيد
             const newName = document.getElementById('newGroupNameInput').value;
             
             if(itemToRename !== null && newName.trim() !== '') {
@@ -843,7 +855,6 @@
             itemToRename = null;
         });
 
-        // السماح بالضغط على Enter للحفظ
         document.getElementById('newGroupNameInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 document.getElementById('confirmRenameBtn').click();
@@ -861,7 +872,6 @@
             const nameEl = document.getElementById('modalGroupName');
             const contentEl = document.getElementById('modalBodyContent');
 
-            // تعديل تصميم الهيدر ليتناسب مع الشارة الجديدة
             nameEl.style.display = 'flex';
             nameEl.style.alignItems = 'center';
             nameEl.style.flexWrap = 'wrap';
@@ -870,7 +880,6 @@
                 const data = JSON.parse(savedState);
                 const groupName = data.g_name || `مجموعة رقم ${lessonId}`;
                 
-                // 2. تصميم الإشارة الخضراء أو الحمراء
                 let statusBadge = isPublished ? 
                     `<span style="font-size: 11px; background: #D1FAE5; color: #065F46; padding: 3px 8px; border-radius: 99px; margin-right: 10px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 5px; font-weight: 800;">
                         <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
@@ -882,31 +891,25 @@
                         الموقع مخفي عن الطلبة
                     </span>`;
 
-                // 3. وضع الاسم وبجواره الإشارة
                 nameEl.innerHTML = `${groupName} ${statusBadge}`;
                 
-                // عرض بيانات الساعة الرقمية المخصصة
                 const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? 
                                     `${data.start_hour}:${data.start_min} ${data.start_ampm}` : '--:--';
                 const endTime12 = (data.end_hour && data.end_min && data.end_ampm) ? 
                                   `${data.end_hour}:${data.end_min} ${data.end_ampm}` : '--:--';
 
-                // استخراج الأيام، الشهور، والتكرار الأسبوعي الجديدة
                 const daysStr = data.g_days && data.g_days.length > 0 ? data.g_days.join('، ') : 'غير محدد';
                 const monthsStr = data.g_months && data.g_months.length > 0 ? data.g_months.join('، ') : 'غير محدد';
                 const repeatStr = data.g_repeat_weekly ? '✅ نعم (مكرر أسبوعياً)' : '❌ لا (مرة واحدة)';
 
-                // ✅ ترجمة قيم الفئة
-                let genderText = 'مختلط'; // القيمة الافتراضية
+                let genderText = 'مختلط'; 
                 if(data.g_gender === 'g_boys') genderText = 'أولاد فقط';
                 else if(data.g_gender === 'g_girls') genderText = 'بنات فقط';
 
-                // ✅ ترجمة قيم المكان
-                let locText = 'السنتر'; // القيمة الافتراضية
+                let locText = 'السنتر'; 
                 if(data.g_loc === 'l_teach') locText = 'بيت المستر';
                 else if(data.g_loc === 'l_stud') locText = 'منزل الطالب';
 
-                // ✅ استخراج الصف والمادة
                 const gradeStr = data.s_grade || 'غير محدد';
                 const subjectsStr = data.selectedSubjects && data.selectedSubjects.length > 0 
                                     ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ') 
