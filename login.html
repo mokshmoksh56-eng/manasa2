@@ -2,8 +2,9 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>منصة احجزلى - تسجيل دخول المعلم</title>
+    <!-- إعدادات الموبايل لمنع التقريب التلقائي المزعج -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>منصة احجزلى - تسجيل الدخول</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -16,7 +17,7 @@
         :root {
             --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
         }
-        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
         
         body {
             background: #F8FAFC;
@@ -27,12 +28,12 @@
         }
 
         /* ============================================ */
-        /* ✅ الهيدر العلوي (نفس ستايل المنصة) */
+        /* ✅ الهيدر العلوي */
         /* ============================================ */
         .hero-banner {
             position: relative;
             width: 100%;
-            min-height: 320px;
+            min-height: 280px;
             background-image: url('./teacher2.png');
             background-size: cover;
             background-position: center;
@@ -40,10 +41,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: hidden;
-            padding: 40px 20px;
-            border-bottom-left-radius: 40px;
-            border-bottom-right-radius: 40px;
+            padding: 20px;
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
@@ -52,10 +52,10 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.75) 0%, 
-                rgba(255, 255, 255, 0.90) 50%, 
-                rgba(255, 255, 255, 0.98) 100%);
-            z-index: 1;
+                rgba(255, 255, 255, 0.8) 0%, 
+                rgba(255, 255, 255, 0.95) 100%);
+            border-bottom-left-radius: 35px;
+            border-bottom-right-radius: 35px;
         }
 
         .hero-content {
@@ -66,13 +66,11 @@
         }
 
         .hero-brand {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 900;
             color: #0F172A;
-            letter-spacing: -1px;
             line-height: 1;
-            margin-bottom: 12px;
-            display: inline-block;
+            margin-bottom: 8px;
         }
         .hero-brand .accent {
             color: #F59E0B;
@@ -81,7 +79,7 @@
         .hero-brand .accent::after {
             content: '';
             position: absolute;
-            bottom: -6px;
+            bottom: -5px;
             left: 0;
             right: 0;
             height: 4px;
@@ -94,12 +92,13 @@
         /* ============================================ */
         .auth-container {
             max-width: 450px;
-            margin: -60px auto 40px;
+            width: 92%;
+            margin: -50px auto 40px;
             position: relative;
             z-index: 10;
             background: #FFFFFF;
-            border-radius: 28px;
-            padding: 30px;
+            border-radius: 24px;
+            padding: 25px 20px;
             box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
             border: 2px solid #E2E8F0;
         }
@@ -107,16 +106,16 @@
         .auth-tabs {
             display: flex;
             background: #F1F5F9;
-            border-radius: 16px;
-            padding: 5px;
-            margin-bottom: 25px;
+            border-radius: 14px;
+            padding: 4px;
+            margin-bottom: 20px;
         }
 
         .auth-tab {
             flex: 1;
             text-align: center;
             padding: 12px;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 800;
             color: #64748B;
             border-radius: 12px;
@@ -131,10 +130,10 @@
         }
 
         /* ============================================ */
-        /* ✅ الحقول والإدخال */
+        /* ✅ الحقول والإدخال للموبايل */
         /* ============================================ */
         .input-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             text-align: right;
         }
 
@@ -143,15 +142,16 @@
             font-size: 14px;
             font-weight: 800;
             color: #1E293B;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
-        .custom-input, .custom-select {
+        .custom-input {
             width: 100%;
             padding: 14px;
             border: 2px solid #E2E8F0;
-            border-radius: 14px;
-            font-size: 15px;
+            border-radius: 12px;
+            /* حجم الخط 16px يمنع التقريب التلقائي في الآيفون */
+            font-size: 16px; 
             font-weight: 700;
             color: #1E293B;
             background: #F8FAFC;
@@ -160,7 +160,7 @@
             box-sizing: border-box;
         }
 
-        .custom-input:focus, .custom-select:focus {
+        .custom-input:focus {
             border-color: var(--primary-600);
             background: #FFFFFF;
             box-shadow: 0 0 0 4px #DBEAFE;
@@ -169,12 +169,13 @@
         .custom-input::placeholder {
             color: #94A3B8;
             font-weight: 600;
+            font-size: 14px;
         }
 
         /* تنسيق اختيار اللقب */
         .radio-group {
             display: flex;
-            gap: 15px;
+            gap: 10px;
             margin-bottom: 10px;
         }
         .radio-label {
@@ -182,7 +183,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             padding: 12px;
             background: #F1F5F9;
             border: 2px solid #E2E8F0;
@@ -191,6 +192,7 @@
             font-weight: 800;
             color: #475569;
             transition: all 0.3s;
+            font-size: 15px;
         }
         .radio-input {
             display: none;
@@ -210,56 +212,49 @@
             background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
             color: #FFFFFF;
             border: none;
-            border-radius: 14px;
+            border-radius: 12px;
             font-size: 16px;
             font-weight: 900;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
-            margin-top: 10px;
+            box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.4);
+            margin-top: 5px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
         }
 
-        .btn-submit:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
+        .btn-submit:active {
+            transform: scale(0.98);
         }
 
         .btn-danger {
             background: linear-gradient(135deg, #EF4444, #B91C1C);
-            box-shadow: 0 10px 20px -5px rgba(239, 68, 68, 0.4);
+            box-shadow: 0 8px 20px -5px rgba(239, 68, 68, 0.4);
             margin-top: 15px;
-        }
-        .btn-danger:hover {
-            box-shadow: 0 15px 25px -5px rgba(239, 68, 68, 0.5);
         }
 
         /* زر الرجوع */
         .btn-back-home {
             position: absolute;
-            top: 25px;
-            right: 25px;
+            top: 20px;
+            right: 20px;
             background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
             color: #ffffff;
-            padding: 10px 22px;
+            padding: 8px 16px;
             border-radius: 999px;
             font-weight: 800;
-            font-size: 15px;
+            font-size: 13px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             text-decoration: none;
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 5px 15px -3px rgba(37, 99, 235, 0.3);
             z-index: 10;
-            transition: all 0.4s;
         }
 
-        /* ============================================ */
-        /* ✅ رسائل الخطأ والنجاح */
-        /* ============================================ */
+        /* رسائل الخطأ والنجاح */
         .alert-msg {
             padding: 12px;
             border-radius: 10px;
@@ -268,33 +263,14 @@
             text-align: center;
             margin-bottom: 15px;
             display: none;
+            animation: fadeInDown 0.3s ease-out;
         }
-        .alert-error {
-            background: #FEE2E2;
-            color: #991B1B;
-            border: 1px solid #FECACA;
+        @keyframes fadeInDown {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .alert-success {
-            background: #D1FAE5;
-            color: #065F46;
-            border: 1px solid #A7F3D0;
-        }
-
-        /* ============================================ */
-        /* الموبايل */
-        /* ============================================ */
-        @media (max-width: 768px) {
-            .auth-container {
-                margin: -40px 15px 30px;
-                padding: 20px;
-            }
-            .btn-back-home {
-                top: 15px;
-                right: 15px;
-                padding: 8px 16px;
-                font-size: 13px;
-            }
-        }
+        .alert-error { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
+        .alert-success { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
     </style>
 </head>
 <body>
@@ -302,7 +278,7 @@
     <!-- الهيدر -->
     <section class="hero-banner">
         <a href="./index.html" class="btn-back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
             الرئيسية
@@ -311,15 +287,15 @@
             <div class="hero-brand">
                 بوابة <span class="accent">المعلمين</span>
             </div>
-            <p style="color: #475569; font-weight: 800; margin-top: 10px; font-size: 16px;">سجل دخولك أو أنشئ حساباً جديداً لإدارة حصصك</p>
+            <p style="color: #475569; font-weight: 800; margin-top: 5px; font-size: 14px;">إدارة حصصك بسهولة من هاتفك</p>
         </div>
     </section>
 
-    <!-- حاوية تسجيل الدخول (في حالة عدم وجود حساب مسجل) -->
+    <!-- حاوية تسجيل الدخول والتسجيل -->
     <div id="authFormsContainer" class="auth-container">
         
         <div class="auth-tabs">
-            <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</div>
+            <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">دخول</div>
             <div class="auth-tab" id="tab-register" onclick="switchTab('register')">حساب جديد</div>
         </div>
 
@@ -329,15 +305,16 @@
         <div id="loginForm">
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="loginPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <!-- استخدام inputmode="numeric" و pattern لفتح لوحة الأرقام في الموبايل -->
+                <input type="tel" id="loginPhone" class="custom-input" placeholder="01012345678" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <button class="btn-submit" onclick="handleLogin()">
-                دخول 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
+                تسجيل الدخول 
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
             </button>
         </div>
 
@@ -363,46 +340,41 @@
             </div>
 
             <div class="input-group">
-                <label class="input-label">العمر</label>
-                <input type="number" id="regAge" class="custom-input" placeholder="مثال: 30" min="20" max="80">
-            </div>
-
-            <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="regPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
-            <div class="input-group">
-                <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="regPassword1" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-            </div>
-
-            <div class="input-group">
-                <label class="input-label">تأكيد الرقم السري (4 أرقام)</label>
-                <input type="password" id="regPassword2" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            <div class="input-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label class="input-label">الرقم السري</label>
+                    <input type="password" id="regPassword1" class="custom-input" placeholder="4 أرقام" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+                <div style="flex: 1;">
+                    <label class="input-label">تأكيد السري</label>
+                    <input type="password" id="regPassword2" class="custom-input" placeholder="4 أرقام" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
             </div>
 
             <button class="btn-submit" onclick="handleRegister()">
                 إنشاء حساب 
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" /></svg>
             </button>
         </div>
     </div>
 
-    <!-- حاوية الملف الشخصي (تظهر بعد تسجيل الدخول) -->
+    <!-- حاوية الملف الشخصي (تظهر تلقائياً إذا كان مسجلاً للدخول) -->
     <div id="profileContainer" class="auth-container" style="display: none; text-align: center;">
-        <div style="width: 80px; height: 80px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 3px solid #BFDBFE;">
-            <span id="profileIcon" style="font-size: 40px;">👨‍🏫</span>
+        <div style="width: 70px; height: 70px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 3px solid #BFDBFE;">
+            <span id="profileIcon" style="font-size: 32px;">👨‍🏫</span>
         </div>
-        <h2 id="profileName" style="font-size: 24px; font-weight: 900; color: #0F2D5C; margin-bottom: 5px;">مرحباً</h2>
-        <p id="profilePhone" style="font-size: 15px; font-weight: 700; color: #64748B; margin-bottom: 25px;"></p>
+        <h2 id="profileName" style="font-size: 22px; font-weight: 900; color: #0F2D5C; margin-bottom: 4px;">مرحباً</h2>
+        <p id="profilePhone" style="font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 20px;"></p>
 
         <a href="./index2.html" class="btn-submit" style="text-decoration: none;">
-            الذهاب لإدارة المجموعات
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+            إدارة المجموعات
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
 
-        <!-- ✅ زر تسجيل الخروج -->
         <button class="btn-submit" style="background: #F1F5F9; color: #475569; box-shadow: none;" onclick="handleLogout()">
             تسجيل خروج
         </button>
@@ -413,10 +385,11 @@
     </div>
 
     <script>
-        // التحقق من حالة تسجيل الدخول عند تحميل الصفحة
+        // ✅ 1. التحقق من التخزين المحلي (Local Storage) فور فتح الصفحة
         window.onload = function() {
             const loggedInTeacher = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacher) {
+                // إذا كان مسجلاً، اذهب للبروفايل مباشرة
                 showProfile(JSON.parse(loggedInTeacher));
             }
         };
@@ -437,7 +410,7 @@
             }
         }
 
-        // إظهار رسالة
+        // دالة إظهار الرسائل المنبثقة
         function showAlert(msg, isError = true) {
             const alertEl = document.getElementById('alertMsg');
             alertEl.textContent = msg;
@@ -446,16 +419,15 @@
             setTimeout(() => { alertEl.style.display = 'none'; }, 4000);
         }
 
-        // إنشاء حساب
+        // ✅ 2. إنشاء حساب وحفظه في الـ Local Storage
         function handleRegister() {
             const title = document.querySelector('input[name="title"]:checked').value;
             const name = document.getElementById('regName').value.trim();
-            const age = document.getElementById('regAge').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
 
-            if (!name || !age || !phone || !pass1 || !pass2) {
+            if (!name || !phone || !pass1 || !pass2) {
                 return showAlert('الرجاء إكمال جميع البيانات.');
             }
             if (phone.length !== 11) {
@@ -468,32 +440,36 @@
                 return showAlert('الرقمان السريان غير متطابقين.');
             }
 
-            // التأكد أن الرقم غير مسجل مسبقاً (محاكاة)
+            // التأكد من أن الرقم غير مسجل
             const savedData = localStorage.getItem('teacherAccount_' + phone);
             if (savedData) {
                 return showAlert('هذا الرقم مسجل مسبقاً! قم بتسجيل الدخول.');
             }
 
-            const accountData = { title, name, age, phone, pass: pass1 };
+            // حفظ بيانات الحساب الأساسية في الذاكرة
+            const accountData = { title, name, phone, pass: pass1 };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
-            localStorage.setItem('loggedInTeacher', JSON.stringify(accountData)); // تسجيل دخول تلقائي
+            
+            // تسجيل الدخول التلقائي بعد إنشاء الحساب
+            localStorage.setItem('loggedInTeacher', JSON.stringify(accountData)); 
 
             showAlert('تم إنشاء الحساب بنجاح!', false);
             setTimeout(() => { showProfile(accountData); }, 1000);
         }
 
-        // تسجيل الدخول
+        // ✅ 3. تسجيل الدخول من الـ Local Storage
         function handleLogin() {
             const phone = document.getElementById('loginPhone').value.trim();
             const pass = document.getElementById('loginPassword').value;
 
             if (phone.length !== 11 || pass.length !== 4) {
-                return showAlert('الرجاء إدخال رقم تليفون صحيح ورقم سري مكون من 4 أرقام.');
+                return showAlert('أدخل رقم تليفون صحيح ورقم سري من 4 أرقام.');
             }
 
+            // البحث عن الحساب في الذاكرة المحلية
             const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
             if (!savedDataStr) {
-                return showAlert('هذا الرقم غير مسجل في النظام.');
+                return showAlert('هذا الرقم غير مسجل لدينا.');
             }
 
             const savedData = JSON.parse(savedDataStr);
@@ -501,11 +477,12 @@
                 return showAlert('الرقم السري غير صحيح.');
             }
 
+            // إنشاء جلسة الدخول
             localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
             showProfile(savedData);
         }
 
-        // عرض البروفايل
+        // عرض واجهة الحساب
         function showProfile(data) {
             document.getElementById('authFormsContainer').style.display = 'none';
             document.getElementById('profileContainer').style.display = 'block';
@@ -515,21 +492,21 @@
             document.getElementById('profilePhone').textContent = `رقم الحساب: ${data.phone}`;
         }
 
-        // ✅ تسجيل الخروج وتوجيه المستخدم للصفحة الرئيسية
+        // ✅ 4. تسجيل الخروج وإزالة الجلسة
         function handleLogout() {
             localStorage.removeItem('loggedInTeacher');
-            window.location.href = './index.html'; // التوجيه للصفحة الرئيسية
+            window.location.href = './index.html'; // العودة للرئيسية
         }
 
-        // حذف الحساب
+        // حذف الحساب من الـ Local Storage نهائياً
         function confirmDeleteAccount() {
-            if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ سيتم مسح كافة بياناتك ولن تتمكن من التراجع.')) {
+            if (confirm('هل أنت متأكد من حذف الحساب؟ سيتم مسح بياناتك ولن تتمكن من التراجع.')) {
                 const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
                 if (loggedIn && loggedIn.phone) {
                     localStorage.removeItem('teacherAccount_' + loggedIn.phone);
                     localStorage.removeItem('loggedInTeacher');
                     alert('تم حذف الحساب بنجاح.');
-                    window.location.href = './index.html'; // التوجيه للصفحة الرئيسية
+                    window.location.href = './index.html';
                 }
             }
         }
