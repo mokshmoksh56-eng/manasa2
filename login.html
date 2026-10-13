@@ -2,9 +2,8 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <!-- إعدادات الموبايل لمنع التقريب التلقائي المزعج -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-    <title>منصة احجزلى - تسجيل الدخول</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>منصة احجزلى - تسجيل دخول المعلم</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -17,7 +16,7 @@
         :root {
             --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
         }
-        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
         body {
             background: #F8FAFC;
@@ -41,9 +40,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
-            border-bottom-left-radius: 35px;
-            border-bottom-right-radius: 35px;
+            overflow: hidden;
+            padding: 40px 20px;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
@@ -52,10 +52,10 @@
             position: absolute;
             inset: 0;
             background: linear-gradient(180deg, 
-                rgba(255, 255, 255, 0.8) 0%, 
-                rgba(255, 255, 255, 0.95) 100%);
-            border-bottom-left-radius: 35px;
-            border-bottom-right-radius: 35px;
+                rgba(255, 255, 255, 0.75) 0%, 
+                rgba(255, 255, 255, 0.90) 50%, 
+                rgba(255, 255, 255, 0.98) 100%);
+            z-index: 1;
         }
 
         .hero-content {
@@ -69,17 +69,21 @@
             font-size: 36px;
             font-weight: 900;
             color: #0F172A;
+            letter-spacing: -1px;
             line-height: 1;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            display: inline-block;
         }
+        
         .hero-brand .accent {
             color: #F59E0B;
             position: relative;
         }
+        
         .hero-brand .accent::after {
             content: '';
             position: absolute;
-            bottom: -5px;
+            bottom: -6px;
             left: 0;
             right: 0;
             height: 4px;
@@ -91,14 +95,14 @@
         /* ✅ صندوق تسجيل الدخول والتسجيل */
         /* ============================================ */
         .auth-container {
+            width: 90%;
             max-width: 450px;
-            width: 92%;
-            margin: -50px auto 40px;
+            margin: -50px auto 30px;
             position: relative;
             z-index: 10;
             background: #FFFFFF;
             border-radius: 24px;
-            padding: 25px 20px;
+            padding: 25px;
             box-shadow: 0 20px 40px -15px rgba(0,0,0,0.1);
             border: 2px solid #E2E8F0;
         }
@@ -107,18 +111,18 @@
             display: flex;
             background: #F1F5F9;
             border-radius: 14px;
-            padding: 4px;
+            padding: 5px;
             margin-bottom: 20px;
         }
 
         .auth-tab {
             flex: 1;
             text-align: center;
-            padding: 12px;
+            padding: 10px;
             font-size: 15px;
             font-weight: 800;
             color: #64748B;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
@@ -130,16 +134,16 @@
         }
 
         /* ============================================ */
-        /* ✅ الحقول والإدخال للموبايل */
+        /* ✅ الحقول والإدخال */
         /* ============================================ */
         .input-group {
-            margin-bottom: 16px;
+            margin-bottom: 15px;
             text-align: right;
         }
 
         .input-label {
             display: block;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             color: #1E293B;
             margin-bottom: 6px;
@@ -147,11 +151,10 @@
 
         .custom-input {
             width: 100%;
-            padding: 14px;
+            padding: 12px;
             border: 2px solid #E2E8F0;
             border-radius: 12px;
-            /* حجم الخط 16px يمنع التقريب التلقائي في الآيفون */
-            font-size: 16px; 
+            font-size: 14px;
             font-weight: 700;
             color: #1E293B;
             background: #F8FAFC;
@@ -166,33 +169,27 @@
             box-shadow: 0 0 0 4px #DBEAFE;
         }
 
-        .custom-input::placeholder {
-            color: #94A3B8;
-            font-weight: 600;
-            font-size: 14px;
-        }
-
         /* تنسيق اختيار اللقب */
         .radio-group {
             display: flex;
             gap: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
         }
         .radio-label {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            padding: 12px;
+            gap: 8px;
+            padding: 10px;
             background: #F1F5F9;
             border: 2px solid #E2E8F0;
-            border-radius: 12px;
+            border-radius: 10px;
             cursor: pointer;
             font-weight: 800;
             color: #475569;
             transition: all 0.3s;
-            font-size: 15px;
+            font-size: 14px;
         }
         .radio-input {
             display: none;
@@ -204,11 +201,11 @@
         }
 
         /* ============================================ */
-        /* ✅ الأزرار */
+        /* ✅ الأزرار الأساسية */
         /* ============================================ */
         .btn-submit {
             width: 100%;
-            padding: 16px;
+            padding: 14px;
             background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
             color: #FFFFFF;
             border: none;
@@ -217,7 +214,7 @@
             font-weight: 900;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 8px 20px -5px rgba(37, 99, 235, 0.4);
+            box-shadow: 0 10px 20px -5px rgba(37, 99, 235, 0.4);
             margin-top: 5px;
             display: flex;
             align-items: center;
@@ -225,69 +222,116 @@
             gap: 8px;
         }
 
-        .btn-submit:active {
-            transform: scale(0.98);
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px -5px rgba(37, 99, 235, 0.5);
         }
 
-        .btn-danger {
-            background: linear-gradient(135deg, #EF4444, #B91C1C);
-            box-shadow: 0 8px 20px -5px rgba(239, 68, 68, 0.4);
-            margin-top: 15px;
-        }
-
-        /* زر الرجوع */
-        .btn-back-home {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
-            color: #ffffff;
-            padding: 8px 16px;
-            border-radius: 999px;
-            font-weight: 800;
-            font-size: 13px;
+        /* ============================================ */
+        /* ✅ أزرار التحكم (تسجيل الخروج وحذف الحساب) */
+        /* ============================================ */
+        .action-buttons-container {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 6px;
-            text-decoration: none;
-            box-shadow: 0 5px 15px -3px rgba(37, 99, 235, 0.3);
-            z-index: 10;
+            justify-content: center;
+            gap: 10px;
+            margin: 15px auto 30px;
+            padding: 0 15px;
+            max-width: 450px;
         }
 
-        /* رسائل الخطأ والنجاح */
+        .btn-logout {
+            background: #F1F5F9;
+            color: #475569;
+            border: 2px solid #E2E8F0;
+            padding: 8px 20px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+        .btn-logout:hover {
+            background: #E2E8F0;
+        }
+
+        .btn-delete-small {
+            background: #FEF2F2;
+            color: #DC2626;
+            border: 1px solid #FECACA;
+            padding: 8px 16px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-delete-small:hover {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        /* ============================================ */
+        /* ✅ رسائل الخطأ والنجاح */
+        /* ============================================ */
         .alert-msg {
             padding: 12px;
             border-radius: 10px;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 800;
             text-align: center;
             margin-bottom: 15px;
             display: none;
-            animation: fadeInDown 0.3s ease-out;
         }
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .alert-error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
         }
-        .alert-error { background: #FEE2E2; color: #991B1B; border: 1px solid #FECACA; }
-        .alert-success { background: #D1FAE5; color: #065F46; border: 1px solid #A7F3D0; }
+        .alert-success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        /* ============================================ */
+        /* الموبايل */
+        /* ============================================ */
+        @media (max-width: 768px) {
+            .hero-banner {
+                min-height: 250px;
+                padding: 30px 15px;
+            }
+            .hero-brand {
+                font-size: 32px;
+            }
+            .auth-container {
+                margin: -40px auto 20px;
+                padding: 20px;
+                width: 92%;
+            }
+            .action-buttons-container {
+                flex-direction: column;
+                width: 92%;
+            }
+            .btn-logout, .btn-delete-small {
+                width: 100%;
+            }
+        }
     </style>
 </head>
 <body>
 
     <!-- الهيدر -->
     <section class="hero-banner">
-        <a href="./index.html" class="btn-back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-            الرئيسية
-        </a>
         <div class="hero-content">
             <div class="hero-brand">
                 بوابة <span class="accent">المعلمين</span>
             </div>
-            <p style="color: #475569; font-weight: 800; margin-top: 5px; font-size: 14px;">إدارة حصصك بسهولة من هاتفك</p>
+            <p style="color: #475569; font-weight: 800; margin-top: 10px; font-size: 15px;">سجل دخولك أو أنشئ حساباً جديداً لإدارة حصصك</p>
         </div>
     </section>
 
@@ -295,7 +339,7 @@
     <div id="authFormsContainer" class="auth-container">
         
         <div class="auth-tabs">
-            <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">دخول</div>
+            <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</div>
             <div class="auth-tab" id="tab-register" onclick="switchTab('register')">حساب جديد</div>
         </div>
 
@@ -305,15 +349,14 @@
         <div id="loginForm">
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <!-- استخدام inputmode="numeric" و pattern لفتح لوحة الأرقام في الموبايل -->
-                <input type="tel" id="loginPhone" class="custom-input" placeholder="01012345678" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="tel" id="loginPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <button class="btn-submit" onclick="handleLogin()">
-                تسجيل الدخول 
+                دخول 
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" /></svg>
             </button>
         </div>
@@ -340,19 +383,23 @@
             </div>
 
             <div class="input-group">
-                <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <label class="input-label">العمر</label>
+                <input type="number" id="regAge" class="custom-input" placeholder="مثال: 30" min="20" max="80">
             </div>
 
-            <div class="input-group" style="display: flex; gap: 10px;">
-                <div style="flex: 1;">
-                    <label class="input-label">الرقم السري</label>
-                    <input type="password" id="regPassword1" class="custom-input" placeholder="4 أرقام" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                </div>
-                <div style="flex: 1;">
-                    <label class="input-label">تأكيد السري</label>
-                    <input type="password" id="regPassword2" class="custom-input" placeholder="4 أرقام" maxlength="4" inputmode="numeric" pattern="[0-9]*" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                </div>
+            <div class="input-group">
+                <label class="input-label">رقم التليفون (11 رقم)</label>
+                <input type="tel" id="regPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">الرقم السري (4 أرقام)</label>
+                <input type="password" id="regPassword1" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+            </div>
+
+            <div class="input-group">
+                <label class="input-label">تأكيد الرقم السري (4 أرقام)</label>
+                <input type="password" id="regPassword2" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <button class="btn-submit" onclick="handleRegister()">
@@ -362,39 +409,46 @@
         </div>
     </div>
 
-    <!-- حاوية الملف الشخصي (تظهر تلقائياً إذا كان مسجلاً للدخول) -->
-    <div id="profileContainer" class="auth-container" style="display: none; text-align: center;">
-        <div style="width: 70px; height: 70px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 12px; border: 3px solid #BFDBFE;">
-            <span id="profileIcon" style="font-size: 32px;">👨‍🏫</span>
-        </div>
-        <h2 id="profileName" style="font-size: 22px; font-weight: 900; color: #0F2D5C; margin-bottom: 4px;">مرحباً</h2>
-        <p id="profilePhone" style="font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 20px;"></p>
-
-        <a href="./index2.html" class="btn-submit" style="text-decoration: none;">
-            إدارة المجموعات
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
-        </a>
-
-        <button class="btn-submit" style="background: #F1F5F9; color: #475569; box-shadow: none;" onclick="handleLogout()">
+    <!-- أزرار التحكم الخارجية ظاهرة دائماً (تسجيل خروج / حذف حساب) -->
+    <div class="action-buttons-container">
+        <button class="btn-logout" onclick="handleLogout()">
             تسجيل خروج
         </button>
-
-        <button class="btn-submit btn-danger" onclick="confirmDeleteAccount()">
-            حذف الحساب نهائياً
+        <button class="btn-delete-small" onclick="confirmDeleteAccount()">
+            حذف الحساب
         </button>
     </div>
 
+    <!-- حاوية الملف الشخصي (تظهر بعد تسجيل الدخول) -->
+    <div id="profileContainer" class="auth-container" style="display: none; text-align: center;">
+        <div style="width: 70px; height: 70px; background: #EFF6FF; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px; border: 3px solid #BFDBFE;">
+            <span id="profileIcon" style="font-size: 35px;">👨‍🏫</span>
+        </div>
+        <h2 id="profileName" style="font-size: 22px; font-weight: 900; color: #0F2D5C; margin-bottom: 5px;">مرحباً</h2>
+        <p id="profilePhone" style="font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 25px;"></p>
+
+        <a href="./index2.html" class="btn-submit" style="text-decoration: none;">
+            الذهاب لإدارة المجموعات
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+        </a>
+    </div>
+
     <script>
-        // ✅ 1. التحقق من التخزين المحلي (Local Storage) فور فتح الصفحة
+        // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
         window.onload = function() {
             const loggedInTeacher = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacher) {
-                // إذا كان مسجلاً، اذهب للبروفايل مباشرة
                 showProfile(JSON.parse(loggedInTeacher));
+            } else {
+                // إذا لم يكن مسجلاً للدخول، تفقد إذا كان هناك رقم موبايل محفوظ وقم بملئه تلقائياً
+                const rememberedPhone = localStorage.getItem('rememberedPhone');
+                if (rememberedPhone) {
+                    document.getElementById('loginPhone').value = rememberedPhone;
+                    document.getElementById('regPhone').value = rememberedPhone;
+                }
             }
         };
 
-        // التبديل بين الدخول والتسجيل
         function switchTab(tab) {
             document.getElementById('alertMsg').style.display = 'none';
             if (tab === 'login') {
@@ -410,7 +464,6 @@
             }
         }
 
-        // دالة إظهار الرسائل المنبثقة
         function showAlert(msg, isError = true) {
             const alertEl = document.getElementById('alertMsg');
             alertEl.textContent = msg;
@@ -419,15 +472,15 @@
             setTimeout(() => { alertEl.style.display = 'none'; }, 4000);
         }
 
-        // ✅ 2. إنشاء حساب وحفظه في الـ Local Storage
         function handleRegister() {
             const title = document.querySelector('input[name="title"]:checked').value;
             const name = document.getElementById('regName').value.trim();
+            const age = document.getElementById('regAge').value.trim();
             const phone = document.getElementById('regPhone').value.trim();
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
 
-            if (!name || !phone || !pass1 || !pass2) {
+            if (!name || !age || !phone || !pass1 || !pass2) {
                 return showAlert('الرجاء إكمال جميع البيانات.');
             }
             if (phone.length !== 11) {
@@ -440,36 +493,33 @@
                 return showAlert('الرقمان السريان غير متطابقين.');
             }
 
-            // التأكد من أن الرقم غير مسجل
             const savedData = localStorage.getItem('teacherAccount_' + phone);
             if (savedData) {
                 return showAlert('هذا الرقم مسجل مسبقاً! قم بتسجيل الدخول.');
             }
 
-            // حفظ بيانات الحساب الأساسية في الذاكرة
-            const accountData = { title, name, phone, pass: pass1 };
+            const accountData = { title, name, age, phone, pass: pass1 };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
+            localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
             
-            // تسجيل الدخول التلقائي بعد إنشاء الحساب
-            localStorage.setItem('loggedInTeacher', JSON.stringify(accountData)); 
+            // حفظ الرقم للتذكر
+            localStorage.setItem('rememberedPhone', phone);
 
             showAlert('تم إنشاء الحساب بنجاح!', false);
             setTimeout(() => { showProfile(accountData); }, 1000);
         }
 
-        // ✅ 3. تسجيل الدخول من الـ Local Storage
         function handleLogin() {
             const phone = document.getElementById('loginPhone').value.trim();
             const pass = document.getElementById('loginPassword').value;
 
             if (phone.length !== 11 || pass.length !== 4) {
-                return showAlert('أدخل رقم تليفون صحيح ورقم سري من 4 أرقام.');
+                return showAlert('الرجاء إدخال رقم تليفون صحيح ورقم سري مكون من 4 أرقام.');
             }
 
-            // البحث عن الحساب في الذاكرة المحلية
             const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
             if (!savedDataStr) {
-                return showAlert('هذا الرقم غير مسجل لدينا.');
+                return showAlert('هذا الرقم غير مسجل في النظام.');
             }
 
             const savedData = JSON.parse(savedDataStr);
@@ -477,12 +527,13 @@
                 return showAlert('الرقم السري غير صحيح.');
             }
 
-            // إنشاء جلسة الدخول
             localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
+            // حفظ الرقم للتذكر
+            localStorage.setItem('rememberedPhone', phone);
+            
             showProfile(savedData);
         }
 
-        // عرض واجهة الحساب
         function showProfile(data) {
             document.getElementById('authFormsContainer').style.display = 'none';
             document.getElementById('profileContainer').style.display = 'block';
@@ -492,21 +543,35 @@
             document.getElementById('profilePhone').textContent = `رقم الحساب: ${data.phone}`;
         }
 
-        // ✅ 4. تسجيل الخروج وإزالة الجلسة
         function handleLogout() {
+            // حفظ الرقم قبل الخروج للراحة عند الدخول مرة أخرى
+            const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
+            if (loggedIn && loggedIn.phone) {
+                localStorage.setItem('rememberedPhone', loggedIn.phone);
+            }
             localStorage.removeItem('loggedInTeacher');
-            window.location.href = './index.html'; // العودة للرئيسية
+            window.location.href = './index.html'; 
         }
 
-        // حذف الحساب من الـ Local Storage نهائياً
+        // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل
         function confirmDeleteAccount() {
-            if (confirm('هل أنت متأكد من حذف الحساب؟ سيتم مسح بياناتك ولن تتمكن من التراجع.')) {
+            if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ (سيتم مسح جميع بياناتك، وسيتم الاحتفاظ برقم الموبايل فقط)')) {
                 const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
                 if (loggedIn && loggedIn.phone) {
+                    
+                    // الاحتفاظ برقم الموبايل فقط
+                    localStorage.setItem('rememberedPhone', loggedIn.phone);
+                    
+                    // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
                     localStorage.removeItem('teacherAccount_' + loggedIn.phone);
-                    localStorage.removeItem('loggedInTeacher');
-                    alert('تم حذف الحساب بنجاح.');
+                    
+                    // تسجيل الخروج وإنهاء الجلسة
+                    localStorage.removeItem('loggedInTeacher'); 
+                    
+                    alert('تم مسح بيانات الحساب بنجاح، مع الاحتفاظ برقم الموبايل.');
                     window.location.href = './index.html';
+                } else {
+                    alert('لا يوجد حساب مسجل حالياً.');
                 }
             }
         }
