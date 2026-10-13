@@ -14,6 +14,13 @@
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        /* ✅ منع إيماءات اللمس (السحب الجانبي للرجوع) في الهواتف */
+        html, body {
+            overscroll-behavior-x: none;
+            touch-action: pan-y;
+        }
+
         body { background: #F1F5F9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
         /* ============================================ */
@@ -317,6 +324,7 @@
         let currentLat = 30.0444;
         let currentLng = 31.2357;
         
+        // ✅ منع زر الرجوع في المتصفح أو الهاتف
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, location.href);
