@@ -121,7 +121,7 @@
             padding: 10px;
             font-size: 15px;
             font-weight: 800;
-            color: #64748B;
+            color: #4ADE80; /* لون أخضر فاتح للتبويب غير النشط */
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
@@ -129,7 +129,7 @@
 
         .auth-tab.active {
             background: #FFFFFF;
-            color: var(--primary-600);
+            color: #16A34A; /* لون أخضر داكن/أساسي للتبويب النشط */
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
         }
 
@@ -224,15 +224,15 @@
 
         /* التأثيرات لـ (مس) - وردي (Pink) */
         .radio-input[value="مس"]:checked + .radio-label {
-            background: #FDF2F8;
-            border-color: #EC4899;
-            color: #DB2777;
+            background: #FDF2F8; /* خلفية وردية فاتحة */
+            border-color: #EC4899; /* حواف وردية */
+            color: #DB2777; /* نص وردي داكن */
             transform: translateY(-2px);
         }
         .radio-input[value="مس"]:checked + .radio-label .avatar-img {
             border-color: #EC4899;
             transform: scale(1.15);
-            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4);
+            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4); /* ظل وردي */
         }
 
         /* ============================================ */
@@ -474,38 +474,6 @@
         </a>
     </div>
 
-    <!-- ✅ سكريبت تأثير الصوت عند الضغط -->
-    <script>
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-
-        function playHighPitchSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(3000, audioCtx.currentTime);
-            
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
-            
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
-        }
-
-        document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .auth-tab, .radio-label, a');
-            if (clickableElement) {
-                playHighPitchSound();
-            }
-        });
-    </script>
-
     <script>
         // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
         window.onload = function() {
@@ -616,10 +584,10 @@
             
             if (data.title === 'مستر') {
                 document.getElementById('profileImage').src = './teacher.png';
-                profileImageContainer.style.borderColor = '#BFDBFE'; 
+                profileImageContainer.style.borderColor = '#BFDBFE'; // إطار أزرق للمستر
             } else {
                 document.getElementById('profileImage').src = './miss.png';
-                profileImageContainer.style.borderColor = '#FBCFE8'; 
+                profileImageContainer.style.borderColor = '#FBCFE8'; // إطار وردي للمس
             }
             
             document.getElementById('profileName').textContent = `${data.title} / ${data.name}`;
@@ -638,7 +606,7 @@
 
         // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل
         function confirmDeleteAccount() {
-            if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ (سيتم مسح جميع بياناتك، وسيتم الاحتفاظ برقم الموبايل فقط)')) {
+            if (confirm('هل أنت متأكد؟ سيتم حذف البيانات فقط')) {
                 const loggedIn = JSON.parse(localStorage.getItem('loggedInTeacher'));
                 if (loggedIn && loggedIn.phone) {
                     
@@ -651,7 +619,7 @@
                     // تسجيل الخروج وإنهاء الجلسة
                     localStorage.removeItem('loggedInTeacher'); 
                     
-                    alert('تم مسح بيانات الحساب بنجاح، مع الاحتفاظ برقم الموبايل.');
+                    alert('تم حذف البيانات فقط');
                     window.location.href = './index.html';
                 } else {
                     alert('لا يوجد حساب مسجل حالياً.');
