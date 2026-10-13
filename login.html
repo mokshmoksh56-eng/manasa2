@@ -92,46 +92,6 @@
         }
 
         /* ============================================ */
-        /* ✅ زر الرجوع (سهم لليمين) */
-        /* ============================================ */
-        .back-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            z-index: 20;
-            width: 44px;
-            height: 44px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.95);
-            border: 2px solid #E2E8F0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            transition: all 0.3s ease;
-            color: #0F2D5C;
-            text-decoration: none;
-        }
-
-        .back-btn:hover {
-            background: #FFFFFF;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.12);
-            border-color: var(--primary-600);
-            color: var(--primary-600);
-        }
-
-        .back-btn:active {
-            transform: translateY(0);
-        }
-
-        .back-btn svg {
-            width: 22px;
-            height: 22px;
-        }
-
-        /* ============================================ */
         /* ✅ صندوق تسجيل الدخول والتسجيل */
         /* ============================================ */
         .auth-container {
@@ -395,12 +355,6 @@
             .btn-logout, .btn-delete-small {
                 width: 100%;
             }
-            .back-btn {
-                top: 15px;
-                right: 15px;
-                width: 40px;
-                height: 40px;
-            }
         }
     </style>
 </head>
@@ -408,13 +362,6 @@
 
     <!-- الهيدر -->
     <section class="hero-banner">
-        <!-- ✅ سهم الرجوع (لليمين) -->
-        <a href="./login.html" class="back-btn" title="رجوع">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-        </a>
-
         <div class="hero-content">
             <div class="hero-brand">
                 بوابة <span class="accent">المعلمين</span>
@@ -521,12 +468,9 @@
         <h2 id="profileName" style="font-size: 22px; font-weight: 900; color: #0F2D5C; margin-bottom: 5px;">مرحباً</h2>
         <p id="profilePhone" style="font-size: 14px; font-weight: 700; color: #64748B; margin-bottom: 25px;"></p>
 
-        <!-- ✅ زر الذهاب لإدارة المجموعات مع سهم لليمين -->
         <a href="./index2.html" class="btn-submit" style="text-decoration: none;">
             الذهاب لإدارة المجموعات
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
         </a>
     </div>
 
