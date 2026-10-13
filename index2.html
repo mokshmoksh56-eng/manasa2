@@ -192,6 +192,45 @@
         }
 
         /* ============================================ */
+        /* ✅ أزرار أعلى الصفحة */
+        /* ============================================ */
+        .top-buttons-container {
+            position: absolute;
+            top: 25px;
+            right: 25px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .btn-top-action {
+            background: rgba(255, 255, 255, 0.95);
+            color: var(--primary-900);
+            padding: 10px 22px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2px solid #E2E8F0;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .btn-top-action:hover {
+            background: #ffffff;
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px -10px rgba(37, 99, 235, 0.3);
+            border-color: var(--primary-600);
+            color: var(--primary-600);
+        }
+
+        /* ============================================ */
         /* ✅ البطاقات */
         /* ============================================ */
         .cards-section {
@@ -481,36 +520,6 @@
         }
         .custom-input:focus { border-color: var(--primary-600); box-shadow: 0 0 0 4px #DBEAFE; }
 
-        /* ============================================ */
-        /* ✅ زر الرجوع للرئيسية */
-        /* ============================================ */
-        .btn-back-home {
-            position: absolute;
-            top: 25px;
-            right: 25px;
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--primary-900);
-            padding: 10px 22px;
-            border-radius: 999px;
-            font-weight: 800;
-            font-size: 15px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            text-decoration: none;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
-            z-index: 10;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 2px solid #E2E8F0;
-        }
-
-        .btn-back-home:hover {
-            background: #ffffff;
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px -10px rgba(37, 99, 235, 0.3);
-            border-color: var(--primary-600);
-            color: var(--primary-600);
-        }
 
         /* ============================================ */
         /* الموبايل */
@@ -547,10 +556,13 @@
             .card-text p { font-size: 12px; margin-bottom: 12px; line-height: 1.55; }
             .btn-go { padding: 10px 20px; font-size: 12.5px; }
 
-            /* تعديل الزر لشاشات الموبايل */
-            .btn-back-home {
+            /* تعديل الأزرار لشاشات الموبايل */
+            .top-buttons-container {
                 top: 15px;
                 right: 15px;
+            }
+            
+            .btn-top-action {
                 padding: 8px 16px;
                 font-size: 13px;
             }
@@ -583,16 +595,35 @@
 </head>
 <body>
 
+    <!-- ✅ كود التحقق من تسجيل الدخول -->
+    <script>
+        const loggedInTeacher = localStorage.getItem('loggedInTeacher');
+        if (!loggedInTeacher) {
+            window.location.replace('./login.html');
+        }
+    </script>
+
     <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
 
-        <!-- ✅ زر الذهاب لصفحة التسجيل -->
-        <a href="./login.html" class="btn-back-home">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
-            </svg>
-            تسجيل الدخول
-        </a>
+        <!-- ✅ حاوية الأزرار أعلى يمين الصفحة -->
+        <div class="top-buttons-container">
+            <!-- زر تسجيل الدخول -->
+            <a href="./login.html" class="btn-top-action">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                </svg>
+                تسجيل الدخول
+            </a>
+            
+            <!-- زر الرئيسية الجديد -->
+            <a href="./index.html" class="btn-top-action">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                </svg>
+                الرئيسية
+            </a>
+        </div>
 
         <div class="hero-content">
             <div class="hero-brand">
@@ -716,7 +747,7 @@
         // تشغيل الصوت عند الضغط على أي زر، كارت، أو أيقونة في الصفحة
         document.addEventListener('click', function(e) {
             // حدد العناصر التي تريد أن يصدر منها الصوت عند الضغط
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-back-home');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-top-action');
             if (clickableElement) {
                 playHighPitchSound();
             }
