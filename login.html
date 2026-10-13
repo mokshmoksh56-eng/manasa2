@@ -518,7 +518,7 @@
     <!-- صندوق الحوار المخصص لحذف الحساب -->
     <div id="customConfirmModal" class="modal-overlay">
         <div class="custom-modal">
-            <p>هل أنت متأكد؟ سيتم حذف البيانات فقط</p>
+            <p>هل أنت متأكد؟ سيتم حذف الحساب</p>
             <div class="modal-buttons">
                 <button class="btn-confirm" onclick="executeDeleteAccount()">حسناً</button>
                 <button class="btn-cancel" onclick="closeCustomConfirm()">إلغاء</button>
@@ -683,7 +683,7 @@
                 localStorage.removeItem('loggedInTeacher'); 
                 
                 // يمكنك استخدام alert هنا أو custom alert إذا أردت
-                alert('تم حذف البيانات فقط');
+                alert('تم حذف الحساب بنجاح');
                 window.location.href = './index.html';
             } else {
                 alert('لا يوجد حساب مسجل حالياً.');
