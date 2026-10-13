@@ -536,7 +536,7 @@
                 </div>
             </div>
 
-            <!-- أوقات الحصة بالساعة الرقمية الواقعية جداً -->
+            <!-- أوقات الحصة بالساعة الرقمية -->
             <div class="grid-2" style="margin-top: 15px;">
                 <div class="form-group">
                     <label>⏰ من الساعة</label>
@@ -588,7 +588,7 @@
                 <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
             </div>
 
-            <!-- الكود الجديد: خيار إظهار الخريطة للطلاب -->
+            <!-- خيار إظهار الخريطة للطلاب -->
             <div class="form-group" style="background: #F0F9FF; padding: 12px; border-radius: 10px; border: 1.5px solid #BAE6FD; border-bottom: 4px solid #0284C7; display: flex; align-items: center; gap: 12px; transition: transform 0.2s; cursor: pointer; margin-top: 15px;">
                 <input type="checkbox" id="g_publish_map" checked style="width: 22px; height: 22px; accent-color: #0284C7; cursor: pointer;">
                 <label for="g_publish_map" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #075985;">
@@ -716,7 +716,6 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
-        // حفظ الحالة
         function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
@@ -752,23 +751,17 @@
                 selectedSubjects: selectedSubjects,
                 m_address: document.getElementById('m_address').value,
                 
-                // حفظ حالة الظهور للطلاب
                 g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
                 
                 lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
                 lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng
             };
             
-            // استخدام localStorage بدلاً من sessionStorage
             localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
-            
-            // مزامنة حالة النشر مباشرة ليقرأها ملف end.html والقوائم الأخرى
             localStorage.setItem('publishState_' + currentLessonId, state.g_publish_map);
         }
 
-        // استرجاع الحالة
         function loadState() {
-            // استخدام localStorage
             const saved = localStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
                 const state = JSON.parse(saved);
@@ -831,7 +824,6 @@
 
                 if(state.m_address) document.getElementById('m_address').value = state.m_address;
                 
-                // استرجاع حالة النشر للطلاب
                 if(state.g_publish_map !== undefined) {
                     document.getElementById('g_publish_map').checked = state.g_publish_map;
                 }
@@ -860,7 +852,6 @@
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
 
             populateTimeSelectors();
-
             loadState();
 
             document.querySelectorAll('input, select').forEach(el => {
@@ -1105,7 +1096,6 @@
                 return;
             }
 
-            // فحص التعارض مع المجموعات الأخرى المحفوظة (استخدام localStorage بدلاً من sessionStorage)
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 
