@@ -488,8 +488,8 @@
             position: absolute;
             top: 25px;
             right: 25px;
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--primary-900);
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-900)); /* تغيير الخلفية لتدرج أزرق */
+            color: #ffffff; /* تغيير لون النص والأيقونة للأبيض */
             padding: 10px 22px;
             border-radius: 999px;
             font-weight: 800;
@@ -498,18 +498,16 @@
             align-items: center;
             gap: 8px;
             text-decoration: none;
-            box-shadow: 0 10px 25px -5px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.4); /* ظل أزرق خفيف */
             z-index: 10;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-            border: 2px solid #E2E8F0;
+            border: 2px solid transparent; /* إزالة الحدود */
         }
 
         .btn-back-home:hover {
-            background: #ffffff;
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px -10px rgba(37, 99, 235, 0.3);
-            border-color: var(--primary-600);
-            color: var(--primary-600);
+            box-shadow: 0 15px 35px -10px rgba(37, 99, 235, 0.6); /* زيادة الظل عند التمرير */
+            filter: brightness(1.1); /* تفتيح اللون قليلاً عند التمرير */
         }
 
         /* ============================================ */
@@ -586,12 +584,12 @@
     <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
 
-        <!-- ✅ زر الذهاب لصفحة التسجيل -->
-        <a href="./login.html" class="btn-back-home">
+        <!-- ✅ زر الرجوع للرئيسية -->
+        <a href="./index.html" class="btn-back-home">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
             </svg>
-            تسجيل الدخول
+            الرئيسية
         </a>
 
         <div class="hero-content">
@@ -966,6 +964,42 @@
                     <p>👑 <b>الصف الدراسي:</b> ${gradeStr}</p>
                     <p>📚 <b>المادة:</b> ${subjectsStr}</p>
                     <p>📅 <b>أيام الحصص:</b> ${daysStr}</p>
+                    <p>🗓️ <b>الشهور الميلادية:</b> ${monthsStr}</p>
+                    <p>🔄 <b>التكرار أسبوعياً:</b> ${repeatStr}</p>
+                    <p>🔢 <b>عدد الطلاب المطلوب:</b> ${data.g_count || 'غير محدد'} طالب</p>
+                    <p>⏰ <b>المواعيد:</b> من ${startTime12} إلى ${endTime12}</p>
+                    <p>🎓 <b>الفئة:</b> ${genderText} | 📍 <b>المكان:</b> ${locText}</p>
+                    <p>📍 <b>العنوان التفصيلي:</b> ${data.m_address || 'لم يتم تحديد الموقع بدقة'}</p>
+                `;
+            } else {
+                nameEl.innerHTML = `مجموعة رقم ${lessonId}`;
+                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 15px 0;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد المجموعة" للبدء في إدخال المواعيد والمكان.</p>`;
+            }
+
+            modal.classList.add('active');
+        }
+
+        // حفظ القائمة في localStorage
+        function saveLessonsToStorage() {
+            try {
+                localStorage.setItem('teacher_lessons', JSON.stringify(lessons));
+            } catch(e) {
+                console.warn('فشل الحفظ في الذاكرة المحلية', e);
+            }
+        }
+    </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js')
+                    .then(() => console.log('SW registered'))
+                    .catch((e) => console.log('SW failed:', e));
+            });
+        }
+    </script>
+</body>
+</html>حصص:</b> ${daysStr}</p>
                     <p>🗓️ <b>الشهور الميلادية:</b> ${monthsStr}</p>
                     <p>🔄 <b>التكرار أسبوعياً:</b> ${repeatStr}</p>
                     <p>🔢 <b>عدد الطلاب المطلوب:</b> ${data.g_count || 'غير محدد'} طالب</p>
