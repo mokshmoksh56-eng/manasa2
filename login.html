@@ -170,39 +170,39 @@
         }
 
         /* ============================================ */
-        /* ✅ تنسيق اختيار اللقب بالصور الجديدة */
+        /* ✅ تنسيق اختيار اللقب بالصور الجديدة (تم التكبير) */
         /* ============================================ */
         .radio-group {
             display: flex;
-            gap: 10px;
-            margin-bottom: 5px;
+            gap: 12px;
+            margin-bottom: 8px;
         }
         .radio-label {
             flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
-            padding: 8px 10px;
+            gap: 12px;
+            padding: 12px 15px; /* تم تكبير الحواف الداخلية هنا */
             background: #F1F5F9;
             border: 2px solid #E2E8F0;
-            border-radius: 12px;
+            border-radius: 14px;
             cursor: pointer;
             font-weight: 800;
             color: #475569;
             transition: all 0.3s;
-            font-size: 15px;
+            font-size: 17px; /* تم تكبير الخط */
         }
         
         /* تنسيق الأفاتار الصغير داخل الزر */
         .avatar-img {
-            width: 38px;
-            height: 38px;
+            width: 48px; /* تم تكبير الصورة */
+            height: 48px; /* تم تكبير الصورة */
             border-radius: 50%;
             object-fit: cover;
-            object-position: top; /* لإظهار الوجه جيداً */
+            object-position: top; 
             border: 2px solid #CBD5E1;
-            background: #000; /* خلفية افتراضية لأن الصور لها خلفية سوداء */
+            background: #000; 
             transition: all 0.3s;
         }
 
@@ -215,11 +215,12 @@
             background: #EFF6FF;
             border-color: var(--primary-600);
             color: var(--primary-600);
+            transform: translateY(-2px); /* تأثير ارتفاع بسيط عند التحديد */
         }
         .radio-input:checked + .radio-label .avatar-img {
             border-color: var(--primary-600);
-            transform: scale(1.1);
-            box-shadow: 0 4px 10px rgba(37, 99, 235, 0.3);
+            transform: scale(1.15); /* تكبير الصورة بشكل ملحوظ عند الاختيار */
+            box-shadow: 0 5px 12px rgba(37, 99, 235, 0.4);
         }
 
         /* ============================================ */
