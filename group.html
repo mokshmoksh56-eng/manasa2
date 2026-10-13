@@ -423,33 +423,22 @@
         </div>
     </div>
 
-    <!-- الخطوة 1 -->
+    <!-- الخطوة 1 المعدلة -->
     <div id="step1" class="step-content active theme-pink">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة الأساسية</h3>
             
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>👥 اسم المجموعة</label>
-                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة الفيزياء العامة">
-                </div>
-                <div class="form-group">
-                    <label>🏫 اسم السنتر (اختياري)</label>
-                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>👤 اسم المستر</label>
-                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
-                </div>
-                <div class="form-group">
-                    <label>🔢 العدد المطلوب للطلاب</label>
-                    <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
+            <!-- 1. مكان الدرس الأساسي -->
+            <div class="form-group">
+                <label>📍 مكان الدرس الأساسي</label>
+                <div class="radio-grid">
+                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked onchange="toggleCenterVisibility()"><label for="l_center"><i>🏫</i> السنتر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر" onchange="toggleCenterVisibility()"><label for="l_teach"><i>🏠</i> المستر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب" onchange="toggleCenterVisibility()"><label for="l_stud"><i>🚗</i> الطالب</label></div>
                 </div>
             </div>
 
+            <!-- 2. الفئات المسموح بها -->
             <div class="form-group" style="margin-top: 15px;">
                 <label>🎓 الفئات المسموح بها</label>
                 <div class="radio-grid">
@@ -459,12 +448,27 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>📍 مكان الدرس الأساسي</label>
-                <div class="radio-grid">
-                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> السنتر</label></div>
-                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر"><label for="l_teach"><i>🏠</i> المستر</label></div>
-                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب"><label for="l_stud"><i>🚗</i> الطالب</label></div>
+            <!-- 3. اسم المستر واسم المجموعة -->
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>👤 اسم المستر</label>
+                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
+                </div>
+                <div class="form-group">
+                    <label>👥 اسم المجموعة</label>
+                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة الفيزياء العامة">
+                </div>
+            </div>
+
+            <!-- 4. اسم السنتر والعدد المطلوب -->
+            <div class="grid-2" id="center_count_grid">
+                <div class="form-group" id="center_wrapper">
+                    <label>🏫 اسم السنتر (اختياري)</label>
+                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
+                </div>
+                <div class="form-group">
+                    <label>🔢 العدد المطلوب للطلاب</label>
+                    <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
                 </div>
             </div>
             
@@ -743,6 +747,23 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
+        // ✅ دالة إخفاء وإظهار حقل السنتر
+        function toggleCenterVisibility() {
+            const isCenter = document.getElementById('l_center').checked;
+            const centerWrapper = document.getElementById('center_wrapper');
+            const gridWrapper = document.getElementById('center_count_grid');
+
+            if (isCenter) {
+                centerWrapper.style.display = 'block'; // إظهار حقل السنتر
+                // إعادة تقسيم الجريد لعمودين (للشاشات العادية) أو عمود (للموبايل)
+                gridWrapper.style.gridTemplateColumns = window.innerWidth <= 480 ? '1fr' : '1fr 1fr'; 
+            } else {
+                centerWrapper.style.display = 'none'; // إخفاء حقل السنتر
+                gridWrapper.style.gridTemplateColumns = '1fr'; // جعل حقل العدد يأخذ العرض بالكامل
+                document.getElementById('g_center').value = ''; // تصفير حقل السنتر
+            }
+        }
+
         function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
@@ -833,7 +854,10 @@
                 }
 
                 if(state.g_gender) document.getElementById(state.g_gender).checked = true;
-                if(state.g_loc) document.getElementById(state.g_loc).checked = true;
+                if(state.g_loc) {
+                    document.getElementById(state.g_loc).checked = true;
+                    toggleCenterVisibility(); // ✅ استدعاء التحديث بناءً على القيمة المحفوظة
+                }
                 
                 if(state.s_stage) {
                     document.getElementById('s_stage').value = state.s_stage;
@@ -879,12 +903,16 @@
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
 
             populateTimeSelectors();
+            toggleCenterVisibility(); // ✅ تفعيل الإخفاء أو الإظهار عند بدء الصفحة
             loadState();
 
             document.querySelectorAll('input, select').forEach(el => {
                 el.addEventListener('input', saveState);
                 el.addEventListener('change', saveState);
             });
+            
+            // ✅ تحديث العرض في حالة دوران الشاشة أو تغيير حجمها
+            window.addEventListener('resize', toggleCenterVisibility);
         };
 
         function nextStep(step, skipValidation = false) {
