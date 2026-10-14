@@ -36,7 +36,7 @@
         }
         .hero-content { position: relative; z-index: 3; text-align: center; max-width: 700px; width: 100%; }
         .hero-brand { font-size: 36px; font-weight: 900; color: #0F172A; margin-bottom: 5px; }
-        .hero-brand .accent { color: #10B981; } /* لون مميز يتناسب مع واجهة الطالب */
+        .hero-brand .accent { color: #10B981; } /* لون مميز للطالب أخضر */
         .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
 
         /* ============================================ */
@@ -124,7 +124,7 @@
 </head>
 <body>
 
-    <!-- ✅ الهيدر الجديد مطابق لـ group.html -->
+    <!-- ✅ الهيدر المطابق لـ group.html -->
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">مرحباً بك <span class="accent">يا بطل! 🎓</span></div>
@@ -215,7 +215,7 @@
                 </div>
             </div>
 
-            <button class="btn-search" onclick="searchTeachers()">
+            <button class="btn-search clickable-element" onclick="searchTeachers()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                 </svg>
@@ -230,6 +230,35 @@
     </div>
 
     <script>
+        // ==========================================
+        // 0. إضافة تأثير الصوت (مطابق للمنصة)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playHighPitchSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(2500, audioCtx.currentTime);
+            
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
+            
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        document.addEventListener('click', function(e) {
+            const clickableElement = e.target.closest('.clickable-element, label, select, input[type="radio"]');
+            if (clickableElement) {
+                playHighPitchSound();
+            }
+        });
+
         // ==========================================
         // 1. منطق العمر والواتساب
         // ==========================================
@@ -327,7 +356,7 @@
             // إنشاء بيانات معلمين وهمية كـ مثال (Mock Data) بناءً على بحثه
             const mapCenter = map.getCenter();
             
-            // توليد نقاط قريبة من المركز
+            // توليد نقاط قريبة من المركز لتوضيح الفكرة للطالب
             const fakeTeachers = [
                 {
                     name: "أ/ محمد أحمد", gender: "مستر", locType: "سنتر النخبة",
@@ -361,7 +390,7 @@
                     <div class="teacher-popup-detail"><span>المادة:</span> <span>${teacher.subject} (${teacher.grade})</span></div>
                     <div class="teacher-popup-detail"><span>المكان:</span> <span style="color:#059669;">${teacher.locType}</span></div>
                     <div class="teacher-popup-detail"><span>المواعيد:</span> <span style="font-size:10px;">${teacher.time}</span></div>
-                    <button class="teacher-popup-btn" onclick="bookLesson('${teacher.name}')">تأكيد حجز الدرس</button>
+                    <button class="teacher-popup-btn clickable-element" onclick="bookLesson('${teacher.name}')">تأكيد حجز الدرس</button>
                 `;
 
                 const marker = L.marker([teacher.lat, teacher.lng], { icon: customIcon });
@@ -374,11 +403,14 @@
             map.fitBounds(group.getBounds().pad(0.2));
             
             // سكرول بطيء لأسفل لرؤية الخريطة
-            mapWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => {
+                mapWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }, 300);
         }
 
         // دالة حجز الدرس عند الضغط من داخل الخريطة
         function bookLesson(teacherName) {
+            playHighPitchSound();
             alert(`تم اختيار الدرس مع ${teacherName}. سيتم توجيهك لصفحة إتمام الحجز...`);
         }
     </script>
