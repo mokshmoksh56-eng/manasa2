@@ -230,6 +230,17 @@
             color: var(--primary-600);
         }
 
+        /* تنسيق زر تسجيل الخروج ليكون بلون مختلف */
+        .btn-top-action.logout-btn {
+            color: #EF4444;
+            border-color: #FCA5A5;
+        }
+        .btn-top-action.logout-btn:hover {
+            border-color: #EF4444;
+            color: #DC2626;
+            box-shadow: 0 15px 35px -10px rgba(239, 68, 68, 0.3);
+        }
+
         /* ============================================ */
         /* ✅ البطاقات */
         /* ============================================ */
@@ -608,12 +619,12 @@
 
         <!-- ✅ حاوية الأزرار أعلى يمين الصفحة -->
         <div class="top-buttons-container">
-            <!-- زر تسجيل الدخول -->
-            <a href="./login.html" class="btn-top-action">
+            <!-- زر تسجيل الخروج بدلا من الدخول -->
+            <a href="#" onclick="logoutTeacher()" class="btn-top-action logout-btn">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                 </svg>
-                تسجيل الدخول
+                تسجيل الخروج
             </a>
             
             <!-- زر الرئيسية الجديد -->
@@ -717,12 +728,19 @@
     <!-- ✅ السكريبتات والتفاعل -->
     <script>
         // ==========================================
+        // ✅ إضافة دالة تسجيل الخروج الجديدة
+        // ==========================================
+        function logoutTeacher() {
+            localStorage.removeItem('loggedInTeacher');
+            window.location.replace('./login.html');
+        }
+
+        // ==========================================
         // ✅ إضافة تأثير الصوت المرتفع (Click Sound)
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function playHighPitchSound() {
-            // استئناف السياق الصوتي إذا كان معلقاً (خاصية الأمان في المتصفحات)
             if (audioCtx.state === 'suspended') {
                 audioCtx.resume();
             }
@@ -733,20 +751,17 @@
             osc.connect(gain);
             gain.connect(audioCtx.destination);
             
-            osc.type = 'sine'; // نوع الموجة للحصول على صوت نقي
-            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); // 3000 هرتز لصوت رفيع جداً
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(3000, audioCtx.currentTime);
             
-            // عمل تلاشي سريع جداً للصوت (مثل صوت Pop أو Tick)
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
             
             osc.start();
-            osc.stop(audioCtx.currentTime + 0.05); // مدة الصوت جزء صغير جدا من الثانية
+            osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // تشغيل الصوت عند الضغط على أي زر، كارت، أو أيقونة في الصفحة
         document.addEventListener('click', function(e) {
-            // حدد العناصر التي تريد أن يصدر منها الصوت عند الضغط
             const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-top-action');
             if (clickableElement) {
                 playHighPitchSound();
@@ -760,7 +775,6 @@
         let itemToDelete = null;
         let itemToRename = null;
 
-        // عند تحميل الصفحة، استرجاع الحصص المحفوظة مسبقاً
         window.addEventListener('DOMContentLoaded', () => {
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
@@ -773,12 +787,10 @@
             }
         });
 
-        // دالة عامة لإغلاق النوافذ المنبثقة
         function closeModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
         }
 
-        // إنشاء حصة جديدة
         function createNewLesson(saveToStorage = true) {
             const newId = lessons.length > 0 ? Math.max(...lessons.map(l => l.id)) + 1 : 1;
             
@@ -796,7 +808,6 @@
             renderLessons();
         }
 
-        // عرض الحصص على الشاشة
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
@@ -826,7 +837,6 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} animate-fade-in`;
                 
-                // تم تبديل ترتيب الأزرار هنا (أصبح زر التعديل هو الأول على اليمين ثم زر الحذف)
                 newCard.innerHTML = `
                     <div class="card-actions">
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal(${lesson.id}, event)">
@@ -841,7 +851,6 @@
                         </button>
                     </div>
 
-                    <!-- صندوق الصورة قابل للضغط لعرض تفاصيل المواعيد والمكان -->
                     <div class="card-image-box" onclick="openGroupModal(${lesson.id})" title="اضغط لعرض تفاصيل المواعيد والمكان">
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
@@ -859,9 +868,6 @@
             });
         }
 
-        // ==========================================
-        // وظائف نافذة الحذف المخصصة
-        // ==========================================
         function openDeleteModal(id, event) {
             if (event) event.stopPropagation();
             itemToDelete = id;
@@ -882,9 +888,6 @@
             }
         });
 
-        // ==========================================
-        // وظائف نافذة تعديل الاسم المخصصة
-        // ==========================================
         function openRenameModal(id, event) {
             if (event) event.stopPropagation();
             itemToRename = id;
@@ -894,7 +897,7 @@
                 const inputField = document.getElementById('newGroupNameInput');
                 inputField.value = lesson.title;
                 document.getElementById('renameModal').classList.add('active');
-                setTimeout(() => inputField.focus(), 100); // التركيز التلقائي
+                setTimeout(() => inputField.focus(), 100);
             }
         }
 
@@ -922,16 +925,12 @@
             itemToRename = null;
         });
 
-        // السماح بالضغط على Enter للحفظ
         document.getElementById('newGroupNameInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 document.getElementById('confirmRenameBtn').click();
             }
         });
 
-        // ==========================================
-        // وظائف نافذة تفاصيل المجموعة
-        // ==========================================
         function openGroupModal(lessonId) {
             const savedState = localStorage.getItem('lessonState_' + lessonId);
             const isPublished = localStorage.getItem('publishState_' + lessonId) === 'true';
@@ -940,7 +939,6 @@
             const nameEl = document.getElementById('modalGroupName');
             const contentEl = document.getElementById('modalBodyContent');
 
-            // تعديل تصميم الهيدر ليتناسب مع الشارة الجديدة
             nameEl.style.display = 'flex';
             nameEl.style.alignItems = 'center';
             nameEl.style.flexWrap = 'wrap';
@@ -949,7 +947,6 @@
                 const data = JSON.parse(savedState);
                 const groupName = data.g_name || `مجموعة رقم ${lessonId}`;
                 
-                // 2. تصميم الإشارة الخضراء أو الحمراء
                 let statusBadge = isPublished ? 
                     `<span style="font-size: 11px; background: #D1FAE5; color: #065F46; padding: 3px 8px; border-radius: 99px; margin-right: 10px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 5px; font-weight: 800;">
                         <span style="width: 8px; height: 8px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
@@ -961,31 +958,25 @@
                         الموقع مخفي عن الطلبة
                     </span>`;
 
-                // 3. وضع الاسم وبجواره الإشارة
                 nameEl.innerHTML = `${groupName} ${statusBadge}`;
                 
-                // عرض بيانات الساعة الرقمية المخصصة
                 const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? 
                                     `${data.start_hour}:${data.start_min} ${data.start_ampm}` : '--:--';
                 const endTime12 = (data.end_hour && data.end_min && data.end_ampm) ? 
                                   `${data.end_hour}:${data.end_min} ${data.end_ampm}` : '--:--';
 
-                // استخراج الأيام، الشهور، والتكرار الأسبوعي الجديدة
                 const daysStr = data.g_days && data.g_days.length > 0 ? data.g_days.join('، ') : 'غير محدد';
                 const monthsStr = data.g_months && data.g_months.length > 0 ? data.g_months.join('، ') : 'غير محدد';
                 const repeatStr = data.g_repeat_weekly ? '✅ نعم (مكرر أسبوعياً)' : '❌ لا (مرة واحدة)';
 
-                // ✅ ترجمة قيم الفئة
-                let genderText = 'مختلط'; // القيمة الافتراضية
+                let genderText = 'مختلط';
                 if(data.g_gender === 'g_boys') genderText = 'أولاد فقط';
                 else if(data.g_gender === 'g_girls') genderText = 'بنات فقط';
 
-                // ✅ ترجمة قيم المكان
-                let locText = 'السنتر'; // القيمة الافتراضية
+                let locText = 'السنتر';
                 if(data.g_loc === 'l_teach') locText = 'بيت المستر';
                 else if(data.g_loc === 'l_stud') locText = 'منزل الطالب';
 
-                // ✅ استخراج الصف والمادة
                 const gradeStr = data.s_grade || 'غير محدد';
                 const subjectsStr = data.selectedSubjects && data.selectedSubjects.length > 0 
                                     ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ') 
@@ -1012,7 +1003,6 @@
             modal.classList.add('active');
         }
 
-        // حفظ القائمة في localStorage
         function saveLessonsToStorage() {
             try {
                 localStorage.setItem('teacher_lessons', JSON.stringify(lessons));
