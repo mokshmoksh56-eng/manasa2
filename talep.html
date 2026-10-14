@@ -178,12 +178,12 @@
         .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
         .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 10px; margin-bottom: 4px; background: #F8FAFC; padding: 3px 6px; border-radius: 5px; gap: 6px;}
         
-        /* نبض علامة المستر المسجل من end.html */
+        /* علامة المستر المسجل */
         .registered-teacher-marker {
             background-color: #10B981; color: white; border-radius: 50%;
             width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
             border: 2.5px solid white; font-size: 17px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            animation: pulse-green 1.5s infinite;
+            cursor: pointer; animation: pulse-green 1.5s infinite;
         }
         @keyframes pulse-green {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
@@ -412,7 +412,7 @@
             
             <!-- ✅ حاوية الخريطة -->
             <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
-                <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء لتغيير مركز البحث واستكشاف المدرسين المسجلين</div>
+                <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
                     <button class="fullscreen-btn clickable-element" onclick="toggleMapFullscreen()" title="تكبير/تصغير الخريطة">
@@ -651,7 +651,6 @@
             document.querySelectorAll('input, select').forEach(el => {
                 if(el.id !== 'search_radius') { el.addEventListener('input', saveStudentData); el.addEventListener('change', saveStudentData); }
             });
-            // تحديث الخريطة تلقائياً إذا قام المستر بتفعيل أو إخفاء موقعه في نافذة أخرى (end.html)
             window.addEventListener('storage', () => {
                 if (currentCenter && map) {
                     renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
@@ -778,7 +777,6 @@
                 let html = '';
                 data.saved_teachers.forEach((t, index) => {
                     const iconEmoji = t.gender === 'مس' ? '👩‍🏫' : '👨‍🏫';
-                    const whatsappBtn = t.phone ? `<a href="https://wa.me/2${t.phone}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px; text-decoration: none;">💬 واتساب</a>` : '';
                     html += `
                         <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -795,7 +793,7 @@
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
                                 <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
-                                ${whatsappBtn}
+                                <a href="https://wa.me/2${t.phone || ''}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px; text-decoration: none;">💬 واتساب</a>
                             </div>
                         </div>
                     `;
@@ -840,40 +838,32 @@
                     const lessonId = key.replace('lessonState_', '');
                     const publishState = localStorage.getItem('publishState_' + lessonId);
 
-                    // إذا كان الموقع محجوباً في end.html (غير مفعل)
                     if (publishState === 'false') {
                         hiddenCount++;
                         continue;
                     }
 
-                    // يظهر فقط إذا تم تفعيل الموقع في end.html (أو لم يُحجب)
                     if (publishState === 'true' || publishState === null) {
                         try {
                             const state = JSON.parse(localStorage.getItem(key) || '{}');
                             
-                            // استخراج المواد بنفس طريقة end.html
                             let subjectsText = '';
                             if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
                                 subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1] : sub).join('، ');
                             }
 
-                            // استخراج نوع المكان بنفس طريقة end.html
                             let locLabel = 'السنتر';
                             if (state.g_loc === 'l_teach') locLabel = 'بيت المستر';
                             else if (state.g_loc === 'l_stud') locLabel = 'في منزلي';
 
-                            // استخراج العنوان
                             let fullAddress = state.m_address || 'محدد على الخريطة';
                             if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
 
-                            // استخراج المواعيد
                             const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
                             const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
 
-                            // استخراج الأيام
                             const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
 
-                            // الإحداثيات (تستخدم إحداثيات الدرس المسجلة أو الافتراضية في end.html)
                             const lat = state.lat ? parseFloat(state.lat) : 30.0444;
                             const lng = state.lng ? parseFloat(state.lng) : 31.2357;
 
@@ -905,7 +895,7 @@
         }
 
         // ==========================================
-        // 5. منطق الخريطة والرادار (بدون معلمين افتراضيين)
+        // 5. منطق الخريطة والرادار (بدون فتح تلقائي وبدون رابط لصفحة المستر)
         // ==========================================
         function initMap() {
             if (!map) {
@@ -925,7 +915,6 @@
             const originalBtnHTML = btn.innerHTML;
             btn.innerHTML = "⏳ جاري البحث..."; btn.classList.add('loading');
 
-            // التحقق من وجود معلم مسجل في end.html
             const { registeredList } = getRegisteredTeachersFromStorage();
 
             if (navigator.geolocation) {
@@ -938,7 +927,6 @@
                     (error) => { 
                         btn.innerHTML = originalBtnHTML; 
                         btn.classList.remove('loading'); 
-                        // إذا تعذر الـ GPS ووجد معلم مسجل في end.html نفتح الخريطة على موقع المعلم المسجل مباشرة
                         if (registeredList.length > 0) {
                             buildRadarMap(registeredList[0].lat, registeredList[0].lng, true);
                         } else {
@@ -968,7 +956,6 @@
             const searchRadius = parseInt(document.getElementById('search_radius').value);
             const { registeredList } = getRegisteredTeachersFromStorage();
 
-            // إذا كان هناك معلم مسجل في end.html وكان بعيداً عن إحداثيات الـ GPS الأولية، نوجه الرادار لموقع المعلم المسجل ليظهر فوراً
             if (autoCenterOnTeacher && registeredList.length > 0) {
                 const distToFirstTeacher = map.distance([lat, lng], [registeredList[0].lat, registeredList[0].lng]);
                 if (distToFirstTeacher > searchRadius) {
@@ -999,7 +986,7 @@
             }, 300);
         }
 
-        // ✅ إظهار المستر المسجل في end.html فقط (تم إلغاء المعلمين الافتراضيين نهائياً)
+        // ✅ إظهار أيقونة المستر فقط داخل الدائرة، ولا تفتح بياناته إلا عند الضغط على الأيقونة
         function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
             
@@ -1009,7 +996,7 @@
 
             if (registeredList.length === 0) {
                 if (hiddenCount > 0) {
-                    showToast("موقع المستر محجوب حالياً من صفحة التقرير (end.html) 🔒", true);
+                    showToast("موقع المستر غير مفعل حالياً 🔒", true);
                 } else {
                     showToast("لا يوجد معلم مسجل حالياً في النظام!", true);
                 }
@@ -1019,10 +1006,8 @@
             let shownCount = 0;
 
             registeredList.forEach(t => {
-                // حساب المسافة الفعلية بين نقطة بحث الطالب وموقع المستر المسجل في end.html
                 const distanceInMeters = map.distance(centerPos, [t.lat, t.lng]);
 
-                // إظهار المستر إذا كان داخل نطاق دائرة البحث
                 if (distanceInMeters <= radiusInMeters) {
                     shownCount++;
                     const displaySubject = t.subject || selectedSubject;
@@ -1037,10 +1022,7 @@
                         popupAnchor: [0, -16]
                     });
 
-                    const whatsappBtn = t.phone 
-                        ? `<a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">💬 واتساب</a>`
-                        : `<a href="end.html?lessonId=${t.lessonId}" class="clickable-element" style="flex: 1.5; background: #DBEAFE; border: 1px solid #93C5FD; color: #1E40AF; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">📋 بيانات الحصة</a>`;
-
+                    // نافذة البيانات تحتوي فقط على حفظ وواتساب (بدون أي رابط يدخل الطالب إلى end.html)
                     const popupContent = `
                         <div class="teacher-popup-title">👨‍🏫 أ/ ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
@@ -1051,21 +1033,21 @@
                         
                         <div style="display: flex; gap: 6px; margin-top: 8px;">
                             <button class="clickable-element" onclick="saveTeacher('${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 2px solid #92400E; border-radius: 6px; font-weight: 900; font-size: 12px; cursor: pointer; padding: 4px;">⭐ حفظ</button>
-                            ${whatsappBtn}
+                            <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">💬 واتساب</a>
                         </div>
                     `;
 
+                    // ربط البيانات بالأيقونة فقط بدون openPopup() حتى لا تظهر إلا عند الضغط عليها
                     const marker = L.marker([t.lat, t.lng], { icon: customIcon });
                     marker.bindPopup(popupContent);
                     teachersLayer.addLayer(marker);
-                    marker.openPopup();
                 }
             });
 
             if (shownCount === 0) {
                 showToast("المستر المسجل خارج نطاق الدائرة الحالية، وسّع النطاق أو حرّك النقطة الزرقاء!", true);
             } else {
-                showToast(`تم العثور على (${shownCount}) معلم مسجل في هذا النطاق ✨`);
+                showToast(`تم العثور على (${shownCount}) معلم، اضغط على أيقونة المستر لعرض بياناته ✨`);
             }
         }
     </script>
