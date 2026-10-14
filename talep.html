@@ -18,7 +18,7 @@
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
         /* ============================================ */
-        /* ✅ الهيدر (شديد الضغط للموبايل) */
+        /* ✅ الهيدر */
         /* ============================================ */
         .hero-banner {
             position: relative; width: 100%; min-height: 120px;
@@ -87,7 +87,6 @@
         select.form-control { font-size: 13px !important; font-weight: 900 !important; height: 38px; padding: 0 8px !important; cursor: pointer; text-overflow: ellipsis; }
         select.form-control option { font-size: 13px; font-weight: 900; }
 
-        /* دمج في سطر واحد دائماً */
         .grid-2-always { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         
         .radio-grid { display: grid; gap: 8px; }
@@ -111,27 +110,22 @@
             transform: translateY(1px); border-bottom-width: 2px; margin-bottom: 1px; 
         }
 
-        /* 🔵 ألوان مخصصة */
         #st_boy:checked + label, #t_mr:checked + label { border-color: #3B82F6 !important; border-bottom-color: #2563EB !important; background-color: #DBEAFE !important; color: #1E40AF !important; }
         #st_boy:checked + label::before, #t_mr:checked + label::before { background: #3B82F6 !important; }
         #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background-color: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899 !important; }
 
-        /* ✅ ملخص بيانات الطالب (شديد الضغط - جنب بعض) */
+        /* ✅ ملخص بيانات الطالب */
         .student-summary-card {
             background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 1.5px solid #86EFAC; border-bottom: 3px solid #16A34A;
-            border-radius: 10px; padding: 10px; margin-top: 15px; margin-bottom: 10px; display: none; 
+            border-radius: 10px; padding: 10px 12px; margin-top: 15px; margin-bottom: 10px; display: none; 
         }
         .summary-header { font-size: 12px; font-weight: 900; color: #166534; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; border-bottom: 1px dashed #86EFAC; padding-bottom: 4px;}
-        
-        .summary-badges-container {
-            display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-start;
-        }
+        .summary-badges-container { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-start; }
         .summary-badge {
             background: #ffffff; border: 1px solid #BBF7D0; border-radius: 6px;
             padding: 4px 8px; font-size: 10px; font-weight: 800; color: #064E3B;
-            display: flex; gap: 4px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02);
-            white-space: nowrap;
+            display: flex; gap: 4px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02); white-space: nowrap;
         }
         .summary-badge span { color: #15803D; font-weight: 900; font-size: 9px; }
 
@@ -148,7 +142,7 @@
         .btn-search:active { transform: translateY(2px); border-bottom-width: 1px; }
         .btn-search.loading { background: linear-gradient(135deg, #F59E0B, #D97706); border-color: #B45309; pointer-events: none; animation: pulse-btn 1.5s infinite;}
         
-        .action-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; border: none; color: white; text-align: center; width: 100%;}
+        .action-btn { flex: 1; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none; color: white; text-align: center; width: 100%;}
         .save-btn { background: linear-gradient(135deg, #3B82F6, #2563EB); border-bottom: 3px solid #1D4ED8; }
         .save-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
 
@@ -159,7 +153,7 @@
         /* ============================================ */
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
-        #map { width: 100%; height: 300px; } /* ارتفاع موفر جداً */
+        #map { width: 100%; height: 300px; } 
 
         .fullscreen-btn {
             position: absolute; top: 10px; left: 10px; z-index: 1000; background: #ffffff; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #94A3B8;
@@ -188,9 +182,9 @@
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
         /* ============================================ */
-        /* ✅ تصميم القوائم المنسدلة (Dropdown) المضغوطة */
+        /* ✅ تصميم القوائم المحفوظة (Dropdown) المضغوطة */
         /* ============================================ */
-        .saved-sections-wrapper { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
+        .saved-sections-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         
         .dropdown-btn {
             width: 100%; padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 900;
@@ -212,6 +206,8 @@
         .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; }
         .btn-go-loc { background: #10B981; border-bottom: 2.5px solid #059669; }
         .btn-go-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
+        .btn-edit-loc { background: #3B82F6; border-bottom: 2.5px solid #2563EB; }
+        .btn-edit-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
         .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 2.5px solid #F87171; }
         .btn-del-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
 
@@ -230,12 +226,11 @@
         .custom-btn-cancel { background: #F43F5E; border-bottom: 2.5px solid #E11D48; }
         .custom-btn-cancel:active { transform: translateY(1.5px); border-bottom-width: 1px; }
         .custom-btn-save { background: #10B981; border-bottom: 2.5px solid #059669; }
-        .custom-btn-save:active { transform: translateY(1.5px); border-bottom-width: 1px; }
+        .custom-btn-save:active { transform: translateY(1.5px); border-bottom-width: 1.5px; }
 
         .custom-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #10B981; color: white; padding: 10px 20px; border-radius: 99px; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); z-index: 9999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 2.5px solid #059669; white-space: nowrap; }
         .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* Media Query لتأكيد المسافات والضغوط في الشاشات الصغيرة جداً */
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
             .hero-brand { font-size: 20px; }
@@ -247,31 +242,29 @@
             .radio-grid label i { font-size: 18px; margin-bottom: 2px;}
             .btn-search { padding: 10px; font-size: 13px; }
             #map { height: 260px; }
-            .action-btn { font-size: 11px; padding: 8px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ✅ الإشعار العائم (Toast) -->
     <div id="customToast" class="custom-toast">
         <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- ✅ نافذة إدخال اسم الموقع -->
+    <!-- نافذة إدخال/تعديل اسم الموقع -->
     <div id="saveLocModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
-            <div style="font-size: 36px; margin-bottom: 8px;">🏡</div>
-            <div class="custom-modal-title">أعطِ اسماً مميزاً لهذا الموقع</div>
+            <div id="locModalEmoji" style="font-size: 36px; margin-bottom: 8px;">🏡</div>
+            <div id="locModalTitle" class="custom-modal-title">أعطِ اسماً مميزاً لهذا الموقع</div>
             <input type="text" id="locNameInput" class="custom-modal-input" placeholder="مثال: بيتي، سنتر الأمل..." value="موقع جديد">
             <div class="custom-modal-buttons">
                 <button class="custom-btn custom-btn-cancel clickable-element" onclick="closeSaveLocModal()">إلغاء</button>
-                <button class="custom-btn custom-btn-save clickable-element" onclick="confirmSaveLocation()">حفظ 💾</button>
+                <button id="locModalSaveBtn" class="custom-btn custom-btn-save clickable-element" onclick="confirmSaveLocation()">حفظ 💾</button>
             </div>
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف -->
+    <!-- نافذة تأكيد الحذف -->
     <div id="deleteModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 36px; margin-bottom: 8px;">🗑️</div>
@@ -284,7 +277,6 @@
         </div>
     </div>
 
-    <!-- المحتوى الرئيسي -->
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">مرحباً بك <span class="accent">يا بطل! 🎓</span></div>
@@ -293,12 +285,11 @@
     </section>
 
     <div class="main-container">
-        <!-- 1. بيانات الطالب (الخلفية الخضراء الصريحة) -->
+        <!-- 1. بيانات الطالب (الخلفية الخضراء) -->
         <div class="smart-card bg-green-solid">
             <h3 class="section-title"><span>👤</span> بياناتك الشخصية</h3>
             <div class="form-group">
                 <label>هل أنت؟</label>
-                <!-- دمج في سطر واحد لتوفير المساحة -->
                 <div class="radio-grid grid-2-always">
                     <div><input type="radio" name="st_gender" id="st_boy" value="ولد" checked><label for="st_boy"><i>👨‍🎓</i> ولد</label></div>
                     <div><input type="radio" name="st_gender" id="st_girl" value="بنت"><label for="st_girl"><i>👩‍🎓</i> بنت</label></div>
@@ -320,7 +311,7 @@
             </div>
         </div>
 
-        <!-- 2. المرحلة الدراسية (الخلفية الصفراء الصريحة) -->
+        <!-- 2. المرحلة الدراسية (الخلفية الصفراء) -->
         <div class="smart-card bg-yellow-solid">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="grid-2-always">
@@ -336,7 +327,7 @@
                 <div class="form-group">
                     <label>الصف</label>
                     <select id="s_grade" class="form-control" disabled onchange="updateSubjects()">
-                        <option value="">-- المرحلة أولاً --</option>
+                        <option value="">-- أولاً --</option>
                     </select>
                 </div>
             </div>
@@ -380,13 +371,13 @@
                 </div>
             </div>
 
-            <!-- ✅ ملخص بيانات الطالب (مضغوط جداً - فقاعات بجوار بعضها) -->
+            <!-- ✅ ملخص بيانات الطالب -->
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                     </svg>
-                    بياناتك الحالية للتأكيد
+                    تأكيد بيانات البحث
                 </div>
                 <div class="summary-badges-container">
                     <div class="summary-badge"><span>الطالب:</span><strong id="sum_name">--</strong></div>
@@ -397,7 +388,7 @@
                 </div>
             </div>
 
-            <!-- القوائم المحفوظة المنسدلة -->
+            <!-- ✅ القوائم المحفوظة المنسدلة (تظهر أولاً تحت التفضيلاات/البحث) -->
             <div class="saved-sections-wrapper">
                 <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
                     <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
@@ -420,16 +411,16 @@
                 </div>
             </div>
 
-            <!-- زر البحث الرئيسي -->
-            <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="startSmartSearch()">
+            <!-- ✅ زر البحث الرئيسي -->
+            <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 10px;" onclick="startSmartSearch()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
-                تحديد الموقع والبحث
+                تحديد الموقع والبحث بالـ GPS
             </button>
             
-            <!-- حاوية الخريطة (مدمجة) -->
+            <!-- ✅ حاوية الخريطة -->
             <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء لتغيير مركز البحث واستكشاف المدرسين</div>
                 
@@ -441,9 +432,10 @@
                     <div id="map"></div>
                 </div>
                 
+                <!-- ✅ زر إضافة الموقع للمفضلة (تحت الخريطة) -->
                 <div class="map-actions-wrapper" style="padding: 10px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-top: none; border-bottom: 4px solid #334155; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                     <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
-                        💾 حفظ هذا الموقع للمستقبل
+                        📌 إضافة هذا الموقع للمفضلة
                     </button>
                 </div>
             </div>
@@ -458,6 +450,7 @@
         let map = null; let teachersLayer = null; let studentMarker = null; 
         let searchCircle = null;  let currentCenter = null; let isMapFullscreen = false; 
         let deleteType = ''; let deleteIndexToConfirm = -1;
+        let editingLocationIndex = -1; // مؤشر التعديل الحالي
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -645,24 +638,62 @@
         };
 
         // ==========================================
-        // 3. النوافذ والقوائم المحفوظة
+        // 3. النوافذ والقوائم المحفوظة (أيقونات رسمية + تعديل الاسم)
         // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
+            editingLocationIndex = -1; // وضع إضافة جديد
+            document.getElementById('locModalTitle').innerText = "إضافة هذا الموقع للمفضلة";
+            document.getElementById('locModalEmoji').innerText = "📌";
             document.getElementById('locNameInput').value = 'موقع جديد';
+            document.getElementById('locModalSaveBtn').innerText = "حفظ 💾";
             document.getElementById('saveLocModal').classList.add('active');
         }
 
-        function closeSaveLocModal() { document.getElementById('saveLocModal').classList.remove('active'); }
+        // فتح نافذة التعديل
+        function openEditLocModal(index) {
+            const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
+            if (data.saved_locations && data.saved_locations[index]) {
+                editingLocationIndex = index; // وضع تعديل
+                document.getElementById('locModalTitle').innerText = "تعديل اسم الموقع";
+                document.getElementById('locModalEmoji').innerText = "✏️";
+                document.getElementById('locNameInput').value = data.saved_locations[index].name;
+                document.getElementById('locModalSaveBtn').innerText = "تحديث ✏️";
+                document.getElementById('saveLocModal').classList.add('active');
+            }
+        }
+
+        function closeSaveLocModal() { 
+            document.getElementById('saveLocModal').classList.remove('active'); 
+            editingLocationIndex = -1;
+        }
 
         function confirmSaveLocation() {
-            const locName = document.getElementById('locNameInput').value.trim() || 'موقع جديد';
+            const locName = document.getElementById('locNameInput').value.trim() || 'موقع بدون اسم';
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_locations) existingData.saved_locations = [];
-            existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
-            localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedLocationsList(true); closeSaveLocModal(); showToast("تم حفظ الموقع 💾");
+
+            if (editingLocationIndex > -1) {
+                // تنفيذ التعديل
+                existingData.saved_locations[editingLocationIndex].name = locName;
+                localStorage.setItem('talep_data', JSON.stringify(existingData));
+                renderSavedLocationsList();
+                closeSaveLocModal();
+                showToast("تم تحديث اسم الموقع بنجاح! ✏️");
+            } else {
+                // تنفيذ الإضافة الجديدة
+                existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
+                localStorage.setItem('talep_data', JSON.stringify(existingData));
+                renderSavedLocationsList(true); 
+                closeSaveLocModal(); 
+                showToast("تمت إضافة الموقع للمفضلة! 📌");
+            }
         }
+
+        // الأيقونات الرسمية (SVG)
+        const svgTrash = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>`;
+        const svgGo = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>`;
+        const svgEdit = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>`;
 
         function renderSavedLocationsList(autoOpen = false) {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
@@ -680,8 +711,15 @@
                                 <div class="loc-icon">📌</div><span class="loc-name">${loc.name}</span>
                             </div>
                             <div class="loc-actions">
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})">❌</button>
-                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})">📍</button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})" title="حذف">
+                                    ${svgTrash}
+                                </button>
+                                <button class="btn-icon btn-edit-loc clickable-element" onclick="openEditLocModal(${index})" title="تعديل الاسم">
+                                    ${svgEdit}
+                                </button>
+                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">
+                                    ${svgGo}
+                                </button>
                             </div>
                         </div>
                     `;
@@ -727,7 +765,9 @@
                                     <div class="loc-icon" style="background: ${t.gender === 'مستر' ? '#DBEAFE' : '#FCE7F3'}; color: ${t.gender === 'مستر' ? '#1E40AF' : '#9D174D'};">${iconEmoji}</div>
                                     <div><span class="loc-name" style="display: block;">${t.name}</span><span style="font-size: 10px; color: #64748B; font-weight: 800;">${t.subject} (${t.grade})</span></div>
                                 </div>
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})">❌</button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">
+                                    ${svgTrash}
+                                </button>
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
                                 <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
