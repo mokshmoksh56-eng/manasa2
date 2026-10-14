@@ -5,12 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>تسجيل الطالب - منصة احجزلى</title>
     
-    <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
-    <link href="[https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap](https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap)" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- Leaflet CSS للخريطة -->
-    <link rel="stylesheet" href="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.css](https://unpkg.com/leaflet@1.9.4/dist/leaflet.css)" crossorigin=""/>
-    <script src="[https://unpkg.com/leaflet@1.9.4/dist/leaflet.js](https://unpkg.com/leaflet@1.9.4/dist/leaflet.js)" crossorigin=""></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -160,6 +160,13 @@
             border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #0F2D5C; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .fullscreen-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
+
+        .relocate-btn {
+            position: absolute; top: 10px; right: 10px; z-index: 1000; background: #ffffff; border: 1.5px solid #10B981; border-bottom: 3px solid #059669;
+            border-radius: 8px; padding: 0 10px; height: 36px; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: #065F46; font-size: 11px; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        }
+        .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
+
         .map-container.is-fullscreen {
             position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100vw !important; height: 100vh !important; max-width: none !important; z-index: 999999 !important; border-radius: 0 !important; border: none !important; margin: 0 !important;
@@ -387,7 +394,7 @@
             <!-- ✅ ملخص بيانات الطالب -->
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
-                    <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                     </svg>
                     تأكيد بيانات البحث
@@ -403,7 +410,7 @@
 
             <!-- ✅ زر البحث الرئيسي -->
             <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="startSmartSearch()">
-                <svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
@@ -416,9 +423,15 @@
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
                     <button class="fullscreen-btn clickable-element" onclick="toggleMapFullscreen()" title="تكبير/تصغير الخريطة">
-                        <svg id="iconExpand" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" /></svg>
-                        <svg id="iconCompress" style="display: none;" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" /></svg>
+                        <svg id="iconExpand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" /></svg>
+                        <svg id="iconCompress" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" /></svg>
                     </button>
+
+                    <!-- زر تحديث الموقع اللحظي من داخل الخريطة -->
+                    <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
+                        🎯 موقعي الحالي
+                    </button>
+
                     <div id="map"></div>
                 </div>
                 
@@ -429,7 +442,7 @@
                     <div class="saved-sections-wrapper" style="margin-top: 0; margin-bottom: 10px;">
                         <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
                             <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
-                            <svg id="teachersIcon" class="dropdown-icon" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg id="teachersIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                             </svg>
                         </button>
@@ -439,7 +452,7 @@
 
                         <button id="locationsDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('locationsListContainer', 'locationsIcon')">
                             <span id="locationsCountTxt">📌 المواقع المحفوظة (0)</span>
-                            <svg id="locationsIcon" class="dropdown-icon" xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                            <svg id="locationsIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                             </svg>
                         </button>
@@ -493,7 +506,7 @@
         }
 
         window.shareTeacher = function(name, subject, grade, phone) {
-            const whatsappPart = phone ? `\n📞 للتواصل واتساب: [https://wa.me/2$](https://wa.me/2$){phone}` : '';
+            const whatsappPart = phone ? `\n📞 للتواصل واتساب: https://wa.me/2${phone}` : '';
             const shareText = `لقد وجدت معلماً ممتازاً على منصة احجزلي!\n\n👨‍🏫 المعلم: ${name}\n📚 المادة: ${subject} (${grade})${whatsappPart}`;
             if (navigator.share) {
                 navigator.share({ title: 'مشاركة تفاصيل المعلم', text: shareText }).catch(err => console.error(err));
@@ -708,9 +721,9 @@
             }
         }
 
-        const svgTrash = `<svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>`;
-        const svgGo = `<svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>`;
-        const svgEdit = `<svg xmlns="[http://www.w3.org/2000/svg](http://www.w3.org/2000/svg)" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>`;
+        const svgTrash = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>`;
+        const svgGo = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" /></svg>`;
+        const svgEdit = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="m16.862 4.487 1.687-1.688a1.875 1.875 0 1 1 2.652 2.652L10.582 16.07a4.5 4.5 0 0 1-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 0 1 1.13-1.897l8.932-8.931Zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0 1 15.75 21H5.25A2.25 2.25 0 0 1 3 18.75V8.25A2.25 2.25 0 0 1 5.25 6H10" /></svg>`;
 
         function renderSavedLocationsList(autoOpen = false) {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
@@ -751,7 +764,7 @@
             if(!subject) { showToast("أكمل بيانات المادة أولاً!", true); return; }
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
-                buildRadarMap(data.saved_locations[index].lat, data.saved_locations[index].lng, false);
+                buildRadarMap(data.saved_locations[index].lat, data.saved_locations[index].lng);
             }
         }
 
@@ -793,7 +806,7 @@
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
                                 <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
-                                <a href="[https://wa.me/2$](https://wa.me/2$){t.phone || ''}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px; text-decoration: none;">💬 واتساب</a>
+                                <a href="https://wa.me/2${t.phone || ''}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px; text-decoration: none;">💬 واتساب</a>
                             </div>
                         </div>
                     `;
@@ -895,7 +908,7 @@
         }
 
         // ==========================================
-        // 5. منطق الخريطة والرادار (تحديث الـ GPS الحقيقي دائماً)
+        // 5. منطق الخريطة والرادار (فتح مضمون 100% + تحديث GPS ذكي)
         // ==========================================
         function initMap() {
             if (!map) {
@@ -904,7 +917,35 @@
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
                 teachersLayer = L.layerGroup().addTo(map);
             }
-            map.invalidateSize();
+            setTimeout(() => { if (map) map.invalidateSize(); }, 100);
+        }
+
+        // دالة جلب الإحداثيات الحية على مرحلتين (قمر صناعي ثم شبكة واي فاي/موبايل)
+        function fetchLiveCoordinates(onSuccess, onError) {
+            if (!navigator.geolocation) {
+                onError("الجهاز لا يدعم GPS");
+                return;
+            }
+
+            // المرحلة 1: دقة عالية عبر القمر الصناعي بدون كاش
+            navigator.geolocation.getCurrentPosition(
+                (pos) => {
+                    onSuccess(pos.coords.latitude, pos.coords.longitude);
+                },
+                (err) => {
+                    // المرحلة 2: إذا فشل القمر الصناعي بالداخل، جلب الموقع الحالي عبر الشبكة بدون كاش
+                    navigator.geolocation.getCurrentPosition(
+                        (pos2) => {
+                            onSuccess(pos2.coords.latitude, pos2.coords.longitude);
+                        },
+                        (err2) => {
+                            onError(err2);
+                        },
+                        { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
+                    );
+                },
+                { enableHighAccuracy: true, timeout: 6000, maximumAge: 0 }
+            );
         }
 
         function startSmartSearch() {
@@ -913,39 +954,42 @@
 
             const btn = document.getElementById('searchBtn');
             const originalBtnHTML = btn.innerHTML;
-            btn.innerHTML = "⏳ جاري جلب موقعك الحالي بدقة..."; 
+            btn.innerHTML = "⏳ جاري تحديد موقعك الحالي..."; 
             btn.classList.add('loading');
 
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => { 
-                        btn.innerHTML = originalBtnHTML; 
-                        btn.classList.remove('loading'); 
-                        buildRadarMap(position.coords.latitude, position.coords.longitude, false); 
-                        showToast("تم تحديث موقعك الحالي بالـ GPS بنجاح 📍");
-                    },
-                    (error) => { 
-                        btn.innerHTML = originalBtnHTML; 
-                        btn.classList.remove('loading'); 
-                        let errMsg = "تعذر جلب الموقع الحالي، تأكد من تفعيل الـ GPS في هاتفك!";
-                        if (error.code === 1) errMsg = "يرجى السماح للمتصفح بالوصول إلى الموقع الجغرافي (GPS)!";
-                        else if (error.code === 3) errMsg = "انتهت مهلة التقاط إشارة الـ GPS، حاول مرة أخرى في مكان مفتوح!";
-                        showToast(errMsg, true);
-                    },
-                    { 
-                        enableHighAccuracy: true, 
-                        timeout: 15000, 
-                        maximumAge: 0 
-                    }
-                );
-            } else { 
-                btn.innerHTML = originalBtnHTML; 
-                btn.classList.remove('loading'); 
-                showToast("متصفحك لا يدعم خاصية تحديد المواقع (GPS)!", true);
-            }
+            fetchLiveCoordinates(
+                (lat, lng) => {
+                    btn.innerHTML = originalBtnHTML;
+                    btn.classList.remove('loading');
+                    buildRadarMap(lat, lng);
+                },
+                (err) => {
+                    btn.innerHTML = originalBtnHTML;
+                    btn.classList.remove('loading');
+                    // فتح الخريطة في جميع الأحوال حتى لو رفض المتصفح الـ GPS (بدون القفز لموقع المعلم القديم)
+                    const fallbackLat = currentCenter ? currentCenter[0] : 31.0409;
+                    const fallbackLng = currentCenter ? currentCenter[1] : 31.3785;
+                    buildRadarMap(fallbackLat, fallbackLng);
+                    showToast("تم فتح الخريطة، تأكد من تفعيل الموقع بالهاتف أو حرّك النقطة الزرقاء يدوياً 📍", true);
+                }
+            );
         }
 
-        function buildRadarMap(lat, lng, autoCenterOnTeacher = false) {
+        // زر تحديث الموقع اللحظي من داخل الخريطة
+        function refreshMyLiveGPS() {
+            showToast("⏳ جاري تحديث موقعك الحالي بالـ GPS...");
+            fetchLiveCoordinates(
+                (lat, lng) => {
+                    buildRadarMap(lat, lng);
+                    showToast("تم تحديث موقعك الحالي بنجاح 🎯");
+                },
+                (err) => {
+                    showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح!", true);
+                }
+            );
+        }
+
+        function buildRadarMap(lat, lng) {
             document.getElementById('mapOuterWrapper').style.display = 'block';
             initMap();
             if (studentMarker) map.removeLayer(studentMarker);
@@ -954,6 +998,7 @@
 
             const searchRadius = parseInt(document.getElementById('search_radius').value);
             
+            // تثبيت الخريطة على موقع الطالب الفعلي مباشرة
             currentCenter = [lat, lng];
             map.setView(currentCenter, 15);
 
@@ -971,6 +1016,7 @@
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
             setTimeout(() => { 
+                map.invalidateSize();
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 }); 
                 document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' }); 
             }, 300);
@@ -1023,7 +1069,7 @@
                         
                         <div style="display: flex; gap: 6px; margin-top: 8px;">
                             <button class="clickable-element" onclick="saveTeacher('${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 2px solid #92400E; border-radius: 6px; font-weight: 900; font-size: 12px; cursor: pointer; padding: 4px;">⭐ حفظ</button>
-                            <a href="[https://wa.me/2$](https://wa.me/2$){t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">💬 واتساب</a>
+                            <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">💬 واتساب</a>
                         </div>
                     `;
 
