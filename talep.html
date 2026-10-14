@@ -14,119 +14,101 @@
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
         html, body { overscroll-behavior-x: none; touch-action: pan-y; }
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
         /* ============================================ */
-        /* ✅ الهيدر */
+        /* ✅ الهيدر (شديد الضغط للموبايل) */
         /* ============================================ */
         .hero-banner {
-            position: relative; width: 100%; min-height: 250px;
-            background-image: url('./teacher2.png'); background-size: cover; background-position: center;
-            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 20px;
+            position: relative; width: 100%; min-height: 120px;
+            background-image: url('./teacher2.png'); background-size: cover; background-position: center 20%;
+            display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 10px;
         }
         .hero-banner::before {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.95) 100%); z-index: 1;
+            background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.98) 100%); z-index: 1;
         }
-        .hero-content { position: relative; z-index: 3; text-align: center; max-width: 700px; width: 100%; }
-        .hero-brand { font-size: 36px; font-weight: 900; color: #0F172A; margin-bottom: 5px; }
+        .hero-content { position: relative; z-index: 3; text-align: center; width: 100%; }
+        .hero-brand { font-size: 24px; font-weight: 900; color: #0F172A; margin-bottom: 2px; }
         .hero-brand .accent { color: #10B981; }
-        .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
+        .hero-headline { font-size: 13px; font-weight: 900; color: #1E293B; margin-top: 2px; }
 
         /* ============================================ */
-        /* ✅ محتوى الصفحة والبطاقات */
+        /* ✅ الحاوية والبطاقات (مضغوطة) */
         /* ============================================ */
-        .main-container { max-width: 800px; margin: -30px auto 0; width: 100%; padding: 0 15px 80px; position: relative; z-index: 10; }
+        .main-container { max-width: 800px; margin: -10px auto 0; width: 100%; padding: 0 10px 50px; position: relative; z-index: 10; }
         
         .smart-card {
-            background: #fff; border: 1.5px solid #E2E8F0; 
-            border-radius: 16px; padding: 20px; box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 12px;
         }
 
-        /* 🟢 البطاقات الخضراء (بياناتك الشخصية + دراستك والمادة) 🟢 */
+        /* 🟢 البطاقة الخضراء (البيانات) 🟢 */
         .bg-green-solid {
-            background: #10B981 !important; 
-            border: 2px solid #059669 !important;
-            border-top: 5px solid #047857 !important;
-            border-bottom: 6px solid #064E3B !important;
+            background: #10B981 !important; border: 1.5px solid #059669 !important;
+            border-top: 4px solid #047857 !important; border-bottom: 4px solid #064E3B !important;
         }
-        .bg-green-solid .section-title {
-            color: #ffffff !important;
-            border-bottom: 2px dashed rgba(255, 255, 255, 0.4) !important;
-        }
-        .bg-green-solid .form-group > label {
-            color: #ffffff !important;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-        }
-        .bg-green-solid .radio-grid label {
-            color: #1E293B !important;
-            background-color: #FFFFFF !important;
-            text-shadow: none !important;
-        }
-        .bg-green-solid .form-control {
-            border: 2px solid #059669 !important;
-            border-bottom: 4px solid #064E3B !important;
-        }
-        .bg-green-solid .form-control:focus {
-            border-color: #047857 !important;
-            box-shadow: 0 0 0 4px rgba(255,255,255,0.3) !important;
-        }
-        .bg-green-solid .form-control:disabled {
-            background-color: #F1F5F9 !important;
-            color: #64748B !important;
-            border-color: #CBD5E1 !important;
-        }
-        .age-warning-text { color: #FEF08A; font-size: 11px; background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 6px; margin-right: 5px; }
-
-        /* ⚪ البطاقة الأبيض الغامق (تفضيلات الدرس) ⚪ */
-        .bg-offwhite-card {
-            background-color: #F1F5F9 !important; 
-            border: 2px solid #E2E8F0 !important;
-            border-top: 5px solid #94A3B8 !important;
-            border-bottom: 6px solid #475569 !important;
-        }
-
-        .section-title { color: #0F2D5C; font-weight: 900; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-size: 18px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 10px; }
+        .bg-green-solid .section-title { color: #ffffff !important; border-bottom: 1.5px dashed rgba(255, 255, 255, 0.4) !important; }
+        .bg-green-solid .form-group > label { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+        .bg-green-solid .radio-grid label { color: #1E293B !important; background-color: #FFFFFF !important; text-shadow: none !important; }
+        .bg-green-solid .form-control { border: 1.5px solid #059669 !important; border-bottom: 3px solid #064E3B !important; }
+        .bg-green-solid .form-control:focus { border-color: #047857 !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.3) !important; }
         
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; font-size: 14px; font-weight: 900; color: #1E293B; margin-bottom: 6px; }
+        /* 🟡 البطاقة الصفراء (المرحلة والمادة) 🟡 */
+        .bg-yellow-solid {
+            background-color: #FEF08A !important; border: 1.5px solid #FDE047 !important;
+            border-top: 4px solid #FACC15 !important; border-bottom: 4px solid #CA8A04 !important;
+        }
+        .bg-yellow-solid .section-title { color: #854D0E !important; border-bottom: 1.5px dashed rgba(202, 138, 4, 0.3) !important; }
+        .bg-yellow-solid .form-group > label { color: #713F12 !important; text-shadow: 0 1px 1px rgba(255,255,255,0.8); }
+        .bg-yellow-solid .form-control { border: 1.5px solid #FACC15 !important; border-bottom: 3px solid #CA8A04 !important; }
+        .bg-yellow-solid .form-control:focus { border-color: #A16207 !important; box-shadow: 0 0 0 3px rgba(250,204,21,0.4) !important; }
+        .bg-yellow-solid .form-control:disabled { background-color: #FEF9C3 !important; color: #A16207 !important; border-color: #FDE047 !important; border-bottom-color: #EAB308 !important; }
+
+        /* ⚪ البطاقة الأبيض الغامق (تفضيلات) ⚪ */
+        .bg-offwhite-card {
+            background-color: #F1F5F9 !important; border: 1.5px solid #E2E8F0 !important;
+            border-top: 4px solid #94A3B8 !important; border-bottom: 4px solid #475569 !important;
+        }
+
+        .age-warning-text { color: #FEF08A; font-size: 10px; background: rgba(0,0,0,0.15); padding: 2px 6px; border-radius: 4px; margin-right: 4px; }
+
+        .section-title { font-weight: 900; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; font-size: 15px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; }
+        
+        .form-group { margin-bottom: 8px; }
+        .form-group label { display: block; font-size: 12px; font-weight: 900; margin-bottom: 4px; color: #1E293B;}
         
         .form-control {
-            width: 100%; padding: 12px; border: 1.5px solid #CBD5E1; 
-            border-bottom: 4px solid #334155; border-radius: 10px; font-size: 14px; color: #1E293B;
-            font-weight: 900; transition: all 0.3s; outline: none; background: #FFFFFF;
+            width: 100%; padding: 8px 10px; border: 1.5px solid #CBD5E1; 
+            border-bottom: 3px solid #334155; border-radius: 8px; font-size: 13px; color: #1E293B;
+            font-weight: 900; transition: all 0.2s; outline: none; background: #FFFFFF;
         }
-        .form-control:focus { border-color: #10B981; border-bottom: 4px solid #059669; background: #F8FAFC; }
         
-        select.form-control { font-size: 16px !important; height: 52px; cursor: pointer; }
-        select.form-control option { font-size: 16px; font-weight: 900; }
+        select.form-control { font-size: 13px !important; font-weight: 900 !important; height: 38px; padding: 0 8px !important; cursor: pointer; text-overflow: ellipsis; }
+        select.form-control option { font-size: 13px; font-weight: 900; }
 
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        /* دمج في سطر واحد دائماً */
+        .grid-2-always { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
         
-        .radio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
+        .radio-grid { display: grid; gap: 8px; }
         .radio-grid input { display: none; }
-        
         .radio-grid label {
             position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 12px 5px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; 
-            border-radius: 12px; cursor: pointer; font-size: 13px; font-weight: 900; 
-            transition: all 0.2s; text-align: center; background: #FFFFFF; color: #1E293B;
+            padding: 8px 2px; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #334155; 
+            border-radius: 8px; cursor: pointer; font-size: 11px; font-weight: 900; 
+            transition: all 0.2s; text-align: center; background: #FFFFFF; color: #1E293B; line-height: 1.2;
         }
-        .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
+        .radio-grid label i { font-size: 18px; font-style: normal; margin-bottom: 2px; }
         
         .radio-grid input:checked + label::before {
-            content: '✔'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            background: #10B981; color: white; border-radius: 50%; width: 22px; height: 22px;
-            font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; z-index: 10;
+            content: '✔'; position: absolute; top: -6px; left: 50%; transform: translateX(-50%);
+            background: #10B981; color: white; border-radius: 50%; width: 16px; height: 16px;
+            font-size: 10px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2); border: 1.5px solid white; z-index: 10;
         }
-
         .radio-grid input:checked + label {
             border-color: #10B981; border-bottom-color: #059669; background: #D1FAE5; color: #065F46 !important; 
-            transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; 
+            transform: translateY(1px); border-bottom-width: 2px; margin-bottom: 1px; 
         }
 
         /* 🔵 ألوان مخصصة */
@@ -135,38 +117,38 @@
         #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background-color: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899 !important; }
 
-        /* ✅ ملخص بيانات الطالب */
+        /* ✅ ملخص بيانات الطالب (شديد الضغط - جنب بعض) */
         .student-summary-card {
-            background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 2px solid #86EFAC; border-bottom: 5px solid #16A34A;
-            border-radius: 14px; padding: 15px; margin-top: 25px; margin-bottom: 15px; display: none; 
+            background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 1.5px solid #86EFAC; border-bottom: 3px solid #16A34A;
+            border-radius: 10px; padding: 10px; margin-top: 15px; margin-bottom: 10px; display: none; 
         }
-        .summary-header { font-size: 15px; font-weight: 900; color: #166534; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px dashed #86EFAC; padding-bottom: 8px;}
-        .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
-        .summary-item { margin-bottom: 4px; }
-        .summary-item span { color: #15803D; font-weight: 800; display: block; font-size: 11px;}
-        .summary-item strong { color: #064E3B; font-weight: 900; font-size: 14px;}
+        .summary-header { font-size: 12px; font-weight: 900; color: #166534; margin-bottom: 8px; display: flex; align-items: center; gap: 4px; border-bottom: 1px dashed #86EFAC; padding-bottom: 4px;}
+        
+        .summary-badges-container {
+            display: flex; flex-wrap: wrap; gap: 6px; align-items: center; justify-content: flex-start;
+        }
+        .summary-badge {
+            background: #ffffff; border: 1px solid #BBF7D0; border-radius: 6px;
+            padding: 4px 8px; font-size: 10px; font-weight: 800; color: #064E3B;
+            display: flex; gap: 4px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+            white-space: nowrap;
+        }
+        .summary-badge span { color: #15803D; font-weight: 900; font-size: 9px; }
 
-        /* ✅ شريط تمرير النطاق (Slider) */
-        .styled-slider {
-            -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px;
-            background: #CBD5E1; outline: none; transition: background 0.2s; margin-top: 5px; margin-bottom: 5px;
-        }
-        .styled-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
-            background: #10B981; cursor: pointer; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff; transition: transform 0.1s;
-        }
-        .styled-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+        /* ✅ شريط تمرير النطاق */
+        .styled-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 4px; background: #CBD5E1; outline: none; margin-top: 4px; margin-bottom: 4px; }
+        .styled-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #10B981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); border: 2.5px solid #fff; }
         
         /* ✅ أزرار البحث والتحكم */
         .btn-search {
-            width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 900;
-            display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s;
-            background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: 1px solid #065F46; border-bottom: 4px solid #064E3B;
+            width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 900;
+            display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
+            background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: 1px solid #065F46; border-bottom: 3px solid #064E3B;
         }
-        .btn-search:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .btn-search:active { transform: translateY(2px); border-bottom-width: 1px; }
         .btn-search.loading { background: linear-gradient(135deg, #F59E0B, #D97706); border-color: #B45309; pointer-events: none; animation: pulse-btn 1.5s infinite;}
         
-        .action-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none; transition: 0.2s; color: white; text-align: center; width: 100%;}
+        .action-btn { flex: 1; padding: 10px; border-radius: 8px; font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; border: none; color: white; text-align: center; width: 100%;}
         .save-btn { background: linear-gradient(135deg, #3B82F6, #2563EB); border-bottom: 3px solid #1D4ED8; }
         .save-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
 
@@ -175,113 +157,97 @@
         /* ============================================ */
         /* ✅ الخريطة والنافذة المنبثقة */
         /* ============================================ */
-        .map-hint { background: #DBEAFE; color: #1E40AF; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; border: 1px dashed #93C5FD; }
-        .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid #334155; overflow: hidden; z-index: 1; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        #map { width: 100%; height: 450px; } 
+        .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
+        .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
+        #map { width: 100%; height: 300px; } /* ارتفاع موفر جداً */
 
         .fullscreen-btn {
-            position: absolute; top: 15px; left: 15px; z-index: 1000; background: #ffffff; border: 2px solid #CBD5E1; border-bottom: 4px solid #94A3B8;
-            border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: #0F2D5C; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            position: absolute; top: 10px; left: 10px; z-index: 1000; background: #ffffff; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #94A3B8;
+            border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #0F2D5C; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .fullscreen-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .fullscreen-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
         .map-container.is-fullscreen {
             position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
-            width: 100vw !important; height: 100vh !important; max-width: none !important;
-            z-index: 999999 !important; border-radius: 0 !important; border: none !important; margin: 0 !important;
+            width: 100vw !important; height: 100vh !important; max-width: none !important; z-index: 999999 !important; border-radius: 0 !important; border: none !important; margin: 0 !important;
         }
         .map-container.is-fullscreen #map { height: 100% !important; }
 
         .student-radar {
-            position: relative; width: 22px; height: 22px; background-color: #3B82F6; border-radius: 50%; border: 3px solid white; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative; width: 18px; height: 18px; background-color: #3B82F6; border-radius: 50%; border: 2.5px solid white; cursor: grab; box-shadow: 0 3px 8px rgba(0,0,0,0.3);
         }
         .student-radar:active { cursor: grabbing; transform: scale(1.1); }
-        .student-radar::after {
-            content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border-radius: 50%; border: 2px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;
-        }
+        .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-bottom: 4px solid #0F2D5C;}
-        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.6; font-size: 13px; margin: 12px 10px;}
-        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 15px; margin-bottom: 8px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;}
-        .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 11px; margin-bottom: 6px; background: #F8FAFC; padding: 4px 8px; border-radius: 6px;}
+        .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-bottom: 3px solid #0F2D5C;}
+        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 11px; margin: 10px 8px;}
+        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
+        .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 10px; margin-bottom: 4px; background: #F8FAFC; padding: 3px 6px; border-radius: 5px;}
         
         path.leaflet-interactive { animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
         /* ============================================ */
-        /* ✅ تصميم القوائم المنسدلة (Dropdown) الجديدة */
+        /* ✅ تصميم القوائم المنسدلة (Dropdown) المضغوطة */
         /* ============================================ */
-        .saved-sections-wrapper { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        .saved-sections-wrapper { display: flex; flex-direction: column; gap: 8px; margin-top: 15px; }
         
         .dropdown-btn {
-            width: 100%; padding: 14px 15px; border-radius: 12px; font-size: 15px; font-weight: 900;
-            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s;
-            background: #ffffff; border: 2px solid #CBD5E1; color: #0F2D5C; border-bottom: 4px solid #94A3B8;
+            width: 100%; padding: 10px 12px; border-radius: 10px; font-size: 13px; font-weight: 900;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer;
+            background: #ffffff; border: 1.5px solid #CBD5E1; color: #0F2D5C; border-bottom: 3px solid #94A3B8;
         }
-        .dropdown-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-        .dropdown-icon { transition: transform 0.3s ease; }
-        .dropdown-content { display: none; padding-top: 10px; animation: slideDown 0.3s ease-out; }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .dropdown-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
+        .dropdown-icon { transition: transform 0.2s ease; width: 16px; height: 16px; }
+        .dropdown-content { display: none; padding-top: 8px; animation: slideDown 0.2s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .saved-list-container { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding-right: 5px; }
-        .loc-item {
-            background: white; border: 1.5px solid #E2E8F0; border-radius: 12px;
-            padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.02); transition: all 0.2s;
-        }
-        .loc-item:hover { border-color: #CBD5E1; background: #F8FAFC; }
-        .loc-info { display: flex; align-items: center; gap: 10px; flex: 1; }
-        .loc-icon { background: #E0E7FF; color: #4F46E5; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;}
-        .loc-name { font-weight: 900; color: #1E293B; font-size: 14px; line-height: 1.4; }
-        .loc-actions { display: flex; gap: 8px; flex-shrink: 0; }
+        .saved-list-container { display: flex; flex-direction: column; gap: 8px; max-height: 220px; overflow-y: auto; padding-right: 4px; }
+        .loc-item { background: white; border: 1px solid #E2E8F0; border-radius: 10px; padding: 8px 12px; display: flex; justify-content: space-between; align-items: center; }
+        .loc-info { display: flex; align-items: center; gap: 8px; flex: 1; }
+        .loc-icon { background: #E0E7FF; color: #4F46E5; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0;}
+        .loc-name { font-weight: 900; color: #1E293B; font-size: 12px; line-height: 1.3; }
+        .loc-actions { display: flex; gap: 6px; flex-shrink: 0; }
         
-        .btn-icon { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
-        .btn-go-loc { background: #10B981; border-bottom: 3px solid #059669; }
-        .btn-go-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
-        .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 3px solid #F87171; }
-        .btn-del-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .btn-icon { width: 32px; height: 32px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: white; }
+        .btn-go-loc { background: #10B981; border-bottom: 2.5px solid #059669; }
+        .btn-go-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
+        .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 2.5px solid #F87171; }
+        .btn-del-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
 
         /* ============================================ */
         /* ✅ النوافذ المنبثقة (Modals) والإشعارات */
         /* ============================================ */
-        .custom-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center; z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.3s;
-        }
+        .custom-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.2s; }
         .custom-modal-overlay.active { opacity: 1; visibility: visible; }
-        .custom-modal-box {
-            background: #fff; border-radius: 20px; padding: 25px; width: 90%; max-width: 350px;
-            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(20px) scale(0.95); transition: all 0.3s; border-bottom: 6px solid #10B981;
-        }
+        .custom-modal-box { background: #fff; border-radius: 16px; padding: 20px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); transform: translateY(15px) scale(0.95); transition: all 0.2s; border-bottom: 5px solid #10B981; }
         .custom-modal-overlay.active .custom-modal-box { transform: translateY(0) scale(1); }
-        .custom-modal-title { font-size: 18px; font-weight: 900; color: #0F2D5C; margin-bottom: 10px; }
-        .custom-modal-input { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-weight: 800; text-align: center; outline: none; margin-bottom: 15px; color: #1E293B; }
+        .custom-modal-title { font-size: 16px; font-weight: 900; color: #0F2D5C; margin-bottom: 8px; }
+        .custom-modal-input { width: 100%; padding: 10px; border: 1.5px solid #E2E8F0; border-radius: 8px; font-size: 13px; font-weight: 800; text-align: center; outline: none; margin-bottom: 12px; color: #1E293B; }
         .custom-modal-input:focus { border-color: #10B981; }
-        .custom-modal-buttons { display: flex; gap: 10px; }
-        .custom-btn { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; border: none; font-size: 14px; transition: 0.2s; color: white;}
-        .custom-btn-cancel { background: #F43F5E; border-bottom: 3px solid #E11D48; }
-        .custom-btn-cancel:active { transform: translateY(2px); border-bottom-width: 1px; }
-        .custom-btn-save { background: #10B981; border-bottom: 3px solid #059669; }
-        .custom-btn-save:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .custom-modal-buttons { display: flex; gap: 8px; }
+        .custom-btn { flex: 1; padding: 8px; border-radius: 8px; font-weight: 900; cursor: pointer; border: none; font-size: 13px; color: white;}
+        .custom-btn-cancel { background: #F43F5E; border-bottom: 2.5px solid #E11D48; }
+        .custom-btn-cancel:active { transform: translateY(1.5px); border-bottom-width: 1px; }
+        .custom-btn-save { background: #10B981; border-bottom: 2.5px solid #059669; }
+        .custom-btn-save:active { transform: translateY(1.5px); border-bottom-width: 1px; }
 
-        .custom-toast {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #10B981; color: white; padding: 12px 25px; border-radius: 99px;
-            font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); z-index: 9999999;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 3px solid #059669; white-space: nowrap;
-        }
+        .custom-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #10B981; color: white; padding: 10px 20px; border-radius: 99px; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); z-index: 9999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 2.5px solid #059669; white-space: nowrap; }
         .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        @media (max-width: 480px) {
-            .hero-banner { min-height: 200px; padding: 15px 10px; }
-            .hero-brand { font-size: 26px; }
-            .hero-headline { font-size: 16px; margin-top: 5px; }
-            .grid-2 { grid-template-columns: 1fr; gap: 10px; }
-            .radio-grid label { padding: 10px 2px; font-size: 12px; }
-            #map { height: 400px; } 
+        /* Media Query لتأكيد المسافات والضغوط في الشاشات الصغيرة جداً */
+        @media (max-width: 380px) {
+            .hero-banner { min-height: 100px; padding: 5px; }
+            .hero-brand { font-size: 20px; }
+            .hero-headline { font-size: 11px; }
+            .smart-card { padding: 10px; border-radius: 10px; }
+            .form-control { padding: 6px 8px; font-size: 12px; }
+            select.form-control { height: 36px; font-size: 12px !important; }
+            .radio-grid label { padding: 6px 2px; font-size: 10px; }
+            .radio-grid label i { font-size: 18px; margin-bottom: 2px;}
+            .btn-search { padding: 10px; font-size: 13px; }
+            #map { height: 260px; }
+            .action-btn { font-size: 11px; padding: 8px; }
         }
     </style>
 </head>
@@ -292,10 +258,10 @@
         <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- ✅ نافذة إدخال اسم الموقع (بديل Prompt) -->
+    <!-- ✅ نافذة إدخال اسم الموقع -->
     <div id="saveLocModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
-            <div style="font-size: 40px; margin-bottom: 10px;">🏡</div>
+            <div style="font-size: 36px; margin-bottom: 8px;">🏡</div>
             <div class="custom-modal-title">أعطِ اسماً مميزاً لهذا الموقع</div>
             <input type="text" id="locNameInput" class="custom-modal-input" placeholder="مثال: بيتي، سنتر الأمل..." value="موقع جديد">
             <div class="custom-modal-buttons">
@@ -305,14 +271,14 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف العامة للمواقع والمعلمين -->
+    <!-- ✅ نافذة تأكيد الحذف -->
     <div id="deleteModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
-            <div style="font-size: 40px; margin-bottom: 10px;">🗑️</div>
+            <div style="font-size: 36px; margin-bottom: 8px;">🗑️</div>
             <div class="custom-modal-title" style="color:#991B1B;">تأكيد الحذف</div>
-            <p style="font-size: 13px; color: #475569; margin-bottom: 15px; font-weight: 800;">هل أنت متأكد أنك تريد حذف هذا العنصر من قائمتك؟</p>
+            <p style="font-size: 12px; color: #475569; margin-bottom: 12px; font-weight: 800;">هل أنت متأكد أنك تريد الحذف؟</p>
             <div class="custom-modal-buttons">
-                <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 3px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع</button>
+                <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 2.5px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع</button>
                 <button class="custom-btn custom-btn-cancel clickable-element" onclick="confirmDelete()">نعم، احذف</button>
             </div>
         </div>
@@ -332,7 +298,8 @@
             <h3 class="section-title"><span>👤</span> بياناتك الشخصية</h3>
             <div class="form-group">
                 <label>هل أنت؟</label>
-                <div class="radio-grid">
+                <!-- دمج في سطر واحد لتوفير المساحة -->
+                <div class="radio-grid grid-2-always">
                     <div><input type="radio" name="st_gender" id="st_boy" value="ولد" checked><label for="st_boy"><i>👨‍🎓</i> ولد</label></div>
                     <div><input type="radio" name="st_gender" id="st_girl" value="بنت"><label for="st_girl"><i>👩‍🎓</i> بنت</label></div>
                 </div>
@@ -341,43 +308,43 @@
                 <label>اسمك بالكامل</label>
                 <input type="text" id="st_name" class="form-control" placeholder="اكتب اسمك هنا...">
             </div>
-            <div class="grid-2">
+            <div class="grid-2-always">
                 <div class="form-group">
-                    <label>عمرك (بالسنوات)</label>
+                    <label>عمرك</label>
                     <input type="number" id="st_age" class="form-control" placeholder="مثال: 14" oninput="checkAge()">
                 </div>
                 <div class="form-group">
-                    <label id="phone_label">📱 رقم الواتس أب</label>
+                    <label id="phone_label">📱 رقم الواتس</label>
                     <input type="tel" id="st_phone" class="form-control" placeholder="010XXXXXXXX">
                 </div>
             </div>
         </div>
 
-        <!-- 2. المرحلة الدراسية (الخلفية الخضراء الصريحة مطابقة للأولى) -->
-        <div class="smart-card bg-green-solid">
+        <!-- 2. المرحلة الدراسية (الخلفية الصفراء الصريحة) -->
+        <div class="smart-card bg-yellow-solid">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
-            <div class="form-group">
-                <label>المرحلة الدراسية</label>
-                <select id="s_stage" class="form-control" onchange="updateGrades()">
-                    <option value="">-- اختر المرحلة --</option>
-                    <option value="primary">🎒 الابتدائية</option>
-                    <option value="prep">📐 الإعدادية</option>
-                    <option value="secondary">🎓 الثانوية</option>
-                </select>
-            </div>
-            <div class="grid-2">
+            <div class="grid-2-always">
                 <div class="form-group">
-                    <label>الصف الدراسي</label>
+                    <label>المرحلة</label>
+                    <select id="s_stage" class="form-control" onchange="updateGrades()">
+                        <option value="">-- اختر --</option>
+                        <option value="primary">🎒 الابتدائية</option>
+                        <option value="prep">📐 الإعدادية</option>
+                        <option value="secondary">🎓 الثانوية</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>الصف</label>
                     <select id="s_grade" class="form-control" disabled onchange="updateSubjects()">
-                        <option value="">-- اختر المرحلة أولاً --</option>
+                        <option value="">-- المرحلة أولاً --</option>
                     </select>
                 </div>
-                <div class="form-group">
-                    <label>المادة التي تبحث عنها</label>
-                    <select id="s_subject" class="form-control" disabled>
-                        <option value="">-- اختر الصف أولاً --</option>
-                    </select>
-                </div>
+            </div>
+            <div class="form-group" style="margin-bottom: 0;">
+                <label>المادة التي تبحث عنها</label>
+                <select id="s_subject" class="form-control" disabled>
+                    <option value="">-- اختر الصف أولاً --</option>
+                </select>
             </div>
         </div>
 
@@ -386,94 +353,55 @@
             <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
                 <label>تفضل الدرس مع؟</label>
-                <div class="radio-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-                    <div><input type="radio" name="pref_teacher" id="t_any" value="أي منهما" checked><label for="t_any"><i>🤷‍♂️</i> أي منهما</label></div>
+                <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div><input type="radio" name="pref_teacher" id="t_any" value="أي منهما" checked><label for="t_any"><i>🤷‍♂️</i> أيهم</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_ms" value="مس"><label for="t_ms"><i>👩‍🏫</i> مس</label></div>
                 </div>
             </div>
             <div class="form-group">
                 <label>أين تفضل أخذ الدرس؟</label>
-                <div class="radio-grid" style="grid-template-columns: 1fr 1fr 1fr;">
-                    <div><input type="radio" name="pref_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> السنتر</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_teacher" value="بيت المستر"><label for="l_teacher"><i>🏠</i> المستر/المس</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_home" value="في منزلي"><label for="l_home"><i>🚗</i> منزلي (يجيني)</label></div>
+                <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
+                    <div><input type="radio" name="pref_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> سنتر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_teacher" value="بيت المستر"><label for="l_teacher"><i>🏠</i> المستر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_home" value="في منزلي"><label for="l_home"><i>🚗</i> منزلي</label></div>
                 </div>
             </div>
 
-            <div class="form-group" style="margin-top: 25px; padding: 15px; background: #FFFFFF; border-radius: 12px; border: 1.5px solid #CBD5E1;">
-                <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 15px;">🎯 نطاق البحث المسموح:</span>
-                    <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 16px; background: #D1FAE5; padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
+            <div class="form-group" style="margin-top: 15px; padding: 10px; background: #FFFFFF; border-radius: 10px; border: 1.5px solid #CBD5E1;">
+                <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                    <span style="font-size: 13px;">🎯 نطاق البحث:</span>
+                    <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 13px; background: #D1FAE5; padding: 2px 10px; border-radius: 20px;">3 كيلومتر</span>
                 </label>
                 <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-top: 8px; font-weight: 800;">
+                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748B; margin-top: 4px; font-weight: 800;">
                     <span>500 متر</span>
                     <span>5 كيلو</span>
                 </div>
             </div>
 
-            <!-- ✅ ملخص بيانات الطالب -->
+            <!-- ✅ ملخص بيانات الطالب (مضغوط جداً - فقاعات بجوار بعضها) -->
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 14px; height: 14px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                     </svg>
-                    ملخص بياناتك الحالية
+                    بياناتك الحالية للتأكيد
                 </div>
-                <div class="summary-grid">
-                    <div class="summary-item"><span>الطالب:</span> <strong id="sum_name">--</strong></div>
-                    <div class="summary-item"><span>المرحلة/الصف:</span> <strong id="sum_grade">--</strong></div>
-                    <div class="summary-item"><span>المادة المختارة:</span> <strong id="sum_subject">--</strong></div>
-                    <div class="summary-item"><span>المعلم المفضل:</span> <strong id="sum_teacher_pref">--</strong></div>
-                    <div class="summary-item" style="grid-column: 1 / -1;"><span>مكان الدرس:</span> <strong id="sum_loc">--</strong></div>
+                <div class="summary-badges-container">
+                    <div class="summary-badge"><span>الطالب:</span><strong id="sum_name">--</strong></div>
+                    <div class="summary-badge"><span>الجهة:</span><strong id="sum_grade">--</strong></div>
+                    <div class="summary-badge"><span>المادة:</span><strong id="sum_subject">--</strong></div>
+                    <div class="summary-badge"><span>المعلم:</span><strong id="sum_teacher_pref">--</strong></div>
+                    <div class="summary-badge"><span>المكان:</span><strong id="sum_loc">--</strong></div>
                 </div>
             </div>
 
-            <!-- زر البحث الرئيسي -->
-            <button class="btn-search clickable-element" id="searchBtn" onclick="startSmartSearch()">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                </svg>
-                تحديد موقعي الحالي والبحث بالـ GPS
-            </button>
-            
-            <!-- حاوية الخريطة والتكبير -->
-            <div id="mapOuterWrapper" style="display: none; margin-top: 20px;">
-                <div id="mapHint" class="map-hint">
-                    💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى بحرية
-                </div>
-                
-                <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-                    
-                    <button class="fullscreen-btn clickable-element" onclick="toggleMapFullscreen()" title="تكبير/تصغير الخريطة">
-                        <svg id="iconExpand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" />
-                        </svg>
-                        <svg id="iconCompress" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" />
-                        </svg>
-                    </button>
-
-                    <div id="map"></div>
-                </div>
-                
-                <!-- منطقة حفظ الخريطة -->
-                <div class="map-actions-wrapper" style="padding: 15px; background: #F8FAFC; border: 2px solid #CBD5E1; border-top: none; border-bottom: 6px solid #334155; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
-                    <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
-                        💾 حفظ موقع البحث هذا للعودة إليه لاحقاً
-                    </button>
-                </div>
-            </div>
-            
-            <!-- ✅ القوائم المحفوظة المنسدلة (Dropdown) تظهر هنا دائماً -->
+            <!-- القوائم المحفوظة المنسدلة -->
             <div class="saved-sections-wrapper">
-                
-                <!-- 1. قائمة المعلمين المنسدلة -->
                 <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
                     <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
-                    <svg id="teachersIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <svg id="teachersIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
                 </button>
@@ -481,19 +409,45 @@
                     <div class="saved-list-container" id="savedTeachersList"></div>
                 </div>
 
-                <!-- 2. قائمة المواقع المنسدلة -->
                 <button id="locationsDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('locationsListContainer', 'locationsIcon')">
                     <span id="locationsCountTxt">📌 المواقع المحفوظة (0)</span>
-                    <svg id="locationsIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                    <svg id="locationsIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                     </svg>
                 </button>
                 <div id="locationsListContainer" class="dropdown-content">
                     <div class="saved-list-container" id="savedLocationsList"></div>
                 </div>
-                
             </div>
 
+            <!-- زر البحث الرئيسي -->
+            <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="startSmartSearch()">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                </svg>
+                تحديد الموقع والبحث
+            </button>
+            
+            <!-- حاوية الخريطة (مدمجة) -->
+            <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
+                <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء لتغيير مركز البحث واستكشاف المدرسين</div>
+                
+                <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                    <button class="fullscreen-btn clickable-element" onclick="toggleMapFullscreen()" title="تكبير/تصغير الخريطة">
+                        <svg id="iconExpand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" /></svg>
+                        <svg id="iconCompress" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" /></svg>
+                    </button>
+                    <div id="map"></div>
+                </div>
+                
+                <div class="map-actions-wrapper" style="padding: 10px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-top: none; border-bottom: 4px solid #334155; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                    <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
+                        💾 حفظ هذا الموقع للمستقبل
+                    </button>
+                </div>
+            </div>
+            
         </div>
     </div>
 
@@ -501,21 +455,14 @@
         // ==========================================
         // 0. المتغيرات والتأثيرات والمشاركة
         // ==========================================
-        let map = null;
-        let teachersLayer = null; 
-        let studentMarker = null; 
-        let searchCircle = null;  
-        let currentCenter = null; 
-        let isMapFullscreen = false; 
-        
-        let deleteType = ''; 
-        let deleteIndexToConfirm = -1;
+        let map = null; let teachersLayer = null; let studentMarker = null; 
+        let searchCircle = null;  let currentCenter = null; let isMapFullscreen = false; 
+        let deleteType = ''; let deleteIndexToConfirm = -1;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
+            const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sine'; osc.frequency.setValueAtTime(2500, audioCtx.currentTime);
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
@@ -547,7 +494,7 @@
         };
 
         // ==========================================
-        // 1. منطق التكبير والقوائم المنسدلة (Dropdown)
+        // 1. منطق التكبير والقوائم المنسدلة
         // ==========================================
         function toggleMapFullscreen() {
             const mapWrap = document.getElementById('mapWrapper');
@@ -570,28 +517,25 @@
         function toggleDropdown(containerId, iconId, forceOpen = false) {
             const container = document.getElementById(containerId);
             const icon = document.getElementById(iconId);
-            
             if (forceOpen || container.style.display === 'none' || container.style.display === '') {
-                container.style.display = 'block';
-                icon.style.transform = 'rotate(180deg)';
+                container.style.display = 'block'; icon.style.transform = 'rotate(180deg)';
             } else {
-                container.style.display = 'none';
-                icon.style.transform = 'rotate(0deg)';
+                container.style.display = 'none'; icon.style.transform = 'rotate(0deg)';
             }
         }
 
         // ==========================================
-        // 2. منطق العمر والمناهج والتخزين
+        // 2. منطق العمر والمناهج
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
             const phoneLabel = document.getElementById('phone_label');
             const phoneInput = document.getElementById('st_phone');
             if (ageInput !== "" && parseInt(ageInput) < 13) {
-                phoneLabel.innerHTML = "📱 رقم ولي الأمر <span class='age-warning-text'>(لأنك أقل من 13 سنة)</span>";
-                phoneInput.placeholder = "أدخل رقم ولي الأمر...";
+                phoneLabel.innerHTML = "📱 رقم ولي الأمر <span class='age-warning-text'>(-13 سنة)</span>";
+                phoneInput.placeholder = "رقم ولي الأمر...";
             } else {
-                phoneLabel.innerHTML = "📱 رقم الواتس أب الخاص بك";
+                phoneLabel.innerHTML = "📱 رقم الواتس أب";
                 phoneInput.placeholder = "010XXXXXXXX";
             }
         }
@@ -606,8 +550,8 @@
             const stage = document.getElementById('s_stage').value;
             const gSelect = document.getElementById('s_grade');
             const sSelect = document.getElementById('s_subject');
-            gSelect.innerHTML = '<option value="">-- اختر الصف --</option>';
-            sSelect.innerHTML = '<option value="">-- اختر المادة --</option>';
+            gSelect.innerHTML = '<option value="">-- اختر --</option>';
+            sSelect.innerHTML = '<option value="">-- المادة --</option>';
             sSelect.disabled = true;
             if(stage) { curriculum[stage].grades.forEach(g => gSelect.innerHTML += `<option value="${g}">${g}</option>`); gSelect.disabled = false; } else { gSelect.disabled = true; }
         }
@@ -615,7 +559,7 @@
         function updateSubjects() {
             const stage = document.getElementById('s_stage').value;
             const sSelect = document.getElementById('s_subject');
-            sSelect.innerHTML = '<option value="">-- اختر مادة --</option>';
+            sSelect.innerHTML = '<option value="">-- المادة --</option>';
             if(stage && document.getElementById('s_grade').value) { curriculum[stage].subjs.forEach(s => sSelect.innerHTML += `<option value="${s}">${s}</option>`); sSelect.disabled = false; } else { sSelect.disabled = true; }
         }
 
@@ -626,7 +570,7 @@
             else {
                 let kmVal = (val / 1000).toFixed(1);
                 if(kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
-                display.innerText = kmVal + " كيلومتر";
+                display.innerText = kmVal + " كم";
             }
             updateStudentSummary(); saveStudentData();
             if (searchCircle) { searchCircle.setRadius(val); }
@@ -634,8 +578,7 @@
 
         function onRadiusChangeEnd() {
             if (currentCenter && searchCircle) {
-                const radius = parseInt(document.getElementById('search_radius').value);
-                generateSmartTeachers(currentCenter, radius);
+                generateSmartTeachers(currentCenter, parseInt(document.getElementById('search_radius').value));
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
             }
         }
@@ -650,20 +593,19 @@
 
             if(grade && subject) {
                 document.getElementById('studentSummaryCard').style.display = 'block';
-                document.getElementById('sum_name').innerText = name || 'لم يكتب الاسم';
-                document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : 'غير محدد';
-                document.getElementById('sum_subject').innerText = subject || 'غير محدد';
+                document.getElementById('sum_name').innerText = name || 'بدون اسم';
+                document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : '--';
+                document.getElementById('sum_subject').innerText = subject || '--';
                 document.getElementById('sum_teacher_pref').innerText = prefTeacher || 'أي منهما';
-                document.getElementById('sum_loc').innerText = prefLoc || 'غير محدد';
+                document.getElementById('sum_loc').innerText = prefLoc || '--';
             } else {
                 document.getElementById('studentSummaryCard').style.display = 'none';
             }
         }
 
         function saveStudentData() {
-            const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             const studentData = {
-                ...existingData,
+                ...JSON.parse(localStorage.getItem('talep_data') || '{}'),
                 st_gender: document.querySelector('input[name="st_gender"]:checked')?.id,
                 st_name: document.getElementById('st_name').value,
                 st_age: document.getElementById('st_age').value,
@@ -680,40 +622,33 @@
         }
 
         function loadStudentData() {
-            const savedData = localStorage.getItem('talep_data');
-            if (savedData) {
-                const data = JSON.parse(savedData);
-                if (data.st_gender) document.getElementById(data.st_gender).checked = true;
-                if (data.st_name) document.getElementById('st_name').value = data.st_name;
-                if (data.st_age) { document.getElementById('st_age').value = data.st_age; checkAge(); }
-                if (data.st_phone) document.getElementById('st_phone').value = data.st_phone;
-                if (data.s_stage) { document.getElementById('s_stage').value = data.s_stage; updateGrades(); }
-                if (data.s_grade) { document.getElementById('s_grade').value = data.s_grade; updateSubjects(); }
-                if (data.s_subject) { document.getElementById('s_subject').value = data.s_subject; }
-                if (data.pref_teacher) document.getElementById(data.pref_teacher).checked = true;
-                if (data.pref_loc) document.getElementById(data.pref_loc).checked = true;
-                if (data.search_radius) { document.getElementById('search_radius').value = data.search_radius; updateRadiusDisplay(); }
-            }
-            updateStudentSummary();
-            renderSavedLocationsList(); 
-            renderSavedTeachersList();
+            const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
+            if (data.st_gender) document.getElementById(data.st_gender).checked = true;
+            if (data.st_name) document.getElementById('st_name').value = data.st_name;
+            if (data.st_age) { document.getElementById('st_age').value = data.st_age; checkAge(); }
+            if (data.st_phone) document.getElementById('st_phone').value = data.st_phone;
+            if (data.s_stage) { document.getElementById('s_stage').value = data.s_stage; updateGrades(); }
+            if (data.s_grade) { document.getElementById('s_grade').value = data.s_grade; updateSubjects(); }
+            if (data.s_subject) { document.getElementById('s_subject').value = data.s_subject; }
+            if (data.pref_teacher) document.getElementById(data.pref_teacher).checked = true;
+            if (data.pref_loc) document.getElementById(data.pref_loc).checked = true;
+            if (data.search_radius) { document.getElementById('search_radius').value = data.search_radius; updateRadiusDisplay(); }
+            
+            updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
         }
 
         window.onload = () => {
             loadStudentData();
             document.querySelectorAll('input, select').forEach(el => {
-                if(el.id !== 'search_radius') { 
-                    el.addEventListener('input', saveStudentData);
-                    el.addEventListener('change', saveStudentData);
-                }
+                if(el.id !== 'search_radius') { el.addEventListener('input', saveStudentData); el.addEventListener('change', saveStudentData); }
             });
         };
 
         // ==========================================
-        // 3. قوائم الحفظ (المواقع والمعلمين المنسدلة)
+        // 3. النوافذ والقوائم المحفوظة
         // ==========================================
         function openSaveLocModal() {
-            if (!currentCenter) { showToast("يرجى تحديد موقع على الخريطة أولاً!", true); return; }
+            if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
             document.getElementById('locNameInput').value = 'موقع جديد';
             document.getElementById('saveLocModal').classList.add('active');
         }
@@ -724,12 +659,9 @@
             const locName = document.getElementById('locNameInput').value.trim() || 'موقع جديد';
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_locations) existingData.saved_locations = [];
-            
             existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedLocationsList(true); // true = auto open
-            closeSaveLocModal();
-            showToast("تم حفظ الموقع بنجاح يا بطل! 💾");
+            renderSavedLocationsList(true); closeSaveLocModal(); showToast("تم حفظ الموقع 💾");
         }
 
         function renderSavedLocationsList(autoOpen = false) {
@@ -739,9 +671,7 @@
             const countTxt = document.getElementById('locationsCountTxt');
             
             if (data.saved_locations && data.saved_locations.length > 0) {
-                btn.style.display = 'flex';
-                countTxt.innerText = `📌 المواقع المحفوظة (${data.saved_locations.length})`;
-                
+                btn.style.display = 'flex'; countTxt.innerText = `📌 المواقع المحفوظة (${data.saved_locations.length})`;
                 let html = '';
                 data.saved_locations.forEach((loc, index) => {
                     html += `
@@ -750,51 +680,33 @@
                                 <div class="loc-icon">📌</div><span class="loc-name">${loc.name}</span>
                             </div>
                             <div class="loc-actions">
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})" title="حذف">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                </button>
-                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                    </svg>
-                                </button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})">❌</button>
+                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})">📍</button>
                             </div>
                         </div>
                     `;
                 });
                 list.innerHTML = html;
                 if(autoOpen) toggleDropdown('locationsListContainer', 'locationsIcon', true);
-            } else { 
-                btn.style.display = 'none'; 
-                document.getElementById('locationsListContainer').style.display = 'none';
-            }
+            } else { btn.style.display = 'none'; document.getElementById('locationsListContainer').style.display = 'none'; }
         }
 
         function loadSpecificLocation(index) {
             const subject = document.getElementById('s_subject').value;
-            if(!subject) { showToast("يرجى استكمال بيانات المادة أولاً!", true); return; }
-
+            if(!subject) { showToast("أكمل بيانات المادة أولاً!", true); return; }
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
-                const loc = data.saved_locations[index];
-                buildRadarMap(loc.lat, loc.lng);
+                buildRadarMap(data.saved_locations[index].lat, data.saved_locations[index].lng);
             }
         }
 
         window.saveTeacher = function(name, subject, grade, locType, phone, gender) {
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_teachers) existingData.saved_teachers = [];
-
-            const exists = existingData.saved_teachers.some(t => t.phone === phone);
-            if(exists) { showToast("المعلم محفوظ بالفعل في قائمتك!", true); return; }
-
+            if(existingData.saved_teachers.some(t => t.phone === phone)) { showToast("المعلم محفوظ بالفعل!", true); return; }
             existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedTeachersList(true); // true = auto open
-            showToast("تم حفظ المعلم في قائمتك بنجاح! ⭐");
+            renderSavedTeachersList(true); showToast("تم حفظ المعلم ⭐");
         };
 
         function renderSavedTeachersList(autoOpen = false) {
@@ -804,79 +716,45 @@
             const countTxt = document.getElementById('teachersCountTxt');
 
             if (data.saved_teachers && data.saved_teachers.length > 0) {
-                btn.style.display = 'flex';
-                countTxt.innerText = `⭐ المعلمون المفضلون (${data.saved_teachers.length})`;
-
+                btn.style.display = 'flex'; countTxt.innerText = `⭐ المعلمون المفضلون (${data.saved_teachers.length})`;
                 let html = '';
                 data.saved_teachers.forEach((t, index) => {
                     const iconEmoji = t.gender === 'مستر' ? '👨‍🏫' : '👩‍🏫';
                     html += `
-                        <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                        <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                                 <div class="loc-info">
                                     <div class="loc-icon" style="background: ${t.gender === 'مستر' ? '#DBEAFE' : '#FCE7F3'}; color: ${t.gender === 'مستر' ? '#1E40AF' : '#9D174D'};">${iconEmoji}</div>
-                                    <div>
-                                        <span class="loc-name" style="display: block;">${t.name}</span>
-                                        <span style="font-size: 11px; color: #64748B; font-weight: 800;">${t.subject} (${t.grade})</span>
-                                    </div>
+                                    <div><span class="loc-name" style="display: block;">${t.name}</span><span style="font-size: 10px; color: #64748B; font-weight: 800;">${t.subject} (${t.grade})</span></div>
                                 </div>
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
-                                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                </button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})">❌</button>
                             </div>
-                            <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 8px; gap: 8px;">
-                                <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; color: #1D4ED8; font-size: 13px; padding: 8px;">
-                                    🔗 مشاركة
-                                </button>
-                                <a href="https://wa.me/2${t.phone}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 3px solid #16A34A; color: white; padding: 8px; font-size: 13px; text-decoration: none; display:flex; gap:6px; align-items:center; justify-content:center;">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
-                                    تواصل واتساب
-                                </a>
+                            <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
+                                <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
+                                <a href="https://wa.me/2${t.phone}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px; text-decoration: none;">💬 واتساب</a>
                             </div>
                         </div>
                     `;
                 });
                 list.innerHTML = html;
                 if(autoOpen) toggleDropdown('teachersListContainer', 'teachersIcon', true);
-            } else { 
-                btn.style.display = 'none'; 
-                document.getElementById('teachersListContainer').style.display = 'none';
-            }
+            } else { btn.style.display = 'none'; document.getElementById('teachersListContainer').style.display = 'none'; }
         }
 
-        function deleteItem(type, index) {
-            deleteType = type;
-            deleteIndexToConfirm = index;
-            document.getElementById('deleteModal').classList.add('active');
-        }
-        
-        function closeDeleteModal() {
-            document.getElementById('deleteModal').classList.remove('active');
-            deleteIndexToConfirm = -1;
-        }
-
+        function deleteItem(type, index) { deleteType = type; deleteIndexToConfirm = index; document.getElementById('deleteModal').classList.add('active'); }
+        function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('active'); deleteIndexToConfirm = -1; }
         function confirmDelete() {
             if (deleteIndexToConfirm > -1) {
                 const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
-                if (deleteType === 'location') {
-                    existingData.saved_locations.splice(deleteIndexToConfirm, 1);
-                    showToast("تم إزالة الموقع من قائمتك 🗑️");
-                    localStorage.setItem('talep_data', JSON.stringify(existingData));
-                    renderSavedLocationsList();
-                } else if (deleteType === 'teacher') {
-                    existingData.saved_teachers.splice(deleteIndexToConfirm, 1);
-                    showToast("تم إزالة المعلم من قائمتك 🗑️");
-                    localStorage.setItem('talep_data', JSON.stringify(existingData));
-                    renderSavedTeachersList();
-                }
+                if (deleteType === 'location') { existingData.saved_locations.splice(deleteIndexToConfirm, 1); renderSavedLocationsList(); showToast("تم إزالة الموقع 🗑️"); } 
+                else if (deleteType === 'teacher') { existingData.saved_teachers.splice(deleteIndexToConfirm, 1); renderSavedTeachersList(); showToast("تم إزالة المعلم 🗑️"); }
+                localStorage.setItem('talep_data', JSON.stringify(existingData));
             }
             closeDeleteModal();
         }
 
         // ==========================================
-        // 4. منطق الخريطة الذكية والرادار
+        // 5. منطق الخريطة والرادار
         // ==========================================
         function initMap() {
             if (!map) {
@@ -894,30 +772,19 @@
 
             const btn = document.getElementById('searchBtn');
             const originalBtnHTML = btn.innerHTML;
-            btn.innerHTML = "⏳ جاري تحديد موقعك...";
-            btn.classList.add('loading');
+            btn.innerHTML = "⏳ جاري التحديد..."; btn.classList.add('loading');
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        btn.innerHTML = originalBtnHTML; btn.classList.remove('loading');
-                        buildRadarMap(position.coords.latitude, position.coords.longitude);
-                    },
-                    (error) => {
-                        btn.innerHTML = originalBtnHTML; btn.classList.remove('loading');
-                        buildRadarMap(31.0409, 31.3785);
-                    },
+                    (position) => { btn.innerHTML = originalBtnHTML; btn.classList.remove('loading'); buildRadarMap(position.coords.latitude, position.coords.longitude); },
+                    (error) => { btn.innerHTML = originalBtnHTML; btn.classList.remove('loading'); buildRadarMap(31.0409, 31.3785); },
                     { enableHighAccuracy: true, timeout: 5000 }
                 );
-            } else {
-                btn.innerHTML = originalBtnHTML; btn.classList.remove('loading');
-                buildRadarMap(31.0409, 31.3785);
-            }
+            } else { btn.innerHTML = originalBtnHTML; btn.classList.remove('loading'); buildRadarMap(31.0409, 31.3785); }
         }
 
         function buildRadarMap(lat, lng) {
             document.getElementById('mapOuterWrapper').style.display = 'block';
-            
             initMap();
             if (studentMarker) map.removeLayer(studentMarker);
             if (searchCircle) map.removeLayer(searchCircle);
@@ -927,10 +794,10 @@
             map.setView(currentCenter, 14);
 
             const searchRadius = parseInt(document.getElementById('search_radius').value); 
-            searchCircle = L.circle(currentCenter, { color: '#10B981', weight: 3, dashArray: '10, 10', fillColor: '#34D399', fillOpacity: 0.15 }).addTo(map);
+            searchCircle = L.circle(currentCenter, { color: '#10B981', weight: 2, dashArray: '8, 8', fillColor: '#34D399', fillOpacity: 0.15 }).addTo(map);
             searchCircle.setRadius(searchRadius);
 
-            const studentIcon = L.divIcon({ className: 'custom-student-marker', html: '<div class="student-radar"></div>', iconSize: [22, 22], iconAnchor: [11, 11] });
+            const studentIcon = L.divIcon({ className: 'custom-student-marker', html: '<div class="student-radar"></div>', iconSize: [18, 18], iconAnchor: [9, 9] });
             studentMarker = L.marker(currentCenter, { icon: studentIcon, draggable: true, zIndexOffset: 10000 }).addTo(map);
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
@@ -951,21 +818,15 @@
             const prefLoc = document.querySelector('input[name="pref_loc"]:checked').value;
             const degreeRadius = radiusInMeters / 111000;
 
-            const mrData = [
-                {n: "أ/ محمد أحمد", p: "01012345678"}, {n: "أ/ محمود طارق", p: "01123456789"}, 
-                {n: "أ/ علي حسن", p: "01234567890"}, {n: "أ/ إبراهيم سعيد", p: "01555556666"}, {n: "أ/ مصطفى كمال", p: "01099998888"}
-            ];
-            const msData = [
-                {n: "أ/ سارة محمود", p: "01077778888"}, {n: "أ/ فاطمة علي", p: "01188889999"}, 
-                {n: "أ/ ندى مصطفى", p: "01299990000"}, {n: "أ/ منة طارق", p: "01566667777"}, {n: "أ/ ياسمين عادل", p: "01044445555"}
-            ];
+            const mrData = [ {n: "أ/ محمد أحمد", p: "01012345678"}, {n: "أ/ محمود طارق", p: "01123456789"}, {n: "أ/ علي حسن", p: "01234567890"}, {n: "أ/ إبراهيم سعيد", p: "01555556666"} ];
+            const msData = [ {n: "أ/ سارة محمود", p: "01077778888"}, {n: "أ/ فاطمة علي", p: "01188889999"}, {n: "أ/ ندى مصطفى", p: "01299990000"}, {n: "أ/ منة طارق", p: "01566667777"} ];
             
             let pool = [];
             if (prefTeacher === "مستر") pool = mrData.map(item => ({name: item.n, phone: item.p, gender: "مستر"}));
             else if (prefTeacher === "مس") pool = msData.map(item => ({name: item.n, phone: item.p, gender: "مس"}));
             else { pool = [...mrData.map(item => ({name: item.n, phone: item.p, gender: "مستر"})), ...msData.map(item => ({name: item.n, phone: item.p, gender: "مس"}))]; }
 
-            let maxTeachers = radiusInMeters < 1500 ? 2 : (radiusInMeters < 3000 ? 4 : 6);
+            let maxTeachers = radiusInMeters < 1500 ? 2 : (radiusInMeters < 3000 ? 4 : 5);
             pool = pool.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + maxTeachers);
 
             pool.forEach(t => {
@@ -977,23 +838,17 @@
                 const iconEmoji = t.gender === 'مستر' ? '👨‍🏫' : '👩‍🏫';
                 const iconColor = t.gender === 'مستر' ? '#0284C7' : '#DB2777';
 
-                const iconHtml = `<div style="background-color: ${iconColor}; color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: 3px solid white; font-size: 18px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); transition: transform 0.2s;">${iconEmoji}</div>`;
-                const customIcon = L.divIcon({ className: 'custom-leaflet-marker', html: iconHtml, iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -15] });
+                const iconHtml = `<div style="background-color: ${iconColor}; color: white; border-radius: 50%; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; border: 2px solid white; font-size: 16px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">${iconEmoji}</div>`;
+                const customIcon = L.divIcon({ className: 'custom-leaflet-marker', html: iconHtml, iconSize: [34, 34], iconAnchor: [17, 17], popupAnchor: [0, -15] });
 
                 const popupContent = `
                     <div class="teacher-popup-title">${iconEmoji} ${t.name}</div>
                     <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${subject} (${grade})</span></div>
                     <div class="teacher-popup-detail"><span>📍 المكان:</span> <span style="color:#059669;">${prefLoc === 'في منزلي' ? 'حضور لمنزلك' : prefLoc}</span></div>
-                    <div class="teacher-popup-detail"><span>⭐ التقييم:</span> <span style="color:#F59E0B;">4.9 / 5</span></div>
                     
-                    <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <button class="clickable-element" onclick="saveTeacher('${t.name}', '${subject}', '${grade}', '${prefLoc}', '${t.phone}', '${t.gender}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 3px solid #92400E; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.2s;">
-                            ⭐ حفظ
-                        </button>
-                        <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; padding: 6px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
-                            واتساب
-                        </a>
+                    <div style="display: flex; gap: 6px; margin-top: 8px;">
+                        <button class="clickable-element" onclick="saveTeacher('${t.name}', '${subject}', '${grade}', '${prefLoc}', '${t.phone}', '${t.gender}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 2px solid #92400E; border-radius: 6px; font-weight: 900; font-size: 12px; cursor: pointer;">⭐ حفظ</button>
+                        <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">💬 واتساب</a>
                     </div>
                 `;
 
