@@ -46,34 +46,42 @@
             margin-bottom: 20px;
         }
 
-        /* 🟢 1. البطاقة الخضراء (بياناتك الشخصية) 🟢 */
+        /* 🟢 البطاقات الخضراء (بياناتك الشخصية + دراستك والمادة) 🟢 */
         .bg-green-solid {
             background: #10B981 !important; 
             border: 2px solid #059669 !important;
             border-top: 5px solid #047857 !important;
             border-bottom: 6px solid #064E3B !important;
         }
-        .bg-green-solid .section-title { color: #ffffff !important; border-bottom: 2px dashed rgba(255, 255, 255, 0.4) !important; }
-        .bg-green-solid .form-group > label { color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
-        .bg-green-solid .radio-grid label { color: #1E293B !important; background-color: #FFFFFF !important; text-shadow: none !important; }
-        .bg-green-solid .form-control { border: 2px solid #059669 !important; border-bottom: 4px solid #064E3B !important; }
-        .bg-green-solid .form-control:focus { border-color: #047857 !important; box-shadow: 0 0 0 4px rgba(255,255,255,0.3) !important; }
+        .bg-green-solid .section-title {
+            color: #ffffff !important;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.4) !important;
+        }
+        .bg-green-solid .form-group > label {
+            color: #ffffff !important;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .bg-green-solid .radio-grid label {
+            color: #1E293B !important;
+            background-color: #FFFFFF !important;
+            text-shadow: none !important;
+        }
+        .bg-green-solid .form-control {
+            border: 2px solid #059669 !important;
+            border-bottom: 4px solid #064E3B !important;
+        }
+        .bg-green-solid .form-control:focus {
+            border-color: #047857 !important;
+            box-shadow: 0 0 0 4px rgba(255,255,255,0.3) !important;
+        }
+        .bg-green-solid .form-control:disabled {
+            background-color: #F1F5F9 !important;
+            color: #64748B !important;
+            border-color: #CBD5E1 !important;
+        }
         .age-warning-text { color: #FEF08A; font-size: 11px; background: rgba(0,0,0,0.15); padding: 2px 8px; border-radius: 6px; margin-right: 5px; }
 
-        /* 🟡 2. البطاقة الصفراء الصريحة (دراستك والمادة) 🟡 */
-        .bg-yellow-solid {
-            background-color: #FACC15 !important; 
-            border: 2px solid #EAB308 !important;
-            border-top: 5px solid #CA8A04 !important;
-            border-bottom: 6px solid #A16207 !important;
-        }
-        .bg-yellow-solid .section-title { color: #0F2D5C !important; border-bottom: 2px dashed rgba(15, 45, 92, 0.2) !important; }
-        .bg-yellow-solid .form-group > label { color: #0F172A !important; text-shadow: none !important; }
-        .bg-yellow-solid .form-control { border: 2px solid #EAB308 !important; border-bottom: 4px solid #CA8A04 !important; background: #FFFFFF !important; }
-        .bg-yellow-solid .form-control:focus { border-color: #A16207 !important; box-shadow: 0 0 0 4px rgba(250,204,21,0.3) !important; }
-        .bg-yellow-solid .form-control:disabled { background-color: #FEF9C3 !important; color: #CA8A04 !important; border-color: #FDE047 !important; }
-
-        /* ⚪ 3. البطاقة الأبيض الغامق (تفضيلات الدرس) ⚪ */
+        /* ⚪ البطاقة الأبيض الغامق (تفضيلات الدرس) ⚪ */
         .bg-offwhite-card {
             background-color: #F1F5F9 !important; 
             border: 2px solid #E2E8F0 !important;
@@ -93,8 +101,8 @@
         }
         .form-control:focus { border-color: #10B981; border-bottom: 4px solid #059669; background: #F8FAFC; }
         
-        select.form-control { font-size: 14px !important; font-weight: 800 !important; height: 50px; padding: 8px 10px !important; cursor: pointer; text-overflow: ellipsis; }
-        select.form-control option { font-size: 14px; font-weight: 800; }
+        select.form-control { font-size: 16px !important; height: 52px; cursor: pointer; }
+        select.form-control option { font-size: 16px; font-weight: 900; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
@@ -121,10 +129,9 @@
             transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; 
         }
 
-        /* 🔵 ألوان مخصصة (الولد والمستر = أزرق) (البنت والمس = وردي) */
+        /* 🔵 ألوان مخصصة */
         #st_boy:checked + label, #t_mr:checked + label { border-color: #3B82F6 !important; border-bottom-color: #2563EB !important; background-color: #DBEAFE !important; color: #1E40AF !important; }
         #st_boy:checked + label::before, #t_mr:checked + label::before { background: #3B82F6 !important; }
-
         #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background-color: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899 !important; }
 
@@ -204,9 +211,20 @@
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
         /* ============================================ */
-        /* ✅ تصميم القوائم المحفوظة (المعلمين والمواقع) */
+        /* ✅ تصميم القوائم المنسدلة (Dropdown) الجديدة */
         /* ============================================ */
-        .saved-sections-wrapper { display: flex; flex-direction: column; gap: 15px; margin-bottom: 20px; }
+        .saved-sections-wrapper { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+        
+        .dropdown-btn {
+            width: 100%; padding: 14px 15px; border-radius: 12px; font-size: 15px; font-weight: 900;
+            display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: all 0.3s;
+            background: #ffffff; border: 2px solid #CBD5E1; color: #0F2D5C; border-bottom: 4px solid #94A3B8;
+        }
+        .dropdown-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
+        .dropdown-icon { transition: transform 0.3s ease; }
+        .dropdown-content { display: none; padding-top: 10px; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
         .saved-list-container { display: flex; flex-direction: column; gap: 10px; max-height: 280px; overflow-y: auto; padding-right: 5px; }
         .loc-item {
             background: white; border: 1.5px solid #E2E8F0; border-radius: 12px;
@@ -335,8 +353,8 @@
             </div>
         </div>
 
-        <!-- 2. المرحلة الدراسية (الخلفية الصفراء الصريحة) -->
-        <div class="smart-card bg-yellow-solid">
+        <!-- 2. المرحلة الدراسية (الخلفية الخضراء الصريحة مطابقة للأولى) -->
+        <div class="smart-card bg-green-solid">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="form-group">
                 <label>المرحلة الدراسية</label>
@@ -412,27 +430,6 @@
                 </div>
             </div>
 
-            <!-- ✅ القوائم المحفوظة (المعلمين والمواقع) تظهر هنا دائماً خارج الخريطة -->
-            <div class="saved-sections-wrapper">
-                
-                <!-- قائمة المعلمين المحفوظين -->
-                <div id="savedTeachersContainer" style="display: none;">
-                    <h4 style="font-size: 15px; font-weight: 900; color: #0F2D5C; margin-bottom: 8px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 5px;">
-                        ⭐ معلمون حفظتهم للتواصل:
-                    </h4>
-                    <div class="saved-list-container" id="savedTeachersList"></div>
-                </div>
-
-                <!-- قائمة المواقع المحفوظة -->
-                <div id="savedLocationsContainer" style="display: none;">
-                    <h4 style="font-size: 15px; font-weight: 900; color: #0F2D5C; margin-bottom: 8px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 5px;">
-                        📌 مواقعك المحفوظة للبحث السريع:
-                    </h4>
-                    <div class="saved-list-container" id="savedLocationsList"></div>
-                </div>
-                
-            </div>
-
             <!-- زر البحث الرئيسي -->
             <button class="btn-search clickable-element" id="searchBtn" onclick="startSmartSearch()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
@@ -470,12 +467,39 @@
                 </div>
             </div>
             
+            <!-- ✅ القوائم المحفوظة المنسدلة (Dropdown) تظهر هنا دائماً -->
+            <div class="saved-sections-wrapper">
+                
+                <!-- 1. قائمة المعلمين المنسدلة -->
+                <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
+                    <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
+                    <svg id="teachersIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+                <div id="teachersListContainer" class="dropdown-content">
+                    <div class="saved-list-container" id="savedTeachersList"></div>
+                </div>
+
+                <!-- 2. قائمة المواقع المنسدلة -->
+                <button id="locationsDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('locationsListContainer', 'locationsIcon')">
+                    <span id="locationsCountTxt">📌 المواقع المحفوظة (0)</span>
+                    <svg id="locationsIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
+                    </svg>
+                </button>
+                <div id="locationsListContainer" class="dropdown-content">
+                    <div class="saved-list-container" id="savedLocationsList"></div>
+                </div>
+                
+            </div>
+
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 0. المتغيرات والتأثيرات ونظام الإشعارات والمشاركة
+        // 0. المتغيرات والتأثيرات والمشاركة
         // ==========================================
         let map = null;
         let teachersLayer = null; 
@@ -516,17 +540,15 @@
         window.shareTeacher = function(name, subject, grade, phone) {
             const shareText = `لقد وجدت معلماً ممتازاً على منصة احجزلي!\n\n👨‍🏫 المعلم: ${name}\n📚 المادة: ${subject} (${grade})\n📞 للتواصل واتساب: https://wa.me/2${phone}`;
             if (navigator.share) {
-                navigator.share({
-                    title: 'مشاركة تفاصيل المعلم',
-                    text: shareText
-                }).catch(err => console.error(err));
+                navigator.share({ title: 'مشاركة تفاصيل المعلم', text: shareText }).catch(err => console.error(err));
             } else {
-                navigator.clipboard.writeText(shareText).then(() => {
-                    showToast("تم نسخ بيانات المعلم للمشاركة! 📋");
-                });
+                navigator.clipboard.writeText(shareText).then(() => { showToast("تم نسخ بيانات المعلم للمشاركة! 📋"); });
             }
         };
 
+        // ==========================================
+        // 1. منطق التكبير والقوائم المنسدلة (Dropdown)
+        // ==========================================
         function toggleMapFullscreen() {
             const mapWrap = document.getElementById('mapWrapper');
             const iconExpand = document.getElementById('iconExpand');
@@ -545,8 +567,21 @@
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
 
+        function toggleDropdown(containerId, iconId, forceOpen = false) {
+            const container = document.getElementById(containerId);
+            const icon = document.getElementById(iconId);
+            
+            if (forceOpen || container.style.display === 'none' || container.style.display === '') {
+                container.style.display = 'block';
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                container.style.display = 'none';
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
         // ==========================================
-        // 1. منطق العمر والمناهج
+        // 2. منطق العمر والمناهج والتخزين
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
@@ -584,9 +619,6 @@
             if(stage && document.getElementById('s_grade').value) { curriculum[stage].subjs.forEach(s => sSelect.innerHTML += `<option value="${s}">${s}</option>`); sSelect.disabled = false; } else { sSelect.disabled = true; }
         }
 
-        // ==========================================
-        // 2. التحديث والحفظ
-        // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
             const display = document.getElementById('radius_val_display');
@@ -678,7 +710,7 @@
         };
 
         // ==========================================
-        // 3. النوافذ والقوائم المحفوظة
+        // 3. قوائم الحفظ (المواقع والمعلمين المنسدلة)
         // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع على الخريطة أولاً!", true); return; }
@@ -695,18 +727,21 @@
             
             existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedLocationsList();
+            renderSavedLocationsList(true); // true = auto open
             closeSaveLocModal();
             showToast("تم حفظ الموقع بنجاح يا بطل! 💾");
         }
 
-        function renderSavedLocationsList() {
+        function renderSavedLocationsList(autoOpen = false) {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
-            const container = document.getElementById('savedLocationsContainer');
+            const btn = document.getElementById('locationsDropdownBtn');
             const list = document.getElementById('savedLocationsList');
+            const countTxt = document.getElementById('locationsCountTxt');
             
             if (data.saved_locations && data.saved_locations.length > 0) {
-                container.style.display = 'block';
+                btn.style.display = 'flex';
+                countTxt.innerText = `📌 المواقع المحفوظة (${data.saved_locations.length})`;
+                
                 let html = '';
                 data.saved_locations.forEach((loc, index) => {
                     html += `
@@ -731,7 +766,11 @@
                     `;
                 });
                 list.innerHTML = html;
-            } else { container.style.display = 'none'; }
+                if(autoOpen) toggleDropdown('locationsListContainer', 'locationsIcon', true);
+            } else { 
+                btn.style.display = 'none'; 
+                document.getElementById('locationsListContainer').style.display = 'none';
+            }
         }
 
         function loadSpecificLocation(index) {
@@ -754,17 +793,20 @@
 
             existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedTeachersList();
+            renderSavedTeachersList(true); // true = auto open
             showToast("تم حفظ المعلم في قائمتك بنجاح! ⭐");
         };
 
-        function renderSavedTeachersList() {
+        function renderSavedTeachersList(autoOpen = false) {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
-            const container = document.getElementById('savedTeachersContainer');
+            const btn = document.getElementById('teachersDropdownBtn');
             const list = document.getElementById('savedTeachersList');
+            const countTxt = document.getElementById('teachersCountTxt');
 
             if (data.saved_teachers && data.saved_teachers.length > 0) {
-                container.style.display = 'block';
+                btn.style.display = 'flex';
+                countTxt.innerText = `⭐ المعلمون المفضلون (${data.saved_teachers.length})`;
+
                 let html = '';
                 data.saved_teachers.forEach((t, index) => {
                     const iconEmoji = t.gender === 'مستر' ? '👨‍🏫' : '👩‍🏫';
@@ -797,7 +839,11 @@
                     `;
                 });
                 list.innerHTML = html;
-            } else { container.style.display = 'none'; }
+                if(autoOpen) toggleDropdown('teachersListContainer', 'teachersIcon', true);
+            } else { 
+                btn.style.display = 'none'; 
+                document.getElementById('teachersListContainer').style.display = 'none';
+            }
         }
 
         function deleteItem(type, index) {
@@ -830,7 +876,7 @@
         }
 
         // ==========================================
-        // 5. منطق الخريطة الذكية والرادار
+        // 4. منطق الخريطة الذكية والرادار
         // ==========================================
         function initMap() {
             if (!map) {
@@ -871,7 +917,6 @@
 
         function buildRadarMap(lat, lng) {
             document.getElementById('mapOuterWrapper').style.display = 'block';
-            renderSavedLocationsList(); renderSavedTeachersList();
             
             initMap();
             if (studentMarker) map.removeLayer(studentMarker);
