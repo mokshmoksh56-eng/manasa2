@@ -59,7 +59,6 @@
         }
         .form-control:focus { border-color: #10B981; border-bottom: 4px solid #059669; background: #F8FAFC; }
         
-        /* 🔵 تكبير القوائم المنسدلة */
         select.form-control { font-size: 16px !important; height: 52px; cursor: pointer; }
         select.form-control option { font-size: 16px; font-weight: 900; }
 
@@ -68,7 +67,6 @@
         .radio-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 10px; }
         .radio-grid input { display: none; }
         
-        /* ✅ تحديث: إضافة position: relative لدعم علامة الصح */
         .radio-grid label {
             position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -78,26 +76,11 @@
         }
         .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
         
-        /* ✅ تحديث: علامة الصح (✔) فوق الاختيار */
         .radio-grid input:checked + label::before {
-            content: '✔';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #10B981;
-            color: white;
-            border-radius: 50%;
-            width: 22px;
-            height: 22px;
-            font-size: 12px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-            border: 2px solid white;
-            z-index: 10;
+            content: '✔'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
+            background: #10B981; color: white; border-radius: 50%; width: 22px; height: 22px;
+            font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; z-index: 10;
         }
 
         .radio-grid input:checked + label {
@@ -105,25 +88,17 @@
             transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; 
         }
 
-        /* 🔵 ألوان مخصصة (الولد والمستر = أزرق) (البنت والمس = وردي) - مع تلوين علامة الصح */
-        #st_boy:checked + label, #t_mr:checked + label {
-            border-color: #3B82F6 !important; border-bottom-color: #2563EB !important; 
-            background: #DBEAFE !important; color: #1E40AF !important;
-        }
+        #st_boy:checked + label, #t_mr:checked + label { border-color: #3B82F6 !important; border-bottom-color: #2563EB !important; background: #DBEAFE !important; color: #1E40AF !important; }
         #st_boy:checked + label::before, #t_mr:checked + label::before { background: #3B82F6; }
 
-        #st_girl:checked + label, #t_ms:checked + label {
-            border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; 
-            background: #FCE7F3 !important; color: #9D174D !important;
-        }
+        #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899; }
 
         /* ✅ ملخص بيانات الطالب */
         .student-summary-card {
             background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
             border: 2px solid #86EFAC; border-bottom: 5px solid #16A34A;
-            border-radius: 14px; padding: 15px; margin-top: 25px; margin-bottom: 15px;
-            display: none; 
+            border-radius: 14px; padding: 15px; margin-top: 25px; margin-bottom: 15px; display: none; 
         }
         .summary-header { font-size: 15px; font-weight: 900; color: #166534; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px dashed #86EFAC; padding-bottom: 8px;}
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
@@ -134,15 +109,11 @@
         /* ✅ شريط تمرير النطاق (Slider) */
         .styled-slider {
             -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px;
-            background: #E2E8F0; outline: none; transition: background 0.2s;
-            margin-top: 5px; margin-bottom: 5px;
+            background: #E2E8F0; outline: none; transition: background 0.2s; margin-top: 5px; margin-bottom: 5px;
         }
         .styled-slider::-webkit-slider-thumb {
-            -webkit-appearance: none; appearance: none;
-            width: 26px; height: 26px; border-radius: 50%;
-            background: #10B981; cursor: pointer;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff;
-            transition: transform 0.1s;
+            -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
+            background: #10B981; cursor: pointer; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff; transition: transform 0.1s;
         }
         .styled-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
         
@@ -162,7 +133,7 @@
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
         /* ============================================ */
-        /* ✅ إبداع الخريطة وتكبيرها (Fullscreen) */
+        /* ✅ الخريطة والنافذة المنبثقة */
         /* ============================================ */
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid #334155; overflow: hidden; z-index: 1; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
@@ -175,8 +146,6 @@
             cursor: pointer; color: #0F2D5C; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         .fullscreen-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
-        .fullscreen-btn:hover { background: #F8FAFC; color: #10B981; border-color: #10B981; border-bottom-color: #059669; }
-
         .map-container.is-fullscreen {
             position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100vw !important; height: 100vh !important; max-width: none !important;
@@ -195,17 +164,17 @@
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
         .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-bottom: 4px solid #0F2D5C;}
-        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.6; font-size: 13px; margin: 15px;}
-        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 16px; margin-bottom: 8px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;}
-        .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 12px; margin-bottom: 6px; background: #F8FAFC; padding: 4px 8px; border-radius: 6px;}
+        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.6; font-size: 13px; margin: 12px 10px;}
+        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 15px; margin-bottom: 8px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;}
+        .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 11px; margin-bottom: 6px; background: #F8FAFC; padding: 4px 8px; border-radius: 6px;}
         
         path.leaflet-interactive { animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
         /* ============================================ */
-        /* ✅ تصميم قائمة المواقع المحفوظة */
+        /* ✅ تصميم القوائم المحفوظة (المواقع والمعلمين) */
         /* ============================================ */
-        .saved-locations-list { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .saved-list-container { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
         .loc-item {
             background: white; border: 1.5px solid #E2E8F0; border-radius: 12px;
             padding: 12px 15px; display: flex; justify-content: space-between; align-items: center;
@@ -215,27 +184,24 @@
         .loc-info { display: flex; align-items: center; gap: 8px; }
         .loc-icon { background: #E0E7FF; color: #4F46E5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .loc-name { font-weight: 900; color: #1E293B; font-size: 14px; }
-        .loc-actions { display: flex; gap: 8px; }
-        .btn-icon { width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
+        
+        .btn-icon { width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
         .btn-go-loc { background: #10B981; border-bottom: 3px solid #059669; }
         .btn-go-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
         .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 3px solid #F87171; }
         .btn-del-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
 
         /* ============================================ */
-        /* ✅ تصميم النوافذ المنبثقة (Modals) العصرية (بديل Alert) */
+        /* ✅ تصميم النوافذ المنبثقة (Modals) والإشعارات */
         /* ============================================ */
         .custom-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
-            display: flex; align-items: center; justify-content: center;
-            z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.3s;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center; z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.3s;
         }
         .custom-modal-overlay.active { opacity: 1; visibility: visible; }
         .custom-modal-box {
             background: #fff; border-radius: 20px; padding: 25px; width: 90%; max-width: 350px;
-            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-            transform: translateY(20px) scale(0.95); transition: all 0.3s; border-bottom: 6px solid #10B981;
+            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(20px) scale(0.95); transition: all 0.3s; border-bottom: 6px solid #10B981;
         }
         .custom-modal-overlay.active .custom-modal-box { transform: translateY(0) scale(1); }
         .custom-modal-title { font-size: 18px; font-weight: 900; color: #0F2D5C; margin-bottom: 10px; }
@@ -248,14 +214,12 @@
         .custom-btn-save { background: #10B981; border-bottom: 3px solid #059669; }
         .custom-btn-save:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ الإشعار العائم (Toast) */
         .custom-toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: #10B981; color: white; padding: 12px 25px; border-radius: 99px;
             font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); z-index: 9999999;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 3px solid #059669;
-            white-space: nowrap;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 3px solid #059669; white-space: nowrap;
         }
         .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -289,12 +253,12 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف (بديل Confirm) -->
+    <!-- ✅ نافذة تأكيد الحذف العامة للمواقع والمعلمين -->
     <div id="deleteModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 40px; margin-bottom: 10px;">🗑️</div>
             <div class="custom-modal-title" style="color:#991B1B;">تأكيد الحذف</div>
-            <p style="font-size: 13px; color: #475569; margin-bottom: 15px; font-weight: 800;">هل أنت متأكد أنك تريد حذف هذا الموقع من قائمتك؟</p>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 15px; font-weight: 800;">هل أنت متأكد أنك تريد حذف هذا العنصر من قائمتك؟</p>
             <div class="custom-modal-buttons">
                 <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 3px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع</button>
                 <button class="custom-btn custom-btn-cancel clickable-element" onclick="confirmDelete()">نعم، احذف</button>
@@ -370,7 +334,6 @@
             <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
                 <label>تفضل الدرس مع؟</label>
-                <!-- ✅ التعديل: ترتيب أي منهما، ثم مستر، ثم مس -->
                 <div class="radio-grid" style="grid-template-columns: 1fr 1fr 1fr;">
                     <div><input type="radio" name="pref_teacher" id="t_any" value="أي منهما" checked><label for="t_any"><i>🤷‍♂️</i> أي منهما</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر</label></div>
@@ -386,7 +349,6 @@
                 </div>
             </div>
 
-            <!-- شريط اختيار نطاق البحث التفاعلي -->
             <div class="form-group" style="margin-top: 25px; padding: 15px; background: #F8FAFC; border-radius: 12px; border: 1.5px solid #E2E8F0;">
                 <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 15px;">🎯 نطاق البحث المسموح:</span>
@@ -416,7 +378,7 @@
                 </div>
             </div>
 
-            <!-- زر البحث الرئيسي بالـ GPS -->
+            <!-- زر البحث الرئيسي -->
             <button class="btn-search clickable-element" id="searchBtn" onclick="startSmartSearch()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -425,7 +387,7 @@
                 تحديد موقعي الحالي والبحث بالـ GPS
             </button>
             
-            <!-- حاوية الخريطة والتكبير -->
+            <!-- حاوية الخريطة -->
             <div id="mapOuterWrapper" style="display: none; margin-top: 20px;">
                 <div id="mapHint" class="map-hint">
                     💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى بحرية
@@ -445,19 +407,30 @@
                     <div id="map"></div>
                 </div>
                 
-                <!-- منطقة الحفظ والقائمة أسفل الخريطة -->
+                <!-- منطقة الحفظ والقوائم أسفل الخريطة -->
                 <div class="map-actions-wrapper" style="padding: 15px; background: #F8FAFC; border: 2px solid #CBD5E1; border-top: none; border-bottom: 6px solid #334155; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
                     
                     <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
-                        💾 حفظ هذا الموقع
+                        💾 حفظ موقع البحث هذا
                     </button>
 
+                    <!-- قائمة المعلمين المحفوظين -->
+                    <div id="savedTeachersContainer" style="display: none; margin-top: 20px;">
+                        <h4 style="font-size: 14px; font-weight: 900; color: #475569; margin-bottom: 8px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 5px;">
+                            ⭐ المعلمون المفضلون:
+                        </h4>
+                        <div class="saved-list-container" id="savedTeachersList">
+                            <!-- Items here -->
+                        </div>
+                    </div>
+
+                    <!-- قائمة المواقع المحفوظة -->
                     <div id="savedLocationsContainer" style="display: none; margin-top: 20px;">
                         <h4 style="font-size: 14px; font-weight: 900; color: #475569; margin-bottom: 8px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 5px;">
                             📌 المواقع المحفوظة سابقاً:
                         </h4>
-                        <div class="saved-locations-list" id="savedLocationsList">
-                            <!-- يتم تعبئة العناصر من الجافاسكريبت -->
+                        <div class="saved-list-container" id="savedLocationsList">
+                            <!-- Items here -->
                         </div>
                     </div>
 
@@ -469,7 +442,7 @@
 
     <script>
         // ==========================================
-        // 0. المتغيرات العامة والتأثيرات الصوتية ونظام الإشعارات
+        // 0. المتغيرات والتأثيرات ونظام الإشعارات
         // ==========================================
         let map = null;
         let teachersLayer = null; 
@@ -477,6 +450,8 @@
         let searchCircle = null;  
         let currentCenter = null; 
         let isMapFullscreen = false; 
+        
+        let deleteType = ''; // 'location' or 'teacher'
         let deleteIndexToConfirm = -1;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -495,47 +470,36 @@
             if (e.target.closest('.clickable-element, label, select, input[type="radio"], button')) playHighPitchSound();
         });
 
-        // دالة عرض الإشعار العائم المخصص (بديل Alert السريع)
         function showToast(message, isError = false) {
             const toast = document.getElementById('customToast');
             document.getElementById('toastText').innerText = message;
             document.getElementById('toastIcon').innerText = isError ? '⚠️' : '✨';
-            
             toast.style.background = isError ? '#EF4444' : '#10B981';
             toast.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
-            
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
-        // ==========================================
-        // 1. منطق التكبير (Fullscreen Map)
-        // ==========================================
         function toggleMapFullscreen() {
             const mapWrap = document.getElementById('mapWrapper');
             const iconExpand = document.getElementById('iconExpand');
             const iconCompress = document.getElementById('iconCompress');
-            
             isMapFullscreen = !isMapFullscreen;
-            
             if (isMapFullscreen) {
                 mapWrap.classList.add('is-fullscreen');
-                iconExpand.style.display = 'none';
-                iconCompress.style.display = 'block';
+                iconExpand.style.display = 'none'; iconCompress.style.display = 'block';
                 document.body.style.overflow = 'hidden'; 
             } else {
                 mapWrap.classList.remove('is-fullscreen');
-                iconExpand.style.display = 'block';
-                iconCompress.style.display = 'none';
+                iconExpand.style.display = 'block'; iconCompress.style.display = 'none';
                 document.body.style.overflow = ''; 
                 document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
-            
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
 
         // ==========================================
-        // 2. منطق العمر والمناهج
+        // 1. منطق العمر والمناهج
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
@@ -574,7 +538,7 @@
         }
 
         // ==========================================
-        // 3. تحديث مؤشر النطاق (التفاعلي)
+        // 2. تحديث النطاق وملخص البيانات والتخزين الداخلي
         // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
@@ -597,9 +561,6 @@
             }
         }
 
-        // ==========================================
-        // 4. ملخص البيانات والتخزين الداخلي
-        // ==========================================
         function updateStudentSummary() {
             const name = document.getElementById('st_name').value;
             const stage = document.getElementById('s_stage').options[document.getElementById('s_stage').selectedIndex]?.text;
@@ -656,6 +617,7 @@
             }
             updateStudentSummary();
             renderSavedLocationsList(); 
+            renderSavedTeachersList();
         }
 
         window.onload = () => {
@@ -669,36 +631,24 @@
         };
 
         // ==========================================
-        // 5. حفظ المواقع ورسم القائمة العصرية (تحديث النوافذ المنبثقة)
+        // 3. حفظ وحذف المواقع والمعلمين
         // ==========================================
         function openSaveLocModal() {
-            if (!currentCenter) {
-                showToast("يرجى تحديد موقع على الخريطة أولاً!", true);
-                return;
-            }
+            if (!currentCenter) { showToast("يرجى تحديد موقع على الخريطة أولاً!", true); return; }
             document.getElementById('locNameInput').value = 'موقع جديد';
             document.getElementById('saveLocModal').classList.add('active');
         }
 
-        function closeSaveLocModal() {
-            document.getElementById('saveLocModal').classList.remove('active');
-        }
+        function closeSaveLocModal() { document.getElementById('saveLocModal').classList.remove('active'); }
 
         function confirmSaveLocation() {
             const locName = document.getElementById('locNameInput').value.trim() || 'موقع جديد';
-            
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_locations) existingData.saved_locations = [];
             
-            existingData.saved_locations.unshift({
-                name: locName,
-                lat: currentCenter[0],
-                lng: currentCenter[1]
-            });
-            
+            existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
             renderSavedLocationsList();
-            
             closeSaveLocModal();
             showToast("تم حفظ الموقع بنجاح يا بطل! 💾");
         }
@@ -710,46 +660,27 @@
             
             if (data.saved_locations && data.saved_locations.length > 0) {
                 container.style.display = 'block';
-                
                 let html = '';
                 data.saved_locations.forEach((loc, index) => {
                     html += `
                         <div class="loc-item">
                             <div class="loc-info">
-                                <div class="loc-icon">📌</div>
-                                <span class="loc-name">${loc.name}</span>
+                                <div class="loc-icon">📌</div><span class="loc-name">${loc.name}</span>
                             </div>
                             <div class="loc-actions">
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteSavedLocation(${index})" title="حذف">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                                    </svg>
-                                </button>
-                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
-                                      <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
-                                    </svg>
-                                </button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})" title="حذف">❌</button>
+                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">📍</button>
                             </div>
                         </div>
                     `;
                 });
                 list.innerHTML = html;
-            } else {
-                container.style.display = 'none';
-            }
+            } else { container.style.display = 'none'; }
         }
 
         function loadSpecificLocation(index) {
-            const stage = document.getElementById('s_stage').value;
-            const grade = document.getElementById('s_grade').value;
             const subject = document.getElementById('s_subject').value;
-
-            if(!stage || !grade || !subject) {
-                showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true);
-                return;
-            }
+            if(!subject) { showToast("يرجى استكمال بيانات المادة أولاً!", true); return; }
 
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
@@ -758,8 +689,57 @@
             }
         }
 
-        // منطق الحذف بالنوافذ المخصصة
-        function deleteSavedLocation(index) {
+        // وظائف المعلمين المحفوظين
+        window.saveTeacher = function(name, subject, grade, locType, phone, gender) {
+            const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
+            if (!existingData.saved_teachers) existingData.saved_teachers = [];
+
+            const exists = existingData.saved_teachers.some(t => t.phone === phone);
+            if(exists) { showToast("المعلم محفوظ بالفعل في قائمتك!", true); return; }
+
+            existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender });
+            localStorage.setItem('talep_data', JSON.stringify(existingData));
+            renderSavedTeachersList();
+            showToast("تم حفظ المعلم في قائمتك بنجاح! ⭐");
+        };
+
+        function renderSavedTeachersList() {
+            const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
+            const container = document.getElementById('savedTeachersContainer');
+            const list = document.getElementById('savedTeachersList');
+
+            if (data.saved_teachers && data.saved_teachers.length > 0) {
+                container.style.display = 'block';
+                let html = '';
+                data.saved_teachers.forEach((t, index) => {
+                    const iconEmoji = t.gender === 'مستر' ? '👨‍🏫' : '👩‍🏫';
+                    html += `
+                        <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
+                            <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
+                                <div class="loc-info">
+                                    <div class="loc-icon" style="background: ${t.gender === 'مستر' ? '#DBEAFE' : '#FCE7F3'}; color: ${t.gender === 'مستر' ? '#1E40AF' : '#9D174D'};">${iconEmoji}</div>
+                                    <div>
+                                        <span class="loc-name" style="display: block;">${t.name}</span>
+                                        <span style="font-size: 11px; color: #64748B; font-weight: 800;">${t.subject} (${t.grade})</span>
+                                    </div>
+                                </div>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">❌</button>
+                            </div>
+                            <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 8px;">
+                                <a href="https://wa.me/2${t.phone}" target="_blank" class="action-btn clickable-element" style="background: #22C55E; border-bottom: 3px solid #16A34A; padding: 8px; font-size: 13px; text-decoration: none;">
+                                    💬 تواصل واتساب
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            } else { container.style.display = 'none'; }
+        }
+
+        // نافذة الحذف الموحدة
+        function deleteItem(type, index) {
+            deleteType = type;
             deleteIndexToConfirm = index;
             document.getElementById('deleteModal').classList.add('active');
         }
@@ -772,16 +752,23 @@
         function confirmDelete() {
             if (deleteIndexToConfirm > -1) {
                 const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
-                existingData.saved_locations.splice(deleteIndexToConfirm, 1);
-                localStorage.setItem('talep_data', JSON.stringify(existingData));
-                renderSavedLocationsList();
-                showToast("تم إزالة الموقع من قائمتك 🗑️");
+                if (deleteType === 'location') {
+                    existingData.saved_locations.splice(deleteIndexToConfirm, 1);
+                    showToast("تم إزالة الموقع من قائمتك 🗑️");
+                    localStorage.setItem('talep_data', JSON.stringify(existingData));
+                    renderSavedLocationsList();
+                } else if (deleteType === 'teacher') {
+                    existingData.saved_teachers.splice(deleteIndexToConfirm, 1);
+                    showToast("تم إزالة المعلم من قائمتك 🗑️");
+                    localStorage.setItem('talep_data', JSON.stringify(existingData));
+                    renderSavedTeachersList();
+                }
             }
             closeDeleteModal();
         }
 
         // ==========================================
-        // 6. منطق الخريطة الذكية والرادار
+        // 4. منطق الخريطة الذكية والرادار
         // ==========================================
         function initMap() {
             if (!map) {
@@ -794,47 +781,37 @@
         }
 
         function startSmartSearch() {
-            const stage = document.getElementById('s_stage').value;
-            const grade = document.getElementById('s_grade').value;
             const subject = document.getElementById('s_subject').value;
-
-            if(!stage || !grade || !subject) {
-                showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true);
-                return;
-            }
+            if(!subject) { showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true); return; }
 
             const btn = document.getElementById('searchBtn');
             const originalBtnHTML = btn.innerHTML;
-            btn.innerHTML = "⏳ جاري تحديد موقعك والبحث...";
+            btn.innerHTML = "⏳ جاري تحديد موقعك...";
             btn.classList.add('loading');
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
-                        btn.innerHTML = originalBtnHTML;
-                        btn.classList.remove('loading');
+                        btn.innerHTML = originalBtnHTML; btn.classList.remove('loading');
                         buildRadarMap(position.coords.latitude, position.coords.longitude);
                     },
                     (error) => {
-                        btn.innerHTML = originalBtnHTML;
-                        btn.classList.remove('loading');
+                        btn.innerHTML = originalBtnHTML; btn.classList.remove('loading');
                         buildRadarMap(31.0409, 31.3785);
                     },
                     { enableHighAccuracy: true, timeout: 5000 }
                 );
             } else {
-                btn.innerHTML = originalBtnHTML;
-                btn.classList.remove('loading');
+                btn.innerHTML = originalBtnHTML; btn.classList.remove('loading');
                 buildRadarMap(31.0409, 31.3785);
             }
         }
 
         function buildRadarMap(lat, lng) {
             document.getElementById('mapOuterWrapper').style.display = 'block';
-            renderSavedLocationsList(); 
+            renderSavedLocationsList(); renderSavedTeachersList();
             
             initMap();
-            
             if (studentMarker) map.removeLayer(studentMarker);
             if (searchCircle) map.removeLayer(searchCircle);
             teachersLayer.clearLayers();
@@ -843,71 +820,43 @@
             map.setView(currentCenter, 14);
 
             const searchRadius = parseInt(document.getElementById('search_radius').value); 
-            
-            searchCircle = L.circle(currentCenter, {
-                color: '#10B981', weight: 3, dashArray: '10, 10', fillColor: '#34D399', fillOpacity: 0.15
-            }).addTo(map);
+            searchCircle = L.circle(currentCenter, { color: '#10B981', weight: 3, dashArray: '10, 10', fillColor: '#34D399', fillOpacity: 0.15 }).addTo(map);
             searchCircle.setRadius(searchRadius);
 
-            const studentIcon = L.divIcon({
-                className: 'custom-student-marker',
-                html: '<div class="student-radar"></div>',
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
-            });
-            
-            studentMarker = L.marker(currentCenter, { 
-                icon: studentIcon, 
-                draggable: true,
-                zIndexOffset: 10000 
-            }).addTo(map);
+            const studentIcon = L.divIcon({ className: 'custom-student-marker', html: '<div class="student-radar"></div>', iconSize: [22, 22], iconAnchor: [11, 11] });
+            studentMarker = L.marker(currentCenter, { icon: studentIcon, draggable: true, zIndexOffset: 10000 }).addTo(map);
 
-            studentMarker.on('drag', function(e) {
-                searchCircle.setLatLng(e.target.getLatLng());
-            });
-
+            studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-                const radius = parseInt(document.getElementById('search_radius').value);
-                generateSmartTeachers(currentCenter, radius);
+                generateSmartTeachers(currentCenter, parseInt(document.getElementById('search_radius').value));
             });
 
             generateSmartTeachers(currentCenter, searchRadius);
-
-            setTimeout(() => {
-                map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
-                document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }, 300);
+            setTimeout(() => { map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 }); document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
         }
 
         function generateSmartTeachers(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
-
             const subject = document.getElementById('s_subject').value;
             const grade = document.getElementById('s_grade').value;
             const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked').value;
             const prefLoc = document.querySelector('input[name="pref_loc"]:checked').value;
-
             const degreeRadius = radiusInMeters / 111000;
 
             const mrData = [
                 {n: "أ/ محمد أحمد", p: "01012345678"}, {n: "أ/ محمود طارق", p: "01123456789"}, 
-                {n: "أ/ علي حسن", p: "01234567890"}, {n: "أ/ إبراهيم سعيد", p: "01555556666"}, 
-                {n: "أ/ مصطفى كمال", p: "01099998888"}
+                {n: "أ/ علي حسن", p: "01234567890"}, {n: "أ/ إبراهيم سعيد", p: "01555556666"}, {n: "أ/ مصطفى كمال", p: "01099998888"}
             ];
             const msData = [
                 {n: "أ/ سارة محمود", p: "01077778888"}, {n: "أ/ فاطمة علي", p: "01188889999"}, 
-                {n: "أ/ ندى مصطفى", p: "01299990000"}, {n: "أ/ منة طارق", p: "01566667777"}, 
-                {n: "أ/ ياسمين عادل", p: "01044445555"}
+                {n: "أ/ ندى مصطفى", p: "01299990000"}, {n: "أ/ منة طارق", p: "01566667777"}, {n: "أ/ ياسمين عادل", p: "01044445555"}
             ];
             
             let pool = [];
             if (prefTeacher === "مستر") pool = mrData.map(item => ({name: item.n, phone: item.p, gender: "مستر"}));
             else if (prefTeacher === "مس") pool = msData.map(item => ({name: item.n, phone: item.p, gender: "مس"}));
-            else {
-                pool = [...mrData.map(item => ({name: item.n, phone: item.p, gender: "مستر"})), 
-                        ...msData.map(item => ({name: item.n, phone: item.p, gender: "مس"}))];
-            }
+            else { pool = [...mrData.map(item => ({name: item.n, phone: item.p, gender: "مستر"})), ...msData.map(item => ({name: item.n, phone: item.p, gender: "مس"}))]; }
 
             let maxTeachers = radiusInMeters < 1500 ? 2 : (radiusInMeters < 3000 ? 4 : 6);
             pool = pool.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + maxTeachers);
@@ -921,28 +870,21 @@
                 const iconEmoji = t.gender === 'مستر' ? '👨‍🏫' : '👩‍🏫';
                 const iconColor = t.gender === 'مستر' ? '#0284C7' : '#DB2777';
 
-                const iconHtml = `<div style="background-color: ${iconColor}; color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: 3px solid white; font-size: 18px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); transition: transform 0.2s;">
-                    ${iconEmoji}
-                </div>`;
+                const iconHtml = `<div style="background-color: ${iconColor}; color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: 3px solid white; font-size: 18px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); transition: transform 0.2s;">${iconEmoji}</div>`;
+                const customIcon = L.divIcon({ className: 'custom-leaflet-marker', html: iconHtml, iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -15] });
 
-                const customIcon = L.divIcon({
-                    className: 'custom-leaflet-marker',
-                    html: iconHtml,
-                    iconSize: [38, 38],
-                    iconAnchor: [19, 19],
-                    popupAnchor: [0, -15]
-                });
-
-                // إزالة زر الحجز ووضع زر الواتساب مكانه
                 const popupContent = `
                     <div class="teacher-popup-title">${iconEmoji} ${t.name}</div>
                     <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${subject} (${grade})</span></div>
-                    <div class="teacher-popup-detail"><span>📍 المكان:</span> <span style="color:#059669;">${prefLoc === 'في منزلي' ? 'مستعد للحضور لمنزلك' : prefLoc}</span></div>
+                    <div class="teacher-popup-detail"><span>📍 المكان:</span> <span style="color:#059669;">${prefLoc === 'في منزلي' ? 'حضور لمنزلك' : prefLoc}</span></div>
                     <div class="teacher-popup-detail"><span>⭐ التقييم:</span> <span style="color:#F59E0B;">4.9 / 5</span></div>
-                    <div class="teacher-popup-detail" style="justify-content: center; background: #DCFCE7; border: 1px solid #86EFAC; margin-top: 8px;">
-                        <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="color: #166534; text-decoration: none; font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 6px;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M13.601 2.326A7.85 7.85 0 0 0 7.994 0C3.627 0 .068 3.558.064 7.926c0 1.399.366 2.76 1.057 3.965L0 16l4.204-1.102a7.9 7.9 0 0 0 3.79.965h.004c4.368 0 7.926-3.558 7.93-7.93A7.9 7.9 0 0 0 13.6 2.326zM7.994 14.521a6.6 6.6 0 0 1-3.356-.92l-.24-.144-2.494.654.666-2.433-.156-.251a6.56 6.56 0 0 1-1.007-3.505c0-3.626 2.957-6.584 6.591-6.584a6.56 6.56 0 0 1 4.66 1.931 6.56 6.56 0 0 1 1.928 4.66c-.004 3.639-2.961 6.592-6.592 6.592m3.615-4.934c-.197-.099-1.17-.578-1.353-.646-.182-.065-.315-.099-.445.099-.133.197-.513.646-.627.775-.114.133-.232.148-.43.05-.197-.1-.836-.308-1.592-.985-.59-.525-.985-1.175-1.103-1.372-.114-.198-.011-.304.088-.403.087-.088.197-.232.296-.346.1-.114.133-.198.198-.33.065-.134.034-.248-.015-.347-.05-.099-.445-1.076-.612-1.47-.16-.389-.323-.335-.445-.34-.114-.007-.247-.007-.38-.007a.73.73 0 0 0-.529.247c-.182.198-.691.677-.691 1.654s.71 1.916.81 2.049c.098.133 1.394 2.132 3.383 2.992.47.205.84.326 1.129.418.475.152.904.129 1.246.08.38-.058 1.171-.48 1.338-.943.164-.464.164-.86.114-.943-.049-.084-.182-.133-.38-.232"/></svg>
-                            تواصل واتساب
+                    
+                    <div style="display: flex; gap: 8px; margin-top: 10px;">
+                        <button class="clickable-element" onclick="saveTeacher('${t.name}', '${subject}', '${grade}', '${prefLoc}', '${t.phone}', '${t.gender}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 3px solid #92400E; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.2s;">
+                            ⭐ حفظ
+                        </button>
+                        <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; padding: 6px;">
+                            💬 واتساب
                         </a>
                     </div>
                 `;
