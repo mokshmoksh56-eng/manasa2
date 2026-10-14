@@ -224,15 +224,15 @@
 
         /* التأثيرات لـ (مس) - وردي (Pink) */
         .radio-input[value="مس"]:checked + .radio-label {
-            background: #FDF2F8; /* خلفية وردية فاتحة */
-            border-color: #EC4899; /* حواف وردية */
-            color: #DB2777; /* نص وردي داكن */
+            background: #FDF2F8;
+            border-color: #EC4899;
+            color: #DB2777;
             transform: translateY(-2px);
         }
         .radio-input[value="مس"]:checked + .radio-label .avatar-img {
             border-color: #EC4899;
             transform: scale(1.15);
-            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4); /* ظل وردي */
+            box-shadow: 0 5px 12px rgba(236, 72, 153, 0.4);
         }
 
         /* ============================================ */
@@ -333,6 +333,100 @@
         }
 
         /* ============================================ */
+        /* ✅ النوافذ المنبثقة المخصصة (بديل mokshmoksh) */
+        /* ============================================ */
+        .custom-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            padding: 15px;
+        }
+        .custom-modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .custom-modal-box {
+            background: #FFFFFF;
+            width: 90%;
+            max-width: 340px;
+            border-radius: 22px;
+            padding: 22px 18px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-bottom: 5px solid #2563EB;
+        }
+        .custom-modal-overlay.active .custom-modal-box {
+            transform: translateY(0) scale(1);
+        }
+        .modal-icon-circle {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            margin: 0 auto 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 30px;
+        }
+        .modal-title-text {
+            font-size: 19px;
+            font-weight: 900;
+            color: #0F2D5C;
+            margin-bottom: 6px;
+        }
+        .modal-desc-text {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748B;
+            margin-bottom: 18px;
+            line-height: 1.6;
+        }
+        .modal-btn-row {
+            display: flex;
+            gap: 10px;
+        }
+        .modal-btn {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+        .modal-btn-cancel {
+            background: #E2E8F0;
+            color: #475569;
+        }
+        .modal-btn-cancel:active {
+            background: #CBD5E1;
+        }
+        .modal-btn-danger {
+            background: #EF4444;
+            color: #FFFFFF;
+            box-shadow: 0 6px 15px rgba(239, 68, 68, 0.35);
+        }
+        .modal-btn-danger:active {
+            background: #DC2626;
+        }
+        .modal-btn-success {
+            background: #10B981;
+            color: #FFFFFF;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35);
+        }
+
+        /* ============================================ */
         /* الموبايل */
         /* ============================================ */
         @media (max-width: 768px) {
@@ -359,6 +453,37 @@
     </style>
 </head>
 <body>
+
+    <!-- ✅ 1. نافذة رسالة نجاح التسجيل / الدخول -->
+    <div id="successModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #10B981;">
+            <div class="modal-icon-circle" style="background: #D1FAE5; color: #059669;">🎉</div>
+            <h3 id="successModalTitle" class="modal-title-text" style="color: #065F46;">تم التسجيل بنجاح!</h3>
+            <p id="successModalDesc" class="modal-desc-text">مرحباً بك في منصة احجزلي، جاري تحويلك لإدارة مجموعاتك...</p>
+        </div>
+    </div>
+
+    <!-- ✅ 2. نافذة تأكيد حذف الحساب (بدون mokshmoksh) -->
+    <div id="confirmDeleteModal" class="custom-modal-overlay" onclick="closeCustomModal('confirmDeleteModal')">
+        <div class="custom-modal-box" style="border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
+            <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">⚠️</div>
+            <h3 class="modal-title-text" style="color: #991B1B;">هل أنت متأكد من حذف الحساب؟</h3>
+            <p class="modal-desc-text">سيتم مسح بيانات حسابك المسجل مع الاحتفاظ برقم التليفون فقط.</p>
+            <div class="modal-btn-row">
+                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeCustomModal('confirmDeleteModal')">إلغاء</button>
+                <button type="button" class="modal-btn modal-btn-danger" onclick="executeDeleteAccount()">نعم، احذف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ 3. نافذة إتمام حذف الحساب -->
+    <div id="deletedSuccessModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #10B981;">
+            <div class="modal-icon-circle" style="background: #D1FAE5; color: #059669;">✅</div>
+            <h3 class="modal-title-text" style="color: #065F46;">تم حذف الحساب</h3>
+            <p class="modal-desc-text">تم حذف بيانات الحساب بنجاح، جاري الرجوع للرئيسية...</p>
+        </div>
+    </div>
 
     <!-- الهيدر -->
     <section class="hero-banner">
@@ -461,9 +586,38 @@
     </div>
 
     <script>
-        // التحقق من حالة تسجيل الدخول واسترجاع الموبايل المحفوظ
+        // ==========================================
+        // ✅ تأثير الصوت عند الضغط (Click Sound)
+        // ==========================================
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        function playHighPitchSound() {
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(2800, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.start();
+            osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        document.addEventListener('click', function(e) {
+            const clickable = e.target.closest('button, .auth-tab, .radio-label, .modal-btn');
+            if (clickable) {
+                playHighPitchSound();
+            }
+        });
+
+        // ==========================================
+        // ✅ التحقق من حالة تسجيل الدخول واسترجاع الموبايل
+        // ==========================================
         window.onload = function() {
-            // مسح حالة "تسجيل الدخول النشط" لمنع الدخول التلقائي (السريع)
             const loggedInTeacher = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacher) {
                 const loggedIn = JSON.parse(loggedInTeacher);
@@ -473,16 +627,27 @@
                 localStorage.removeItem('loggedInTeacher');
             }
 
-            // إظهار أزرار التحكم
             document.getElementById('actionButtonsContainer').style.display = 'flex';
             
-            // استرجاع رقم الموبايل المحفوظ وملء الحقل تلقائياً (يحفظ الرقم فقط)
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
             }
         };
+
+        function closeCustomModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showSuccessPopup(title, desc, redirectUrl) {
+            document.getElementById('successModalTitle').textContent = title;
+            document.getElementById('successModalDesc').textContent = desc;
+            document.getElementById('successModal').classList.add('active');
+            setTimeout(() => {
+                window.location.href = redirectUrl;
+            }, 1400);
+        }
 
         function switchTab(tab) {
             document.getElementById('alertMsg').style.display = 'none';
@@ -536,13 +701,10 @@
             const accountData = { title, name, age, phone, pass: pass1 };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
-            
-            // حفظ الرقم للتذكر
             localStorage.setItem('rememberedPhone', phone);
 
-            showAlert('تم إنشاء الحساب بنجاح!', false);
-            // ✅ التوجيه مباشرة لصفحة إدارة المجموعات بعد التسجيل
-            setTimeout(() => { window.location.href = './index2.html'; }, 1000);
+            showAlert('تم إنشاء الحساب بنجاح! 🎉', false);
+            showSuccessPopup('تم تسجيل حسابك بنجاح! 🎉', `مرحباً بك يا ${title} / ${name}، جاري فتح صفحة المجموعات...`, './index2.html');
         }
 
         function handleLogin() {
@@ -564,37 +726,42 @@
             }
 
             localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
-            // حفظ الرقم للتذكر
             localStorage.setItem('rememberedPhone', phone);
             
-            // ✅ التوجيه مباشرة لصفحة إدارة المجموعات بعد تسجيل الدخول
-            window.location.href = './index2.html';
+            showAlert('تم تسجيل الدخول بنجاح! ✨', false);
+            showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.title || ''} / ${savedData.name || ''}`, './index2.html');
         }
 
         function handleLogout() {
-            // توجيه المستخدم لـ index.html بدلاً من تسجيل الخروج لأنه تم إلغاؤه في اللود
             window.location.href = './index.html'; 
         }
 
-        // مسح بيانات الحساب بالكامل باستثناء رقم الموبايل
+        // ==========================================
+        // ✅ حذف الحساب عبر نافذة مخصصة بدون mokshmoksh
+        // ==========================================
         function confirmDeleteAccount() {
-            if (confirm('هل أنت متأكد من رغبتك في حذف حسابك نهائياً؟ (سيتم مسح جميع بياناتك، وسيتم الاحتفاظ برقم الموبايل فقط)')) {
-                // نبحث عن الحساب المرتبط بالرقم المكتوب حاليا في المربع
-                const currentPhone = document.getElementById('loginPhone').value.trim();
+            const currentPhone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
+            
+            if (!currentPhone || !localStorage.getItem('teacherAccount_' + currentPhone)) {
+                return showAlert('لا يوجد حساب مسجل لهذا الرقم حالياً لحذفه.');
+            }
+
+            document.getElementById('confirmDeleteModal').classList.add('active');
+        }
+
+        function executeDeleteAccount() {
+            closeCustomModal('confirmDeleteModal');
+            const currentPhone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
+            
+            if (currentPhone && localStorage.getItem('teacherAccount_' + currentPhone)) {
+                localStorage.setItem('rememberedPhone', currentPhone);
+                localStorage.removeItem('teacherAccount_' + currentPhone);
+                localStorage.removeItem('loggedInTeacher');
                 
-                if (currentPhone && localStorage.getItem('teacherAccount_' + currentPhone)) {
-                    // الاحتفاظ برقم الموبايل فقط
-                    localStorage.setItem('rememberedPhone', currentPhone);
-                    
-                    // مسح جميع بيانات الحساب (الاسم، العمر، الرقم السري)
-                    localStorage.removeItem('teacherAccount_' + currentPhone);
-                    localStorage.removeItem('loggedInTeacher'); 
-                    
-                    alert('تم مسح بيانات الحساب بنجاح، مع الاحتفاظ برقم الموبايل.');
+                document.getElementById('deletedSuccessModal').classList.add('active');
+                setTimeout(() => {
                     window.location.href = './index.html';
-                } else {
-                    alert('لا يوجد حساب مسجل لهذا الرقم حالياً.');
-                }
+                }, 1400);
             }
         }
     </script>
