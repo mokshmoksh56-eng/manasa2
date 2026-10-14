@@ -116,7 +116,7 @@
         .student-radar {
             position: relative; width: 22px; height: 22px;
             background-color: #3B82F6; border-radius: 50%;
-            border: 3px solid white; z-index: 1000; cursor: grab;
+            border: 3px solid white; cursor: grab;
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .student-radar:active { cursor: grabbing; transform: scale(1.1); }
@@ -239,7 +239,6 @@
                     <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 16px; background: #D1FAE5; padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
                 </label>
                 
-                <!-- OnInput للتحديث المباشر لحجم الدائرة، OnChange لعمل تحديث لبيانات المدرسين -->
                 <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
                 
                 <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-top: 8px; font-weight: 800;">
@@ -256,7 +255,6 @@
                 تحديد موقعي والبحث في النطاق الدائري
             </button>
             
-            <!-- رسالة تلميحية لطريقة الاستخدام تظهر مع الخريطة -->
             <div id="mapHint" class="map-hint" style="margin-top: 20px;">
                 💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى
             </div>
@@ -272,10 +270,10 @@
         // 0. المتغيرات العامة للخريطة
         // ==========================================
         let map = null;
-        let teachersLayer = null; // طبقة منفصلة للمدرسين فقط
-        let studentMarker = null; // نقطة الطالب
-        let searchCircle = null;  // دائرة البحث
-        let currentCenter = null; // الإحداثيات المركزية الحالية
+        let teachersLayer = null; 
+        let studentMarker = null; 
+        let searchCircle = null;  
+        let currentCenter = null; 
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -347,14 +345,12 @@
             }
             saveStudentData();
 
-            // تحديث حجم الدائرة على الخريطة مباشرة أثناء السحب
             if (searchCircle) {
                 searchCircle.setRadius(val);
             }
         }
 
         function onRadiusChangeEnd() {
-            // إعادة توليد المعلمين عند ترك المؤشر (لعدم التحميل الزائد أثناء السحب)
             if (currentCenter && searchCircle) {
                 const radius = parseInt(document.getElementById('search_radius').value);
                 generateSmartTeachers(currentCenter, radius);
@@ -413,7 +409,7 @@
         };
 
         // ==========================================
-        // 4. منطق الخريطة الذكية والرادار القابل للسحب
+        // 4. منطق الخريطة الذكية والرادار القابل للسحب (محدث)
         // ==========================================
         function initMap() {
             if (!map) {
@@ -444,7 +440,6 @@
                 navigator.geolocation.getCurrentPosition(
                     (position) => buildRadarMap(position.coords.latitude, position.coords.longitude, originalBtnHTML),
                     (error) => {
-                        // في حال رفض الـ GPS نعطي إحداثيات افتراضية
                         buildRadarMap(31.0409, 31.3785, originalBtnHTML);
                     },
                     { enableHighAccuracy: true, timeout: 5000 }
@@ -466,7 +461,6 @@
             
             initMap();
             
-            // تنظيف الخريطة من العناصر القديمة
             if (studentMarker) map.removeLayer(studentMarker);
             if (searchCircle) map.removeLayer(searchCircle);
             teachersLayer.clearLayers();
@@ -476,34 +470,35 @@
 
             const searchRadius = parseInt(document.getElementById('search_radius').value); 
             
-            // 1. إضافة الدائرة
             searchCircle = L.circle(currentCenter, {
                 color: '#10B981', weight: 3, dashArray: '10, 10', fillColor: '#34D399', fillOpacity: 0.15
             }).addTo(map);
             searchCircle.setRadius(searchRadius);
 
-            // 2. إضافة نقطة الطالب (قابلة للسحب draggable: true)
             const studentIcon = L.divIcon({
                 className: 'custom-student-marker',
                 html: '<div class="student-radar"></div>',
                 iconSize: [22, 22],
                 iconAnchor: [11, 11]
             });
-            studentMarker = L.marker(currentCenter, { icon: studentIcon, draggable: true }).addTo(map);
+            
+            // ✅ تم إضافة zIndexOffset بقيمة 10000 لضمان بقاء النقطة دائماً فوق أيقونات المدرسين
+            studentMarker = L.marker(currentCenter, { 
+                icon: studentIcon, 
+                draggable: true,
+                zIndexOffset: 10000 
+            }).addTo(map);
 
-            // حدث سحب النقطة (تحريك الدائرة معها مباشرة)
             studentMarker.on('drag', function(e) {
                 searchCircle.setLatLng(e.target.getLatLng());
             });
 
-            // حدث إفلات النقطة (تحديث البحث)
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 const radius = parseInt(document.getElementById('search_radius').value);
                 generateSmartTeachers(currentCenter, radius);
             });
 
-            // توليد المدرسين لأول مرة
             generateSmartTeachers(currentCenter, searchRadius);
 
             setTimeout(() => {
@@ -513,7 +508,6 @@
         }
 
         function generateSmartTeachers(centerPos, radiusInMeters) {
-            // مسح المدرسين القدامى فقط
             teachersLayer.clearLayers();
 
             const subject = document.getElementById('s_subject').value;
@@ -533,7 +527,6 @@
                 pool = [...namesMr.map(n => ({name: n, gender: "مستر"})), ...namesMs.map(n => ({name: n, gender: "مس"}))];
             }
 
-            // توليد عدد معلمين يتناسب طردياً مع حجم الدائرة المحددة
             let maxTeachers = radiusInMeters < 1500 ? 2 : (radiusInMeters < 3000 ? 4 : 6);
             pool = pool.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + maxTeachers);
 
@@ -568,7 +561,7 @@
 
                 const marker = L.marker([tLat, tLng], { icon: customIcon });
                 marker.bindPopup(popupContent);
-                teachersLayer.addLayer(marker); // إضافته لطبقة المدرسين فقط
+                teachersLayer.addLayer(marker); 
             });
         }
 
