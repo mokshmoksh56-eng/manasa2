@@ -83,14 +83,14 @@
         }
         .styled-slider::-webkit-slider-thumb {
             -webkit-appearance: none; appearance: none;
-            width: 24px; height: 24px; border-radius: 50%;
+            width: 26px; height: 26px; border-radius: 50%;
             background: #10B981; cursor: pointer;
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff;
             transition: transform 0.1s;
         }
         .styled-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
         .styled-slider::-moz-range-thumb {
-            width: 24px; height: 24px; border-radius: 50%;
+            width: 26px; height: 26px; border-radius: 50%;
             background: #10B981; cursor: pointer;
             box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff;
         }
@@ -107,20 +107,24 @@
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
         /* ============================================ */
-        /* ✅ إبداع الخريطة (الرادار والنبض) */
+        /* ✅ إبداع الخريطة (الرادار التفاعلي) */
         /* ============================================ */
-        .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid #334155; overflow: hidden; z-index: 1; margin-top: 20px; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .map-hint { background: #DBEAFE; color: #1E40AF; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; display: none; border: 1px dashed #93C5FD; }
+        .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid #334155; overflow: hidden; z-index: 1; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         #map { width: 100%; height: 380px; }
 
         .student-radar {
-            position: relative; width: 20px; height: 20px;
+            position: relative; width: 22px; height: 22px;
             background-color: #3B82F6; border-radius: 50%;
-            border: 3px solid white; z-index: 1000;
+            border: 3px solid white; z-index: 1000; cursor: grab;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
+        .student-radar:active { cursor: grabbing; transform: scale(1.1); }
         .student-radar::after {
             content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
             border-radius: 50%; border: 2px solid #3B82F6;
             animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
+            pointer-events: none;
         }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
@@ -140,7 +144,7 @@
             .hero-headline { font-size: 16px; margin-top: 5px; }
             .grid-2 { grid-template-columns: 1fr; gap: 10px; }
             .radio-grid label { padding: 10px 2px; font-size: 12px; }
-            #map { height: 320px; }
+            #map { height: 340px; }
         }
     </style>
 </head>
@@ -228,14 +232,15 @@
                 </div>
             </div>
 
-            <!-- شريط اختيار نطاق البحث من 500 متر إلى 5 كيلو -->
+            <!-- شريط اختيار نطاق البحث التفاعلي -->
             <div class="form-group" style="margin-top: 25px; padding: 15px; background: #F8FAFC; border-radius: 12px; border: 1.5px solid #E2E8F0;">
                 <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
                     <span style="font-size: 15px;">🎯 نطاق البحث المسموح:</span>
                     <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 16px; background: #D1FAE5; padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
                 </label>
                 
-                <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()">
+                <!-- OnInput للتحديث المباشر لحجم الدائرة، OnChange لعمل تحديث لبيانات المدرسين -->
+                <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
                 
                 <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-top: 8px; font-weight: 800;">
                     <span>500 متر</span>
@@ -251,7 +256,12 @@
                 تحديد موقعي والبحث في النطاق الدائري
             </button>
             
-            <div class="map-container" id="mapWrapper" style="display: none;">
+            <!-- رسالة تلميحية لطريقة الاستخدام تظهر مع الخريطة -->
+            <div id="mapHint" class="map-hint" style="margin-top: 20px;">
+                💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى
+            </div>
+            
+            <div class="map-container" id="mapWrapper" style="display: none; margin-top: 0;">
                 <div id="map"></div>
             </div>
         </div>
@@ -259,8 +269,14 @@
 
     <script>
         // ==========================================
-        // 0. تأثير الصوت
+        // 0. المتغيرات العامة للخريطة
         // ==========================================
+        let map = null;
+        let teachersLayer = null; // طبقة منفصلة للمدرسين فقط
+        let studentMarker = null; // نقطة الطالب
+        let searchCircle = null;  // دائرة البحث
+        let currentCenter = null; // الإحداثيات المركزية الحالية
+
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -317,7 +333,7 @@
         }
 
         // ==========================================
-        // 2. تحديث وعرض قيمة النطاق (الرادار)
+        // 2. تحديث مؤشر النطاق (التفاعلي)
         // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
@@ -326,15 +342,28 @@
                 display.innerText = val + " متر";
             } else {
                 let kmVal = (val / 1000).toFixed(1);
-                // إزالة الصفر العشري إذا كان الرقم صحيحاً
                 if(kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
                 display.innerText = kmVal + " كيلومتر";
             }
-            saveStudentData(); // حفظ القيمة تلقائياً
+            saveStudentData();
+
+            // تحديث حجم الدائرة على الخريطة مباشرة أثناء السحب
+            if (searchCircle) {
+                searchCircle.setRadius(val);
+            }
+        }
+
+        function onRadiusChangeEnd() {
+            // إعادة توليد المعلمين عند ترك المؤشر (لعدم التحميل الزائد أثناء السحب)
+            if (currentCenter && searchCircle) {
+                const radius = parseInt(document.getElementById('search_radius').value);
+                generateSmartTeachers(currentCenter, radius);
+                map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
+            }
         }
 
         // ==========================================
-        // 3. التخزين الداخلي (Local Storage) - حفظ واسترجاع
+        // 3. التخزين الداخلي (Local Storage)
         // ==========================================
         function saveStudentData() {
             const studentData = {
@@ -347,7 +376,7 @@
                 s_subject: document.getElementById('s_subject').value,
                 pref_teacher: document.querySelector('input[name="pref_teacher"]:checked')?.id,
                 pref_loc: document.querySelector('input[name="pref_loc"]:checked')?.id,
-                search_radius: document.getElementById('search_radius').value // حفظ قيمة الرادار
+                search_radius: document.getElementById('search_radius').value
             };
             localStorage.setItem('talep_data', JSON.stringify(studentData));
         }
@@ -356,7 +385,6 @@
             const savedData = localStorage.getItem('talep_data');
             if (savedData) {
                 const data = JSON.parse(savedData);
-                
                 if (data.st_gender) document.getElementById(data.st_gender).checked = true;
                 if (data.st_name) document.getElementById('st_name').value = data.st_name;
                 if (data.st_age) { document.getElementById('st_age').value = data.st_age; checkAge(); }
@@ -369,7 +397,7 @@
                 
                 if (data.search_radius) { 
                     document.getElementById('search_radius').value = data.search_radius; 
-                    updateRadiusDisplay(); // تحديث النص فوراً
+                    updateRadiusDisplay(); 
                 }
             }
         }
@@ -377,7 +405,7 @@
         window.onload = () => {
             loadStudentData();
             document.querySelectorAll('input, select').forEach(el => {
-                if(el.id !== 'search_radius') { // مؤشر النطاق له الدالة الخاصة به فوق
+                if(el.id !== 'search_radius') { 
                     el.addEventListener('input', saveStudentData);
                     el.addEventListener('change', saveStudentData);
                 }
@@ -385,17 +413,14 @@
         };
 
         // ==========================================
-        // 4. منطق الخريطة الذكية والرادار الدائري
+        // 4. منطق الخريطة الذكية والرادار القابل للسحب
         // ==========================================
-        let map = null;
-        let markersLayer = null;
-
         function initMap() {
             if (!map) {
                 map = L.map('map', { zoomControl: false });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                markersLayer = L.layerGroup().addTo(map);
+                teachersLayer = L.layerGroup().addTo(map);
             }
             map.invalidateSize();
         }
@@ -419,7 +444,7 @@
                 navigator.geolocation.getCurrentPosition(
                     (position) => buildRadarMap(position.coords.latitude, position.coords.longitude, originalBtnHTML),
                     (error) => {
-                        // إحداثيات افتراضية في حال رفض الـ GPS
+                        // في حال رفض الـ GPS نعطي إحداثيات افتراضية
                         buildRadarMap(31.0409, 31.3785, originalBtnHTML);
                     },
                     { enableHighAccuracy: true, timeout: 5000 }
@@ -435,54 +460,71 @@
             btn.classList.remove('loading');
 
             const mapWrap = document.getElementById('mapWrapper');
+            const mapHint = document.getElementById('mapHint');
             mapWrap.style.display = 'block';
+            mapHint.style.display = 'block';
             
             initMap();
-            markersLayer.clearLayers();
             
-            const center = [lat, lng];
-            map.setView(center, 14);
+            // تنظيف الخريطة من العناصر القديمة
+            if (studentMarker) map.removeLayer(studentMarker);
+            if (searchCircle) map.removeLayer(searchCircle);
+            teachersLayer.clearLayers();
+            
+            currentCenter = [lat, lng];
+            map.setView(currentCenter, 14);
 
-            // جلب قيمة النطاق من مؤشر التحكم (بالمتر)
             const searchRadius = parseInt(document.getElementById('search_radius').value); 
             
-            const circle = L.circle(center, {
-                color: '#10B981',      
-                weight: 3,
-                dashArray: '10, 10',   
-                fillColor: '#34D399',  
-                fillOpacity: 0.15
-            }).addTo(markersLayer);
+            // 1. إضافة الدائرة
+            searchCircle = L.circle(currentCenter, {
+                color: '#10B981', weight: 3, dashArray: '10, 10', fillColor: '#34D399', fillOpacity: 0.15
+            }).addTo(map);
+            searchCircle.setRadius(searchRadius);
 
+            // 2. إضافة نقطة الطالب (قابلة للسحب draggable: true)
             const studentIcon = L.divIcon({
                 className: 'custom-student-marker',
                 html: '<div class="student-radar"></div>',
-                iconSize: [20, 20],
-                iconAnchor: [10, 10]
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
             });
-            L.marker(center, { icon: studentIcon, interactive: false }).addTo(markersLayer);
+            studentMarker = L.marker(currentCenter, { icon: studentIcon, draggable: true }).addTo(map);
 
-            // إرسال قيمة الرادار لإنشاء المعلمين داخل الدائرة فقط
-            generateSmartTeachers(center, searchRadius);
+            // حدث سحب النقطة (تحريك الدائرة معها مباشرة)
+            studentMarker.on('drag', function(e) {
+                searchCircle.setLatLng(e.target.getLatLng());
+            });
+
+            // حدث إفلات النقطة (تحديث البحث)
+            studentMarker.on('dragend', function(e) {
+                currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+                const radius = parseInt(document.getElementById('search_radius').value);
+                generateSmartTeachers(currentCenter, radius);
+            });
+
+            // توليد المدرسين لأول مرة
+            generateSmartTeachers(currentCenter, searchRadius);
 
             setTimeout(() => {
-                // عمل زووم ديناميكي ليحتوي الدائرة بالكامل بناءً على حجمها
-                map.fitBounds(circle.getBounds(), { padding: [20, 20], maxZoom: 16 });
+                map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
                 mapWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
         }
 
         function generateSmartTeachers(centerPos, radiusInMeters) {
+            // مسح المدرسين القدامى فقط
+            teachersLayer.clearLayers();
+
             const subject = document.getElementById('s_subject').value;
             const grade = document.getElementById('s_grade').value;
             const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked').value;
             const prefLoc = document.querySelector('input[name="pref_loc"]:checked').value;
 
-            // تحويل الراديوس من متر إلى درجات تقريباً
             const degreeRadius = radiusInMeters / 111000;
 
-            const namesMr = ["أ/ محمد أحمد", "أ/ محمود طارق", "أ/ علي حسن", "أ/ إبراهيم سعيد"];
-            const namesMs = ["أ/ سارة محمود", "أ/ فاطمة علي", "أ/ ندى مصطفى", "أ/ منة طارق"];
+            const namesMr = ["أ/ محمد أحمد", "أ/ محمود طارق", "أ/ علي حسن", "أ/ إبراهيم سعيد", "أ/ مصطفى كمال"];
+            const namesMs = ["أ/ سارة محمود", "أ/ فاطمة علي", "أ/ ندى مصطفى", "أ/ منة طارق", "أ/ ياسمين عادل"];
             
             let pool = [];
             if (prefTeacher === "مستر") pool = namesMr.map(n => ({name: n, gender: "مستر"}));
@@ -491,11 +533,12 @@
                 pool = [...namesMr.map(n => ({name: n, gender: "مستر"})), ...namesMs.map(n => ({name: n, gender: "مس"}))];
             }
 
-            pool = pool.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + 2);
+            // توليد عدد معلمين يتناسب طردياً مع حجم الدائرة المحددة
+            let maxTeachers = radiusInMeters < 1500 ? 2 : (radiusInMeters < 3000 ? 4 : 6);
+            pool = pool.sort(() => 0.5 - Math.random()).slice(0, Math.floor(Math.random() * 2) + maxTeachers);
 
             pool.forEach(t => {
                 const angle = Math.random() * Math.PI * 2;
-                // ضمان وضع المدرس داخل النطاق المحدد تماماً (الدائرة)
                 const r = Math.sqrt(Math.random()) * degreeRadius; 
                 const tLat = centerPos[0] + (r * Math.cos(angle));
                 const tLng = centerPos[1] + (r * Math.sin(angle));
@@ -525,7 +568,7 @@
 
                 const marker = L.marker([tLat, tLng], { icon: customIcon });
                 marker.bindPopup(popupContent);
-                markersLayer.addLayer(marker);
+                teachersLayer.addLayer(marker); // إضافته لطبقة المدرسين فقط
             });
         }
 
