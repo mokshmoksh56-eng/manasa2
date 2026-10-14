@@ -181,9 +181,9 @@
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
         .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-bottom: 3px solid #0F2D5C;}
-        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 11px; margin: 10px 8px; min-width: 200px;}
+        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 11px; margin: 10px 8px; min-width: 215px;}
         .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
-        .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 10px; margin-bottom: 4px; background: #F8FAFC; padding: 3px 6px; border-radius: 5px; gap: 6px;}
+        .teacher-popup-detail { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #475569; font-size: 10.5px; margin-bottom: 4px; background: #F8FAFC; padding: 4px 6px; border-radius: 5px; gap: 6px;}
         
         /* علامة المستر المسجل */
         .registered-teacher-marker {
@@ -473,7 +473,7 @@
 
     <script>
         // ==========================================
-        // 0. المتغيرات والتأثيرات والمشاركة
+        // 0. المتغيرات والتأثيرات والمشاركة والواتساب
         // ==========================================
         let map = null; let teachersLayer = null; let studentMarker = null; 
         let searchCircle = null; let currentCenter = null; let isMapFullscreen = false; 
@@ -505,8 +505,33 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
+        // دالة تنظيف الرقم وفتح محادثة واتساب المستر بشكل مضمون
+        window.openTeacherWhatsApp = function(rawPhone, teacherName = '', subject = '', grade = '', groupName = '') {
+            let cleanPhone = String(rawPhone || '').replace(/\D/g, '');
+            if (!cleanPhone) {
+                showToast("رقم تليفون المستر غير مسجل في بيانات المجموعة!", true);
+                return;
+            }
+
+            if (cleanPhone.startsWith('0020')) {
+                cleanPhone = cleanPhone.substring(2);
+            } else if (cleanPhone.startsWith('01') && cleanPhone.length === 11) {
+                cleanPhone = '2' + cleanPhone;
+            } else if (cleanPhone.startsWith('1') && cleanPhone.length === 10) {
+                cleanPhone = '20' + cleanPhone;
+            }
+
+            const studentName = document.getElementById('st_name')?.value || 'طالب';
+            const msg = `السلام عليكم أ/ ${teacherName}، أنا الطالب (${studentName}) وأرغب في الحجز والاستفسار عن مادة (${subject} - ${grade})${groupName ? ' - ' + groupName : ''} عبر منصة احجزلي.`;
+            const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+            
+            window.open(waUrl, '_blank');
+        };
+
         window.shareTeacher = function(name, subject, grade, phone) {
-            const whatsappPart = phone ? `\n📞 للتواصل واتساب: https://wa.me/2${phone}` : '';
+            let cleanPhone = String(phone || '').replace(/\D/g, '');
+            if (cleanPhone.startsWith('01') && cleanPhone.length === 11) cleanPhone = '2' + cleanPhone;
+            const whatsappPart = cleanPhone ? `\n📱 رقم التليفون: ${phone}\n💬 واتساب: https://wa.me/${cleanPhone}` : '';
             const shareText = `لقد وجدت معلماً ممتازاً على منصة احجزلي!\n\n👨‍🏫 المعلم: ${name}\n📚 المادة: ${subject} (${grade})${whatsappPart}`;
             if (navigator.share) {
                 navigator.share({ title: 'مشاركة تفاصيل المعلم', text: shareText }).catch(err => console.error(err));
@@ -521,10 +546,8 @@
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
                 openMapFullscreen();
-                // إضافة حالة في سجل المتصفح لكي تعترض سحبة الرجوع ولا تخرج لصفحة index
                 history.pushState({ mapFullscreen: true }, "");
             } else {
-                // إذا ضغط المستخدم على أيقونة التصغير، نرجع خطوة في السجل لإغلاقها بنظافة
                 if (history.state && history.state.mapFullscreen) {
                     history.back();
                 } else {
@@ -558,7 +581,6 @@
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
 
-        // التقاط سحبة الرجوع من الشاشة باليد وإغلاق الخريطة المكبرة فقط والبقاء في talep.html
         window.addEventListener('popstate', function(event) {
             if (isMapFullscreen) {
                 closeMapFullscreen();
@@ -701,7 +723,7 @@
         };
 
         // ==========================================
-        // 3. النوافذ والقوائم المحفوظة (حذف وتعديل فوري)
+        // 3. النوافذ والقوائم المحفوظة (مع إظهار رقم المستر وفتح الواتساب)
         // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
@@ -800,8 +822,14 @@
         window.saveTeacher = function(name, subject, grade, locType, phone, gender, groupName = '') {
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_teachers) existingData.saved_teachers = [];
-            if(existingData.saved_teachers.some(t => t.name === name && t.groupName === groupName)) { 
-                showToast("المعلم محفوظ بالفعل!", true); return; 
+            const existingIdx = existingData.saved_teachers.findIndex(t => t.name === name && t.groupName === groupName);
+            if(existingIdx > -1) { 
+                // تحديث الرقم إذا كان محفوظاً مسبقاً بدون رقم
+                existingData.saved_teachers[existingIdx].phone = phone;
+                localStorage.setItem('talep_data', JSON.stringify(existingData));
+                renderSavedTeachersList(true);
+                showToast("تم تحديث بيانات المعلم المحفوظ ⭐"); 
+                return; 
             }
             existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender, groupName });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
@@ -819,6 +847,7 @@
                 let html = '';
                 data.saved_teachers.forEach((t, index) => {
                     const iconEmoji = t.gender === 'مس' ? '👩‍🏫' : '👨‍🏫';
+                    const displayPhone = t.phone ? t.phone : 'غير مسجل';
                     html += `
                         <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -826,7 +855,8 @@
                                     <div class="loc-icon" style="background: ${t.gender === 'مس' ? '#FCE7F3' : '#DBEAFE'}; color: ${t.gender === 'مس' ? '#9D174D' : '#1E40AF'};">${iconEmoji}</div>
                                     <div>
                                         <span class="loc-name" style="display: block;">أ/ ${t.name} ${t.groupName ? `(${t.groupName})` : ''}</span>
-                                        <span style="font-size: 10px; color: #64748B; font-weight: 800;">${t.subject} - ${t.grade}</span>
+                                        <span style="font-size: 10px; color: #64748B; font-weight: 800; display: block;">${t.subject} - ${t.grade}</span>
+                                        <span style="font-size: 11px; color: #0D9488; font-weight: 900; display: block; margin-top: 2px;" dir="ltr">📱 ${displayPhone}</span>
                                     </div>
                                 </div>
                                 <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">
@@ -835,7 +865,7 @@
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
                                 <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
-                                <a href="https://wa.me/2${t.phone || ''}" target="_blank" class="action-btn clickable-element" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px; text-decoration: none;">💬 واتساب</a>
+                                <button class="action-btn clickable-element" onclick="openTeacherWhatsApp('${t.phone || ''}', '${t.name}', '${t.subject}', '${t.grade}', '${t.groupName || ''}')" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px;">💬 واتساب</button>
                             </div>
                         </div>
                     `;
@@ -868,8 +898,33 @@
         }
 
         // ==========================================
-        // 4. جلب بيانات المستر المسجل من end.html
+        // 4. جلب بيانات المستر المسجل ورقم التليفون من end.html
         // ==========================================
+        function extractTeacherPhone(state) {
+            const directKeys = ['g_phone', 't_phone', 'm_phone', 'phone', 'whatsapp', 'teacher_phone', 'teacherPhone', 'mobile', 'tel'];
+            for (const k of directKeys) {
+                if (state[k] && String(state[k]).trim() !== '') {
+                    return String(state[k]).trim();
+                }
+            }
+            const phoneRegex = /(?:01[0125]\d{8})/;
+            for (const key in state) {
+                if (typeof state[key] === 'string' && phoneRegex.test(state[key])) {
+                    return state[key].match(phoneRegex)[0];
+                }
+            }
+            for (let i = 0; i < localStorage.length; i++) {
+                const storageKey = localStorage.key(i);
+                if (storageKey && storageKey !== 'talep_data' && !storageKey.startsWith('publishState_')) {
+                    const rawVal = localStorage.getItem(storageKey) || '';
+                    if (phoneRegex.test(rawVal)) {
+                        return rawVal.match(phoneRegex)[0];
+                    }
+                }
+            }
+            return '';
+        }
+
         function getRegisteredTeachersFromStorage() {
             const registeredList = [];
             let hiddenCount = 0;
@@ -909,6 +964,8 @@
                             const lat = state.lat ? parseFloat(state.lat) : 30.0444;
                             const lng = state.lng ? parseFloat(state.lng) : 31.2357;
 
+                            const extractedPhone = extractTeacherPhone(state);
+
                             registeredList.push({
                                 lessonId: lessonId,
                                 groupName: state.g_name || `مجموعة ${lessonId}`,
@@ -921,7 +978,7 @@
                                 endTime: endTime,
                                 locType: locLabel,
                                 address: fullAddress,
-                                phone: state.g_phone || state.t_phone || state.phone || '',
+                                phone: extractedPhone,
                                 gender: state.t_gender || 'مستر',
                                 lat: lat,
                                 lng: lng
@@ -937,7 +994,7 @@
         }
 
         // ==========================================
-        // 5. منطق الخريطة والرادار (فتح مضمون 100% + تحديث GPS ذكي)
+        // 5. منطق الخريطة والرادار (إظهار التليفون وتفعيل الواتساب)
         // ==========================================
         function initMap() {
             if (!map) {
@@ -949,20 +1006,17 @@
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
         }
 
-        // دالة جلب الإحداثيات الحية على مرحلتين (قمر صناعي ثم شبكة واي فاي/موبايل)
         function fetchLiveCoordinates(onSuccess, onError) {
             if (!navigator.geolocation) {
                 onError("الجهاز لا يدعم GPS");
                 return;
             }
 
-            // المرحلة 1: دقة عالية عبر القمر الصناعي بدون كاش
             navigator.geolocation.getCurrentPosition(
                 (pos) => {
                     onSuccess(pos.coords.latitude, pos.coords.longitude);
                 },
                 (err) => {
-                    // المرحلة 2: إذا فشل القمر الصناعي بالداخل، جلب الموقع الحالي عبر الشبكة بدون كاش
                     navigator.geolocation.getCurrentPosition(
                         (pos2) => {
                             onSuccess(pos2.coords.latitude, pos2.coords.longitude);
@@ -995,7 +1049,6 @@
                 (err) => {
                     btn.innerHTML = originalBtnHTML;
                     btn.classList.remove('loading');
-                    // فتح الخريطة في جميع الأحوال حتى لو رفض المتصفح الـ GPS (بدون القفز لموقع المعلم القديم)
                     const fallbackLat = currentCenter ? currentCenter[0] : 31.0409;
                     const fallbackLng = currentCenter ? currentCenter[1] : 31.3785;
                     buildRadarMap(fallbackLat, fallbackLng);
@@ -1004,7 +1057,6 @@
             );
         }
 
-        // زر تحديث الموقع اللحظي من داخل الخريطة
         function refreshMyLiveGPS() {
             showToast("⏳ جاري تحديث موقعك الحالي بالـ GPS...");
             fetchLiveCoordinates(
@@ -1027,7 +1079,6 @@
 
             const searchRadius = parseInt(document.getElementById('search_radius').value);
             
-            // تثبيت الخريطة على موقع الطالب الفعلي مباشرة
             currentCenter = [lat, lng];
             map.setView(currentCenter, 15);
 
@@ -1051,7 +1102,7 @@
             }, 300);
         }
 
-        // ✅ إظهار أيقونة المستر فقط داخل الدائرة، ولا تفتح بياناته إلا عند الضغط على الأيقونة
+        // ✅ إظهار أيقونة المستر مع عرض رقم التليفون وتفعيل زر الواتساب
         function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
             
@@ -1077,6 +1128,7 @@
                     shownCount++;
                     const displaySubject = t.subject || selectedSubject;
                     const displayGrade = t.grade || selectedGrade;
+                    const displayPhone = t.phone ? t.phone : 'غير مسجل';
 
                     const iconHtml = `<div class="registered-teacher-marker">👨‍🏫</div>`;
                     const customIcon = L.divIcon({
@@ -1087,7 +1139,7 @@
                         popupAnchor: [0, -16]
                     });
 
-                    // نافذة البيانات تحتوي فقط على حفظ وواتساب (بدون أي رابط يدخل الطالب إلى end.html)
+                    // نافذة البيانات تعرض رقم التليفون بوضوح وتفتح الواتساب عبر دالة مضمونة
                     const popupContent = `
                         <div class="teacher-popup-title">👨‍🏫 أ/ ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
@@ -1095,14 +1147,17 @@
                         <div class="teacher-popup-detail"><span>📅 الأيام:</span> <span style="color:#2563EB;">${t.days}</span></div>
                         <div class="teacher-popup-detail"><span>⏰ الموعد:</span> <span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
                         <div class="teacher-popup-detail"><span>📍 المكان:</span> <span style="color:#059669;">${t.locType} (${t.address})</span></div>
+                        <div class="teacher-popup-detail" style="background:#ECFDF5; border:1px solid #A7F3D0;">
+                            <span>📱 التليفون:</span> 
+                            ${t.phone ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:12px; text-decoration:none;" dir="ltr">📞 ${displayPhone}</a>` : `<span style="color:#EF4444;">غير مسجل</span>`}
+                        </div>
                         
                         <div style="display: flex; gap: 6px; margin-top: 8px;">
-                            <button class="clickable-element" onclick="saveTeacher('${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 2px solid #92400E; border-radius: 6px; font-weight: 900; font-size: 12px; cursor: pointer; padding: 4px;">⭐ حفظ</button>
-                            <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 11px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 4px;">💬 واتساب</a>
+                            <button type="button" class="clickable-element" onclick="saveTeacher('${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 2px solid #92400E; border-radius: 6px; font-weight: 900; font-size: 12px; cursor: pointer; padding: 6px 4px;">⭐ حفظ</button>
+                            <button type="button" class="clickable-element" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.groupName}')" style="flex: 1.5; background: #22C55E; border: none; border-bottom: 2px solid #15803D; color: white; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 6px 4px; cursor: pointer;">💬 واتساب</button>
                         </div>
                     `;
 
-                    // ربط البيانات بالأيقونة فقط بدون openPopup() حتى لا تظهر إلا عند الضغط عليها
                     const marker = L.marker([t.lat, t.lng], { icon: customIcon });
                     marker.bindPopup(popupContent);
                     teachersLayer.addLayer(marker);
