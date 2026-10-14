@@ -19,6 +19,19 @@
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
         /* ============================================ */
+        /* ✅ ألوان علم فرنسا الأساسية (للمتغيرات) */
+        /* ============================================ */
+        :root {
+            --fr-blue: #0055A4;
+            --fr-blue-dark: #003366;
+            --fr-blue-light: #EFF6FF;
+            --fr-white: #FFFFFF;
+            --fr-red: #EF4135;
+            --fr-red-dark: #B91C1C;
+            --fr-red-light: #FEF2F2;
+        }
+
+        /* ============================================ */
         /* ✅ الهيدر */
         /* ============================================ */
         .hero-banner {
@@ -28,69 +41,74 @@
         }
         .hero-banner::before {
             content: ''; position: absolute; inset: 0;
-            background: linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0.95) 100%); z-index: 1;
+            background: linear-gradient(135deg, rgba(0, 85, 164, 0.85) 0%, rgba(0, 51, 102, 0.95) 100%); z-index: 1;
         }
-        .hero-content { position: relative; z-index: 3; text-align: center; max-width: 700px; width: 100%; }
-        .hero-brand { font-size: 36px; font-weight: 900; color: #0F172A; margin-bottom: 5px; }
-        .hero-brand .accent { color: #10B981; }
-        .hero-headline { font-size: 22px; font-weight: 900; color: #1E293B; margin-top: 10px; }
+        .hero-content { position: relative; z-index: 3; text-align: center; max-width: 700px; width: 100%; color: white; }
+        .hero-brand { font-size: 36px; font-weight: 900; margin-bottom: 5px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .hero-brand .accent { color: var(--fr-red); text-shadow: 0 2px 10px rgba(239, 65, 53, 0.5); }
+        .hero-headline { font-size: 20px; font-weight: 800; color: #E2E8F0; margin-top: 10px; }
 
         /* ============================================ */
-        /* ✅ محتوى الصفحة والبطاقات */
+        /* ✅ محتوى الصفحة والبطاقات (إبداع الألوان) */
         /* ============================================ */
         .main-container { max-width: 800px; margin: -30px auto 0; width: 100%; padding: 0 15px 80px; position: relative; z-index: 10; }
         
         .smart-card {
-            background: #fff; border: 1.5px solid #E2E8F0; 
-            border-top: 5px solid #10B981; border-bottom: 6px solid #334155; 
-            border-radius: 16px; padding: 20px; box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
+            background: #fff; border-radius: 16px; padding: 20px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.15);
+            margin-bottom: 20px; transition: transform 0.3s;
         }
+        .smart-card:hover { transform: translateY(-2px); }
 
-        /* 🟢 تنسيق خاص للبطاقة الخضراء (بياناتك الشخصية) 🟢 */
-        .bg-green-solid {
-            background: #10B981 !important; 
-            border: 2px solid #059669 !important;
-            border-top: 5px solid #047857 !important;
-            border-bottom: 6px solid #064E3B !important;
+        /* 🔵 1. البطاقة الزرقاء (بياناتك الشخصية) 🔵 */
+        .bg-french-blue {
+            background: var(--fr-blue) !important; 
+            border: 2px solid #004080 !important;
+            border-top: 5px solid #3B82F6 !important;
+            border-bottom: 6px solid var(--fr-blue-dark) !important;
         }
-        .bg-green-solid .section-title {
+        .bg-french-blue .section-title {
             color: #ffffff !important;
-            border-bottom: 2px dashed rgba(255, 255, 255, 0.4) !important;
+            border-bottom: 2px dashed rgba(255, 255, 255, 0.3) !important;
         }
-        .bg-green-solid .form-group label {
-            color: #ffffff !important;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        .bg-french-blue .form-group > label {
+            color: #ffffff !important; text-shadow: 0 1px 2px rgba(0,0,0,0.2);
         }
-        .bg-green-solid .form-control {
-            border: 2px solid #059669 !important;
-            border-bottom: 4px solid #064E3B !important;
+        .bg-french-blue .radio-grid label { color: var(--fr-blue-dark) !important; }
+        .bg-french-blue .form-control {
+            border: 2px solid #004080 !important; border-bottom: 4px solid var(--fr-blue-dark) !important;
         }
-        .bg-green-solid .form-control:focus {
-            border-color: #047857 !important;
-            box-shadow: 0 0 0 4px rgba(255,255,255,0.3) !important;
+        .bg-french-blue .form-control:focus {
+            border-color: #3B82F6 !important; box-shadow: 0 0 0 4px rgba(255,255,255,0.2) !important;
         }
-        /* تنبيه العمر داخل البطاقة الخضراء */
-        .age-warning-text {
-            color: #FEF08A; /* أصفر فاتح للتحذير */
-            font-size: 11px;
-            background: rgba(0,0,0,0.15);
-            padding: 2px 8px;
-            border-radius: 6px;
-            margin-right: 5px;
-        }
+        .age-warning-text { color: #FCA5A5; font-size: 11px; background: rgba(0,0,0,0.2); padding: 2px 8px; border-radius: 6px; margin-right: 5px; }
 
-        .section-title { color: #0F2D5C; font-weight: 900; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-size: 18px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 10px; }
-        
+        /* ⚪ 2. البطاقة البيضاء (دراستك والمادة) ⚪ */
+        .bg-french-white {
+            background-color: var(--fr-white) !important;
+            border: 2px solid #E2E8F0 !important;
+            border-top: 5px solid var(--fr-blue) !important; /* لمسة زرقاء */
+            border-bottom: 6px solid var(--fr-red) !important;  /* لمسة حمراء */
+        }
+        .bg-french-white .section-title { color: var(--fr-blue) !important; border-bottom-color: #E2E8F0 !important; }
+
+        /* 🔴 3. البطاقة الحمراء الفاتحة (تفضيلات الدرس) 🔴 */
+        .bg-french-red {
+            background-color: var(--fr-red-light) !important;
+            border: 2px solid #FCA5A5 !important;
+            border-top: 5px solid var(--fr-red) !important;
+            border-bottom: 6px solid var(--fr-red-dark) !important;
+        }
+        .bg-french-red .section-title { color: var(--fr-red-dark) !important; border-bottom-color: #FCA5A5 !important; }
+
+        .section-title { font-weight: 900; margin-bottom: 15px; display: flex; align-items: center; gap: 8px; font-size: 18px; padding-bottom: 10px; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-size: 14px; font-weight: 900; color: #1E293B; margin-bottom: 6px; }
         
         .form-control {
             width: 100%; padding: 12px; border: 1.5px solid #CBD5E1; 
-            border-bottom: 4px solid #334155; border-radius: 10px; font-size: 14px; color: #1E293B;
+            border-bottom: 4px solid #94A3B8; border-radius: 10px; font-size: 14px; color: #1E293B;
             font-weight: 900; transition: all 0.3s; outline: none; background: #FFFFFF;
         }
-        .form-control:focus { border-color: #10B981; border-bottom: 4px solid #059669; background: #F8FAFC; }
         
         select.form-control { font-size: 16px !important; height: 52px; cursor: pointer; }
         select.form-control option { font-size: 16px; font-weight: 900; }
@@ -102,7 +120,7 @@
         
         .radio-grid label {
             position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
-            padding: 12px 5px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; 
+            padding: 12px 5px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #94A3B8; 
             border-radius: 12px; cursor: pointer; font-size: 13px; font-weight: 900; 
             transition: all 0.2s; text-align: center; background: #FFFFFF; color: #1E293B;
         }
@@ -110,56 +128,58 @@
         
         .radio-grid input:checked + label::before {
             content: '✔'; position: absolute; top: -10px; left: 50%; transform: translateX(-50%);
-            background: #10B981; color: white; border-radius: 50%; width: 22px; height: 22px;
+            color: white; border-radius: 50%; width: 22px; height: 22px;
             font-size: 12px; font-weight: 900; display: flex; align-items: center; justify-content: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.2); border: 2px solid white; z-index: 10;
         }
 
+        /* 🔵 ألوان مخصصة (الولد والمستر = أزرق) (البنت والمس = وردي/أحمر) (محايد = رمادي غامق) */
         .radio-grid input:checked + label {
-            border-color: #10B981; border-bottom-color: #059669; background: #D1FAE5; color: #065F46; 
+            border-color: #475569; border-bottom-color: #1E293B; background: #F1F5F9; color: #0F172A; 
             transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; 
         }
+        .radio-grid input:checked + label::before { background: #475569; }
 
-        /* 🔵 ألوان مخصصة (الولد والمستر = أزرق) (البنت والمس = وردي) */
-        #st_boy:checked + label, #t_mr:checked + label { border-color: #3B82F6 !important; border-bottom-color: #2563EB !important; background: #DBEAFE !important; color: #1E40AF !important; }
-        #st_boy:checked + label::before, #t_mr:checked + label::before { background: #3B82F6; }
+        #st_boy:checked + label, #t_mr:checked + label { border-color: var(--fr-blue) !important; border-bottom-color: var(--fr-blue-dark) !important; background: var(--fr-blue-light) !important; color: var(--fr-blue-dark) !important; }
+        #st_boy:checked + label::before, #t_mr:checked + label::before { background: var(--fr-blue); }
 
-        #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background: #FCE7F3 !important; color: #9D174D !important; }
-        #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899; }
+        #st_girl:checked + label, #t_ms:checked + label { border-color: var(--fr-red) !important; border-bottom-color: var(--fr-red-dark) !important; background: var(--fr-red-light) !important; color: var(--fr-red-dark) !important; }
+        #st_girl:checked + label::before, #t_ms:checked + label::before { background: var(--fr-red); }
 
-        /* ✅ ملخص بيانات الطالب */
+        /* ✅ ملخص بيانات الطالب (روح العلم الفرنسي) */
         .student-summary-card {
-            background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 2px solid #86EFAC; border-bottom: 5px solid #16A34A;
+            background: #F8FAFC; border: 2px solid #CBD5E1; 
+            border-top: 5px solid var(--fr-blue); border-bottom: 5px solid var(--fr-red);
             border-radius: 14px; padding: 15px; margin-top: 25px; margin-bottom: 15px; display: none; 
         }
-        .summary-header { font-size: 15px; font-weight: 900; color: #166534; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px dashed #86EFAC; padding-bottom: 8px;}
+        .summary-header { font-size: 15px; font-weight: 900; color: var(--fr-blue); margin-bottom: 10px; display: flex; align-items: center; gap: 6px; border-bottom: 1px dashed #CBD5E1; padding-bottom: 8px;}
         .summary-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 13px; }
         .summary-item { margin-bottom: 4px; }
-        .summary-item span { color: #15803D; font-weight: 800; display: block; font-size: 11px;}
-        .summary-item strong { color: #064E3B; font-weight: 900; font-size: 14px;}
+        .summary-item span { color: #64748B; font-weight: 800; display: block; font-size: 11px;}
+        .summary-item strong { color: #0F172A; font-weight: 900; font-size: 14px;}
 
-        /* ✅ شريط تمرير النطاق (Slider) */
+        /* ✅ شريط تمرير النطاق (Slider) أحمر */
         .styled-slider {
             -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px;
-            background: #E2E8F0; outline: none; transition: background 0.2s; margin-top: 5px; margin-bottom: 5px;
+            background: #FCA5A5; outline: none; transition: background 0.2s; margin-top: 5px; margin-bottom: 5px;
         }
         .styled-slider::-webkit-slider-thumb {
             -webkit-appearance: none; appearance: none; width: 26px; height: 26px; border-radius: 50%;
-            background: #10B981; cursor: pointer; box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff; transition: transform 0.1s;
+            background: var(--fr-red); cursor: pointer; box-shadow: 0 0 10px rgba(239, 65, 53, 0.4); border: 3px solid #fff; transition: transform 0.1s;
         }
         .styled-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
         
-        /* ✅ أزرار البحث والتحكم */
+        /* ✅ أزرار البحث والتحكم (أزرق فرنسي) */
         .btn-search {
             width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 900;
             display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s;
-            background: linear-gradient(135deg, #10B981, #059669); color: #fff; border: 1px solid #065F46; border-bottom: 4px solid #064E3B;
+            background: linear-gradient(135deg, var(--fr-blue), var(--fr-blue-dark)); color: #fff; border: 1px solid var(--fr-blue-dark); border-bottom: 4px solid #001f3f;
         }
         .btn-search:active { transform: translateY(2px); border-bottom-width: 2px; }
-        .btn-search.loading { background: linear-gradient(135deg, #F59E0B, #D97706); border-color: #B45309; pointer-events: none; animation: pulse-btn 1.5s infinite;}
+        .btn-search.loading { background: linear-gradient(135deg, #94A3B8, #475569); border-color: #334155; pointer-events: none; animation: pulse-btn 1.5s infinite;}
         
         .action-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none; transition: 0.2s; color: white; text-align: center; width: 100%;}
-        .save-btn { background: linear-gradient(135deg, #3B82F6, #2563EB); border-bottom: 3px solid #1D4ED8; }
+        .save-btn { background: linear-gradient(135deg, var(--fr-blue), var(--fr-blue-dark)); border-bottom: 3px solid #002244; }
         .save-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
 
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
@@ -167,14 +187,14 @@
         /* ============================================ */
         /* ✅ الخريطة والنافذة المنبثقة */
         /* ============================================ */
-        .map-hint { background: #DBEAFE; color: #1E40AF; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; border: 1px dashed #93C5FD; }
-        .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid #334155; overflow: hidden; z-index: 1; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .map-hint { background: var(--fr-blue-light); color: var(--fr-blue-dark); padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; border: 1px dashed #BFDBFE; }
+        .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid var(--fr-blue-dark); overflow: hidden; z-index: 1; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
         #map { width: 100%; height: 450px; } 
 
         .fullscreen-btn {
             position: absolute; top: 15px; left: 15px; z-index: 1000; background: #ffffff; border: 2px solid #CBD5E1; border-bottom: 4px solid #94A3B8;
             border-radius: 10px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center;
-            cursor: pointer; color: #0F2D5C; transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            cursor: pointer; color: var(--fr-blue); transition: all 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.15);
         }
         .fullscreen-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
         .map-container.is-fullscreen {
@@ -184,26 +204,27 @@
         }
         .map-container.is-fullscreen #map { height: 100% !important; }
 
+        /* الرادار باللون الأحمر الفرنسي */
         .student-radar {
-            position: relative; width: 22px; height: 22px; background-color: #3B82F6; border-radius: 50%; border: 3px solid white; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative; width: 22px; height: 22px; background-color: var(--fr-red); border-radius: 50%; border: 3px solid white; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .student-radar:active { cursor: grabbing; transform: scale(1.1); }
         .student-radar::after {
             content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border-radius: 50%; border: 2px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;
+            border-radius: 50%; border: 2px solid var(--fr-red); animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;
         }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-bottom: 4px solid #0F2D5C;}
+        .leaflet-popup-content-wrapper { border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); border-bottom: 4px solid var(--fr-blue-dark);}
         .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.6; font-size: 13px; margin: 12px 10px;}
-        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 15px; margin-bottom: 8px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;}
+        .teacher-popup-title { font-weight: 900; color: var(--fr-blue-dark); font-size: 15px; margin-bottom: 8px; border-bottom: 2px dashed #E2E8F0; padding-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;}
         .teacher-popup-detail { display: flex; justify-content: space-between; font-weight: 800; color: #475569; font-size: 11px; margin-bottom: 6px; background: #F8FAFC; padding: 4px 8px; border-radius: 6px;}
         
         path.leaflet-interactive { animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
         /* ============================================ */
-        /* ✅ تصميم القوائم المحفوظة (رأسية ومظبوطة) */
+        /* ✅ تصميم القوائم المحفوظة (ألوان فرنسا) */
         /* ============================================ */
         .saved-sections-wrapper { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
         .saved-list-container { display: flex; flex-direction: column; gap: 10px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
@@ -214,46 +235,47 @@
         }
         .loc-item:hover { border-color: #CBD5E1; background: #F8FAFC; }
         .loc-info { display: flex; align-items: center; gap: 10px; flex: 1; }
-        .loc-icon { background: #E0E7FF; color: #4F46E5; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;}
+        .loc-icon { background: var(--fr-blue-light); color: var(--fr-blue); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0;}
         .loc-name { font-weight: 900; color: #1E293B; font-size: 14px; line-height: 1.4; }
         .loc-actions { display: flex; gap: 8px; flex-shrink: 0; }
         
         .btn-icon { width: 38px; height: 38px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
-        .btn-go-loc { background: #10B981; border-bottom: 3px solid #059669; }
+        .btn-go-loc { background: var(--fr-blue); border-bottom: 3px solid var(--fr-blue-dark); }
         .btn-go-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
-        .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 3px solid #F87171; }
+        .btn-del-loc { background: var(--fr-red-light); color: var(--fr-red); border: 1px solid #FCA5A5; border-bottom: 3px solid var(--fr-red); }
         .btn-del-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
 
         /* ============================================ */
         /* ✅ النوافذ المنبثقة (Modals) والإشعارات */
         /* ============================================ */
         .custom-modal-overlay {
-            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(5px);
             display: flex; align-items: center; justify-content: center; z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.3s;
         }
         .custom-modal-overlay.active { opacity: 1; visibility: visible; }
         .custom-modal-box {
             background: #fff; border-radius: 20px; padding: 25px; width: 90%; max-width: 350px;
-            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); transform: translateY(20px) scale(0.95); transition: all 0.3s; border-bottom: 6px solid #10B981;
+            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.3); transform: translateY(20px) scale(0.95); transition: all 0.3s; border-bottom: 6px solid var(--fr-blue);
         }
         .custom-modal-overlay.active .custom-modal-box { transform: translateY(0) scale(1); }
         .custom-modal-title { font-size: 18px; font-weight: 900; color: #0F2D5C; margin-bottom: 10px; }
         .custom-modal-input { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-weight: 800; text-align: center; outline: none; margin-bottom: 15px; color: #1E293B; }
-        .custom-modal-input:focus { border-color: #10B981; }
+        .custom-modal-input:focus { border-color: var(--fr-blue); }
         .custom-modal-buttons { display: flex; gap: 10px; }
         .custom-btn { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; border: none; font-size: 14px; transition: 0.2s; color: white;}
-        .custom-btn-cancel { background: #F43F5E; border-bottom: 3px solid #E11D48; }
+        .custom-btn-cancel { background: var(--fr-red); border-bottom: 3px solid var(--fr-red-dark); }
         .custom-btn-cancel:active { transform: translateY(2px); border-bottom-width: 1px; }
-        .custom-btn-save { background: #10B981; border-bottom: 3px solid #059669; }
+        .custom-btn-save { background: var(--fr-blue); border-bottom: 3px solid var(--fr-blue-dark); }
         .custom-btn-save:active { transform: translateY(2px); border-bottom-width: 1px; }
 
         .custom-toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
-            background: #10B981; color: white; padding: 12px 25px; border-radius: 99px;
+            background: var(--fr-blue); color: white; padding: 12px 25px; border-radius: 99px;
             font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); z-index: 9999999;
-            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 3px solid #059669; white-space: nowrap;
+            box-shadow: 0 10px 25px rgba(0, 85, 164, 0.4); z-index: 9999999;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 3px solid var(--fr-blue-dark); white-space: nowrap;
         }
+        .custom-toast.error-toast { background: var(--fr-red); border-bottom-color: var(--fr-red-dark); box-shadow: 0 10px 25px rgba(239, 65, 53, 0.4); }
         .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         @media (max-width: 480px) {
@@ -273,7 +295,7 @@
         <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- ✅ نافذة إدخال اسم الموقع (بديل Prompt) -->
+    <!-- ✅ نافذة إدخال اسم الموقع -->
     <div id="saveLocModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div style="font-size: 40px; margin-bottom: 10px;">🏡</div>
@@ -286,11 +308,11 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف العامة للمواقع والمعلمين -->
+    <!-- ✅ نافذة تأكيد الحذف -->
     <div id="deleteModal" class="custom-modal-overlay">
-        <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
+        <div class="custom-modal-box" style="border-bottom-color: var(--fr-red);">
             <div style="font-size: 40px; margin-bottom: 10px;">🗑️</div>
-            <div class="custom-modal-title" style="color:#991B1B;">تأكيد الحذف</div>
+            <div class="custom-modal-title" style="color:var(--fr-red-dark);">تأكيد الحذف</div>
             <p style="font-size: 13px; color: #475569; margin-bottom: 15px; font-weight: 800;">هل أنت متأكد أنك تريد حذف هذا العنصر من قائمتك؟</p>
             <div class="custom-modal-buttons">
                 <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 3px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع</button>
@@ -308,8 +330,8 @@
     </section>
 
     <div class="main-container">
-        <!-- 1. بيانات الطالب (الخلفية الخضراء الصريحة) -->
-        <div class="smart-card bg-green-solid">
+        <!-- 1. بيانات الطالب (الخلفية الزرقاء الفرنسية) -->
+        <div class="smart-card bg-french-blue">
             <h3 class="section-title"><span>👤</span> بياناتك الشخصية</h3>
             <div class="form-group">
                 <label>هل أنت؟</label>
@@ -334,8 +356,8 @@
             </div>
         </div>
 
-        <!-- 2. المرحلة الدراسية -->
-        <div class="smart-card" style="border-top-color: #3B82F6;">
+        <!-- 2. المرحلة الدراسية (الخلفية البيضاء) -->
+        <div class="smart-card bg-french-white">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="form-group">
                 <label>المرحلة الدراسية</label>
@@ -362,8 +384,8 @@
             </div>
         </div>
 
-        <!-- 3. تفضيلات الدرس والبحث -->
-        <div class="smart-card" style="border-top-color: #F59E0B;">
+        <!-- 3. تفضيلات الدرس والبحث (الخلفية الحمراء الفاتحة) -->
+        <div class="smart-card bg-french-red">
             <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
                 <label>تفضل الدرس مع؟</label>
@@ -382,13 +404,13 @@
                 </div>
             </div>
 
-            <div class="form-group" style="margin-top: 25px; padding: 15px; background: #F8FAFC; border-radius: 12px; border: 1.5px solid #E2E8F0;">
+            <div class="form-group" style="margin-top: 25px; padding: 15px; background: #FFFFFF; border-radius: 12px; border: 1.5px solid #FCA5A5;">
                 <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                    <span style="font-size: 15px;">🎯 نطاق البحث المسموح:</span>
-                    <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 16px; background: #D1FAE5; padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
+                    <span style="font-size: 15px; color: var(--fr-red-dark);">🎯 نطاق البحث المسموح:</span>
+                    <span id="radius_val_display" style="color: var(--fr-red-dark); font-weight: 900; font-size: 16px; background: var(--fr-red-light); padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
                 </label>
                 <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
-                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-top: 8px; font-weight: 800;">
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #94A3B8; margin-top: 8px; font-weight: 800;">
                     <span>500 متر</span>
                     <span>5 كيلو</span>
                 </div>
@@ -423,7 +445,7 @@
             <!-- حاوية الخريطة والتكبير -->
             <div id="mapOuterWrapper" style="display: none; margin-top: 20px;">
                 <div id="mapHint" class="map-hint">
-                    💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى بحرية
+                    💡 يمكنك سحب النقطة الحمراء لتغيير مركز البحث واستكشاف أماكن أخرى بحرية
                 </div>
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
@@ -440,8 +462,8 @@
                     <div id="map"></div>
                 </div>
                 
-                <!-- منطقة الحفظ والقوائم أسفل الخريطة (مرتبة رأسياً) -->
-                <div class="map-actions-wrapper" style="padding: 15px; background: #F8FAFC; border: 2px solid #CBD5E1; border-top: none; border-bottom: 6px solid #334155; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+                <!-- منطقة الحفظ والقوائم أسفل الخريطة (رأسية ومظبوطة) -->
+                <div class="map-actions-wrapper" style="padding: 15px; background: #F8FAFC; border: 2px solid #CBD5E1; border-top: none; border-bottom: 6px solid var(--fr-blue-dark); border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
                     
                     <!-- زر حفظ الخريطة -->
                     <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()" style="margin-bottom: 10px;">
@@ -449,24 +471,20 @@
                     </button>
 
                     <div class="saved-sections-wrapper">
-                        <!-- ✅ قائمة المعلمين المحفوظين (رأسية) -->
+                        <!-- ✅ قائمة المعلمين المحفوظين -->
                         <div id="savedTeachersContainer" style="display: none;">
                             <h4 style="font-size: 14px; font-weight: 900; color: #475569; margin-bottom: 8px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 5px;">
                                 ⭐ المعلمون المفضلون:
                             </h4>
-                            <div class="saved-list-container" id="savedTeachersList">
-                                <!-- يتم التعبئة من الجافاسكريبت -->
-                            </div>
+                            <div class="saved-list-container" id="savedTeachersList"></div>
                         </div>
 
-                        <!-- ✅ قائمة المواقع المحفوظة (رأسية) -->
+                        <!-- ✅ قائمة المواقع المحفوظة -->
                         <div id="savedLocationsContainer" style="display: none;">
                             <h4 style="font-size: 14px; font-weight: 900; color: #475569; margin-bottom: 8px; border-bottom: 2px dashed #CBD5E1; padding-bottom: 5px;">
                                 📌 المواقع المحفوظة سابقاً:
                             </h4>
-                            <div class="saved-list-container" id="savedLocationsList">
-                                <!-- يتم التعبئة من الجافاسكريبت -->
-                            </div>
+                            <div class="saved-list-container" id="savedLocationsList"></div>
                         </div>
                     </div>
 
@@ -510,8 +528,15 @@
             const toast = document.getElementById('customToast');
             document.getElementById('toastText').innerText = message;
             document.getElementById('toastIcon').innerText = isError ? '⚠️' : '✨';
-            toast.style.background = isError ? '#EF4444' : '#10B981';
-            toast.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
+            
+            if (isError) {
+                toast.classList.add('error-toast');
+            } else {
+                toast.classList.remove('error-toast');
+                toast.style.background = 'var(--fr-blue)';
+                toast.style.borderBottomColor = 'var(--fr-blue-dark)';
+            }
+            
             toast.classList.add('show');
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
@@ -574,7 +599,7 @@
         }
 
         // ==========================================
-        // 2. تحديث النطاق وملخص البيانات والتخزين الداخلي
+        // 2. التحديث والحفظ
         // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
@@ -667,7 +692,7 @@
         };
 
         // ==========================================
-        // 3. حفظ وحذف المواقع والمعلمين
+        // 3. النوافذ والقوائم المحفوظة
         // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع على الخريطة أولاً!", true); return; }
@@ -705,12 +730,12 @@
                             </div>
                             <div class="loc-actions">
                                 <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})" title="حذف">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                     </svg>
                                 </button>
                                 <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 11-6 0 3 3 0 016 0z" />
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1115 0z" />
                                     </svg>
@@ -734,7 +759,6 @@
             }
         }
 
-        // وظائف المعلمين المحفوظين
         window.saveTeacher = function(name, subject, grade, locType, phone, gender) {
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_teachers) existingData.saved_teachers = [];
@@ -762,14 +786,14 @@
                         <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 10px;">
                             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
                                 <div class="loc-info">
-                                    <div class="loc-icon" style="background: ${t.gender === 'مستر' ? '#DBEAFE' : '#FCE7F3'}; color: ${t.gender === 'مستر' ? '#1E40AF' : '#9D174D'};">${iconEmoji}</div>
+                                    <div class="loc-icon" style="background: ${t.gender === 'مستر' ? 'var(--fr-blue-light)' : 'var(--fr-red-light)'}; color: ${t.gender === 'مستر' ? 'var(--fr-blue)' : 'var(--fr-red)'};">${iconEmoji}</div>
                                     <div>
                                         <span class="loc-name" style="display: block;">${t.name}</span>
                                         <span style="font-size: 11px; color: #64748B; font-weight: 800;">${t.subject} (${t.grade})</span>
                                     </div>
                                 </div>
                                 <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 20px; height: 20px;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
                                     </svg>
                                 </button>
@@ -787,7 +811,6 @@
             } else { container.style.display = 'none'; }
         }
 
-        // نافذة الحذف الموحدة
         function deleteItem(type, index) {
             deleteType = type;
             deleteIndexToConfirm = index;
@@ -870,7 +893,8 @@
             map.setView(currentCenter, 14);
 
             const searchRadius = parseInt(document.getElementById('search_radius').value); 
-            searchCircle = L.circle(currentCenter, { color: '#10B981', weight: 3, dashArray: '10, 10', fillColor: '#34D399', fillOpacity: 0.15 }).addTo(map);
+            // الدائرة زرقاء شفافة
+            searchCircle = L.circle(currentCenter, { color: 'var(--fr-blue)', weight: 3, dashArray: '10, 10', fillColor: 'var(--fr-blue)', fillOpacity: 0.1 }).addTo(map);
             searchCircle.setRadius(searchRadius);
 
             const studentIcon = L.divIcon({ className: 'custom-student-marker', html: '<div class="student-radar"></div>', iconSize: [22, 22], iconAnchor: [11, 11] });
@@ -918,19 +942,20 @@
                 const tLng = centerPos[1] + (r * Math.sin(angle));
 
                 const iconEmoji = t.gender === 'مستر' ? '👨‍🏫' : '👩‍🏫';
-                const iconColor = t.gender === 'مستر' ? '#0284C7' : '#DB2777';
+                // مستر = أزرق، مس = أحمر
+                const iconColor = t.gender === 'مستر' ? 'var(--fr-blue)' : 'var(--fr-red)';
 
                 const iconHtml = `<div style="background-color: ${iconColor}; color: white; border-radius: 50%; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; border: 3px solid white; font-size: 18px; box-shadow: 0 6px 15px rgba(0,0,0,0.3); transition: transform 0.2s;">${iconEmoji}</div>`;
                 const customIcon = L.divIcon({ className: 'custom-leaflet-marker', html: iconHtml, iconSize: [38, 38], iconAnchor: [19, 19], popupAnchor: [0, -15] });
 
                 const popupContent = `
-                    <div class="teacher-popup-title">${iconEmoji} ${t.name}</div>
+                    <div class="teacher-popup-title" style="color: ${iconColor};">${iconEmoji} ${t.name}</div>
                     <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${subject} (${grade})</span></div>
                     <div class="teacher-popup-detail"><span>📍 المكان:</span> <span style="color:#059669;">${prefLoc === 'في منزلي' ? 'حضور لمنزلك' : prefLoc}</span></div>
                     <div class="teacher-popup-detail"><span>⭐ التقييم:</span> <span style="color:#F59E0B;">4.9 / 5</span></div>
                     
                     <div style="display: flex; gap: 8px; margin-top: 10px;">
-                        <button class="clickable-element" onclick="saveTeacher('${t.name}', '${subject}', '${grade}', '${prefLoc}', '${t.phone}', '${t.gender}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 3px solid #92400E; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.2s;">
+                        <button class="clickable-element" onclick="saveTeacher('${t.name}', '${subject}', '${grade}', '${prefLoc}', '${t.phone}', '${t.gender}')" style="flex: 1; background: linear-gradient(135deg, var(--fr-blue), var(--fr-blue-dark)); color: white; border: none; border-bottom: 3px solid #002244; border-radius: 8px; font-weight: 900; font-size: 13px; cursor: pointer; transition: 0.2s;">
                             ⭐ حفظ
                         </button>
                         <a href="https://wa.me/2${t.phone}" target="_blank" class="clickable-element" style="flex: 1.5; background: #DCFCE7; border: 1px solid #86EFAC; color: #166534; text-decoration: none; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 4px; border-radius: 8px; padding: 6px;">
