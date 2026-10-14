@@ -59,16 +59,9 @@
         }
         .form-control:focus { border-color: #10B981; border-bottom: 4px solid #059669; background: #F8FAFC; }
         
-        /* 🔵 تكبير القوائم المنسدلة (المراحل والمواد) */
-        select.form-control {
-            font-size: 16px !important; /* تكبير الخط للوضوح */
-            height: 52px; /* زيادة الارتفاع لسهولة اللمس */
-            cursor: pointer;
-        }
-        select.form-control option {
-            font-size: 16px;
-            font-weight: 900;
-        }
+        /* 🔵 تكبير القوائم المنسدلة */
+        select.form-control { font-size: 16px !important; height: 52px; cursor: pointer; }
+        select.form-control option { font-size: 16px; font-weight: 900; }
 
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
@@ -88,12 +81,12 @@
             transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; 
         }
 
-        /* 🔵 ألوان مخصصة لخيار "مس" و "مستر" */
-        #t_mr:checked + label {
+        /* 🔵 ألوان مخصصة (الولد والمستر = أزرق) (البنت والمس = وردي) */
+        #st_boy:checked + label, #t_mr:checked + label {
             border-color: #3B82F6 !important; border-bottom-color: #2563EB !important; 
             background: #DBEAFE !important; color: #1E40AF !important;
         }
-        #t_ms:checked + label {
+        #st_girl:checked + label, #t_ms:checked + label {
             border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; 
             background: #FCE7F3 !important; color: #9D174D !important;
         }
@@ -110,7 +103,6 @@
         .summary-item { margin-bottom: 4px; }
         .summary-item span { color: #15803D; font-weight: 800; display: block; font-size: 11px;}
         .summary-item strong { color: #064E3B; font-weight: 900; font-size: 14px;}
-        /* لكي يأخذ "مكان الدرس" المساحة كاملة إذا احتجنا، لكن هنا سنتركها مقسمة */
 
         /* ✅ شريط تمرير النطاق (Slider) */
         .styled-slider {
@@ -166,15 +158,12 @@
         .map-container.is-fullscreen #map { height: 100% !important; }
 
         .student-radar {
-            position: relative; width: 22px; height: 22px;
-            background-color: #3B82F6; border-radius: 50%; border: 3px solid white; cursor: grab;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            position: relative; width: 22px; height: 22px; background-color: #3B82F6; border-radius: 50%; border: 3px solid white; cursor: grab; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
         .student-radar:active { cursor: grabbing; transform: scale(1.1); }
         .student-radar::after {
             content: ''; position: absolute; top: -10px; left: -10px; right: -10px; bottom: -10px;
-            border-radius: 50%; border: 2px solid #3B82F6;
-            animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;
+            border-radius: 50%; border: 2px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none;
         }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
@@ -202,15 +191,47 @@
         .loc-icon { background: #E0E7FF; color: #4F46E5; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
         .loc-name { font-weight: 900; color: #1E293B; font-size: 14px; }
         .loc-actions { display: flex; gap: 8px; }
-        
-        .btn-icon { 
-            width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer; 
-            display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; 
-        }
+        .btn-icon { width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; color: white; }
         .btn-go-loc { background: #10B981; border-bottom: 3px solid #059669; }
         .btn-go-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
         .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 3px solid #F87171; }
         .btn-del-loc:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+        /* ============================================ */
+        /* ✅ تصميم النوافذ المنبثقة (Modals) العصرية (بديل Alert) */
+        /* ============================================ */
+        .custom-modal-overlay {
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px);
+            display: flex; align-items: center; justify-content: center;
+            z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.3s;
+        }
+        .custom-modal-overlay.active { opacity: 1; visibility: visible; }
+        .custom-modal-box {
+            background: #fff; border-radius: 20px; padding: 25px; width: 90%; max-width: 350px;
+            text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px) scale(0.95); transition: all 0.3s; border-bottom: 6px solid #10B981;
+        }
+        .custom-modal-overlay.active .custom-modal-box { transform: translateY(0) scale(1); }
+        .custom-modal-title { font-size: 18px; font-weight: 900; color: #0F2D5C; margin-bottom: 10px; }
+        .custom-modal-input { width: 100%; padding: 12px; border: 2px solid #E2E8F0; border-radius: 10px; font-size: 14px; font-weight: 800; text-align: center; outline: none; margin-bottom: 15px; color: #1E293B; }
+        .custom-modal-input:focus { border-color: #10B981; }
+        .custom-modal-buttons { display: flex; gap: 10px; }
+        .custom-btn { flex: 1; padding: 10px; border-radius: 10px; font-weight: 900; cursor: pointer; border: none; font-size: 14px; transition: 0.2s; color: white;}
+        .custom-btn-cancel { background: #F43F5E; border-bottom: 3px solid #E11D48; }
+        .custom-btn-cancel:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .custom-btn-save { background: #10B981; border-bottom: 3px solid #059669; }
+        .custom-btn-save:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+        /* ✅ الإشعار العائم (Toast) */
+        .custom-toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(100px);
+            background: #10B981; color: white; padding: 12px 25px; border-radius: 99px;
+            font-weight: 900; font-size: 14px; display: flex; align-items: center; gap: 8px;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4); z-index: 9999999;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 3px solid #059669;
+        }
+        .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         @media (max-width: 480px) {
             .hero-banner { min-height: 200px; padding: 15px 10px; }
@@ -224,6 +245,48 @@
 </head>
 <body>
 
+    <!-- ✅ الإشعار العائم (Toast) -->
+    <div id="customToast" class="custom-toast">
+        <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
+    </div>
+
+    <!-- ✅ نافذة إدخال اسم الموقع (بديل Prompt) -->
+    <div id="saveLocModal" class="custom-modal-overlay">
+        <div class="custom-modal-box">
+            <div style="font-size: 40px; margin-bottom: 10px;">🏡</div>
+            <div class="custom-modal-title">أعطِ اسماً مميزاً لهذا الموقع</div>
+            <input type="text" id="locNameInput" class="custom-modal-input" placeholder="مثال: بيتي، سنتر الأمل..." value="موقع جديد">
+            <div class="custom-modal-buttons">
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="closeSaveLocModal()">إلغاء</button>
+                <button class="custom-btn custom-btn-save clickable-element" onclick="confirmSaveLocation()">حفظ 💾</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ نافذة تأكيد الحذف (بديل Confirm) -->
+    <div id="deleteModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🗑️</div>
+            <div class="custom-modal-title" style="color:#991B1B;">تأكيد الحذف</div>
+            <p style="font-size: 13px; color: #475569; margin-bottom: 15px; font-weight: 800;">هل أنت متأكد أنك تريد حذف هذا الموقع من قائمتك؟</p>
+            <div class="custom-modal-buttons">
+                <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 3px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع</button>
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="confirmDelete()">نعم، احذف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ✅ نافذة الحجز المبدئي (بديل Alert) -->
+    <div id="bookingModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #3B82F6;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🎉</div>
+            <div class="custom-modal-title" style="color:#1E40AF;">تم الحجز المبدئي!</div>
+            <p id="bookingMessage" style="font-size: 13px; color: #475569; margin-bottom: 15px; font-weight: 800; line-height: 1.6;"></p>
+            <button class="custom-btn clickable-element" style="background: #3B82F6; border-bottom: 3px solid #1D4ED8; width: 100%;" onclick="closeBookingModal()">عاش يا بطل 🚀</button>
+        </div>
+    </div>
+
+    <!-- المحتوى الرئيسي -->
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">مرحباً بك <span class="accent">يا بطل! 🎓</span></div>
@@ -319,7 +382,7 @@
                 </div>
             </div>
 
-            <!-- ✅ ملخص بيانات الطالب -->
+            <!-- ✅ ملخص بيانات الطالب (يظهر كبطاقة تأكيد قبل البحث) -->
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
@@ -368,7 +431,7 @@
                 <!-- منطقة الحفظ والقائمة أسفل الخريطة -->
                 <div class="map-actions-wrapper" style="padding: 15px; background: #F8FAFC; border: 2px solid #CBD5E1; border-top: none; border-bottom: 6px solid #334155; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
                     
-                    <button class="action-btn save-btn clickable-element" onclick="saveCurrentLocation()">
+                    <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
                         💾 حفظ هذا الموقع
                     </button>
 
@@ -389,7 +452,7 @@
 
     <script>
         // ==========================================
-        // 0. المتغيرات العامة والتأثيرات الصوتية
+        // 0. المتغيرات العامة والتأثيرات الصوتية ونظام الإشعارات
         // ==========================================
         let map = null;
         let teachersLayer = null; 
@@ -397,6 +460,7 @@
         let searchCircle = null;  
         let currentCenter = null; 
         let isMapFullscreen = false; 
+        let deleteIndexToConfirm = -1;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -413,6 +477,19 @@
         document.addEventListener('click', function(e) {
             if (e.target.closest('.clickable-element, label, select, input[type="radio"], button')) playHighPitchSound();
         });
+
+        // دالة عرض الإشعار العائم المخصص (بديل Alert السريع)
+        function showToast(message, isError = false) {
+            const toast = document.getElementById('customToast');
+            document.getElementById('toastText').innerText = message;
+            document.getElementById('toastIcon').innerText = isError ? '⚠️' : '✨';
+            
+            toast.style.background = isError ? '#EF4444' : '#10B981';
+            toast.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
+            
+            toast.classList.add('show');
+            setTimeout(() => { toast.classList.remove('show'); }, 3500);
+        }
 
         // ==========================================
         // 1. منطق التكبير (Fullscreen Map)
@@ -485,19 +562,14 @@
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
             const display = document.getElementById('radius_val_display');
-            if (val < 1000) {
-                display.innerText = val + " متر";
-            } else {
+            if (val < 1000) { display.innerText = val + " متر"; } 
+            else {
                 let kmVal = (val / 1000).toFixed(1);
                 if(kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
                 display.innerText = kmVal + " كيلومتر";
             }
-            updateStudentSummary();
-            saveStudentData();
-
-            if (searchCircle) {
-                searchCircle.setRadius(val);
-            }
+            updateStudentSummary(); saveStudentData();
+            if (searchCircle) { searchCircle.setRadius(val); }
         }
 
         function onRadiusChangeEnd() {
@@ -580,26 +652,38 @@
         };
 
         // ==========================================
-        // 5. حفظ المواقع ورسم القائمة العصرية للموبايل
+        // 5. حفظ المواقع ورسم القائمة العصرية (تحديث النوافذ المنبثقة)
         // ==========================================
-        function saveCurrentLocation() {
-            if (!currentCenter) return;
-            
-            let locName = prompt('أدخل اسماً لهذا الموقع (مثال: المنزل، السنتر، بيت جدي):', 'موقع جديد');
-            if (!locName || locName.trim() === '') return; 
+        function openSaveLocModal() {
+            if (!currentCenter) {
+                showToast("يرجى تحديد موقع على الخريطة أولاً!", true);
+                return;
+            }
+            document.getElementById('locNameInput').value = 'موقع جديد';
+            document.getElementById('saveLocModal').classList.add('active');
+        }
 
+        function closeSaveLocModal() {
+            document.getElementById('saveLocModal').classList.remove('active');
+        }
+
+        function confirmSaveLocation() {
+            const locName = document.getElementById('locNameInput').value.trim() || 'موقع جديد';
+            
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_locations) existingData.saved_locations = [];
             
             existingData.saved_locations.unshift({
-                name: locName.trim(),
+                name: locName,
                 lat: currentCenter[0],
                 lng: currentCenter[1]
             });
             
             localStorage.setItem('talep_data', JSON.stringify(existingData));
             renderSavedLocationsList();
-            alert("تم حفظ الموقع بنجاح في القائمة! 💾");
+            
+            closeSaveLocModal();
+            showToast("تم حفظ الموقع بنجاح يا بطل! 💾");
         }
 
         function renderSavedLocationsList() {
@@ -646,7 +730,7 @@
             const subject = document.getElementById('s_subject').value;
 
             if(!stage || !grade || !subject) {
-                alert("يرجى اختيار المرحلة، الصف، والمادة أولاً لنتمكن من البحث.");
+                showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true);
                 return;
             }
 
@@ -657,12 +741,26 @@
             }
         }
 
+        // منطق الحذف بالنوافذ المخصصة
         function deleteSavedLocation(index) {
-            if(!confirm('هل أنت متأكد من حذف هذا الموقع؟')) return;
-            const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
-            existingData.saved_locations.splice(index, 1);
-            localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedLocationsList();
+            deleteIndexToConfirm = index;
+            document.getElementById('deleteModal').classList.add('active');
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            deleteIndexToConfirm = -1;
+        }
+
+        function confirmDelete() {
+            if (deleteIndexToConfirm > -1) {
+                const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
+                existingData.saved_locations.splice(deleteIndexToConfirm, 1);
+                localStorage.setItem('talep_data', JSON.stringify(existingData));
+                renderSavedLocationsList();
+                showToast("تم إزالة الموقع من قائمتك 🗑️");
+            }
+            closeDeleteModal();
         }
 
         // ==========================================
@@ -684,7 +782,7 @@
             const subject = document.getElementById('s_subject').value;
 
             if(!stage || !grade || !subject) {
-                alert("يرجى إكمال بيانات المرحلة، الصف، والمادة أولاً لنتمكن من البحث.");
+                showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true);
                 return;
             }
 
@@ -823,9 +921,14 @@
             });
         }
 
+        // نافذة الحجز המخصص
         function bookLesson(teacherName) {
             playHighPitchSound();
-            alert(`تم حجز الدرس المبدئي مع ${teacherName}. سيتم التواصل معك لتأكيد الموعد.`);
+            document.getElementById('bookingMessage').innerHTML = `لقد اخترت الدرس مع <b>${teacherName}</b>.<br>سيتم التواصل معك قريباً لتأكيد الموعد النهائي!`;
+            document.getElementById('bookingModal').classList.add('active');
+        }
+        function closeBookingModal() {
+            document.getElementById('bookingModal').classList.remove('active');
         }
     </script>
 </body>
