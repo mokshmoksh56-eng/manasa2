@@ -516,25 +516,54 @@
         };
 
         // ==========================================
-        // 1. منطق التكبير والقوائم المنسدلة
+        // 1. منطق التكبير والتصغير مع دعم سحبة الرجوع بالهاتف
         // ==========================================
         function toggleMapFullscreen() {
+            if (!isMapFullscreen) {
+                openMapFullscreen();
+                // إضافة حالة في سجل المتصفح لكي تعترض سحبة الرجوع ولا تخرج لصفحة index
+                history.pushState({ mapFullscreen: true }, "");
+            } else {
+                // إذا ضغط المستخدم على أيقونة التصغير، نرجع خطوة في السجل لإغلاقها بنظافة
+                if (history.state && history.state.mapFullscreen) {
+                    history.back();
+                } else {
+                    closeMapFullscreen();
+                }
+            }
+        }
+
+        function openMapFullscreen() {
             const mapWrap = document.getElementById('mapWrapper');
             const iconExpand = document.getElementById('iconExpand');
             const iconCompress = document.getElementById('iconCompress');
-            isMapFullscreen = !isMapFullscreen;
-            if (isMapFullscreen) {
-                mapWrap.classList.add('is-fullscreen');
-                iconExpand.style.display = 'none'; iconCompress.style.display = 'block';
-                document.body.style.overflow = 'hidden'; 
-            } else {
-                mapWrap.classList.remove('is-fullscreen');
-                iconExpand.style.display = 'block'; iconCompress.style.display = 'none';
-                document.body.style.overflow = ''; 
-                document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            }
+            isMapFullscreen = true;
+            mapWrap.classList.add('is-fullscreen');
+            iconExpand.style.display = 'none'; 
+            iconCompress.style.display = 'block';
+            document.body.style.overflow = 'hidden'; 
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
+
+        function closeMapFullscreen() {
+            const mapWrap = document.getElementById('mapWrapper');
+            const iconExpand = document.getElementById('iconExpand');
+            const iconCompress = document.getElementById('iconCompress');
+            isMapFullscreen = false;
+            mapWrap.classList.remove('is-fullscreen');
+            iconExpand.style.display = 'block'; 
+            iconCompress.style.display = 'none';
+            document.body.style.overflow = ''; 
+            document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            setTimeout(() => { if (map) map.invalidateSize(); }, 300);
+        }
+
+        // التقاط سحبة الرجوع من الشاشة باليد وإغلاق الخريطة المكبرة فقط والبقاء في talep.html
+        window.addEventListener('popstate', function(event) {
+            if (isMapFullscreen) {
+                closeMapFullscreen();
+            }
+        });
 
         function toggleDropdown(containerId, iconId, forceOpen = false) {
             const container = document.getElementById(containerId);
