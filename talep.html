@@ -89,12 +89,8 @@
             transition: transform 0.1s;
         }
         .styled-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
-        .styled-slider::-moz-range-thumb {
-            width: 26px; height: 26px; border-radius: 50%;
-            background: #10B981; cursor: pointer;
-            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff;
-        }
-
+        
+        /* ✅ أزرار البحث والتحكم */
         .btn-search {
             width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 900;
             display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s;
@@ -104,12 +100,18 @@
         .btn-search:active { transform: translateY(2px); border-bottom-width: 2px; }
         .btn-search.loading { background: linear-gradient(135deg, #F59E0B, #D97706); border-color: #B45309; pointer-events: none; animation: pulse-btn 1.5s infinite;}
         
+        .action-btn { flex: 1; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 900; display: flex; align-items: center; justify-content: center; gap: 6px; cursor: pointer; border: none; transition: 0.2s; color: white; text-align: center; }
+        .save-btn { background: linear-gradient(135deg, #3B82F6, #2563EB); border-bottom: 3px solid #1D4ED8; }
+        .save-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .load-btn { background: linear-gradient(135deg, #8B5CF6, #7C3AED); border-bottom: 3px solid #6D28D9; }
+        .load-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
         /* ============================================ */
         /* ✅ إبداع الخريطة (الرادار التفاعلي) */
         /* ============================================ */
-        .map-hint { background: #DBEAFE; color: #1E40AF; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; display: none; border: 1px dashed #93C5FD; }
+        .map-hint { background: #DBEAFE; color: #1E40AF; padding: 10px; border-radius: 10px; font-size: 13px; font-weight: 800; text-align: center; margin-bottom: 10px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 16px; border: 2px solid #CBD5E1; border-bottom: 6px solid #334155; overflow: hidden; z-index: 1; transition: all 0.5s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         #map { width: 100%; height: 380px; }
 
@@ -145,6 +147,7 @@
             .grid-2 { grid-template-columns: 1fr; gap: 10px; }
             .radio-grid label { padding: 10px 2px; font-size: 12px; }
             #map { height: 340px; }
+            .map-actions-wrapper { flex-direction: column; }
         }
     </style>
 </head>
@@ -238,36 +241,54 @@
                     <span style="font-size: 15px;">🎯 نطاق البحث المسموح:</span>
                     <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 16px; background: #D1FAE5; padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
                 </label>
-                
                 <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
-                
                 <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-top: 8px; font-weight: 800;">
                     <span>500 متر</span>
                     <span>5 كيلو</span>
                 </div>
             </div>
 
+            <!-- زر الاسترجاع السريع للموقع المحفوظ (يظهر فقط إن وجد موقع محفوظ) -->
+            <button class="action-btn load-btn clickable-element" id="quickLoadBtn" onclick="quickLoadSavedLocation()" style="display: none; width: 100%; margin-top: 20px; font-size: 16px; padding: 14px;">
+                📍 البحث مباشرة في موقعي المحفوظ سابقاً
+            </button>
+
+            <!-- زر البحث الرئيسي بالـ GPS -->
             <button class="btn-search clickable-element" id="searchBtn" onclick="startSmartSearch()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
-                تحديد موقعي والبحث في النطاق الدائري
+                تحديد موقعي الحالي والبحث بالـ GPS
             </button>
             
-            <div id="mapHint" class="map-hint" style="margin-top: 20px;">
-                💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى
+            <!-- حاوية الخريطة وأزرار التحكم أسفلها -->
+            <div id="mapOuterWrapper" style="display: none; margin-top: 20px;">
+                <div id="mapHint" class="map-hint">
+                    💡 يمكنك سحب النقطة الزرقاء لتغيير مركز البحث واستكشاف أماكن أخرى بحرية
+                </div>
+                
+                <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                    <div id="map"></div>
+                </div>
+                
+                <!-- أزرار حفظ واسترجاع الموقع أسفل الخريطة -->
+                <div class="map-actions-wrapper" style="display: flex; gap: 10px; padding: 15px; background: #F8FAFC; border: 2px solid #CBD5E1; border-top: none; border-bottom: 6px solid #334155; border-bottom-left-radius: 16px; border-bottom-right-radius: 16px;">
+                    <button class="action-btn save-btn clickable-element" onclick="saveCurrentLocation()">
+                        💾 حفظ هذا الموقع
+                    </button>
+                    <button class="action-btn load-btn clickable-element" id="loadLocBtn" onclick="quickLoadSavedLocation()" style="display: none;">
+                        📍 استرجاع الموقع المحفوظ
+                    </button>
+                </div>
             </div>
             
-            <div class="map-container" id="mapWrapper" style="display: none; margin-top: 0;">
-                <div id="map"></div>
-            </div>
         </div>
     </div>
 
     <script>
         // ==========================================
-        // 0. المتغيرات العامة للخريطة
+        // 0. المتغيرات العامة والتأثيرات الصوتية
         // ==========================================
         let map = null;
         let teachersLayer = null; 
@@ -362,7 +383,9 @@
         // 3. التخزين الداخلي (Local Storage)
         // ==========================================
         function saveStudentData() {
+            const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             const studentData = {
+                ...existingData, // الاحتفاظ بالبيانات السابقة (مثل إحداثيات الخريطة)
                 st_gender: document.querySelector('input[name="st_gender"]:checked')?.id,
                 st_name: document.getElementById('st_name').value,
                 st_age: document.getElementById('st_age').value,
@@ -390,10 +413,12 @@
                 if (data.s_subject) { document.getElementById('s_subject').value = data.s_subject; }
                 if (data.pref_teacher) document.getElementById(data.pref_teacher).checked = true;
                 if (data.pref_loc) document.getElementById(data.pref_loc).checked = true;
+                if (data.search_radius) { document.getElementById('search_radius').value = data.search_radius; updateRadiusDisplay(); }
                 
-                if (data.search_radius) { 
-                    document.getElementById('search_radius').value = data.search_radius; 
-                    updateRadiusDisplay(); 
+                // إظهار أزرار الاسترجاع إذا كان هناك موقع محفوظ
+                if (data.saved_lat && data.saved_lng) {
+                    document.getElementById('quickLoadBtn').style.display = 'flex';
+                    document.getElementById('loadLocBtn').style.display = 'flex';
                 }
             }
         }
@@ -409,7 +434,39 @@
         };
 
         // ==========================================
-        // 4. منطق الخريطة الذكية والرادار القابل للسحب (محدث)
+        // 4. حفظ واسترجاع موقع الخريطة
+        // ==========================================
+        function saveCurrentLocation() {
+            if (!currentCenter) return;
+            const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
+            existingData.saved_lat = currentCenter[0];
+            existingData.saved_lng = currentCenter[1];
+            localStorage.setItem('talep_data', JSON.stringify(existingData));
+            
+            document.getElementById('quickLoadBtn').style.display = 'flex';
+            document.getElementById('loadLocBtn').style.display = 'flex';
+            
+            alert("تم حفظ موقع البحث بنجاح! 💾\nيمكنك استرجاعه في أي وقت بسهولة.");
+        }
+
+        function quickLoadSavedLocation() {
+            const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
+            const subject = document.getElementById('s_subject').value;
+
+            if(!stage || !grade || !subject) {
+                alert("يرجى اختيار المرحلة، الصف، والمادة أولاً لنتمكن من البحث.");
+                return;
+            }
+
+            const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
+            if (data.saved_lat && data.saved_lng) {
+                buildRadarMap(data.saved_lat, data.saved_lng);
+            }
+        }
+
+        // ==========================================
+        // 5. منطق الخريطة الذكية والرادار
         // ==========================================
         function initMap() {
             if (!map) {
@@ -438,26 +495,27 @@
 
             if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
-                    (position) => buildRadarMap(position.coords.latitude, position.coords.longitude, originalBtnHTML),
+                    (position) => {
+                        btn.innerHTML = originalBtnHTML;
+                        btn.classList.remove('loading');
+                        buildRadarMap(position.coords.latitude, position.coords.longitude);
+                    },
                     (error) => {
-                        buildRadarMap(31.0409, 31.3785, originalBtnHTML);
+                        btn.innerHTML = originalBtnHTML;
+                        btn.classList.remove('loading');
+                        buildRadarMap(31.0409, 31.3785);
                     },
                     { enableHighAccuracy: true, timeout: 5000 }
                 );
             } else {
-                buildRadarMap(31.0409, 31.3785, originalBtnHTML);
+                btn.innerHTML = originalBtnHTML;
+                btn.classList.remove('loading');
+                buildRadarMap(31.0409, 31.3785);
             }
         }
 
-        function buildRadarMap(lat, lng, originalBtnHTML) {
-            const btn = document.getElementById('searchBtn');
-            btn.innerHTML = originalBtnHTML;
-            btn.classList.remove('loading');
-
-            const mapWrap = document.getElementById('mapWrapper');
-            const mapHint = document.getElementById('mapHint');
-            mapWrap.style.display = 'block';
-            mapHint.style.display = 'block';
+        function buildRadarMap(lat, lng) {
+            document.getElementById('mapOuterWrapper').style.display = 'block';
             
             initMap();
             
@@ -482,7 +540,7 @@
                 iconAnchor: [11, 11]
             });
             
-            // ✅ تم إضافة zIndexOffset بقيمة 10000 لضمان بقاء النقطة دائماً فوق أيقونات المدرسين
+            // ✅ الأولوية القصوى للنقطة الزرقاء لتكون دائمًا فوق المدرسين (zIndexOffset: 10000)
             studentMarker = L.marker(currentCenter, { 
                 icon: studentIcon, 
                 draggable: true,
@@ -503,7 +561,7 @@
 
             setTimeout(() => {
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
-                mapWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
         }
 
