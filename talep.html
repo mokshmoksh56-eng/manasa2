@@ -75,6 +75,26 @@
             transform: translateY(2px); border-bottom-width: 2px; margin-bottom: 2px; 
         }
 
+        /* ✅ شريط تمرير النطاق (Slider) */
+        .styled-slider {
+            -webkit-appearance: none; width: 100%; height: 8px; border-radius: 5px;
+            background: #E2E8F0; outline: none; transition: background 0.2s;
+            margin-top: 5px; margin-bottom: 5px;
+        }
+        .styled-slider::-webkit-slider-thumb {
+            -webkit-appearance: none; appearance: none;
+            width: 24px; height: 24px; border-radius: 50%;
+            background: #10B981; cursor: pointer;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff;
+            transition: transform 0.1s;
+        }
+        .styled-slider::-webkit-slider-thumb:active { transform: scale(1.2); }
+        .styled-slider::-moz-range-thumb {
+            width: 24px; height: 24px; border-radius: 50%;
+            background: #10B981; cursor: pointer;
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.4); border: 3px solid #fff;
+        }
+
         .btn-search {
             width: 100%; padding: 14px; border-radius: 12px; font-size: 16px; font-weight: 900;
             display: flex; justify-content: center; align-items: center; gap: 8px; cursor: pointer; transition: all 0.3s;
@@ -208,6 +228,21 @@
                 </div>
             </div>
 
+            <!-- شريط اختيار نطاق البحث من 500 متر إلى 5 كيلو -->
+            <div class="form-group" style="margin-top: 25px; padding: 15px; background: #F8FAFC; border-radius: 12px; border: 1.5px solid #E2E8F0;">
+                <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <span style="font-size: 15px;">🎯 نطاق البحث المسموح:</span>
+                    <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 16px; background: #D1FAE5; padding: 4px 12px; border-radius: 20px;">3 كيلومتر</span>
+                </label>
+                
+                <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()">
+                
+                <div style="display: flex; justify-content: space-between; font-size: 12px; color: #64748B; margin-top: 8px; font-weight: 800;">
+                    <span>500 متر</span>
+                    <span>5 كيلو</span>
+                </div>
+            </div>
+
             <button class="btn-search clickable-element" id="searchBtn" onclick="startSmartSearch()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -282,7 +317,24 @@
         }
 
         // ==========================================
-        // 2. التخزين الداخلي (Local Storage) - حفظ واسترجاع
+        // 2. تحديث وعرض قيمة النطاق (الرادار)
+        // ==========================================
+        function updateRadiusDisplay() {
+            const val = document.getElementById('search_radius').value;
+            const display = document.getElementById('radius_val_display');
+            if (val < 1000) {
+                display.innerText = val + " متر";
+            } else {
+                let kmVal = (val / 1000).toFixed(1);
+                // إزالة الصفر العشري إذا كان الرقم صحيحاً
+                if(kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
+                display.innerText = kmVal + " كيلومتر";
+            }
+            saveStudentData(); // حفظ القيمة تلقائياً
+        }
+
+        // ==========================================
+        // 3. التخزين الداخلي (Local Storage) - حفظ واسترجاع
         // ==========================================
         function saveStudentData() {
             const studentData = {
@@ -294,7 +346,8 @@
                 s_grade: document.getElementById('s_grade').value,
                 s_subject: document.getElementById('s_subject').value,
                 pref_teacher: document.querySelector('input[name="pref_teacher"]:checked')?.id,
-                pref_loc: document.querySelector('input[name="pref_loc"]:checked')?.id
+                pref_loc: document.querySelector('input[name="pref_loc"]:checked')?.id,
+                search_radius: document.getElementById('search_radius').value // حفظ قيمة الرادار
             };
             localStorage.setItem('talep_data', JSON.stringify(studentData));
         }
@@ -304,51 +357,35 @@
             if (savedData) {
                 const data = JSON.parse(savedData);
                 
-                // استرجاع النوع والاسم والبيانات الأساسية
                 if (data.st_gender) document.getElementById(data.st_gender).checked = true;
                 if (data.st_name) document.getElementById('st_name').value = data.st_name;
-                
-                if (data.st_age) {
-                    document.getElementById('st_age').value = data.st_age;
-                    checkAge(); // تشغيل فحص العمر لتغيير التسمية
-                }
-                
+                if (data.st_age) { document.getElementById('st_age').value = data.st_age; checkAge(); }
                 if (data.st_phone) document.getElementById('st_phone').value = data.st_phone;
-                
-                // استرجاع المناهج بالترتيب الصحيح
-                if (data.s_stage) {
-                    document.getElementById('s_stage').value = data.s_stage;
-                    updateGrades(); // تحديث الصفوف بناءً على المرحلة
-                }
-                
-                if (data.s_grade) {
-                    document.getElementById('s_grade').value = data.s_grade;
-                    updateSubjects(); // تحديث المواد بناءً على الصف
-                }
-                
-                if (data.s_subject) {
-                    document.getElementById('s_subject').value = data.s_subject;
-                }
-                
-                // استرجاع التفضيلات
+                if (data.s_stage) { document.getElementById('s_stage').value = data.s_stage; updateGrades(); }
+                if (data.s_grade) { document.getElementById('s_grade').value = data.s_grade; updateSubjects(); }
+                if (data.s_subject) { document.getElementById('s_subject').value = data.s_subject; }
                 if (data.pref_teacher) document.getElementById(data.pref_teacher).checked = true;
                 if (data.pref_loc) document.getElementById(data.pref_loc).checked = true;
+                
+                if (data.search_radius) { 
+                    document.getElementById('search_radius').value = data.search_radius; 
+                    updateRadiusDisplay(); // تحديث النص فوراً
+                }
             }
         }
 
-        // تشغيل استرجاع البيانات عند تحميل الصفحة، وإضافة مستمعات الحفظ التلقائي
         window.onload = () => {
             loadStudentData();
-            
-            // إضافة Event Listeners للحفظ التلقائي عند أي تغيير
             document.querySelectorAll('input, select').forEach(el => {
-                el.addEventListener('input', saveStudentData);
-                el.addEventListener('change', saveStudentData);
+                if(el.id !== 'search_radius') { // مؤشر النطاق له الدالة الخاصة به فوق
+                    el.addEventListener('input', saveStudentData);
+                    el.addEventListener('change', saveStudentData);
+                }
             });
         };
 
         // ==========================================
-        // 3. منطق الخريطة الذكية والرادار الدائري
+        // 4. منطق الخريطة الذكية والرادار الدائري
         // ==========================================
         let map = null;
         let markersLayer = null;
@@ -382,7 +419,7 @@
                 navigator.geolocation.getCurrentPosition(
                     (position) => buildRadarMap(position.coords.latitude, position.coords.longitude, originalBtnHTML),
                     (error) => {
-                        // إحداثيات افتراضية (القاهرة/المنصورة) في حال رفض الـ GPS
+                        // إحداثيات افتراضية في حال رفض الـ GPS
                         buildRadarMap(31.0409, 31.3785, originalBtnHTML);
                     },
                     { enableHighAccuracy: true, timeout: 5000 }
@@ -406,7 +443,9 @@
             const center = [lat, lng];
             map.setView(center, 14);
 
-            const searchRadius = 3000; 
+            // جلب قيمة النطاق من مؤشر التحكم (بالمتر)
+            const searchRadius = parseInt(document.getElementById('search_radius').value); 
+            
             const circle = L.circle(center, {
                 color: '#10B981',      
                 weight: 3,
@@ -423,10 +462,12 @@
             });
             L.marker(center, { icon: studentIcon, interactive: false }).addTo(markersLayer);
 
+            // إرسال قيمة الرادار لإنشاء المعلمين داخل الدائرة فقط
             generateSmartTeachers(center, searchRadius);
 
             setTimeout(() => {
-                map.fitBounds(circle.getBounds(), { padding: [20, 20], maxZoom: 15 });
+                // عمل زووم ديناميكي ليحتوي الدائرة بالكامل بناءً على حجمها
+                map.fitBounds(circle.getBounds(), { padding: [20, 20], maxZoom: 16 });
                 mapWrap.scrollIntoView({ behavior: 'smooth', block: 'center' });
             }, 300);
         }
@@ -437,6 +478,7 @@
             const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked').value;
             const prefLoc = document.querySelector('input[name="pref_loc"]:checked').value;
 
+            // تحويل الراديوس من متر إلى درجات تقريباً
             const degreeRadius = radiusInMeters / 111000;
 
             const namesMr = ["أ/ محمد أحمد", "أ/ محمود طارق", "أ/ علي حسن", "أ/ إبراهيم سعيد"];
@@ -453,6 +495,7 @@
 
             pool.forEach(t => {
                 const angle = Math.random() * Math.PI * 2;
+                // ضمان وضع المدرس داخل النطاق المحدد تماماً (الدائرة)
                 const r = Math.sqrt(Math.random()) * degreeRadius; 
                 const tLat = centerPos[0] + (r * Math.cos(angle));
                 const tLng = centerPos[1] + (r * Math.sin(angle));
