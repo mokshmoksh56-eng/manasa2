@@ -331,6 +331,18 @@
 </head>
 <body>
 
+    <!-- 🌟 نافذة تنبيه توثيق الحساب عند الحظر -->
+    <div id="blockedLoginModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #D97706; max-width: 360px;">
+            <div class="modal-icon-circle" style="background: #FEF3C7; color: #D97706;">⚠️</div>
+            <h3 class="modal-title-text" style="color: #92400E;">تنبيه هامة للإدارة</h3>
+            <p class="modal-desc-text" style="color: #78350F;">
+                عذراً، هذا الحساب بانتظار تفعيل وتوثيق الحساب من إدارة المنصة. يرجى التواصل مع الإدارة لفك الحظر وتوثيق الحساب.
+            </p>
+            <button type="button" class="modal-btn" style="background: #D97706; color: #fff;" onclick="closeCustomModal('blockedLoginModal')">حسناً، فهمت</button>
+        </div>
+    </div>
+
     <div id="successModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #10B981;">
             <div class="modal-icon-circle" style="background: #D1FAE5; color: #059669;">🎉</div>
@@ -362,71 +374,71 @@
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">بوابة <span class="accent">المعلمين</span></div>
-            <p style="color: #475569; font-weight: 800; margin-top: 10px; font-size: 15px;">سجل دخولك أو أنشئ حساباً جديداً لإدارة حصصك</p>
+            <p style="color: #475569; font-weight: 800; margin-top: 10px; font-size: 15px;">سجل دخولك أو أنشئ حساباً جديداً لإدارة حصصك[span_3](start_span)[span_3](end_span)</p>
         </div>
     </section>
 
     <div id="authFormsContainer" class="auth-container">
         <div class="auth-tabs">
-            <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول</div>
-            <div class="auth-tab" id="tab-register" onclick="switchTab('register')">حساب جديد</div>
+            <div class="auth-tab active" id="tab-login" onclick="switchTab('login')">تسجيل الدخول[span_4](start_span)[span_4](end_span)</div>
+            <div class="auth-tab" id="tab-register" onclick="switchTab('register')">حساب جديد[span_5](start_span)[span_5](end_span)</div>
         </div>
 
         <div id="alertMsg" class="alert-msg"></div>
 
         <div id="loginForm">
             <div class="input-group">
-                <label class="input-label">رقم التليفون (11 رقم)</label>
+                <label class="input-label">رقم التليفون (11 رقم)[span_6](start_span)[span_6](end_span)</label>
                 <input type="tel" id="loginPhone" class="custom-input" placeholder="01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
-                <label class="input-label">الرقم السري (4 أرقام)</label>
+                <label class="input-label">الرقم السري (4 أرقام)[span_7](start_span)[span_7](end_span)</label>
                 <input type="password" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
-            <button class="btn-submit" onclick="handleLogin()">دخول</button>
+            <button class="btn-submit" onclick="handleLogin()">دخول[span_8](start_span)[span_8](end_span)</button>
         </div>
 
         <div id="registerForm" style="display: none;">
             <div class="input-group">
-                <label class="input-label">اللقب</label>
+                <label class="input-label">اللقب[span_9](start_span)[span_9](end_span)</label>
                 <div class="radio-group">
                     <label>
                         <input type="radio" name="title" value="مستر" class="radio-input" checked>
-                        <div class="radio-label"><img src="./teacher.png" alt="مستر" class="avatar-img"><span>مستر</span></div>
+                        <div class="radio-label"><img src="./teacher.png" alt="مستر" class="avatar-img"><span>مستر[span_10](start_span)[span_10](end_span)</span></div>
                     </label>
                     <label>
                         <input type="radio" name="title" value="مس" class="radio-input">
-                        <div class="radio-label"><img src="./miss.png" alt="مس" class="avatar-img"><span>مس</span></div>
+                        <div class="radio-label"><img src="./miss.png" alt="مس" class="avatar-img"><span>مس[span_11](start_span)[span_11](end_span)</span></div>
                     </label>
                 </div>
             </div>
             <div class="input-group">
-                <label class="input-label">الاسم الكامل</label>
-                <input type="text" id="regName" class="custom-input" placeholder="اكتب اسمك هنا">
+                <label class="input-label">الاسم الكامل[span_12](start_span)[span_12](end_span)</label>
+                <input type="text" id="regName" class="custom-input" placeholder="اكتب اسمك هنا[span_13](start_span)[span_13](end_span)">
             </div>
             <div class="input-group">
-                <label class="input-label">العمر</label>
+                <label class="input-label">العمر[span_14](start_span)[span_14](end_span)</label>
                 <input type="number" id="regAge" class="custom-input" placeholder="30">
             </div>
             <div class="input-group">
-                <label class="input-label">رقم التليفون (11 رقم)</label>
+                <label class="input-label">رقم التليفون (11 رقم)[span_15](start_span)[span_15](end_span)</label>
                 <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
-                <label class="input-label">الرقم السري (4 أرقام)</label>
+                <label class="input-label">الرقم السري (4 أرقام)[span_16](start_span)[span_16](end_span)</label>
                 <input type="password" id="regPassword1" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
-                <label class="input-label">تأكيد الرقم السري</label>
+                <label class="input-label">تأكيد الرقم السري[span_17](start_span)[span_17](end_span)</label>
                 <input type="password" id="regPassword2" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
-            <button class="btn-submit" onclick="handleRegister()">إنشاء حساب</button>
+            <button class="btn-submit" onclick="handleRegister()">إنشاء حساب[span_18](start_span)[span_18](end_span)</button>
         </div>
     </div>
 
     <div id="actionButtonsContainer" class="action-buttons-container" style="display: flex;">
-        <button class="btn-logout" onclick="handleLogout()">الرئيسية</button>
-        <button class="btn-delete-small" onclick="confirmDeleteAccount()">حذف الحساب</button>
+        <button class="btn-logout" onclick="handleLogout()">الرئيسية[span_19](start_span)[span_19](end_span)</button>
+        <button class="btn-delete-small" onclick="confirmDeleteAccount()">حذف الحساب[span_20](start_span)[span_20](end_span)</button>
     </div>
 
     <script>
@@ -445,7 +457,43 @@
             if (e.target.closest('button, .auth-tab, .radio-label, .modal-btn')) playHighPitchSound();
         });
 
+        // دالة تنظيف اسم المعلم من الألقاب
+        function cleanTeacherName(rawName) {
+            if (!rawName) return '';
+            return String(rawName)
+                .replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '')
+                .replace(/^\/\s*/, '')
+                .trim();
+        }
+
+        // فحص ما إذا كان الحساب محظوراً
+        function checkLoginBlocked(phone, name) {
+            const cleanName = cleanTeacherName(name);
+            if (phone && localStorage.getItem('teacherBlocked_' + phone) === 'true') return true;
+            if (cleanName && localStorage.getItem('teacherBlocked_name_' + cleanName) === 'true') return true;
+            return false;
+        }
+
+        // 🌟 الاستماع للتحديثات اللحظية من school.html عبر BroadcastChannel
+        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
+        if (authStatusChannel) {
+            authStatusChannel.onmessage = function(ev) {
+                if (ev.data && ev.data.type === 'AUTH_STATUS_CHANGED') {
+                    const phoneInput = document.getElementById('loginPhone').value.trim();
+                    if (ev.data.phone && ev.data.phone === phoneInput && ev.data.isBlocked) {
+                        document.getElementById('blockedLoginModal').classList.add('active');
+                    }
+                }
+            };
+        }
+
         window.onload = function() {
+            const loggedInTeacher = localStorage.getItem('loggedInTeacher');
+            if (loggedInTeacher) {
+                const loggedIn = JSON.parse(loggedInTeacher);
+                if (loggedIn && loggedIn.phone) localStorage.setItem('rememberedPhone', loggedIn.phone);
+                localStorage.removeItem('loggedInTeacher');
+            }
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
@@ -499,14 +547,11 @@
 
             if (localStorage.getItem('teacherAccount_' + phone)) return showAlert('هذا الرقم مسجل مسبقاً!');
 
-            const fullTeacherName = `${title} ${name}`; // 👈 دمج اللقب مع الاسم الكامل
-
-            const accountData = { title, name, fullName: fullTeacherName, age, phone, pass: pass1, createdAt: new Date().toISOString().split('T')[0] };
+            const accountData = { title, name, age, phone, pass: pass1, createdAt: new Date().toISOString().split('T')[0], isBlocked: false };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
-            localStorage.setItem('loggedInTeacher', JSON.stringify(accountData)); // 👈 حفظ بيانات المعلم الحالي لتنتقل أوتوماتيك
             localStorage.setItem('rememberedPhone', phone);
 
-            showSuccessPopup('تم إنشاء الحساب بنجاح! 🎉', `مرحباً بك يا ${fullTeacherName}`, './group.html');
+            showSuccessPopup('تم إنشاء الحساب بنجاح! 🎉', `مرحباً بك يا ${title} / ${name}`, './index2.html');
         }
 
         function handleLogin() {
@@ -520,15 +565,16 @@
             const savedData = JSON.parse(savedDataStr);
             if (savedData.pass !== pass) return showAlert('الرقم السري غير صحيح.');
 
-            // تأكد من وجود fullName أو تكوينه من اللقب والاسم
-            if (!savedData.fullName) {
-                savedData.fullName = `${savedData.title || 'مستر'} ${savedData.name || ''}`.trim();
+            // 🌟 التحقق هل الحساب محظور (بانتظار توثيق الحساب)
+            if (checkLoginBlocked(phone, savedData.name)) {
+                document.getElementById('blockedLoginModal').classList.add('active');
+                return;
             }
 
-            localStorage.setItem('loggedInTeacher', JSON.stringify(savedData)); // 👈 حفظ بيانات المعلم الحالي لتنتقل أوتوماتيك
+            localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
             localStorage.setItem('rememberedPhone', phone);
 
-            showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.fullName}`, './group.html');
+            showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.title || ''} / ${savedData.name || ''}`, './index2.html');
         }
 
         function handleLogout() { window.location.href = './index.html'; }
@@ -544,7 +590,8 @@
             const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
             if (phone) {
                 localStorage.removeItem('teacherAccount_' + phone);
-                localStorage.removeItem('loggedInTeacher');
+                localStorage.removeItem('teacherVerification_' + phone);
+                localStorage.removeItem('teacherBlocked_' + phone);
                 document.getElementById('deletedSuccessModal').classList.add('active');
                 setTimeout(() => { window.location.href = './index.html'; }, 1400);
             }
