@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>لوحة التحكم الشاملة - منصة احجزلى</title>
+    <title>لوحة التحكم والمواد الدراسية - منصة احجزلى</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -34,7 +34,7 @@
             width: 100%;
             background: linear-gradient(135deg, #0A1E3F 0%, #0F2D5C 50%, #1E40AF 100%);
             color: white;
-            padding: 28px 20px 65px;
+            padding: 25px 16px 65px;
             border-bottom-left-radius: 36px;
             border-bottom-right-radius: 36px;
             box-shadow: 0 12px 30px rgba(15, 45, 92, 0.2);
@@ -42,18 +42,12 @@
 
         .top-nav {
             max-width: 1200px;
-            margin: 0 auto 20px;
+            margin: 0 auto 15px;
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
             gap: 10px;
-        }
-
-        .nav-links {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
         }
 
         .btn-nav {
@@ -77,61 +71,74 @@
             color: var(--primary-900);
             transform: translateY(-2px);
         }
-        .btn-nav.highlight-btn {
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-            border-color: #FCD34D;
-            color: #fff;
-            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.35);
-        }
-        .btn-nav.highlight-btn:hover {
-            background: linear-gradient(135deg, #D97706, #B45309);
-            color: #fff;
-        }
 
-        /* كروت الإحصائيات */
-        .stats-container {
-            max-width: 1200px;
-            margin: -45px auto 20px;
+        /* شريط التبويبات الرئيسي للتنقل بين المعلمين والمواد */
+        .main-tabs-wrapper {
+            max-width: 700px;
+            margin: -32px auto 22px;
             padding: 0 15px;
             position: relative;
-            z-index: 10;
+            z-index: 20;
             width: 100%;
         }
+        .main-tabs {
+            background: #FFFFFF;
+            padding: 6px;
+            border-radius: 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            box-shadow: 0 12px 30px rgba(15, 45, 92, 0.12);
+            border: 2px solid #E2E8F0;
+            border-bottom: 5px solid #CBD5E1;
+        }
+        .main-tab-btn {
+            padding: 12px 10px;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 14px;
+            color: #475569;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            transition: all 0.25s ease;
+        }
+        .main-tab-btn.active {
+            background: linear-gradient(135deg, #2563EB, #0F2D5C);
+            color: #FFFFFF;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.35);
+        }
+        .main-tab-btn.active-amber {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #FFFFFF;
+            box-shadow: 0 6px 15px rgba(245, 158, 11, 0.35);
+        }
 
+        /* الكروت والإدخال */
         .stat-card {
             background: #FFFFFF;
             border-radius: 20px;
-            padding: 16px;
+            padding: 15px;
             box-shadow: 0 10px 25px -10px rgba(0,0,0,0.08);
             border: 2px solid #E2E8F0;
             border-bottom: 5px solid var(--primary-600);
             display: flex;
             align-items: center;
-            gap: 14px;
-            transition: transform 0.25s ease;
+            gap: 12px;
         }
-        .stat-card:hover { transform: translateY(-4px); }
-
         .stat-icon {
-            width: 52px;
-            height: 52px;
-            border-radius: 16px;
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
+            font-size: 24px;
             flex-shrink: 0;
-        }
-
-        /* شريط البحث والفلترة */
-        .filter-bar {
-            background: #FFFFFF;
-            border-radius: 20px;
-            padding: 16px;
-            border: 2px solid #E2E8F0;
-            border-bottom: 4px solid #CBD5E1;
-            margin-bottom: 20px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
         }
 
         .form-input {
@@ -153,33 +160,76 @@
             box-shadow: 0 0 0 3px #DBEAFE;
         }
 
-        /* شارات مستر ومس */
-        .badge-mr {
-            background: #DBEAFE;
-            color: #1E40AF;
-            border: 1.5px solid #93C5FD;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .badge-ms {
-            background: #FCE7F3;
-            color: #9D174D;
-            border: 1.5px solid #F9A8D4;
-            padding: 3px 10px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+        /* كروت المراحل والمواد */
+        .stage-card {
+            background: #FFFFFF;
+            border-radius: 24px;
+            border: 2px solid #E2E8F0;
+            border-top: 5px solid #2563EB;
+            border-bottom: 6px solid #334155;
+            padding: 20px;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.08);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        /* كارت بيانات المعلم والدرس */
+        .item-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 900;
+            transition: all 0.2s;
+        }
+        .grade-tag {
+            background: #EFF6FF;
+            color: #1E40AF;
+            border: 1.5px solid #BFDBFE;
+            border-bottom: 3px solid #93C5FD;
+        }
+        .subj-tag {
+            background: #ECFDF5;
+            color: #065F46;
+            border: 1.5px solid #A7F3D0;
+            border-bottom: 3px solid #6EE7B7;
+        }
+
+        .del-tag-btn {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: #FEE2E2;
+            color: #DC2626;
+            border: 1px solid #FECACA;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .del-tag-btn:hover {
+            background: #EF4444;
+            color: #FFFFFF;
+            transform: scale(1.15);
+        }
+
+        /* شارات مستر ومس */
+        .badge-mr {
+            background: #DBEAFE; color: #1E40AF; border: 1.5px solid #93C5FD;
+            padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 900;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+        .badge-ms {
+            background: #FCE7F3; color: #9D174D; border: 1.5px solid #F9A8D4;
+            padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 900;
+            display: inline-flex; align-items: center; gap: 4px;
+        }
+
         .record-card {
             background: #FFFFFF;
             border-radius: 22px;
@@ -187,16 +237,9 @@
             border-bottom: 6px solid #334155;
             padding: 18px;
             box-shadow: 0 10px 25px -12px rgba(0,0,0,0.08);
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
         }
         .record-card.is-mr { border-top: 5px solid #2563EB; }
         .record-card.is-ms { border-top: 5px solid #EC4899; }
-        .record-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
-        }
 
         .info-pill {
             background: #F8FAFC;
@@ -211,17 +254,12 @@
             gap: 8px;
             line-height: 1.5;
         }
-        .info-pill .label {
-            color: #64748B;
-            font-weight: 900;
-            white-space: nowrap;
-        }
+        .info-pill .label { color: #64748B; font-weight: 900; white-space: nowrap; }
 
-        /* أزرار الإجراءات */
         .action-chip {
-            padding: 7px 12px;
+            padding: 8px 14px;
             border-radius: 10px;
-            font-size: 12px;
+            font-size: 12.5px;
             font-weight: 900;
             display: inline-flex;
             align-items: center;
@@ -249,14 +287,11 @@
             transition: all 0.25s ease;
             padding: 15px;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
         .modal-box {
             background: #FFFFFF;
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
             border-radius: 24px;
             padding: 22px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.25);
@@ -281,11 +316,9 @@
             opacity: 0;
             border-bottom: 3px solid #059669;
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+            white-space: nowrap;
         }
-        .custom-toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
     </style>
 </head>
 <body>
@@ -299,116 +332,207 @@
             <div class="flex items-center gap-3">
                 <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg">🛡️</div>
                 <div>
-                    <h1 class="text-xl md:text-2xl font-black tracking-tight">لوحة تحكم <span class="text-amber-400">احجزلى</span></h1>
-                    <p class="text-xs text-slate-300 font-bold">إدارة المعلمين (مستر / مس)، التليفونات، المواعيد، والعناوين الفعلية</p>
+                    <h1 class="text-xl md:text-2xl font-black tracking-tight">إدارة تطبيق <span class="text-amber-400">احجزلى</span></h1>
+                    <p class="text-xs text-slate-300 font-bold">التحكم في المواد والصفوف الدراسية وبيانات المعلمين والدروس</p>
                 </div>
             </div>
 
-            <div class="nav-links">
-                <a href="./subjects.html" class="btn-nav highlight-btn">
-                    📚 التحكم في المراحل والمواد الدراسية
-                </a>
-                <button onclick="openAddRecordModal()" class="btn-nav" style="background: rgba(16, 185, 129, 0.25); border-color: #34D399;">
-                    ➕ إضافة معلم / درس
-                </button>
+            <div class="flex flex-wrap gap-2">
+                <a href="./group.html" class="btn-nav">⚙️ إعداد مجموعة</a>
                 <a href="./index2.html" class="btn-nav">📋 مجموعات المعلم</a>
+                <a href="./talep.html" class="btn-nav">🎒 صفحة الطالب</a>
                 <a href="./index.html" class="btn-nav">🏠 الرئيسية</a>
             </div>
         </div>
     </header>
 
-    <!-- كروت الإحصائيات السريعة -->
-    <section class="stats-container">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
-            <div class="stat-card" style="border-bottom-color: #2563EB;">
-                <div class="stat-icon bg-blue-100 text-blue-700">👨‍🏫</div>
-                <div>
-                    <div class="text-xs font-extrabold text-slate-400">عدد المستر (ذكور)</div>
-                    <div id="statMrCount" class="text-2xl font-black text-slate-800">0</div>
-                </div>
-            </div>
-
-            <div class="stat-card" style="border-bottom-color: #EC4899;">
-                <div class="stat-icon bg-pink-100 text-pink-600">👩‍🏫</div>
-                <div>
-                    <div class="text-xs font-extrabold text-slate-400">عدد المس (إناث)</div>
-                    <div id="statMsCount" class="text-2xl font-black text-slate-800">0</div>
-                </div>
-            </div>
-
-            <div class="stat-card" style="border-bottom-color: #10B981;">
-                <div class="stat-icon bg-emerald-100 text-emerald-700">📍</div>
-                <div>
-                    <div class="text-xs font-extrabold text-slate-400">إجمالي الدروس المسجلة</div>
-                    <div id="statLessonsCount" class="text-2xl font-black text-slate-800">0</div>
-                </div>
-            </div>
-
-            <div class="stat-card" style="border-bottom-color: #F59E0B;">
-                <div class="stat-icon bg-amber-100 text-amber-600">🎓</div>
-                <div>
-                    <div class="text-xs font-extrabold text-slate-400">حسابات المعلمين</div>
-                    <div id="statAccountsCount" class="text-2xl font-black text-slate-800">0</div>
-                </div>
-            </div>
+    <!-- شريط التبديل بين (التحكم في المواد والصفوف) و (بيانات المعلمين والدروس) -->
+    <div class="main-tabs-wrapper">
+        <div class="main-tabs">
+            <button id="tabBtnCurriculum" onclick="switchMainSection('curriculum')" class="main-tab-btn active-amber">
+                <span>📚</span> التحكم في المواد والصفوف
+            </button>
+            <button id="tabBtnTeachers" onclick="switchMainSection('teachers')" class="main-tab-btn">
+                <span>👨‍🏫</span> بيانات المعلمين والدروس
+            </button>
         </div>
-    </section>
+    </div>
 
-    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
-        
-        <!-- شريط البحث والفلترة -->
-        <div class="filter-bar">
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-black text-slate-600 mb-1">🔍 بحث شامل (الاسم، رقم التليفون، العنوان، المادة)</label>
-                    <input type="text" id="searchInput" oninput="renderAllRecords()" class="form-input" placeholder="ابحث باسم المستر/المس أو رقم التليفون أو الشارع...">
+
+        <!-- ======================================================= -->
+        <!-- ✅ القسم الأول: التحكم في المراحل والصفوف والمواد الدراسية -->
+        <!-- ======================================================= -->
+        <section id="sectionCurriculum">
+            
+            <!-- شريط إحصائيات المناهج + إضافة مرحلة جديدة -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-6">
+                
+                <!-- صندوق إضافة مرحلة دراسية جديدة -->
+                <div class="lg:col-span-2 bg-white rounded-3xl p-5 border-2 border-amber-300 border-b-4 border-b-amber-500 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                        <h2 class="text-base font-black text-slate-800 flex items-center gap-2">
+                            <span>➕</span> زيادة مرحلة دراسية جديدة
+                        </h2>
+                        <button onclick="openResetCurriculumModal()" class="text-xs font-black text-rose-600 bg-rose-50 hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-xl border border-rose-200 transition">
+                            🔄 استعادة المواد الافتراضية
+                        </button>
+                    </div>
+                    <div class="flex flex-col sm:flex-row gap-2.5">
+                        <select id="newStageEmoji" class="form-input sm:w-32 text-center cursor-pointer">
+                            <option value="🎒">🎒 ابتدائي</option>
+                            <option value="📐">📐 إعدادي</option>
+                            <option value="🎓">🎓 ثانوي</option>
+                            <option value="🧸">🧸 رياض أطفال</option>
+                            <option value="🕌">🕌 أزهري</option>
+                            <option value="🌍">🌍 لغات</option>
+                            <option value="🏛️">🏛️ جامعي</option>
+                        </select>
+                        <input type="text" id="newStageName" class="form-input flex-1" placeholder="اسم المرحلة الجديدة (مثال: المرحلة الأزهرية أو KG)..." onkeypress="if(event.key==='Enter') addNewStage()">
+                        <button onclick="addNewStage()" class="action-chip bg-amber-500 hover:bg-amber-600 text-white px-5 py-3 text-sm border-b-4 border-amber-700">
+                            ➕ إضافة المرحلة
+                        </button>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-black text-slate-600 mb-1">👤 فلترة حسب اللقب</label>
-                    <select id="filterTitle" onchange="renderAllRecords()" class="form-input cursor-pointer">
-                        <option value="all">الكل (مستر + مس)</option>
-                        <option value="مستر">👨‍🏫 مستر فقط</option>
-                        <option value="مس">👩‍🏫 مس فقط</option>
-                    </select>
+                <!-- معاينة فورية للقوائم كما تظهر للمستر والطالب -->
+                <div class="bg-white rounded-3xl p-5 border-2 border-emerald-300 border-b-4 border-b-emerald-600 shadow-sm">
+                    <h2 class="text-sm font-black text-emerald-900 mb-2 flex items-center gap-1.5">
+                        <span>👁️</span> معاينة القوائم بعد التعديل
+                    </h2>
+                    <div class="space-y-2">
+                        <select id="previewStage" onchange="updatePreviewDropdowns()" class="form-input text-xs py-2"></select>
+                        <div class="grid grid-cols-2 gap-2">
+                            <select id="previewGrade" class="form-input text-xs py-2"></select>
+                            <select id="previewSubject" class="form-input text-xs py-2"></select>
+                        </div>
+                    </div>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-black text-slate-600 mb-1">👑 فلترة حسب الصف الدراسي</label>
-                    <select id="filterGrade" onchange="renderAllRecords()" class="form-input cursor-pointer">
-                        <option value="all">جميع الصفوف الدراسية</option>
-                    </select>
+            </div>
+
+            <!-- شبكة المراحل الدراسية (إضافة وإلغاء الصفوف والمواد) -->
+            <div id="stagesContainer" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+
+        </section>
+
+
+        <!-- ======================================================= -->
+        <!-- ✅ القسم الثاني: سجل المعلمين (مستر/مس) والدروس والعناوين -->
+        <!-- ======================================================= -->
+        <section id="sectionTeachers" style="display: none;">
+            
+            <!-- إحصائيات المعلمين -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+                <div class="stat-card" style="border-bottom-color: #2563EB;">
+                    <div class="stat-icon bg-blue-100 text-blue-700">👨‍🏫</div>
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-400">عدد المستر</div>
+                        <div id="statMrCount" class="text-2xl font-black text-slate-800">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-bottom-color: #EC4899;">
+                    <div class="stat-icon bg-pink-100 text-pink-600">👩‍🏫</div>
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-400">عدد المس</div>
+                        <div id="statMsCount" class="text-2xl font-black text-slate-800">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-bottom-color: #10B981;">
+                    <div class="stat-icon bg-emerald-100 text-emerald-700">📍</div>
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-400">الدروس المسجلة</div>
+                        <div id="statLessonsCount" class="text-2xl font-black text-slate-800">0</div>
+                    </div>
+                </div>
+
+                <div class="stat-card" style="border-bottom-color: #F59E0B;">
+                    <div class="stat-icon bg-amber-100 text-amber-600">🎓</div>
+                    <div>
+                        <div class="text-xs font-extrabold text-slate-400">حسابات المعلمين</div>
+                        <div id="statAccountsCount" class="text-2xl font-black text-slate-800">0</div>
+                    </div>
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-slate-100">
-                <div class="text-xs font-extrabold text-slate-500">
-                    📊 النتائج المعروضة: <span id="resultsCounter" class="text-blue-600 font-black">0</span> سجل
+            <!-- شريط البحث والفلترة -->
+            <div class="bg-white rounded-2xl p-4 border-2 border-slate-200 border-b-4 border-b-slate-300 mb-5">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs font-black text-slate-600 mb-1">🔍 بحث (الاسم، التليفون، العنوان، المادة)</label>
+                        <input type="text" id="searchInput" oninput="renderAllRecords()" class="form-input" placeholder="ابحث باسم المستر/المس أو رقم التليفون أو العنوان...">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black text-slate-600 mb-1">👤 اللقب (مستر / مس)</label>
+                        <select id="filterTitle" onchange="renderAllRecords()" class="form-input cursor-pointer">
+                            <option value="all">الكل (مستر + مس)</option>
+                            <option value="مستر">👨‍🏫 مستر فقط</option>
+                            <option value="مس">👩‍🏫 مس فقط</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-black text-slate-600 mb-1">👑 الصف الدراسي</label>
+                        <select id="filterGrade" onchange="renderAllRecords()" class="form-input cursor-pointer">
+                            <option value="all">جميع الصفوف الدراسية</option>
+                        </select>
+                    </div>
                 </div>
-                <div class="flex flex-wrap gap-2">
-                    <button onclick="exportToCSV()" class="action-chip bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white">
-                        📥 تصدير جدول Excel (CSV)
-                    </button>
-                    <a href="./subjects.html" class="action-chip bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-500 hover:text-white">
-                        ⚙️ إدارة المراحل والمواد
-                    </a>
+
+                <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-slate-100">
+                    <div class="text-xs font-extrabold text-slate-500">
+                        📊 السجلات المطابقة: <span id="resultsCounter" class="text-blue-600 font-black">0</span>
+                    </div>
+                    <div class="flex flex-wrap gap-2">
+                        <button onclick="openAddRecordModal()" class="action-chip bg-blue-600 text-white">
+                            ➕ إضافة معلم / درس جديد
+                        </button>
+                        <button onclick="exportToCSV()" class="action-chip bg-emerald-50 text-emerald-700 border border-emerald-200 hover:bg-emerald-600 hover:text-white">
+                            📥 تصدير Excel (CSV)
+                        </button>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- قائمة كروت المعلمين والدروس -->
-        <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
+            <!-- كروت المعلمين والدروس -->
+            <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل على الجهاز (إن وجد) -->
-        <div id="studentInfoSection" class="mt-8 hidden">
-            <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
-                <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
-            </h2>
-            <div id="studentInfoCard" class="bg-white rounded-2xl p-4 border-2 border-emerald-200 shadow-sm"></div>
-        </div>
+        </section>
 
     </main>
+
+    <!-- ======================================================= -->
+    <!-- ✅ النوافذ المنبثقة المخصصة (تعمل على الموبايل والـ APK) -->
+    <!-- ======================================================= -->
+
+    <!-- نافذة تأكيد عامة (لإلغاء مادة أو صف أو مرحلة أو سجل) -->
+    <div id="confirmActionModal" class="modal-overlay" onclick="closeModal('confirmActionModal')">
+        <div class="modal-box text-center" style="max-width: 360px; border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
+            <div class="w-16 h-16 rounded-full bg-rose-100 text-rose-600 flex items-center justify-center text-3xl mx-auto mb-3">🗑️</div>
+            <h3 id="confirmModalTitle" class="text-lg font-black text-rose-900 mb-1">تأكيد الإلغاء</h3>
+            <p id="confirmModalDesc" class="text-xs font-bold text-slate-600 mb-5 leading-relaxed">هل أنت متأكد من الحذف؟</p>
+            <div class="flex gap-2">
+                <button onclick="closeModal('confirmActionModal')" class="action-chip flex-1 bg-slate-200 text-slate-700 py-2.5">تراجع</button>
+                <button id="confirmModalExecBtn" class="action-chip flex-1 bg-rose-600 text-white py-2.5">نعم، إلغاء وحذف</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تعديل اسم مرحلة دراسية -->
+    <div id="renameStageModal" class="modal-overlay" onclick="closeModal('renameStageModal')">
+        <div class="modal-box text-center" style="max-width: 380px;" onclick="event.stopPropagation()">
+            <h3 class="text-lg font-black text-slate-800 mb-3">✏️ تعديل اسم المرحلة الدراسية</h3>
+            <input type="hidden" id="renameStageKeyInput">
+            <input type="text" id="renameStageTextInput" class="form-input text-center mb-4" placeholder="اكتب الاسم الجديد للمرحلة...">
+            <div class="flex gap-2">
+                <button onclick="closeModal('renameStageModal')" class="action-chip flex-1 bg-slate-200 text-slate-700 py-2.5">إلغاء</button>
+                <button onclick="confirmRenameStage()" class="action-chip flex-1 bg-blue-600 text-white py-2.5">💾 حفظ الاسم</button>
+            </div>
+        </div>
+    </div>
 
     <!-- نافذة عرض الموقع الفعلي للدرس على الخريطة -->
     <div id="mapModal" class="modal-overlay" onclick="closeModal('mapModal')">
@@ -421,14 +545,14 @@
             <div id="adminLeafletMap" class="w-full h-64 rounded-2xl border-2 border-slate-300 overflow-hidden mb-3"></div>
             <div class="flex gap-2">
                 <a id="googleMapsExternalLink" href="#" target="_blank" class="action-chip flex-1 bg-blue-600 text-white py-2.5">
-                    🗺️ فتح في خرائط جوجل (Google Maps)
+                    🗺️ فتح في خرائط جوجل
                 </a>
                 <button onclick="closeModal('mapModal')" class="action-chip bg-slate-200 text-slate-700 px-5 py-2.5">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- نافذة إضافة / تعديل بيانات معلم ودرس كامل -->
+    <!-- نافذة إضافة / تعديل بيانات معلم ودرس -->
     <div id="editRecordModal" class="modal-overlay" onclick="closeModal('editRecordModal')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -437,7 +561,6 @@
             </div>
 
             <input type="hidden" id="editLessonId">
-            <input type="hidden" id="editOriginalPhone">
 
             <div class="space-y-3">
                 <div class="grid grid-cols-2 gap-3">
@@ -493,7 +616,7 @@
 
                 <div>
                     <label class="block text-xs font-black text-slate-700 mb-1">📍 العنوان الفعلي التفصيلي للدرس</label>
-                    <input type="text" id="formAddress" class="form-input" placeholder="المحافظة - المدينة - الشارع - بجوار...">
+                    <input type="text" id="formAddress" class="form-input" placeholder="المحافظة - المدينة - الشارع...">
                 </div>
             </div>
 
@@ -510,7 +633,7 @@
 
     <script>
         // ==========================================
-        // 1. تأثير الصوت عند الضغط
+        // 1. تأثير الصوت والإشعارات والنوافذ
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
@@ -525,47 +648,340 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
         document.addEventListener('click', e => {
-            if (e.target.closest('button, a, select')) playClickSound();
+            if (e.target.closest('button, a, select, .del-tag-btn')) playClickSound();
         });
 
         function showToast(msg) {
             const t = document.getElementById('toastMsg');
             t.textContent = msg;
             t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            setTimeout(() => t.classList.remove('show'), 2800);
         }
 
         function closeModal(id) {
             document.getElementById(id).classList.remove('active');
         }
 
-        // ==========================================
-        // 2. قراءة المنهج الدراسي الموحد (app_curriculum)
-        // ==========================================
-        const defaultCurriculum = {
-            primary: { name: '🎒 المرحلة الابتدائية', grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم'] },
-            prep: { name: '📐 المرحلة الإعدادية', grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
-            secondary: { name: '🎓 المرحلة الثانوية', grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات'] }
-        };
+        function openConfirmModal(title, desc, onConfirmCallback) {
+            document.getElementById('confirmModalTitle').textContent = title;
+            document.getElementById('confirmModalDesc').textContent = desc;
+            const btn = document.getElementById('confirmModalExecBtn');
+            btn.onclick = () => {
+                closeModal('confirmActionModal');
+                onConfirmCallback();
+            };
+            document.getElementById('confirmActionModal').classList.add('active');
+        }
 
-        function getCurriculum() {
-            try {
-                const saved = localStorage.getItem('app_curriculum');
-                if (saved) return JSON.parse(saved);
-            } catch (e) {}
-            localStorage.setItem('app_curriculum', JSON.stringify(defaultCurriculum));
-            return defaultCurriculum;
+        // التبديل بين تبويب المواد وتبويب المعلمين
+        function switchMainSection(sec) {
+            const secCurr = document.getElementById('sectionCurriculum');
+            const secTeach = document.getElementById('sectionTeachers');
+            const btnCurr = document.getElementById('tabBtnCurriculum');
+            const btnTeach = document.getElementById('tabBtnTeachers');
+
+            if (sec === 'curriculum') {
+                secCurr.style.display = 'block';
+                secTeach.style.display = 'none';
+                btnCurr.className = 'main-tab-btn active-amber';
+                btnTeach.className = 'main-tab-btn';
+                renderStages();
+                populatePreview();
+            } else {
+                secCurr.style.display = 'none';
+                secTeach.style.display = 'block';
+                btnCurr.className = 'main-tab-btn';
+                btnTeach.className = 'main-tab-btn active';
+                populateGradeFilter();
+                renderAllRecords();
+            }
         }
 
         // ==========================================
-        // 3. تجميع ودمج بيانات المعلمين والدروس من localStorage
+        // 2. إدارة المراحل والصفوف والمواد الدراسية (زيادة وإلغاء)
+        // ==========================================
+        const defaultCurriculum = {
+            primary: {
+                name: '🎒 المرحلة الابتدائية',
+                grades: ['الأول الابتدائي', 'الثاني الابتدائي', 'الثالث الابتدائي', 'الرابع الابتدائي', 'الخامس الابتدائي', 'السادس الابتدائي'],
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'تربية دينية', 'مهارات مهنية', 'تكنولوجيا المعلومات']
+            },
+            prep: {
+                name: '📐 المرحلة الإعدادية',
+                grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'فرنساوي', 'ألماني', 'حاسب آلي']
+            },
+            secondary: {
+                name: '🎓 المرحلة الثانوية',
+                grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                subjs: ['عربي', 'إنجليزي', 'فرنساوي', 'ألماني', 'إيطالي', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات بحتة', 'رياضيات تطبيقية', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+            }
+        };
+
+        let curriculumData = {};
+
+        function loadCurriculum() {
+            try {
+                const saved = localStorage.getItem('app_curriculum');
+                if (saved) {
+                    curriculumData = JSON.parse(saved);
+                    if (curriculumData.primary && !curriculumData.primary.name) curriculumData.primary.name = '🎒 المرحلة الابتدائية';
+                    if (curriculumData.prep && !curriculumData.prep.name) curriculumData.prep.name = '📐 المرحلة الإعدادية';
+                    if (curriculumData.secondary && !curriculumData.secondary.name) curriculumData.secondary.name = '🎓 المرحلة الثانوية';
+                    return;
+                }
+            } catch (e) {}
+            curriculumData = JSON.parse(JSON.stringify(defaultCurriculum));
+            saveCurriculum();
+        }
+
+        function saveCurriculum() {
+            localStorage.setItem('app_curriculum', JSON.stringify(curriculumData));
+            renderStages();
+            populatePreview();
+            populateGradeFilter();
+        }
+
+        function renderStages() {
+            const container = document.getElementById('stagesContainer');
+            const keys = Object.keys(curriculumData);
+
+            container.innerHTML = keys.map(stageKey => {
+                const st = curriculumData[stageKey];
+                
+                const gradesHTML = (st.grades || []).map((g, gIdx) => `
+                    <span class="item-tag grade-tag">
+                        <span>👑 ${g}</span>
+                        <button type="button" class="del-tag-btn" onclick="removeGrade('${stageKey}', ${gIdx})" title="إلغاء هذا الصف">✕</button>
+                    </span>
+                `).join('');
+
+                const subjsHTML = (st.subjs || []).map((s, sIdx) => `
+                    <span class="item-tag subj-tag">
+                        <span>📖 ${s}</span>
+                        <button type="button" class="del-tag-btn" onclick="removeSubject('${stageKey}', ${sIdx})" title="إلغاء هذه المادة">✕</button>
+                    </span>
+                `).join('');
+
+                return `
+                    <div class="stage-card">
+                        <div>
+                            <!-- عنوان المرحلة وأزرار التعديل والحذف -->
+                            <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-4 border-b-2 border-dashed border-slate-200">
+                                <h3 class="text-lg font-black text-slate-800">${st.name || stageKey}</h3>
+                                <div class="flex items-center gap-1.5">
+                                    <button onclick="openRenameStageModal('${stageKey}')" class="text-xs font-black px-3 py-1.5 rounded-xl bg-blue-50 text-blue-700 hover:bg-blue-600 hover:text-white transition">
+                                        ✏️ تعديل الاسم
+                                    </button>
+                                    <button onclick="deleteStage('${stageKey}')" class="text-xs font-black px-3 py-1.5 rounded-xl bg-rose-50 text-rose-600 hover:bg-rose-600 hover:text-white transition">
+                                        🗑️ إلغاء المرحلة
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 1. قسم الصفوف الدراسية (زيادة وإلغاء) -->
+                            <div class="mb-5 bg-slate-50/80 p-3.5 rounded-2xl border border-slate-200">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-black text-blue-900">👑 الصفوف الدراسية (${(st.grades || []).length})</span>
+                                    <span class="text-[11px] font-bold text-slate-400">اضغط ✕ لإلغاء أي صف</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mb-3">
+                                    ${gradesHTML || '<span class="text-xs text-rose-500 font-extrabold">لا توجد صفوف حالياً — أضف صفاً بالأسفل</span>'}
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="inputGrade_${stageKey}" class="form-input text-xs py-2 bg-white" placeholder="اكتب اسم الصف الجديد (مثال: الرابع الابتدائي)..." onkeypress="if(event.key==='Enter') addGrade('${stageKey}')">
+                                    <button onclick="addGrade('${stageKey}')" class="action-chip bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 text-xs whitespace-nowrap">
+                                        + زيادة صف
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 2. قسم المواد الدراسية (زيادة وإلغاء) -->
+                            <div class="bg-emerald-50/50 p-3.5 rounded-2xl border border-emerald-200">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="text-xs font-black text-emerald-900">📚 المواد الدراسية (${(st.subjs || []).length})</span>
+                                    <span class="text-[11px] font-bold text-slate-400">اضغط ✕ لإلغاء أي مادة</span>
+                                </div>
+                                <div class="flex flex-wrap gap-2 mb-3">
+                                    ${subjsHTML || '<span class="text-xs text-rose-500 font-extrabold">لا توجد مواد حالياً — أضف مادة بالأسفل</span>'}
+                                </div>
+                                <div class="flex gap-2">
+                                    <input type="text" id="inputSubj_${stageKey}" class="form-input text-xs py-2 bg-white" placeholder="اكتب اسم المادة الجديدة (مثال: فرنساوي، كيمياء)..." onkeypress="if(event.key==='Enter') addSubjectToStage('${stageKey}')">
+                                    <button onclick="addSubjectToStage('${stageKey}')" class="action-chip bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 text-xs whitespace-nowrap">
+                                        + زيادة مادة
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // زيادة مرحلة جديدة
+        function addNewStage() {
+            const emoji = document.getElementById('newStageEmoji').value;
+            const inp = document.getElementById('newStageName');
+            const name = inp.value.trim();
+            if (!name) {
+                showToast('⚠️ اكتب اسم المرحلة الدراسية أولاً');
+                return;
+            }
+            const key = 'stage_' + Date.now();
+            curriculumData[key] = {
+                name: `${emoji} ${name}`,
+                grades: ['الصف الأول', 'الصف الثاني'],
+                subjs: ['عربي', 'إنجليزي', 'رياضيات']
+            };
+            inp.value = '';
+            saveCurriculum();
+            showToast(`🎉 تمت زيادة "${name}" بنجاح`);
+        }
+
+        // تعديل اسم المرحلة بنافذة مخصصة
+        function openRenameStageModal(stageKey) {
+            document.getElementById('renameStageKeyInput').value = stageKey;
+            document.getElementById('renameStageTextInput').value = curriculumData[stageKey].name || '';
+            document.getElementById('renameStageModal').classList.add('active');
+        }
+
+        function confirmRenameStage() {
+            const key = document.getElementById('renameStageKeyInput').value;
+            const newName = document.getElementById('renameStageTextInput').value.trim();
+            if (key && newName && curriculumData[key]) {
+                curriculumData[key].name = newName;
+                saveCurriculum();
+                closeModal('renameStageModal');
+                showToast('✏️ تم تعديل اسم المرحلة بنجاح');
+            }
+        }
+
+        // إلغاء مرحلة كاملة
+        function deleteStage(stageKey) {
+            if (Object.keys(curriculumData).length <= 1) {
+                showToast('⚠️ يجب الإبقاء على مرحلة دراسية واحدة على الأقل');
+                return;
+            }
+            const stName = curriculumData[stageKey].name;
+            openConfirmModal(
+                'إلغاء المرحلة الدراسية',
+                `هل أنت متأكد من إلغاء "${stName}" بكل ما فيها من صفوف ومواد؟`,
+                () => {
+                    delete curriculumData[stageKey];
+                    saveCurriculum();
+                    showToast('🗑️ تم إلغاء المرحلة الدراسية');
+                }
+            );
+        }
+
+        // زيادة صف دراسي
+        function addGrade(stageKey) {
+            const inp = document.getElementById('inputGrade_' + stageKey);
+            const val = inp.value.trim();
+            if (!val) {
+                showToast('⚠️ اكتب اسم الصف الدراسي أولاً');
+                return;
+            }
+            if (!curriculumData[stageKey].grades.includes(val)) {
+                curriculumData[stageKey].grades.push(val);
+                inp.value = '';
+                saveCurriculum();
+                showToast(`👑 تمت زيادة الصف "${val}"`);
+            } else {
+                showToast('⚠️ هذا الصف موجود بالفعل في هذه المرحلة');
+            }
+        }
+
+        // إلغاء صف دراسي
+        function removeGrade(stageKey, idx) {
+            const gradeName = curriculumData[stageKey].grades[idx];
+            openConfirmModal(
+                'إلغاء صف دراسي',
+                `هل تريد إلغاء الصف "${gradeName}" من ${curriculumData[stageKey].name}؟`,
+                () => {
+                    curriculumData[stageKey].grades.splice(idx, 1);
+                    saveCurriculum();
+                    showToast(`🗑️ تم إلغاء الصف "${gradeName}"`);
+                }
+            );
+        }
+
+        // زيادة مادة دراسية
+        function addSubjectToStage(stageKey) {
+            const inp = document.getElementById('inputSubj_' + stageKey);
+            const val = inp.value.trim();
+            if (!val) {
+                showToast('⚠️ اكتب اسم المادة الدراسية أولاً');
+                return;
+            }
+            if (!curriculumData[stageKey].subjs.includes(val)) {
+                curriculumData[stageKey].subjs.push(val);
+                inp.value = '';
+                saveCurriculum();
+                showToast(`📚 تمت زيادة مادة "${val}"`);
+            } else {
+                showToast('⚠️ هذه المادة موجودة بالفعل في هذه المرحلة');
+            }
+        }
+
+        // إلغاء مادة دراسية
+        function removeSubject(stageKey, idx) {
+            const subjName = curriculumData[stageKey].subjs[idx];
+            openConfirmModal(
+                'إلغاء مادة دراسية',
+                `هل تريد إلغاء مادة "${subjName}" من ${curriculumData[stageKey].name}؟`,
+                () => {
+                    curriculumData[stageKey].subjs.splice(idx, 1);
+                    saveCurriculum();
+                    showToast(`🗑️ تم إلغاء مادة "${subjName}"`);
+                }
+            );
+        }
+
+        // استعادة المواد والصفوف الافتراضية
+        function openResetCurriculumModal() {
+            openConfirmModal(
+                'استعادة المواد الافتراضية',
+                'هل تريد إعادة جميع المراحل والصفوف والمواد الدراسية للوضع الافتراضي؟',
+                () => {
+                    curriculumData = JSON.parse(JSON.stringify(defaultCurriculum));
+                    saveCurriculum();
+                    showToast('🔄 تمت استعادة المواد والصفوف الافتراضية');
+                }
+            );
+        }
+
+        // المعاينة الحية للقوائم
+        function populatePreview() {
+            const pStage = document.getElementById('previewStage');
+            if (!pStage) return;
+            pStage.innerHTML = '';
+            Object.keys(curriculumData).forEach(k => {
+                pStage.innerHTML += `<option value="${k}">${curriculumData[k].name}</option>`;
+            });
+            updatePreviewDropdowns();
+        }
+
+        function updatePreviewDropdowns() {
+            const k = document.getElementById('previewStage').value;
+            const pGrade = document.getElementById('previewGrade');
+            const pSubj = document.getElementById('previewSubject');
+            pGrade.innerHTML = '';
+            pSubj.innerHTML = '';
+            if (curriculumData[k]) {
+                curriculumData[k].grades.forEach(g => pGrade.innerHTML += `<option>${g}</option>`);
+                curriculumData[k].subjs.forEach(s => pSubj.innerHTML += `<option>${s}</option>`);
+            }
+        }
+
+        // ==========================================
+        // 3. إدارة بيانات المعلمين (مستر / مس) والدروس والعناوين
         // ==========================================
         function collectAllAppData() {
             const teacherAccounts = [];
             const lessonsList = [];
             const todayISO = new Date().toISOString().split('T')[0];
 
-            // أ) جمع حسابات المعلمين المسجلة في login.html
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('teacherAccount_')) {
@@ -580,7 +996,6 @@
                 }
             }
 
-            // فحص loggedInTeacher أيضاً في حال وجوده
             const loggedStr = localStorage.getItem('loggedInTeacher');
             let defaultTeacher = teacherAccounts[0] || null;
             if (loggedStr) {
@@ -593,7 +1008,6 @@
                 } catch (e) {}
             }
 
-            // ب) جمع جميع المجموعات والدروس المسجلة في group.html / index2.html
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('lessonState_')) {
@@ -605,7 +1019,6 @@
                             localStorage.setItem(key, JSON.stringify(state));
                         }
 
-                        // محاولة مطابقة المعلم صاحب المجموعة مع حسابه لمعرفة (مستر/مس) ورقم التليفون
                         const matchedAcc = teacherAccounts.find(a => 
                             (state.g_teacher && a.name && state.g_teacher.trim() === a.name.trim()) ||
                             (state.g_phone && a.phone === state.g_phone)
@@ -631,7 +1044,6 @@
                             lessonId: lessonId,
                             title: title,
                             teacherName: teacherName,
-                            age: matchedAcc.age || '--',
                             phone: phone,
                             regDate: regDate,
                             groupName: state.g_name || `مجموعة رقم ${lessonId}`,
@@ -642,7 +1054,6 @@
                             locType: locTypeLabel,
                             address: state.m_address || 'لم يتم تحديد العنوان الفعلي بعد',
                             days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
-                            months: Array.isArray(state.g_months) && state.g_months.length ? state.g_months.join('، ') : 'غير محدد',
                             timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
                             timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
                             maxStudents: state.g_count || '--',
@@ -654,7 +1065,6 @@
                 }
             }
 
-            // ج) إضافة المعلمين الذين سجلوا حساباً في login.html ولم ينشئوا مجموعة بعد
             teacherAccounts.forEach(acc => {
                 const hasLesson = lessonsList.some(l => l.phone === acc.phone || l.teacherName === acc.name);
                 if (!hasLesson) {
@@ -663,7 +1073,6 @@
                         lessonId: null,
                         title: acc.title || 'مستر',
                         teacherName: acc.name || 'بدون اسم',
-                        age: acc.age || '--',
                         phone: acc.phone || 'غير مسجل',
                         regDate: acc.createdAt || todayISO,
                         groupName: 'لم يُنشئ مجموعة بعد',
@@ -674,7 +1083,6 @@
                         locType: '--',
                         address: 'لم يتم إدخال عنوان الدرس بعد',
                         days: '--',
-                        months: '--',
                         timeFrom: '--',
                         timeTo: '--',
                         maxStudents: '--',
@@ -688,15 +1096,12 @@
             return { records: lessonsList, teacherAccounts };
         }
 
-        // ==========================================
-        // 4. عرض الكروت والإحصائيات والفلاتر
-        // ==========================================
         function populateGradeFilter() {
-            const curr = getCurriculum();
             const gradeSelect = document.getElementById('filterGrade');
+            if (!gradeSelect) return;
             const currentVal = gradeSelect.value;
             let allGrades = new Set();
-            Object.values(curr).forEach(stageObj => {
+            Object.values(curriculumData).forEach(stageObj => {
                 (stageObj.grades || []).forEach(g => allGrades.add(g));
             });
             gradeSelect.innerHTML = `<option value="all">جميع الصفوف الدراسية</option>`;
@@ -708,19 +1113,12 @@
 
         function renderAllRecords() {
             const { records, teacherAccounts } = collectAllAppData();
-            const curr = getCurriculum();
 
-            // تحديث الإحصائيات
-            const mrCount = records.filter(r => r.title === 'مستر').length;
-            const msCount = records.filter(r => r.title === 'مس').length;
-            const actualLessons = records.filter(r => r.type === 'lesson').length;
-
-            document.getElementById('statMrCount').textContent = mrCount;
-            document.getElementById('statMsCount').textContent = msCount;
-            document.getElementById('statLessonsCount').textContent = actualLessons;
+            document.getElementById('statMrCount').textContent = records.filter(r => r.title === 'مستر').length;
+            document.getElementById('statMsCount').textContent = records.filter(r => r.title === 'مس').length;
+            document.getElementById('statLessonsCount').textContent = records.filter(r => r.type === 'lesson').length;
             document.getElementById('statAccountsCount').textContent = teacherAccounts.length;
 
-            // الفلترة
             const q = document.getElementById('searchInput').value.trim().toLowerCase();
             const titleFilter = document.getElementById('filterTitle').value;
             const gradeFilter = document.getElementById('filterGrade').value;
@@ -742,21 +1140,17 @@
                 container.innerHTML = `
                     <div class="col-span-full bg-white rounded-3xl p-10 text-center border-2 border-dashed border-slate-300">
                         <div class="text-5xl mb-3">📭</div>
-                        <h3 class="text-lg font-black text-slate-700 mb-1">لا توجد بيانات مطابقة حالياً</h3>
-                        <p class="text-xs font-bold text-slate-500 mb-4">يمكنك إضافة معلم أو مجموعة جديدة مباشرة من الزر أدناه</p>
-                        <button onclick="openAddRecordModal()" class="action-chip bg-blue-600 text-white px-5 py-2.5">➕ إضافة معلم ودرس جديد</button>
+                        <h3 class="text-lg font-black text-slate-700 mb-1">لا توجد بيانات معلمين أو دروس حالياً</h3>
+                        <button onclick="openAddRecordModal()" class="action-chip bg-blue-600 text-white px-5 py-2.5 mt-3">➕ إضافة معلم ودرس جديد</button>
                     </div>
                 `;
                 return;
             }
 
-            container.innerHTML = filtered.map((r, idx) => {
+            container.innerHTML = filtered.map(r => {
                 const isMs = r.title === 'مس';
-                const badgeHTML = isMs
-                    ? `<span class="badge-ms">👩‍🏫 مس</span>`
-                    : `<span class="badge-mr">👨‍🏫 مستر</span>`;
-
-                const stageName = (curr[r.stageKey] && curr[r.stageKey].name) ? curr[r.stageKey].name : 'مرحلة عامة';
+                const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
+                const stageName = (curriculumData[r.stageKey] && curriculumData[r.stageKey].name) ? curriculumData[r.stageKey].name : 'مرحلة عامة';
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
 
@@ -764,11 +1158,10 @@
                     ? (r.isPublished
                         ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ظاهر للطلاب</span>`
                         : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300">🔴 مخفي عن الطلاب</span>`)
-                    : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">⏳ حساب بدون مجموعة</span>`;
+                    : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">⏳ حساب فقط</span>`;
 
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'}">
-                        <!-- السطر العلوي: اللقب + الاسم + حالة النشر -->
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
                             <div class="flex items-center gap-2">
                                 ${badgeHTML}
@@ -778,7 +1171,6 @@
                             ${statusBadge}
                         </div>
 
-                        <!-- تفاصيل المعلم والدرس -->
                         <div class="space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div class="info-pill" style="background:#EFF6FF; border-color:#BFDBFE;">
@@ -793,7 +1185,7 @@
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div class="info-pill">
-                                    <span class="label">👑 الصف الدراسي:</span>
+                                    <span class="label">👑 الصف:</span>
                                     <span class="text-slate-900 font-black">${r.grade} <small class="text-slate-500">(${stageName})</small></span>
                                 </div>
                                 <div class="info-pill">
@@ -803,84 +1195,39 @@
                             </div>
 
                             <div class="info-pill" style="background:#F0FDF4; border-color:#BBF7D0;">
-                                <span class="label">📍 العنوان الفعلي للدرس:</span>
+                                <span class="label">📍 العنوان الفعلي:</span>
                                 <span class="text-emerald-950 font-black">
                                     [${r.locType}${r.centerName && r.centerName !== 'بدون سنتر' ? ' - ' + r.centerName : ''}] — ${r.address}
                                 </span>
                             </div>
-
-                            <div class="info-pill">
-                                <span class="label">⏰ المواعيد:</span>
-                                <span>${r.days} | من <b>${r.timeFrom}</b> إلى <b>${r.timeTo}</b> | العدد: <b>${r.maxStudents}</b></span>
-                            </div>
                         </div>
 
-                        <!-- أزرار التحكم السريعة -->
                         <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
                             ${cleanPhone ? `
-                                <a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white hover:bg-blue-700">📞 اتصال</a>
-                                <a href="https://wa.me/${waPhone}" target="_blank" class="action-chip bg-emerald-600 text-white hover:bg-emerald-700">💬 واتساب</a>
+                                <a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white">📞 اتصال</a>
+                                <a href="https://wa.me/${waPhone}" target="_blank" class="action-chip bg-emerald-600 text-white">💬 واتساب</a>
                             ` : ''}
 
                             ${r.lat && r.lng ? `
-                                <button onclick="openMapPreview('${r.teacherName.replace(/'/g, "\\'")}', '${r.address.replace(/'/g, "\\'")}', ${r.lat},${r.lng})" class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-600 hover:text-white">
-                                    🗺️ الخريطة الفعلية
+                                <button onclick="openMapPreview('${r.teacherName.replace(/'/g, "\\'")}', '${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200">
+                                    🗺️ الخريطة
                                 </button>
                             ` : ''}
 
-                            <button onclick='openEditRecordModal(${JSON.stringify(r).replace(/'/g, "&#39;")})' class="action-chip bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-500 hover:text-white">
+                            <button onclick='openEditRecordModal(${JSON.stringify(r).replace(/'/g, "&#39;")})' class="action-chip bg-amber-50 text-amber-800 border border-amber-200">
                                 ✏️ تعديل
                             </button>
 
-                            ${r.type === 'lesson' ? `
-                                <button onclick="toggleLessonVisibility('${r.lessonId}')" class="action-chip bg-slate-100 text-slate-700 hover:bg-slate-200">
-                                    ${r.isPublished ? '🙈 إخفاء' : '👁️ إظهار'}
-                                </button>
-                            ` : ''}
-
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
+                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 mr-auto">
                                 🗑️ حذف
                             </button>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            renderStudentSection();
         }
 
-        // عرض بيانات الطالب المسجل على الجهاز إن وجدت
-        function renderStudentSection() {
-            const raw = localStorage.getItem('talep_data');
-            const sec = document.getElementById('studentInfoSection');
-            const card = document.getElementById('studentInfoCard');
-            if (!raw) { sec.classList.add('hidden'); return; }
-            try {
-                const st = JSON.parse(raw);
-                if (!st.st_name && !st.st_phone) { sec.classList.add('hidden'); return; }
-                sec.classList.remove('hidden');
-                card.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black">
-                                ${st.st_gender === 'st_girl' ? '👩‍🎓' : '👨‍🎓'}
-                            </div>
-                            <div>
-                                <div class="text-base font-black text-slate-800">${st.st_name || 'طالب بدون اسم'} <span class="text-xs text-emerald-600">(${st.st_age || '--'} سنة)</span></div>
-                                <div class="text-xs font-extrabold text-slate-500">📱 التليفون: <span dir="ltr">${st.st_phone || 'غير مسجل'}</span> | 👑 الصف: ${st.s_grade || '--'} | 📚 المادة المبحوث عنها: ${st.s_subject || '--'}</div>
-                            </div>
-                        </div>
-                        <a href="./talep.html" class="action-chip bg-emerald-600 text-white">فتح صفحة الطالب ➔</a>
-                    </div>
-                `;
-            } catch (e) { sec.classList.add('hidden'); }
-        }
-
-        // ==========================================
-        // 5. الخريطة المنبثقة لعرض العنوان الفعلي للدرس
-        // ==========================================
-        let adminMap = null;
-        let adminMarker = null;
+        let adminMap = null, adminMarker = null;
         function openMapPreview(teacherName, address, lat, lng) {
             document.getElementById('mapModalTitle').textContent = `📍 موقع درس أ/ ${teacherName}`;
             document.getElementById('mapModalAddress').textContent = `🏠 العنوان الفعلي: ${address}`;
@@ -900,41 +1247,31 @@
             }, 200);
         }
 
-        // ==========================================
-        // 6. إضافة / تعديل / حذف السجلات
-        // ==========================================
         function populateModalStages() {
-            const curr = getCurriculum();
             const stageSel = document.getElementById('formStage');
             stageSel.innerHTML = '';
-            Object.keys(curr).forEach(k => {
-                stageSel.innerHTML += `<option value="${k}">${curr[k].name}</option>`;
+            Object.keys(curriculumData).forEach(k => {
+                stageSel.innerHTML += `<option value="${k}">${curriculumData[k].name}</option>`;
             });
             populateModalGrades();
         }
 
         function populateModalGrades() {
-            const curr = getCurriculum();
             const stageKey = document.getElementById('formStage').value;
             const gradeSel = document.getElementById('formGrade');
             gradeSel.innerHTML = '';
-            if (curr[stageKey]) {
-                curr[stageKey].grades.forEach(g => {
-                    gradeSel.innerHTML += `<option value="${g}">${g}</option>`;
-                });
+            if (curriculumData[stageKey]) {
+                curriculumData[stageKey].grades.forEach(g => gradeSel.innerHTML += `<option value="${g}">${g}</option>`);
             }
             populateModalSubjects();
         }
 
         function populateModalSubjects() {
-            const curr = getCurriculum();
             const stageKey = document.getElementById('formStage').value;
             const subjSel = document.getElementById('formSubject');
             subjSel.innerHTML = '';
-            if (curr[stageKey]) {
-                curr[stageKey].subjs.forEach(s => {
-                    subjSel.innerHTML += `<option value="${s}">${s}</option>`;
-                });
+            if (curriculumData[stageKey]) {
+                curriculumData[stageKey].subjs.forEach(s => subjSel.innerHTML += `<option value="${s}">${s}</option>`);
             }
         }
 
@@ -942,7 +1279,6 @@
             populateModalStages();
             document.getElementById('editModalHeading').textContent = '➕ إضافة معلم ودرس جديد';
             document.getElementById('editLessonId').value = '';
-            document.getElementById('editOriginalPhone').value = '';
             document.getElementById('formTitle').value = 'مستر';
             document.getElementById('formTeacherName').value = '';
             document.getElementById('formPhone').value = '';
@@ -957,7 +1293,6 @@
             populateModalStages();
             document.getElementById('editModalHeading').textContent = `✏️ تعديل بيانات: ${record.title} / ${record.teacherName}`;
             document.getElementById('editLessonId').value = record.lessonId || '';
-            document.getElementById('editOriginalPhone').value = record.phone || '';
             document.getElementById('formTitle').value = record.title === 'مس' ? 'مس' : 'مستر';
             document.getElementById('formTeacherName').value = record.teacherName !== 'غير محدد' ? record.teacherName : '';
             document.getElementById('formPhone').value = record.phone !== 'غير مسجل' ? record.phone : '';
@@ -966,17 +1301,13 @@
             document.getElementById('formCenterName').value = record.centerName !== 'بدون سنتر' && record.centerName !== '--' ? record.centerName : '';
             document.getElementById('formAddress').value = record.address.includes('لم يتم') ? '' : record.address;
 
-            if (record.stageKey && getCurriculum()[record.stageKey]) {
+            if (record.stageKey && curriculumData[record.stageKey]) {
                 document.getElementById('formStage').value = record.stageKey;
                 populateModalGrades();
             }
-            if (record.grade) {
-                document.getElementById('formGrade').value = record.grade;
-            }
+            if (record.grade) document.getElementById('formGrade').value = record.grade;
             const firstSubj = (record.subjects || '').split('،')[0].trim();
-            if (firstSubj) {
-                document.getElementById('formSubject').value = firstSubj;
-            }
+            if (firstSubj) document.getElementById('formSubject').value = firstSubj;
 
             document.getElementById('editRecordModal').classList.add('active');
         }
@@ -995,25 +1326,15 @@
             const address = document.getElementById('formAddress').value.trim();
 
             if (!teacherName || !phone) {
-                alert('يرجى إدخال اسم المعلم ورقم التليفون');
+                showToast('⚠️ يرجى إدخال اسم المعلم ورقم التليفون');
                 return;
             }
 
-            // حفظ/تحديث حساب المعلم
-            const existingAccStr = localStorage.getItem('teacherAccount_' + phone);
-            const existingAcc = existingAccStr ? JSON.parse(existingAccStr) : {};
-            const updatedAcc = {
-                ...existingAcc,
-                title: title,
-                name: teacherName,
-                phone: phone,
-                age: existingAcc.age || '30',
-                pass: existingAcc.pass || '1234',
-                createdAt: regDate
-            };
-            localStorage.setItem('teacherAccount_' + phone, JSON.stringify(updatedAcc));
+            const existingAcc = JSON.parse(localStorage.getItem('teacherAccount_' + phone) || '{}');
+            localStorage.setItem('teacherAccount_' + phone, JSON.stringify({
+                ...existingAcc, title, name: teacherName, phone, age: existingAcc.age || '30', pass: existingAcc.pass || '1234', createdAt: regDate
+            }));
 
-            // حفظ/تحديث المجموعة في teacher_lessons و lessonState_
             let lessonsArr = [];
             try { lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]'); } catch (e) {}
 
@@ -1029,79 +1350,62 @@
             localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
 
             const existingState = JSON.parse(localStorage.getItem('lessonState_' + targetId) || '{}');
-            const updatedState = {
+            localStorage.setItem('lessonState_' + targetId, JSON.stringify({
                 ...existingState,
-                t_gender: title,
-                g_teacher: teacherName,
-                g_phone: phone,
-                createdAt: regDate,
-                g_name: groupName,
-                g_center: centerName,
-                s_stage: stageKey,
-                s_grade: grade,
+                t_gender: title, g_teacher: teacherName, g_phone: phone, createdAt: regDate,
+                g_name: groupName, g_center: centerName, s_stage: stageKey, s_grade: grade,
                 selectedSubjects: [`${grade} - ${subject}`],
                 m_address: address || existingState.m_address || 'محدد بواسطة الإدارة',
-                lat: existingState.lat || 31.0409,
-                lng: existingState.lng || 31.3785
-            };
-            localStorage.setItem('lessonState_' + targetId, JSON.stringify(updatedState));
+                lat: existingState.lat || 31.0409, lng: existingState.lng || 31.3785
+            }));
+
             if (localStorage.getItem('publishState_' + targetId) === null) {
                 localStorage.setItem('publishState_' + targetId, 'true');
             }
 
             closeModal('editRecordModal');
-            populateGradeFilter();
             renderAllRecords();
-            showToast('✨ تم حفظ بيانات المعلم والدرس بنجاح');
-        }
-
-        function toggleLessonVisibility(lessonId) {
-            const curr = localStorage.getItem('publishState_' + lessonId) !== 'false';
-            localStorage.setItem('publishState_' + lessonId, String(!curr));
-            renderAllRecords();
-            showToast(!curr ? '🟢 تم إظهار الدرس للطلاب' : '🔴 تم إخفاء الدرس عن الطلاب');
+            showToast('✨ تم حفظ بيانات المعلم والدرس');
         }
 
         function deleteRecord(lessonId, phone) {
-            if (!confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) return;
-            if (lessonId) {
-                localStorage.removeItem('lessonState_' + lessonId);
-                localStorage.removeItem('publishState_' + lessonId);
-                try {
-                    let lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]');
-                    lessonsArr = lessonsArr.filter(l => String(l.id) !== String(lessonId));
-                    localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
-                } catch (e) {}
-            } else if (phone) {
-                localStorage.removeItem('teacherAccount_' + phone);
-            }
-            renderAllRecords();
-            showToast('🗑️ تم حذف السجل بنجاح');
+            openConfirmModal('حذف السجل', 'هل أنت متأكد من حذف هذا السجل نهائياً؟', () => {
+                if (lessonId) {
+                    localStorage.removeItem('lessonState_' + lessonId);
+                    localStorage.removeItem('publishState_' + lessonId);
+                    try {
+                        let lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]');
+                        lessonsArr = lessonsArr.filter(l => String(l.id) !== String(lessonId));
+                        localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
+                    } catch (e) {}
+                } else if (phone) {
+                    localStorage.removeItem('teacherAccount_' + phone);
+                }
+                renderAllRecords();
+                showToast('🗑️ تم حذف السجل');
+            });
         }
 
-        // تصدير البيانات إلى ملف Excel CSV
         function exportToCSV() {
             const { records } = collectAllAppData();
-            if (!records.length) {
-                showToast('⚠️ لا توجد بيانات لتصديرها');
-                return;
-            }
-            const headers = ['اللقب', 'اسم المعلم', 'رقم التليفون', 'تاريخ التسجيل', 'اسم المجموعة', 'الصف الدراسي', 'المادة', 'المكان', 'العنوان الفعلي للدرس', 'الأيام', 'من الساعة', 'إلى الساعة'];
+            if (!records.length) { showToast('⚠️ لا توجد بيانات لتصديرها'); return; }
+            const headers = ['اللقب', 'اسم المعلم', 'رقم التليفون', 'تاريخ التسجيل', 'اسم المجموعة', 'الصف الدراسي', 'المادة', 'المكان', 'العنوان الفعلي'];
             const rows = records.map(r => [
-                r.title, r.teacherName, r.phone, r.regDate, r.groupName, r.grade, r.subjects, r.locType, r.address, r.days, r.timeFrom, r.timeTo
+                r.title, r.teacherName, r.phone, r.regDate, r.groupName, r.grade, r.subjects, r.locType, r.address
             ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
 
-            const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-            const url = URL.createObjectURL(blob);
+            const blob = new Blob(['\uFEFF' + [headers.join(','), ...rows].join('\n')], { type: 'text/csv;charset=utf-8;' });
             const a = document.createElement('a');
-            a.href = url;
+            a.href = URL.createObjectURL(blob);
             a.download = `بيانات_احجزلى_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
-            showToast('📥 تم تحميل ملف البيانات بنجاح');
+            showToast('📥 تم تحميل ملف Excel بنجاح');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            loadCurriculum();
+            renderStages();
+            populatePreview();
             populateGradeFilter();
             renderAllRecords();
         });
