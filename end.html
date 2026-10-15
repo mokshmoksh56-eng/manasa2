@@ -28,7 +28,7 @@
         /* ============================================ */
         .hero-banner {
             background: linear-gradient(135deg, #0F2D5C, #1E40AF);
-            color: white; padding: 30px 15px 50px; text-align: center;
+            color: white; padding: 30px 15px 55px; text-align: center;
             position: relative; overflow: hidden;
         }
         .hero-banner::after {
@@ -36,6 +36,20 @@
             height: 40px; background: #F1F5F9; border-radius: 50% 50% 0 0;
         }
         .lesson-title { font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+        .teacher-header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(4px);
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 13.5px;
+            font-weight: 900;
+            color: #FEF3C7;
+            margin-top: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+        }
 
         /* ============================================ */
         /* ✅ بطاقات التقرير */
@@ -105,7 +119,7 @@
         
         /* زر إخفاء الموقع عن الطلاب (Bold وصغير للموبايل) */
         .map-action-btn {
-            pointer-events: auto; background: #fff; padding: 6px 14px; border-radius: 99px;
+            pointer-events: auto; background: #fff; padding: 6px 14px; border-radius: 999px;
             font-size: 12px; font-weight: 900; display: flex; align-items: center; gap: 4px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 2px solid #FECACA; cursor: pointer; transition: 0.3s;
             color: #DC2626;
@@ -163,9 +177,12 @@
 </head>
 <body>
 
-    <!-- ✅ الهيدر -->
+    <!-- ✅ الهيدر (مع شارة بيانات المعلم مستر/مس ورقم التليفون) -->
     <section class="hero-banner">
         <div class="lesson-title" id="reportTitle">بيانات مجموعة --</div>
+        <div id="teacherHeaderBadge" class="teacher-header-badge" style="display: none;">
+            <span id="headerTeacherTitleAndName">--</span> | <span id="headerTeacherPhone" dir="ltr">--</span>
+        </div>
     </section>
 
     <!-- ✅ تقرير البيانات -->
@@ -297,7 +314,7 @@
             gain.connect(audioCtx.destination);
             
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); // صوت رفيع
+            osc.frequency.setValueAtTime(3000, audioCtx.currentTime); 
             
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
@@ -306,7 +323,6 @@
             osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // تشغيل الصوت عند الضغط على الأزرار المحددة
         document.addEventListener('click', function(e) {
             const clickableElement = e.target.closest('.clickable-element');
             if (clickableElement) {
@@ -324,7 +340,6 @@
         let currentLat = 30.0444;
         let currentLng = 31.2357;
         
-        // ✅ منع زر الرجوع في المتصفح أو الهاتف
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, location.href);
@@ -338,24 +353,31 @@
 
             loadActualData();
 
-            // استخدام localStorage للتحقق من حالة إظهار الخريطة
             const savedPublishState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
             togglePublish(savedPublishState); 
         };
 
         function loadActualData() {
-            // استخدام localStorage
             const savedData = localStorage.getItem('lessonState_' + currentLessonId);
 
+            let teacherTitle = 'مستر';
+            let teacherPhone = '';
+            let teacherName = 'غير محدد';
+
+            // 1. محاولة القراءة من بيانات الحصة / الدرس الحالية
             if (savedData) {
                 const state = JSON.parse(savedData);
 
                 if(state.g_name) document.getElementById('val-groupName').innerText = state.g_name;
                 
                 if(state.g_teacher) {
-                    document.getElementById('val-teacher').innerText = state.g_teacher;
-                    teacherNameGlob = state.g_teacher;
+                    teacherName = state.g_teacher;
+                    document.getElementById('val-teacher').innerText = teacherName;
+                    teacherNameGlob = teacherName;
                 }
+
+                if(state.t_gender) teacherTitle = state.t_gender;
+                if(state.g_phone) teacherPhone = state.g_phone;
                 
                 if(state.g_count) document.getElementById('val-count').innerText = `${state.g_count} طالب`;
                 if(state.s_grade) document.getElementById('val-grade').innerText = state.s_grade;
@@ -416,6 +438,45 @@
                 }
             }
 
+            // 2. إذا لم يكن رقم التليفون أو اللقب موجوداً في الـ state، نقوم باسترجاعه من حساب المعلم المسجل (`login.html` / `teacherAccount_` أو `loggedInTeacher`)
+            if (!teacherPhone || teacherName === 'غير محدد') {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (loggedStr) {
+                    try {
+                        const loggedObj = JSON.parse(loggedStr);
+                        if (loggedObj.title) teacherTitle = loggedObj.title;
+                        if (loggedObj.name && teacherName === 'غير محدد') teacherName = loggedObj.name;
+                        if (loggedObj.phone) teacherPhone = loggedObj.phone;
+                    } catch(e){}
+                }
+            }
+
+            if (!teacherPhone) {
+                const remembered = localStorage.getItem('rememberedPhone');
+                if (remembered) {
+                    teacherPhone = remembered;
+                    const accStr = localStorage.getItem('teacherAccount_' + remembered);
+                    if (accStr) {
+                        try {
+                            const accObj = JSON.parse(accStr);
+                            if (accObj.title) teacherTitle = accObj.title;
+                            if (accObj.name && teacherName === 'غير محدد') teacherName = accObj.name;
+                        } catch(e){}
+                    }
+                }
+            }
+
+            // 3. عرض البيانات في الهيدر العلوي
+            const badgeEl = document.getElementById('teacherHeaderBadge');
+            const titleAndNameEl = document.getElementById('headerTeacherTitleAndName');
+            const phoneEl = document.getElementById('headerTeacherPhone');
+
+            if (badgeEl && teacherName && teacherName !== 'غير محدد') {
+                titleAndNameEl.innerText = `${teacherTitle} / ${teacherName}`;
+                phoneEl.innerText = teacherPhone ? `📱 ${teacherPhone}` : '📱 غير مسجل';
+                badgeEl.style.display = 'inline-flex';
+            }
+
             initStaticMap();
         }
 
@@ -474,7 +535,6 @@
             if (forceState !== null) {
                 isPublished = forceState;
             } else {
-                // استخدام localStorage
                 const current = localStorage.getItem('publishState_' + currentLessonId) === 'true';
                 isPublished = !current;
             }
@@ -488,21 +548,17 @@
             }
 
             updateMapMarker(isPublished);
-            
-            // استخدام localStorage لحفظ حالة إظهار الخريطة
             localStorage.setItem('publishState_' + currentLessonId, isPublished);
         }
 
         function editLesson() {
             const stateKey = 'lessonState_' + currentLessonId;
-            // استخدام localStorage
             const savedState = localStorage.getItem(stateKey);
             if (savedState) {
                 let stateObj = JSON.parse(savedState);
                 stateObj.step = 1; 
                 localStorage.setItem(stateKey, JSON.stringify(stateObj));
             }
-            // تأخير الانتقال قليلاً ليتمكن المستخدم من سماع الصوت
             setTimeout(() => {
                 window.location.href = `group.html?lessonId=${currentLessonId}&mode=edit`;
             }, 100);
