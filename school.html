@@ -28,7 +28,7 @@
             margin: 0;
         }
 
-        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_1](start_span)[span_1](end_span) */
+        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_4](start_span)[span_4](end_span) */
         #pullToRefreshIndicator {
             position: fixed;
             top: -60px;
@@ -415,7 +415,7 @@
 </head>
 <body>
 
-    <!-- مؤشر سحب الشاشة للتحديث[span_2](start_span)[span_2](end_span) -->
+    <!-- مؤشر سحب الشاشة للتحديث[span_5](start_span)[span_5](end_span) -->
     <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
 
     <!-- إشعار منبثق -->
@@ -480,7 +480,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
         
-        <!-- شريط البحث والفلترة (تم إزالة الحقلين المحددين) -->
+        <!-- شريط البحث والفلترة (تم إلغاء زر التصدير وزر إدارة المراحل من هنا كما طلبتم) -->
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-2">
@@ -526,7 +526,7 @@
         <!-- قائمة كروت المعلمين والدروس -->
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل (يعرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب)[span_3](start_span)[span_3](end_span) -->
+        <!-- قسم بيانات الطالب المسجل (عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب)[span_6](start_span)[span_6](end_span) -->
         <div id="studentInfoSection" class="mt-8 hidden">
             <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
                 <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
@@ -537,7 +537,7 @@
     </main>
 
     <!-- ========================================================================= -->
-    <!-- نافذة تفاصيل المعلمين (المستر / المس) -->
+    <!-- نافذة تفاصيل المعلمين (المستر / المس) بالصيغة الأصلية بدون تعديل/إخفاء داخلي -->
     <!-- ========================================================================= -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
@@ -754,7 +754,7 @@
 
     <script>
         // ==========================================
-        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_4](start_span)[span_4](end_span)
+        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_7](start_span)[span_7](end_span)
         // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
@@ -1462,7 +1462,7 @@
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
 
                 const statusBadge = r.type === 'lesson'
-                    ? (r.isPublished ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ظاهر للطلاب</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300">🔴 مخفي عن الطلاب</span>`)
+                    ? (r.isPublished ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ظاهر للطلاب</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-emerald-300">🔴 مخفي عن الطلاب</span>`)
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">⏳ حساب بدون مجموعة</span>`;
 
                 return `
@@ -1545,7 +1545,7 @@
             renderStudentSection();
         }
 
-        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب[span_5](start_span)[span_5](end_span)
+        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب[span_8](start_span)[span_8](end_span)
         function renderStudentSection() {
             const raw = localStorage.getItem('talep_data');
             const sec = document.getElementById('studentInfoSection');
