@@ -12,6 +12,13 @@
 
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#0A1E3F">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="احجزلى">
+    <link rel="apple-touch-icon" href="./icon-192x192.png">
+
     <style>
         :root {
             --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
@@ -97,7 +104,7 @@
         .auth-container {
             width: 90%;
             max-width: 450px;
-            margin: -50px auto 30px;
+            margin: -50px auto 20px;
             position: relative;
             z-index: 10;
             background: #FFFFFF;
@@ -177,8 +184,10 @@
             gap: 12px;
             margin-bottom: 8px;
         }
-        .radio-label {
+        .radio-group label {
             flex: 1;
+        }
+        .radio-label {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -263,7 +272,7 @@
         }
 
         /* ============================================ */
-        /* ✅ أزرار التحكم (تسجيل الخروج وحذف الحساب) */
+        /* ✅ أزرار التحكم (الرجوع وحذف الحساب) */
         /* ============================================ */
         .action-buttons-container {
             display: flex;
@@ -271,17 +280,18 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
-            margin: 15px auto 30px;
+            margin: 5px auto 30px;
             padding: 0 15px;
             max-width: 450px;
+            width: 90%;
         }
 
         .btn-logout {
             background: #F1F5F9;
             color: #475569;
             border: 2px solid #E2E8F0;
-            padding: 8px 20px;
-            border-radius: 10px;
+            padding: 10px 20px;
+            border-radius: 12px;
             font-size: 14px;
             font-weight: 800;
             cursor: pointer;
@@ -297,8 +307,8 @@
             background: #FEF2F2;
             color: #DC2626;
             border: 1px solid #FECACA;
-            padding: 8px 16px;
-            border-radius: 10px;
+            padding: 10px 16px;
+            border-radius: 12px;
             font-size: 13px;
             font-weight: 700;
             cursor: pointer;
@@ -420,11 +430,6 @@
         .modal-btn-danger:active {
             background: #DC2626;
         }
-        .modal-btn-success {
-            background: #10B981;
-            color: #FFFFFF;
-            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35);
-        }
 
         /* ============================================ */
         /* الموبايل */
@@ -438,7 +443,7 @@
                 font-size: 32px;
             }
             .auth-container {
-                margin: -40px auto 20px;
+                margin: -40px auto 15px;
                 padding: 20px;
                 width: 92%;
             }
@@ -468,7 +473,7 @@
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">⚠️</div>
             <h3 class="modal-title-text" style="color: #991B1B;">هل أنت متأكد من حذف الحساب؟</h3>
-            <p class="modal-desc-text">سيتم حذف بياناتك فقط</p>
+            <p class="modal-desc-text">سيتم حذف بيانات حسابك المسجل بهذا الرقم نهائياً.</p>
             <div class="modal-btn-row">
                 <button type="button" class="modal-btn modal-btn-cancel" onclick="closeCustomModal('confirmDeleteModal')">إلغاء</button>
                 <button type="button" class="modal-btn modal-btn-danger" onclick="executeDeleteAccount()">نعم، احذف</button>
@@ -509,11 +514,11 @@
         <div id="loginForm">
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="loginPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="tel" inputmode="numeric" id="loginPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" inputmode="numeric" id="loginPassword" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <button class="btn-submit" onclick="handleLogin()">
                 دخول 
@@ -550,22 +555,22 @@
 
             <div class="input-group">
                 <label class="input-label">العمر</label>
-                <input type="number" id="regAge" class="custom-input" placeholder="مثال: 30" min="20" max="80">
+                <input type="number" inputmode="numeric" id="regAge" class="custom-input" placeholder="مثال: 30" min="20" max="80">
             </div>
 
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="regPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="tel" inputmode="numeric" id="regPhone" class="custom-input" placeholder="مثال: 01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="regPassword1" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" inputmode="numeric" id="regPassword1" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <div class="input-group">
                 <label class="input-label">تأكيد الرقم السري (4 أرقام)</label>
-                <input type="password" id="regPassword2" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" inputmode="numeric" id="regPassword2" class="custom-input" placeholder="****" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
 
             <button class="btn-submit" onclick="handleRegister()">
@@ -575,7 +580,7 @@
         </div>
     </div>
 
-    <!-- أزرار التحكم الخارجية (تسجيل خروج / حذف حساب) -->
+    <!-- أزرار التحكم الخارجية (الرجوع / حذف حساب) -->
     <div id="actionButtonsContainer" class="action-buttons-container">
         <button class="btn-logout" onclick="handleLogout()">
             الرجوع للرئيسية
@@ -585,45 +590,94 @@
         </button>
     </div>
 
+    <!-- ✅ الفوتر والشروط القانونية -->
+    <footer class="py-8 px-4 text-center bg-white border-t border-slate-100 mt-auto">
+        <div class="container mx-auto max-w-xl">
+            <p class="text-slate-600 font-extrabold text-sm md:text-base mb-5">
+                جميع الحقوق محفوظة &copy; 2026 - <span class="text-amber-500">منصة احجزلي</span>
+            </p>
+            <div class="border border-dashed border-slate-300 rounded-2xl p-5 md:p-6 bg-slate-50/60 text-slate-600 text-xs md:text-sm leading-relaxed font-semibold shadow-sm">
+                <div class="text-2xl mb-2 select-none">⚖️</div>
+                <p>
+                    <strong class="font-extrabold text-slate-700">عهدُنا شفافية التواصل:</strong> منصة "احجزلي" هي همزة وصل تقنية مُصممة للارتقاء بالمسيرة التعليمية وتسهيل حجز المجموعات. نُخلي مسؤوليتنا القانونية تماماً عن أية معاملات مالية مباشرة تتم بين المعلم والطالب؛ دورنا يقتصر على ربط الأطراف ببعضها فقط، ونترك التفاصيل المالية لثقتكم المتبادلة.
+                </p>
+            </div>
+            <div class="mt-5">
+                <a href="mailto:mmoksh162@gmail.com?subject=شكوى أو اقتراح - منصة احجزلي" class="inline-flex items-center justify-center gap-2 text-slate-400 hover:text-amber-600 transition-colors font-bold text-xs md:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>صوتك يهمنا.. للشكاوى والاقتراحات</span>
+                </a>
+            </div>
+        </div>
+    </footer>
+
     <script>
         // ==========================================
         // ✅ تأثير الصوت عند الضغط (Click Sound)
         // ==========================================
-        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        let audioCtx = null;
 
         function playHighPitchSound() {
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain);
-            gain.connect(audioCtx.destination);
-            osc.type = 'sine';
-            osc.frequency.setValueAtTime(2800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            osc.start();
-            osc.stop(audioCtx.currentTime + 0.05);
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(2800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start();
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch (e) {}
         }
 
         document.addEventListener('click', function(e) {
-            const clickable = e.target.closest('button, .auth-tab, .radio-label, .modal-btn');
+            const clickable = e.target.closest('button, .auth-tab, .radio-label, .modal-btn, a');
             if (clickable) {
                 playHighPitchSound();
             }
         });
 
+        // دعم زر Enter لتسجيل الدخول أو إنشاء الحساب
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                const isLoginActive = document.getElementById('tab-login').classList.contains('active');
+                if (isLoginActive) {
+                    handleLogin();
+                } else {
+                    handleRegister();
+                }
+            }
+        });
+
         // ==========================================
-        // ✅ التحقق من حالة تسجيل الدخول واسترجاع الموبايل
+        // ✅ ضبط الصفحة وإغلاق النوافذ عند الفتح أو السحب للخلف (Swipe Back)
         // ==========================================
-        window.onload = function() {
+        function initPageState() {
+            // إغلاق أي نافذة منبثقة عالقة من الجلسة السابقة
+            document.querySelectorAll('.custom-modal-overlay').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            const alertEl = document.getElementById('alertMsg');
+            if (alertEl) alertEl.style.display = 'none';
+
             const loggedInTeacher = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacher) {
-                const loggedIn = JSON.parse(loggedInTeacher);
-                if (loggedIn && loggedIn.phone) {
-                    localStorage.setItem('rememberedPhone', loggedIn.phone);
-                }
+                try {
+                    const loggedIn = JSON.parse(loggedInTeacher);
+                    if (loggedIn && loggedIn.phone) {
+                        localStorage.setItem('rememberedPhone', loggedIn.phone);
+                    }
+                } catch (e) {}
                 localStorage.removeItem('loggedInTeacher');
             }
 
@@ -634,7 +688,9 @@
                 document.getElementById('loginPhone').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
             }
-        };
+        }
+
+        window.addEventListener('pageshow', initPageState);
 
         function closeCustomModal(modalId) {
             document.getElementById(modalId).classList.remove('active');
@@ -645,8 +701,11 @@
             document.getElementById('successModalDesc').textContent = desc;
             document.getElementById('successModal').classList.add('active');
             setTimeout(() => {
+                // إخفاء النافذة قبل التحويل حتى لا تُحفظ مفتوحة في ذاكرة المتصفح
+                document.getElementById('successModal').classList.remove('active');
+                document.getElementById('alertMsg').style.display = 'none';
                 window.location.href = redirectUrl;
-            }, 1400);
+            }, 1200);
         }
 
         function switchTab(tab) {
@@ -672,19 +731,27 @@
             setTimeout(() => { alertEl.style.display = 'none'; }, 4000);
         }
 
+        function isValidEgyptianPhone(phone) {
+            return /^01[0125][0-9]{8}$/.test(phone);
+        }
+
         function handleRegister() {
             const title = document.querySelector('input[name="title"]:checked').value;
             const name = document.getElementById('regName').value.trim();
-            const age = document.getElementById('regAge').value.trim();
+            const ageStr = document.getElementById('regAge').value.trim();
+            const age = parseInt(ageStr, 10);
             const phone = document.getElementById('regPhone').value.trim();
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
 
-            if (!name || !age || !phone || !pass1 || !pass2) {
+            if (!name || !ageStr || !phone || !pass1 || !pass2) {
                 return showAlert('الرجاء إكمال جميع البيانات.');
             }
-            if (phone.length !== 11) {
-                return showAlert('رقم التليفون يجب أن يكون 11 رقماً.');
+            if (isNaN(age) || age < 20 || age > 80) {
+                return showAlert('يرجى إدخال عمر صحيح (بين 20 و 80 عاماً).');
+            }
+            if (!isValidEgyptianPhone(phone)) {
+                return showAlert('يرجى إدخال رقم موبايل صحيح مكون من 11 رقماً (يبدأ بـ 010 أو 011 أو 012 أو 015).');
             }
             if (pass1.length !== 4) {
                 return showAlert('الرقم السري يجب أن يكون 4 أرقام.');
@@ -698,7 +765,7 @@
                 return showAlert('هذا الرقم مسجل مسبقاً! قم بتسجيل الدخول.');
             }
 
-            const accountData = { title, name, age, phone, pass: pass1 };
+            const accountData = { title, name, age: ageStr, phone, pass: pass1 };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
             localStorage.setItem('rememberedPhone', phone);
@@ -711,7 +778,7 @@
             const phone = document.getElementById('loginPhone').value.trim();
             const pass = document.getElementById('loginPassword').value;
 
-            if (phone.length !== 11 || pass.length !== 4) {
+            if (!isValidEgyptianPhone(phone) || pass.length !== 4) {
                 return showAlert('الرجاء إدخال رقم تليفون صحيح ورقم سري مكون من 4 أرقام.');
             }
 
@@ -736,14 +803,28 @@
             window.location.href = './index.html'; 
         }
 
-        // ==========================================
-        // ✅ حذف الحساب عبر نافذة مخصصة
-        // ==========================================
         function confirmDeleteAccount() {
-            const currentPhone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
+            switchTab('login');
+
+            const currentPhone = document.getElementById('loginPhone').value.trim();
+            const currentPass = document.getElementById('loginPassword').value;
             
-            if (!currentPhone || !localStorage.getItem('teacherAccount_' + currentPhone)) {
+            if (!currentPhone) {
+                return showAlert('يرجى كتابة رقم التليفون أولاً لحذف الحساب.');
+            }
+
+            const savedDataStr = localStorage.getItem('teacherAccount_' + currentPhone);
+            if (!savedDataStr) {
                 return showAlert('لا يوجد حساب مسجل لهذا الرقم حالياً لحذفه.');
+            }
+
+            if (currentPass.length !== 4) {
+                return showAlert('يرجى إدخال الرقم السري (4 أرقام) في خانة الدخول لتأكيد ملكيتك للحساب قبل حذفه.');
+            }
+
+            const savedData = JSON.parse(savedDataStr);
+            if (savedData.pass !== currentPass) {
+                return showAlert('الرقم السري غير صحيح! لا يمكن حذف الحساب.');
             }
 
             document.getElementById('confirmDeleteModal').classList.add('active');
@@ -751,7 +832,7 @@
 
         function executeDeleteAccount() {
             closeCustomModal('confirmDeleteModal');
-            const currentPhone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
+            const currentPhone = document.getElementById('loginPhone').value.trim();
             
             if (currentPhone && localStorage.getItem('teacherAccount_' + currentPhone)) {
                 localStorage.setItem('rememberedPhone', currentPhone);
@@ -760,8 +841,9 @@
                 
                 document.getElementById('deletedSuccessModal').classList.add('active');
                 setTimeout(() => {
+                    document.getElementById('deletedSuccessModal').classList.remove('active');
                     window.location.href = './index.html';
-                }, 1400);
+                }, 1200);
             }
         }
     </script>
