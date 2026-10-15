@@ -28,7 +28,7 @@
             margin: 0;
         }
 
-        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span) */
+        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span) */
         #pullToRefreshIndicator {
             position: fixed;
             top: -60px;
@@ -213,6 +213,7 @@
         }
         .record-card.is-mr { border-top: 5px solid #2563EB; }
         .record-card.is-ms { border-top: 5px solid #EC4899; }
+        .record-card.is-blocked { opacity: 0.6; border-top-color: #EF4444; border-bottom-color: #991B1B; }
         .record-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
@@ -415,7 +416,7 @@
 </head>
 <body>
 
-    <!-- مؤشر سحب الشاشة للتحديث[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span) -->
+    <!-- مؤشر سحب الشاشة للتحديث[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span) -->
     <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
 
     <!-- إشعار منبثق -->
@@ -526,7 +527,7 @@
         <!-- قائمة كروت المعلمين والدروس -->
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل على الجهاز (يعرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب)[span_10](start_span)[span_10](end_span) -->
+        <!-- قسم بيانات الطالب المسجل (يعرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب)[span_9](start_span)[span_9](end_span)[span_10](start_span)[span_10](end_span) -->
         <div id="studentInfoSection" class="mt-8 hidden">
             <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
                 <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
@@ -672,89 +673,9 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات معلم ودرس -->
-    <div id="editRecordModal" class="modal-overlay" onclick="closeModal('editRecordModal')">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
-                <h3 id="editModalHeading" class="text-lg font-black text-slate-800">✏️ بيانات المعلم والدرس</h3>
-                <button onclick="closeModal('editRecordModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
-            </div>
-
-            <input type="hidden" id="editLessonId">
-            <input type="hidden" id="editOriginalPhone">
-
-            <div class="space-y-3">
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">اللقب (مستر / مس)</label>
-                        <select id="formTitle" class="form-input">
-                            <option value="مستر">👨‍🏫 مستر</option>
-                            <option value="مس">👩‍🏫 مس</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">الاسم الكامل</label>
-                        <input type="text" id="formTeacherName" class="form-input" placeholder="مثال: أحمد محمد">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">📱 رقم التليفون</label>
-                        <input type="tel" id="formPhone" class="form-input" maxlength="11" placeholder="01012345678">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">📅 تاريخ التسجيل</label>
-                        <input type="date" id="formRegDate" class="form-input">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-2 gap-3">
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">👥 اسم المجموعة</label>
-                        <input type="text" id="formGroupName" class="form-input" placeholder="مجموعة التفوق">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">🏫 اسم السنتر / المكان</label>
-                        <input type="text" id="formCenterName" class="form-input" placeholder="سنتر النخبة">
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-3 gap-2">
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">🎓 المرحلة</label>
-                        <select id="formStage" onchange="populateModalGrades()" class="form-input"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">👑 الصف الدراسي</label>
-                        <select id="formGrade" onchange="populateModalSubjects()" class="form-input"></select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">📚 المادة</label>
-                        <select id="formSubject" class="form-input"></select>
-                    </div>
-                </div>
-
-                <div>
-                    <label class="block text-xs font-black text-slate-700 mb-1">📍 العنوان الفعلي التفصيلي للدرس</label>
-                    <input type="text" id="m_address" class="form-input" placeholder="المحافظة - المدينة - الشارع...">
-                </div>
-            </div>
-
-            <div class="flex gap-2 mt-5">
-                <button onclick="saveRecordFromModal()" class="action-chip flex-1 bg-blue-600 text-white py-3 text-sm">
-                    💾 حفظ البيانات
-                </button>
-                <button onclick="closeModal('editRecordModal')" class="action-chip bg-slate-200 text-slate-700 px-6 py-3 text-sm">
-                    إلغاء
-                </button>
-            </div>
-        </div>
-    </div>
-
     <script>
         // ==========================================
-        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span)[span_13](start_span)[span_13](end_span)
+        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span)
         // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
@@ -1208,7 +1129,7 @@
         }
 
         // ==========================================
-        // 3. تجميع بيانات المعلمين والإحصائيات وجدول التفاصيل
+        // 3. تجميع بيانات المعلمين والإحصائيات وتحديث الحظر والتوثيق وتاريخ التسجيل
         // ==========================================
         function collectAllAppData() {
             const teacherAccounts = [];
@@ -1252,6 +1173,9 @@
                         const title = state.t_gender || matchedAcc.title || 'مستر';
                         const teacherName = state.g_teacher || matchedAcc.name || 'غير محدد';
                         const phone = state.g_phone || matchedAcc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
+                        const regDate = state.createdAt || matchedAcc.createdAt || todayISO;
+                        const verification = localStorage.getItem('teacherVerification_' + phone) || 'مجاني';
+                        const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true';
 
                         const subjectsArr = Array.isArray(state.selectedSubjects)
                             ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s)
@@ -1270,8 +1194,12 @@
                             title: title,
                             teacherName: teacherName,
                             phone: phone,
+                            regDate: regDate,
+                            verification: verification,
+                            isBlocked: isBlocked,
                             groupName: state.g_name || `مجموعة رقم ${lessonId}`,
                             grade: state.s_grade || 'غير محدد',
+                            stageKey: state.s_stage || 'primary',
                             subjects: subjectsArr.length ? subjectsArr.join('، ') : 'غير محدد',
                             locType: locTypeLabel,
                             address: state.m_address || 'لم يتم تحديد العنوان',
@@ -1290,14 +1218,23 @@
             teacherAccounts.forEach(acc => {
                 const hasLesson = lessonsList.some(l => l.phone === acc.phone || l.teacherName === acc.name);
                 if (!hasLesson) {
+                    const phone = acc.phone || 'غير مسجل';
+                    const regDate = acc.createdAt || todayISO;
+                    const verification = localStorage.getItem('teacherVerification_' + phone) || 'مجاني';
+                    const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true';
+
                     lessonsList.push({
                         type: 'account_only',
                         lessonId: null,
                         title: acc.title || 'مستر',
                         teacherName: acc.name || 'بدون اسم',
-                        phone: acc.phone || 'غير مسجل',
+                        phone: phone,
+                        regDate: regDate,
+                        verification: verification,
+                        isBlocked: isBlocked,
                         groupName: 'لم يُنشئ مجموعة بعد',
                         grade: 'غير محدد',
+                        stageKey: 'primary',
                         subjects: 'غير محدد',
                         locType: '--',
                         address: '--',
@@ -1307,7 +1244,7 @@
                         lat: null,
                         lng: null,
                         isPublished: false,
-                        waClicks: parseInt(localStorage.getItem('wa_clicks_' + (acc.phone || acc.name)) || '0', 10)
+                        waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone || acc.name)) || '0', 10)
                     });
                 }
             });
@@ -1315,11 +1252,31 @@
             return { records: lessonsList, teacherAccounts };
         }
 
-        // نافذة الجدول بالصيغة الأصلية عند الضغط على كارت المستر أو المس
+        // تحديث حالة توثيق الحساب
+        function updateVerification(phone, val) {
+            if (!phone || phone === 'غير مسجل') return;
+            localStorage.setItem('teacherVerification_' + phone, val);
+            showToast(`✨ تم تحديث توثيق الحساب إلى: ${val}`);
+            renderAllRecords();
+        }
+
+        // حظر أو إلغاء حظر المعلم
+        function toggleTeacherBlock(phone, teacherName) {
+            if (!phone || phone === 'غير مسجل') {
+                showToast('⚠️ لا يمكن حظر حساب بدون رقم تليفون مسجل.');
+                return;
+            }
+            const key = 'teacherBlocked_' + phone;
+            const current = localStorage.getItem(key) === 'true';
+            localStorage.setItem(key, String(!current));
+            renderAllRecords();
+            showToast(!current ? `🚫 تم حظر المعلم (${teacherName})` : `✅ تم إلغاء حظر المعلم (${teacherName})`);
+        }
+
+        // نافذة ملخص المستر/المس بالصيغة الأصلية
         function openTeachersSummaryModal(titleType) {
             const { records } = collectAllAppData();
             const filtered = records.filter(r => r.title === titleType);
-
             const modalTitle = document.getElementById('summaryModalTitle');
             const modalContent = document.getElementById('summaryModalContent');
 
@@ -1329,7 +1286,6 @@
                 modalContent.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">لا توجد سجلات مسجلة لـ (${titleType}) حالياً.</div>`;
             } else {
                 let totalClicks = filtered.reduce((sum, item) => sum + (item.waClicks || 0), 0);
-                
                 let html = `
                     <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs font-black text-blue-900">
                         <span>📊 عدد المعلمين: ${filtered.length}</span>
@@ -1348,10 +1304,9 @@
                         <tbody>
                 `;
 
-                filtered.forEach((r) => {
+                filtered.forEach(r => {
                     const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                     const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                    
                     html += `
                         <tr class="border-b border-slate-200 hover:bg-slate-50">
                             <td class="p-2.5 font-black text-slate-900">${r.teacherName}</td>
@@ -1359,18 +1314,14 @@
                             <td class="p-2.5">${r.groupName} <br><span class="text-[10px] text-slate-500">${r.grade} (${r.subjects})</span></td>
                             <td class="p-2.5 text-center font-black text-emerald-700">${r.waClicks || 0}</td>
                             <td class="p-2.5 text-center">
-                                ${cleanPhone ? `
-                                    <a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>
-                                ` : '--'}
+                                ${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}
                             </td>
                         </tr>
                     `;
                 });
-
                 html += `</tbody></table>`;
                 modalContent.innerHTML = html;
             }
-
             document.getElementById('teachersSummaryModal').classList.add('active');
         }
 
@@ -1380,45 +1331,38 @@
             localStorage.setItem(key, String(current + 1));
         }
 
-        // ==========================================
-        // 4. عرض الكروت والإحصائيات والفلاتر
-        // ==========================================
         function populateGradeFilter() {
             const curr = getCurriculum();
             const gradeSelect = document.getElementById('filterGrade');
-            const currentVal = gradeSelect.value;
             let allGrades = new Set();
-            Object.values(curr).forEach(stageObj => {
-                (stageObj.grades || []).forEach(g => allGrades.add(g));
-            });
+            Object.values(curr).forEach(stageObj => (stageObj.grades || []).forEach(g => allGrades.add(g)));
             gradeSelect.innerHTML = `<option value="all">جميع الصفوف الدراسية</option>`;
-            allGrades.forEach(g => {
-                gradeSelect.innerHTML += `<option value="${g}">${g}</option>`;
-            });
-            if ([...allGrades].includes(currentVal)) gradeSelect.value = currentVal;
+            allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
+
+        let selectedMainSubjectFilter = 'all';
+        function onMainGradeFilterChange() { selectedMainSubjectFilter = 'all'; renderMainGradeSubjectsBar(); renderAllRecords(); }
+        function renderMainGradeSubjectsBar() {
+            const gradeVal = document.getElementById('filterGrade').value;
+            const bar = document.getElementById('mainGradeSubjectsBar');
+            const pillsContainer = document.getElementById('mainGradeSubjectsPills');
+            if (gradeVal === 'all') { bar.classList.add('hidden'); return; }
+            const curr = getCurriculum();
+            let foundSubjects = [];
+            Object.keys(curr).forEach(stageKey => { if ((curr[stageKey].grades || []).includes(gradeVal)) foundSubjects = getSubjectsForGrade(stageKey, gradeVal); });
+            bar.classList.remove('hidden');
+            let html = `<button onclick="selectMainSubjectPill('all')" class="subj-filter-pill ${selectedMainSubjectFilter === 'all' ? 'active' : ''}">الكل</button>`;
+            foundSubjects.forEach(s => html += `<button onclick="selectMainSubjectPill('${s.replace(/'/g, "\\'")}')" class="subj-filter-pill ${selectedMainSubjectFilter === s ? 'active' : ''}">📘 ${s}</button>`);
+            pillsContainer.innerHTML = html;
+        }
+        function selectMainSubjectPill(subjName) { selectedMainSubjectFilter = subjName; renderMainGradeSubjectsBar(); renderAllRecords(); }
 
         function renderAllRecords() {
             const { records, teacherAccounts } = collectAllAppData();
             const curr = getCurriculum();
-
-            const uniqueMrSet = new Set();
-            const uniqueMsSet = new Set();
-
-            teacherAccounts.forEach(acc => {
-                const tTitle = acc.title || 'مستر';
-                const tName = acc.name || '';
-                const tPhone = acc.phone || '';
-                const identifier = tPhone || tName;
-                if (tTitle === 'مس') uniqueMsSet.add(identifier);
-                else uniqueMrSet.add(identifier);
-            });
-
-            records.forEach(r => {
-                const identifier = (r.phone && r.phone !== 'غير مسجل') ? r.phone : r.teacherName;
-                if (r.title === 'مس') uniqueMsSet.add(identifier);
-                else uniqueMrSet.add(identifier);
-            });
+            const uniqueMrSet = new Set(), uniqueMsSet = new Set();
+            teacherAccounts.forEach(acc => acc.title === 'مس' ? uniqueMsSet.add(acc.phone || acc.name) : uniqueMrSet.add(acc.phone || acc.name));
+            records.forEach(r => r.title === 'مس' ? uniqueMsSet.add(r.phone || r.teacherName) : uniqueMrSet.add(r.phone || r.teacherName));
 
             document.getElementById('statMrCount').textContent = uniqueMrSet.size;
             document.getElementById('statMsCount').textContent = uniqueMsSet.size;
@@ -1433,10 +1377,7 @@
                 if (titleFilter !== 'all' && r.title !== titleFilter) return false;
                 if (gradeFilter !== 'all' && r.grade !== gradeFilter) return false;
                 if (selectedMainSubjectFilter !== 'all' && !String(r.subjects || '').includes(selectedMainSubjectFilter)) return false;
-                if (q) {
-                    const hay = `${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects} ${r.address}`.toLowerCase();
-                    if (!hay.includes(q)) return false;
-                }
+                if (q && !`${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects}`.toLowerCase().includes(q)) return false;
                 return true;
             });
 
@@ -1444,53 +1385,62 @@
             const container = document.getElementById('recordsGrid');
 
             if (filtered.length === 0) {
-                container.innerHTML = `
-                    <div class="col-span-full bg-white rounded-3xl p-10 text-center border-2 border-dashed border-slate-300">
-                        <div class="text-5xl mb-3">📭</div>
-                        <h3 class="text-lg font-black text-slate-700 mb-1">لا توجد بيانات مطابقة حالياً</h3>
-                        <p class="text-xs font-bold text-slate-500">يمكنك تعديل فلاتر البحث</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="col-span-full bg-white rounded-3xl p-10 text-center font-bold text-slate-500">لا توجد سجلات مطابقة حالياً</div>`;
                 return;
             }
 
-            container.innerHTML = filtered.map((r) => {
+            container.innerHTML = filtered.map(r => {
                 const isMs = r.title === 'مس';
                 const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
                 const stageName = (curr[r.stageKey] && curr[r.stageKey].name) ? curr[r.stageKey].name : 'مرحلة عامة';
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
 
-                const statusBadge = r.type === 'lesson'
-                    ? (r.isPublished ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ظاهر للطلاب</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-emerald-300">🔴 مخفي عن الطلاب</span>`)
-                    : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">⏳ حساب بدون مجموعة</span>`;
+                const blockClass = r.isBlocked ? 'is-blocked' : '';
+                const blockStatusBadge = r.isBlocked 
+                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 محظور</span>` 
+                    : `<span></span>`;
 
                 return `
-                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'}">
+                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass}">
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
                             <div class="flex items-center gap-2">
                                 ${badgeHTML}
                                 <h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3>
                                 <span class="text-xs font-bold text-slate-400">(${r.groupName})</span>
                             </div>
-                            ${statusBadge}
+                            <div class="flex items-center gap-1.5">
+                                ${blockStatusBadge}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
+                            </div>
                         </div>
 
                         <div class="space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div class="info-pill" style="background:#EFF6FF; border-color:#BFDBFE;">
+                                <div class="info-pill" style="background:#EFF6FF;">
                                     <span class="label">📱 التليفون:</span>
                                     <span class="font-black text-blue-900" dir="ltr">${r.phone}</span>
                                 </div>
-                                <div class="info-pill" style="background:#FFFBEB; border-color:#FDE68A;">
-                                    <span class="label">💬 ضغطات الواتس:</span>
-                                    <span class="font-black text-amber-900">${r.waClicks || 0} ضغطة</span>
+                                <div class="info-pill" style="background:#F8FAFC;">
+                                    <span class="label">📅 تاريخ التسجيل:</span>
+                                    <span class="font-black text-slate-700">${r.regDate}</span>
                                 </div>
+                            </div>
+
+                            <!-- حقل توثيق الحساب (مجاني، شهر، 6 شهور، سنة واحدة)[span_13](start_span)[span_13](end_span) -->
+                            <div class="info-pill flex items-center justify-between" style="background:#FEF3C7; border-color:#FCD34D;">
+                                <span class="label text-amber-900">🛡️ توثيق الحساب:</span>
+                                <select onchange="updateVerification('${r.phone}', this.value)" class="form-input py-1 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer">
+                                    <option value="مجاني" ${r.verification === 'مجاني' ? 'selected' : ''}>مجاني</option>
+                                    <option value="شهر" ${r.verification === 'شهر' ? 'selected' : ''}>شهر واحد</option>
+                                    <option value="٦ شهور" ${r.verification === '٦ شهور' ? 'selected' : ''}>6 شهور</option>
+                                    <option value="سنة واحدة" ${r.verification === 'سنة واحدة' ? 'selected' : ''}>سنة واحدة</option>
+                                </select>
                             </div>
 
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div class="info-pill">
-                                    <span class="label">👑 الصف الدراسي:</span>
+                                    <span class="label">👑 الصف:</span>
                                     <span class="text-slate-900 font-black">${r.grade} <small class="text-slate-500">(${stageName})</small></span>
                                 </div>
                                 <div class="info-pill">
@@ -1499,34 +1449,27 @@
                                 </div>
                             </div>
 
-                            <div class="info-pill" style="background:#F0FDF4; border-color:#BBF7D0;">
-                                <span class="label">📍 العنوان الفعلي:</span>
-                                <span class="text-emerald-950 font-black">
-                                    [${r.locType}] — ${r.address}
-                                </span>
+                            <div class="info-pill" style="background:#F0FDF4;">
+                                <span class="label">📍 العنوان:</span>
+                                <span>[${r.locType}] ${r.address}</span>
                             </div>
 
                             <div class="info-pill">
                                 <span class="label">⏰ المواعيد:</span>
-                                <span>${r.days} | من <b>${r.timeFrom}</b> إلى <b>${r.timeTo}</b></span>
+                                <span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span>
                             </div>
                         </div>
 
                         <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
-                            ${cleanPhone ? `
-                                <a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white hover:bg-blue-700">📞 اتصال</a>
-                                <a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white hover:bg-emerald-700">💬 واتساب</a>
-                            ` : ''}
+                            ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white">💬 واتساب</a>` : ''}
+                            
+                            <!-- زر حظر المعلم -->
+                            <button onclick="toggleTeacherBlock('${r.phone}', '${r.teacherName}')" class="action-chip ${r.isBlocked ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">
+                                ${r.isBlocked ? '✅ إلغاء الحظر' : '🚫 حظر المعلم'}
+                            </button>
 
-                            ${r.lat && r.lng ? `
-                                <button onclick="openMapPreview('${r.teacherName.replace(/'/g, "\\'")}', '${r.address.replace(/'/g, "\\'")}', ${r.lat},${r.lng})" class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 hover:bg-indigo-600 hover:text-white">
-                                    🗺️ الخريطة
-                                </button>
-                            ` : ''}
-
-                            <!-- تم إلغاء زر التعديل وزر إخفاء/إظهار بناءً على طلبكم وجعل الأزرار مقتصرة على الاتصال، واتساب، الخريطة، وحذف المعلم -->
-
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}', '${r.teacherName || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
+                            <!-- زر حذف المعلم -->
+                            <button onclick="deleteRecord('${r.lessonId}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-rose-600 text-white mr-auto">
                                 🗑️ حذف المعلم
                             </button>
                         </div>
@@ -1537,7 +1480,7 @@
             renderStudentSection();
         }
 
-        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب[span_14](start_span)[span_14](end_span)
+        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب[span_14](start_span)[span_14](end_span)[span_15](start_span)[span_15](end_span)
         function renderStudentSection() {
             const raw = localStorage.getItem('talep_data');
             const sec = document.getElementById('studentInfoSection');
@@ -1560,232 +1503,19 @@
             } catch (e) { sec.classList.add('hidden'); }
         }
 
-        let adminMap = null;
-        let adminMarker = null;
-        function openMapPreview(teacherName, address, lat, lng) {
-            document.getElementById('mapModalTitle').textContent = `📍 موقع درس أ/ ${teacherName}`;
-            document.getElementById('mapModalAddress').textContent = `🏠 العنوان الفعلي: ${address}`;
-            document.getElementById('googleMapsExternalLink').href = `https://www.google.com/maps?q=${lat},${lng}`;
-            document.getElementById('mapModal').classList.add('active');
-
-            setTimeout(() => {
-                if (!adminMap) {
-                    adminMap = L.map('adminLeafletMap').setView([lat, lng], 16);
-                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(adminMap);
-                    adminMarker = L.marker([lat, lng]).addTo(adminMap);
-                } else {
-                    adminMap.setView([lat, lng], 16);
-                    adminMarker.setLatLng([lat, lng]);
-                    adminMap.invalidateSize();
-                }
-            }, 200);
-        }
-
-        function populateModalStages() {
-            const curr = getCurriculum();
-            const stageSel = document.getElementById('formStage');
-            stageSel.innerHTML = '';
-            Object.keys(curr).forEach(k => {
-                stageSel.innerHTML += `<option value="${k}">${curr[k].name}</option>`;
-            });
-            populateModalGrades();
-        }
-
-        function populateModalGrades() {
-            const curr = getCurriculum();
-            const stageKey = document.getElementById('formStage').value;
-            const gradeSel = document.getElementById('formGrade');
-            gradeSel.innerHTML = '';
-            if (curr[stageKey]) {
-                (curr[stageKey].grades || []).forEach(g => {
-                    gradeSel.innerHTML += `<option value="${g}">${g}</option>`;
-                });
-            }
-            populateModalSubjects();
-        }
-
-        function populateModalSubjects() {
-            const stageKey = document.getElementById('formStage').value;
-            const gradeName = document.getElementById('formGrade').value;
-            const subjSel = document.getElementById('formSubject');
-            subjSel.innerHTML = '';
-            const subjs = getSubjectsForGrade(stageKey, gradeName);
-            subjs.forEach(s => {
-                subjSel.innerHTML += `<option value="${s}">${s}</option>`;
-            });
-        }
-
-        function saveRecordFromModal() {
-            const lessonIdInput = document.getElementById('editLessonId').value;
-            const title = document.getElementById('formTitle').value;
-            const teacherName = document.getElementById('formTeacherName').value.trim();
-            const phone = document.getElementById('formPhone').value.trim();
-            const regDate = document.getElementById('formRegDate').value || new Date().toISOString().split('T')[0];
-            const groupName = document.getElementById('formGroupName').value.trim() || 'مجموعة جديدة';
-            const centerName = document.getElementById('formCenterName').value.trim();
-            const stageKey = document.getElementById('formStage').value;
-            const grade = document.getElementById('formGrade').value;
-            const subject = document.getElementById('formSubject').value;
-            const address = document.getElementById('m_address').value.trim();
-
-            if (!teacherName || !phone) { alert('يرجى إدخال اسم المعلم ورقم التليفون'); return; }
-
-            const existingAccStr = localStorage.getItem('teacherAccount_' + phone);
-            const existingAcc = existingAccStr ? JSON.parse(existingAccStr) : {};
-            const updatedAcc = {
-                ...existingAcc,
-                title: title,
-                name: teacherName,
-                phone: phone,
-                age: existingAcc.age || '30',
-                pass: existingAcc.pass || '1234',
-                createdAt: regDate
-            };
-            localStorage.setItem('teacherAccount_' + phone, JSON.stringify(updatedAcc));
-
-            let lessonsArr = [];
-            try { lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]'); } catch (e) {}
-
-            let targetId = lessonIdInput;
-            if (!targetId) {
-                targetId = lessonsArr.length > 0 ? Math.max(...lessonsArr.map(l => Number(l.id) || 0)) + 1 : 1;
-                lessonsArr.push({ id: Number(targetId), title: groupName });
-            } else {
-                const idx = lessonsArr.findIndex(l => String(l.id) === String(targetId));
-                if (idx > -1) lessonsArr[idx].title = groupName;
-                else lessonsArr.push({ id: Number(targetId), title: groupName });
-            }
-            localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
-
-            const existingState = JSON.parse(localStorage.getItem('lessonState_' + targetId) || '{}');
-            const updatedState = {
-                ...existingState,
-                t_gender: title,
-                g_teacher: teacherName,
-                g_phone: phone,
-                createdAt: regDate,
-                g_name: groupName,
-                g_center: centerName,
-                s_stage: stageKey,
-                s_grade: grade,
-                selectedSubjects: [`${grade} - ${subject}`],
-                m_address: address || existingState.m_address || 'محدد بواسطة الإدارة',
-                lat: existingState.lat || 31.0409,
-                lng: existingState.lng || 31.3785
-            };
-            localStorage.setItem('lessonState_' + targetId, JSON.stringify(updatedState));
-            if (localStorage.getItem('publishState_' + targetId) === null) {
-                localStorage.setItem('publishState_' + targetId, 'true');
-            }
-
-            closeModal('editRecordModal');
-            populateGradeFilter();
-            renderAllRecords();
-            showToast('✨ تم حفظ بيانات المعلم بنجاح');
-        }
-
         function deleteRecord(lessonId, phone, teacherName) {
-            if (!confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) وحسابه وجميع دروسه نهائياً؟`)) return;
-            
-            if (phone && phone !== 'غير مسجل') {
-                localStorage.removeItem('teacherAccount_' + phone);
-            }
-
+            if (!confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) وحسابه نهائياً؟`)) return;
             if (lessonId) {
                 localStorage.removeItem('lessonState_' + lessonId);
                 localStorage.removeItem('publishState_' + lessonId);
-                try {
-                    let lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]');
-                    lessonsArr = lessonsArr.filter(l => String(l.id) !== String(lessonId));
-                    localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
-                } catch (e) {}
             }
-
-            for (let i = localStorage.length - 1; i >= 0; i--) {
-                const k = localStorage.key(i);
-                if (k && k.startsWith('lessonState_')) {
-                    try {
-                        const st = JSON.parse(localStorage.getItem(k) || '{}');
-                        if ((phone && st.g_phone === phone) || (teacherName && st.g_teacher === teacherName)) {
-                            const lid = k.replace('lessonState_', '');
-                            localStorage.removeItem(k);
-                            localStorage.removeItem('publishState_' + lid);
-                        }
-                    } catch (e) {}
-                }
-                if (k && k.startsWith('teacherAccount_')) {
-                    try {
-                        const acc = JSON.parse(localStorage.getItem(k) || '{}');
-                        if ((phone && acc.phone === phone) || (teacherName && acc.name === teacherName)) {
-                            localStorage.removeItem(k);
-                        }
-                    } catch (e) {}
-                }
+            if (phone && phone !== 'غير مسجل') {
+                localStorage.removeItem('teacherAccount_' + phone);
+                localStorage.removeItem('teacherVerification_' + phone);
+                localStorage.removeItem('teacherBlocked_' + phone);
             }
-
             renderAllRecords();
-            showToast('🗑️ تم حذف المعلم وحسابه نهائياً');
-        }
-
-        let selectedMainSubjectFilter = 'all';
-        function onMainGradeFilterChange() {
-            selectedMainSubjectFilter = 'all';
-            renderMainGradeSubjectsBar();
-            renderAllRecords();
-        }
-
-        function renderMainGradeSubjectsBar() {
-            const gradeVal = document.getElementById('filterGrade').value;
-            const bar = document.getElementById('mainGradeSubjectsBar');
-            const pillsContainer = document.getElementById('mainGradeSubjectsPills');
-            const titleEl = document.getElementById('mainGradeSubjectsTitle');
-
-            if (gradeVal === 'all') {
-                bar.classList.add('hidden');
-                return;
-            }
-
-            const curr = getCurriculum();
-            let foundSubjects = [];
-            Object.keys(curr).forEach(stageKey => {
-                if ((curr[stageKey].grades || []).includes(gradeVal)) {
-                    foundSubjects = getSubjectsForGrade(stageKey, gradeVal);
-                }
-            });
-
-            bar.classList.remove('hidden');
-            titleEl.textContent = `📖 المواد الخاصة بالصف (${gradeVal}):`;
-
-            let html = `
-                <button onclick="selectMainSubjectPill('all')" class="subj-filter-pill ${selectedMainSubjectFilter === 'all' ? 'active' : ''}">
-                    الكل (${foundSubjects.length})
-                </button>
-            `;
-            foundSubjects.forEach(s => {
-                const safeS = s.replace(/'/g, "\\'");
-                html += `
-                    <button onclick="selectMainSubjectPill('${safeS}')" class="subj-filter-pill ${selectedMainSubjectFilter === s ? 'active' : ''}">
-                        📘 ${s}
-                    </button>
-                `;
-            });
-            pillsContainer.innerHTML = html;
-        }
-
-        function selectMainSubjectPill(subjName) {
-            selectedMainSubjectFilter = subjName;
-            renderMainGradeSubjectsBar();
-            renderAllRecords();
-        }
-
-        function openCurriculumForSelectedFilterGrade() {
-            const gradeVal = document.getElementById('filterGrade').value;
-            const curr = getCurriculum();
-            let targetStage = null;
-            Object.keys(curr).forEach(k => {
-                if ((curr[k].grades || []).includes(gradeVal)) targetStage = k;
-            });
-            openCurriculumModal(targetStage, gradeVal !== 'all' ? gradeVal : null);
+            showToast('🗑️ تم حذف المعلم بنجاح');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
