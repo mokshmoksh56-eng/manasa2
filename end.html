@@ -93,6 +93,8 @@
         }
         .is-hidden .map-hidden-overlay { opacity: 1; pointer-events: all; }
         .is-hidden #static-map { filter: grayscale(1) blur(5px); }
+        /* عند الحظر الإداري، نلغي القدرة على التفاعل مع طبقة الحجب */
+        .is-blocked .map-hidden-overlay { cursor: not-allowed; pointer-events: auto; }
 
         .map-hidden-overlay i { font-size: 36px; margin-bottom: 6px; font-style: normal; }
         .map-hidden-overlay h4 { font-size: 16px; font-weight: 900; margin: 0; color: #FCA5A5; }
@@ -107,6 +109,12 @@
             padding: 8px 20px; 
             border-radius: 99px; 
             box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); 
+        }
+        /* تغيير شكل الزر في حالة الحظر */
+        .is-blocked .map-hidden-overlay p {
+            background: #DC2626;
+            box-shadow: 0 6px 15px rgba(220, 38, 38, 0.4);
+            cursor: not-allowed;
         }
 
         /* أزرار التحكم داخل الخريطة (عند النشر) */
@@ -173,6 +181,20 @@
             .fab-btn { flex: unset; padding: 14px 24px; font-size: 15px; }
             .lesson-title { font-size: 28px; }
         }
+
+        /* تنبيه الحظر */
+        #blockAlert {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 800;
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -187,6 +209,10 @@
 
     <!-- ✅ تقرير البيانات -->
     <div class="report-container">
+        
+        <!-- تنبيه الحظر -->
+        <div id="blockAlert">⚠️ تم حظر هذا الحساب من الإدارة. بعض الميزات مثل تفعيل الموقع معطلة.</div>
+
         <div class="report-grid">
             
             <!-- 1. بيانات المجموعة الأساسية -->
@@ -263,10 +289,10 @@
                     </div>
 
                     <!-- طبقة الحجب عند الإخفاء (قابلة للضغط لتفعيل الموقع) صنفناها بـ clickable-element لتشغيل الصوت -->
-                    <div class="map-hidden-overlay clickable-element" onclick="togglePublish(true)" title="اضغط هنا لتفعيل الموقع">
+                    <div class="map-hidden-overlay clickable-element" id="mapOverlay" onclick="handleMapOverlayClick()" title="اضغط هنا لتفعيل الموقع">
                         <i>🔒</i>
-                        <h4>الموقع محجوب عن الطلاب</h4>
-                        <p><b>اضغط هنا لتفعيل الموقع</b></p>
+                        <h4 id="overlayTitle">الموقع محجوب عن الطلاب</h4>
+                        <p id="overlayActionText"><b>اضغط هنا لتفعيل الموقع</b></p>
                     </div>
                     
                     <div id="static-map"></div>
@@ -339,11 +365,30 @@
         let teacherNameGlob = "المعلم"; 
         let currentLat = 30.0444;
         let currentLng = 31.2357;
+        let isTeacherBlocked = false; // متغير لتخزين حالة الحظر
         
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, location.href);
         });
+
+        // الاستماع لتحديثات حالة الحظر من لوحة الإدارة
+        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
+        if (authStatusChannel) {
+            authStatusChannel.onmessage = (event) => {
+                if (event.data.type === 'AUTH_STATUS_CHANGED') {
+                    // إذا تطابق رقم التليفون أو اسم المعلم، نقوم بتحديث الحالة فوراً
+                    const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
+                    const nameParts = document.getElementById('headerTeacherTitleAndName').innerText.split(' / ');
+                    const currentName = nameParts.length > 1 ? nameParts[1] : '';
+
+                    if (event.data.phone === phoneEl || event.data.teacherName === currentName) {
+                        isTeacherBlocked = event.data.isBlocked;
+                        applyBlockStatus();
+                    }
+                }
+            };
+        }
         
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
@@ -352,10 +397,66 @@
             document.getElementById('reportTitle').innerText = `بيانات مجموعة ${currentLessonId}`;
 
             loadActualData();
-
-            const savedPublishState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
-            togglePublish(savedPublishState); 
+            checkBlockStatus(); // فحص حالة الحظر عند التحميل
+            
+            // إذا كان محظوراً، يتم فرض إخفاء الخريطة، وإلا نعتمد على الحالة المحفوظة
+            let initialPublishState = false;
+            if(!isTeacherBlocked) {
+                 initialPublishState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
+            }
+            togglePublish(initialPublishState); 
         };
+
+        function checkBlockStatus() {
+            const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
+            const nameParts = document.getElementById('headerTeacherTitleAndName').innerText.split(' / ');
+            const currentName = nameParts.length > 1 ? nameParts[1] : '';
+
+            isTeacherBlocked = false;
+            
+            if (phoneEl && phoneEl !== 'غير مسجل') {
+                if (localStorage.getItem('teacherBlocked_' + phoneEl) === 'true') isTeacherBlocked = true;
+            }
+            if (!isTeacherBlocked && currentName && currentName !== 'غير محدد') {
+                 if (localStorage.getItem('teacherBlocked_name_' + currentName) === 'true') isTeacherBlocked = true;
+            }
+
+            applyBlockStatus();
+        }
+
+        function applyBlockStatus() {
+            const mapWrap = document.getElementById('mapWrapper');
+            const alertEl = document.getElementById('blockAlert');
+            const overlayTitle = document.getElementById('overlayTitle');
+            const overlayActionText = document.getElementById('overlayActionText');
+
+            if (isTeacherBlocked) {
+                // تفعيل واجهة الحظر
+                alertEl.style.display = 'block';
+                mapWrap.classList.add('is-blocked');
+                overlayTitle.innerText = "الخريطة معطلة (حساب محظور)";
+                overlayActionText.innerHTML = "<b>يرجى التواصل مع الإدارة</b>";
+                
+                // إجبار الخريطة على الاختفاء
+                if (!mapWrap.classList.contains('is-hidden')) {
+                     togglePublish(false);
+                }
+            } else {
+                // إزالة واجهة الحظر
+                alertEl.style.display = 'none';
+                mapWrap.classList.remove('is-blocked');
+                overlayTitle.innerText = "الموقع محجوب عن الطلاب";
+                overlayActionText.innerHTML = "<b>اضغط هنا لتفعيل الموقع</b>";
+            }
+        }
+
+        function handleMapOverlayClick() {
+            if (isTeacherBlocked) {
+                alert("تم إيقاف هذه الميزة. يرجى مراجعة لوحة الإدارة لتوثيق الحساب الخاص بك.");
+                return;
+            }
+            togglePublish(true);
+        }
 
         function loadActualData() {
             const savedData = localStorage.getItem('lessonState_' + currentLessonId);
@@ -537,6 +638,11 @@
             } else {
                 const current = localStorage.getItem('publishState_' + currentLessonId) === 'true';
                 isPublished = !current;
+            }
+
+            // لا يمكن نشر الموقع إذا كان المعلم محظوراً
+            if (isTeacherBlocked && isPublished) {
+                isPublished = false;
             }
 
             const mapWrap = document.getElementById('mapWrapper');
