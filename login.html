@@ -446,12 +446,6 @@
         });
 
         window.onload = function() {
-            const loggedInTeacher = localStorage.getItem('loggedInTeacher');
-            if (loggedInTeacher) {
-                const loggedIn = JSON.parse(loggedInTeacher);
-                if (loggedIn && loggedIn.phone) localStorage.setItem('rememberedPhone', loggedIn.phone);
-                localStorage.removeItem('loggedInTeacher');
-            }
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
@@ -505,11 +499,14 @@
 
             if (localStorage.getItem('teacherAccount_' + phone)) return showAlert('هذا الرقم مسجل مسبقاً!');
 
-            const accountData = { title, name, age, phone, pass: pass1, createdAt: new Date().toISOString().split('T')[0] };
+            const fullTeacherName = `${title} ${name}`; // 👈 دمج اللقب مع الاسم الكامل
+
+            const accountData = { title, name, fullName: fullTeacherName, age, phone, pass: pass1, createdAt: new Date().toISOString().split('T')[0] };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
+            localStorage.setItem('loggedInTeacher', JSON.stringify(accountData)); // 👈 حفظ بيانات المعلم الحالي لتنتقل أوتوماتيك
             localStorage.setItem('rememberedPhone', phone);
 
-            showSuccessPopup('تم إنشاء الحساب بنجاح! 🎉', `مرحباً بك يا ${title} / ${name}`, './index2.html');
+            showSuccessPopup('تم إنشاء الحساب بنجاح! 🎉', `مرحباً بك يا ${fullTeacherName}`, './group.html');
         }
 
         function handleLogin() {
@@ -523,10 +520,15 @@
             const savedData = JSON.parse(savedDataStr);
             if (savedData.pass !== pass) return showAlert('الرقم السري غير صحيح.');
 
-            localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
+            // تأكد من وجود fullName أو تكوينه من اللقب والاسم
+            if (!savedData.fullName) {
+                savedData.fullName = `${savedData.title || 'مستر'} ${savedData.name || ''}`.trim();
+            }
+
+            localStorage.setItem('loggedInTeacher', JSON.stringify(savedData)); // 👈 حفظ بيانات المعلم الحالي لتنتقل أوتوماتيك
             localStorage.setItem('rememberedPhone', phone);
 
-            showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.title || ''} / ${savedData.name || ''}`, './index2.html');
+            showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.fullName}`, './group.html');
         }
 
         function handleLogout() { window.location.href = './index.html'; }
@@ -542,8 +544,7 @@
             const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
             if (phone) {
                 localStorage.removeItem('teacherAccount_' + phone);
-                localStorage.removeItem('teacherVerification_' + phone);
-                localStorage.removeItem('teacherBlocked_' + phone);
+                localStorage.removeItem('loggedInTeacher');
                 document.getElementById('deletedSuccessModal').classList.add('active');
                 setTimeout(() => { window.location.href = './index.html'; }, 1400);
             }
