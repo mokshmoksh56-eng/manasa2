@@ -28,7 +28,6 @@
             margin: 0;
         }
 
-        /* الهيدر العلوي */
         .hero-banner {
             position: relative;
             width: 100%;
@@ -88,7 +87,6 @@
             color: #fff;
         }
 
-        /* كروت الإحصائيات */
         .stats-container {
             max-width: 1200px;
             margin: -45px auto 20px;
@@ -123,7 +121,6 @@
             flex-shrink: 0;
         }
 
-        /* شريط البحث والفلترة */
         .filter-bar {
             background: #FFFFFF;
             border-radius: 20px;
@@ -153,7 +150,6 @@
             box-shadow: 0 0 0 3px #DBEAFE;
         }
 
-        /* شارات مستر ومس */
         .badge-mr {
             background: #DBEAFE;
             color: #1E40AF;
@@ -179,7 +175,6 @@
             gap: 4px;
         }
 
-        /* كارت بيانات المعلم والدرس */
         .record-card {
             background: #FFFFFF;
             border-radius: 22px;
@@ -218,7 +213,6 @@
             white-space: nowrap;
         }
 
-        /* شارة نوع التليفون */
         .phone-type-badge {
             display: inline-flex;
             align-items: center;
@@ -233,7 +227,6 @@
             white-space: nowrap;
         }
 
-        /* أزرار الإجراءات */
         .action-chip {
             padding: 7px 12px;
             border-radius: 10px;
@@ -250,7 +243,6 @@
         }
         .action-chip:active { transform: translateY(1px); }
 
-        /* النوافذ المنبثقة */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -285,7 +277,6 @@
             border-bottom-color: #F59E0B;
         }
 
-        /* أزرار المراحل والصفوف التفاعلية */
         .stage-tab {
             padding: 9px 15px;
             border-radius: 14px;
@@ -309,7 +300,6 @@
             transform: translateY(-1px);
         }
 
-        /* كارت الصف الدراسي القابل للضغط لإظهار مواده تحته */
         .grade-selectable-card {
             display: flex;
             align-items: center;
@@ -338,7 +328,6 @@
             box-shadow: 0 6px 15px rgba(16, 185, 129, 0.15);
         }
 
-        /* صندوق المواد الذي يظهر تحت الصف المختار */
         .grade-subjects-panel {
             background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%);
             border: 2px solid #86EFAC;
@@ -368,7 +357,6 @@
             color: #1E293B;
         }
 
-        /* أزرار فلترة المواد تحت الصف في الصفحة الرئيسية */
         .subj-filter-pill {
             padding: 5px 12px;
             border-radius: 999px;
@@ -411,10 +399,8 @@
 </head>
 <body>
 
-    <!-- إشعار منبثق -->
     <div id="toastMsg" class="custom-toast">✨ تمت العملية بنجاح</div>
 
-    <!-- الهيدر العلوي -->
     <header class="hero-banner">
         <div class="top-nav">
             <div class="flex items-center gap-3">
@@ -438,7 +424,6 @@
         </div>
     </header>
 
-    <!-- كروت الإحصائيات السريعة -->
     <section class="stats-container">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div class="stat-card" style="border-bottom-color: #2563EB;">
@@ -475,10 +460,8 @@
         </div>
     </section>
 
-    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
         
-        <!-- شريط البحث والفلترة -->
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-2">
@@ -503,7 +486,6 @@
                 </div>
             </div>
 
-            <!-- شريط المواد الدراسية الذي يظهر تلقائياً تحت الصف الدراسي عند اختياره -->
             <div id="mainGradeSubjectsBar" class="hidden mt-3 pt-3 border-t border-dashed border-emerald-200 bg-emerald-50/60 p-3 rounded-xl">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <span id="mainGradeSubjectsTitle" class="text-xs font-black text-emerald-900">📖 المواد الخاصة بالصف:</span>
@@ -529,10 +511,8 @@
             </div>
         </div>
 
-        <!-- قائمة كروت المعلمين والدروس -->
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل على الجهاز (إن وجد) -->
         <div id="studentInfoSection" class="mt-8 hidden">
             <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
                 <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
@@ -542,9 +522,6 @@
 
     </main>
 
-    <!-- ========================================================================= -->
-    <!-- نافذة التحكم الهرمي: تضغط على المرحلة -> تضغط على الصف (مثلاً الأول الإعدادي) -> تظهر مواده من تحته -->
-    <!-- ========================================================================= -->
     <div id="curriculumModal" class="modal-overlay" onclick="closeModal('curriculumModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
@@ -562,7 +539,6 @@
                 </div>
             </div>
 
-            <!-- 1. قسم المراحل الدراسية -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <label class="text-xs font-black text-slate-700">🎓 1. المراحل الدراسية (اختر المرحلة):</label>
@@ -572,10 +548,8 @@
                     </div>
                 </div>
 
-                <!-- أزرار المراحل -->
                 <div id="stagesTabsContainer" class="flex flex-wrap gap-2 mt-2"></div>
 
-                <!-- شريط تعديل أو حذف المرحلة المختارة -->
                 <div id="activeStageControlBar" class="flex flex-wrap items-center justify-between gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 mt-3">
                     <div class="text-xs font-black text-blue-900">
                         المرحلة النشطة: <span id="currentStageTitleLabel" class="text-sm font-black text-blue-700 underline"></span>
@@ -591,7 +565,6 @@
                 </div>
             </div>
 
-            <!-- 2. قسم الصفوف الدراسية (اضغط على الصف ليظهر مواده من تحته) -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div>
@@ -607,11 +580,9 @@
                     </div>
                 </div>
 
-                <!-- شبكة الصفوف الدراسية -->
                 <div id="gradesListContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
             </div>
 
-            <!-- 3. قسم المواد الدراسية (يظهر مباشرة من تحت الصف الدراسي الذي تم الضغط عليه) -->
             <div id="gradeSubjectsPanel" class="grade-subjects-panel hidden">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-emerald-200">
                     <div>
@@ -629,7 +600,6 @@
                     </div>
                 </div>
 
-                <!-- قائمة المواد الخاصة بالصف المختار -->
                 <div id="subjectsListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
             </div>
 
@@ -641,7 +611,6 @@
         </div>
     </div>
 
-    <!-- نافذة عرض الموقع الفعلي للدرس على الخريطة -->
     <div id="mapModal" class="modal-overlay" onclick="closeModal('mapModal')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
@@ -659,7 +628,6 @@
         </div>
     </div>
 
-    <!-- نافذة إضافة / تعديل بيانات معلم ودرس كامل -->
     <div id="editRecordModal" class="modal-overlay" onclick="closeModal('editRecordModal')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -754,12 +722,10 @@
         function detectPhoneType() {
             const ua = navigator.userAgent || navigator.vendor || window.opera || '';
             
-            // آيفون / آيباد
             if (/iPhone/i.test(ua)) return '🍎 آيفون';
             if (/iPad/i.test(ua)) return '🍎 آيباد';
             if (/iPod/i.test(ua)) return '🍎 آيفون';
             
-            // أندرويد - نحاول نعرف الماركة
             if (/Android/i.test(ua)) {
                 if (/Samsung|SM-/i.test(ua)) return '🤖 سامسونج';
                 if (/Huawei|HUAWEI/i.test(ua)) return '🤖 هواوي';
@@ -774,10 +740,7 @@
                 return '🤖 أندرويد';
             }
             
-            // ويندوز فون
             if (/Windows Phone/i.test(ua)) return '📱 ويندوز فون';
-            
-            // كمبيوتر
             if (/Windows/i.test(ua)) return '💻 كمبيوتر ويندوز';
             if (/Macintosh|Mac OS X/i.test(ua)) return '💻 ماك بوك';
             if (/Linux/i.test(ua)) return '💻 لينكس';
@@ -785,7 +748,6 @@
             return '📱 غير معروف';
         }
 
-        // تحديث عرض نوع التليفون في نموذج الإضافة/التعديل
         function refreshPhoneTypeDisplay() {
             const type = detectPhoneType();
             const textEl = document.getElementById('formPhoneTypeText');
@@ -813,7 +775,6 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .subj-filter-pill')) playClickSound();
         });
 
-        // قناة بث لحظي للتواصل الفوري مع group.html
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
 
         function showToast(msg) {
@@ -828,7 +789,7 @@
         }
 
         // ==========================================
-        // 2. هيكل المنهج الدراسي (كل صف له المواد الخاصة به gradeSubjects)
+        // 2. هيكل المنهج الدراسي
         // ==========================================
         const defaultCurriculum = {
             primary: {
@@ -866,7 +827,6 @@
             }
         };
 
-        // ترقية البيانات تلقائياً لضمان وجود gradeSubjects لكل صف
         function normalizeCurriculum(currObj) {
             let changed = false;
             Object.keys(currObj).forEach(stageKey => {
@@ -938,7 +898,7 @@
         }
 
         // ==========================================
-        // 2-ب. التحكم الهرمي: المرحلة -> الضغط على الصف -> ظهور مواد الصف بالأسفل
+        // 2-ب. التحكم الهرمي
         // ==========================================
         let activeStageKey = null;
         let activeGradeName = null;
@@ -1231,7 +1191,7 @@
         }
 
         // ==========================================
-        // 3. شريط إظهار مواد الصف تحت فلتر الصفوف الرئيسي في school.html
+        // 3. شريط إظهار مواد الصف
         // ==========================================
         let selectedMainSubjectFilter = 'all';
 
@@ -1296,7 +1256,7 @@
         }
 
         // ==========================================
-        // 4. تجميع ودمج بيانات المعلمين والدروس من localStorage
+        // 4. تجميع ودمج بيانات المعلمين والدروس
         // ==========================================
         function collectAllAppData() {
             const teacherAccounts = [];
@@ -1304,6 +1264,7 @@
             const todayISO = new Date().toISOString().split('T')[0];
             const currentDeviceType = detectPhoneType();
 
+            // 1. اجمع كل الحسابات الموجودة فعلاً
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('teacherAccount_')) {
@@ -1312,7 +1273,6 @@
                         if (!acc.createdAt) {
                             acc.createdAt = todayISO;
                         }
-                        // 🆕 لو مفيش نوع تليفون محفوظ، نحفظ النوع الحالي ونحدّث
                         if (!acc.phoneType) {
                             acc.phoneType = currentDeviceType;
                         }
@@ -1322,19 +1282,29 @@
                 }
             }
 
+            // 🆕 2. تحقق من loggedInTeacher - بس لو الحساب لسه موجود فعلاً
             const loggedStr = localStorage.getItem('loggedInTeacher');
             let defaultTeacher = teacherAccounts[0] || null;
             if (loggedStr) {
                 try {
                     const loggedObj = JSON.parse(loggedStr);
                     if (!loggedObj.phoneType) loggedObj.phoneType = currentDeviceType;
-                    defaultTeacher = loggedObj;
-                    if (!teacherAccounts.some(t => t.phone === loggedObj.phone)) {
-                        teacherAccounts.push(loggedObj);
+                    
+                    // ✅ تحقق إن الحساب لسه موجود في teacherAccount_
+                    const accountStillExists = localStorage.getItem('teacherAccount_' + loggedObj.phone);
+                    if (accountStillExists) {
+                        defaultTeacher = loggedObj;
+                        if (!teacherAccounts.some(t => t.phone === loggedObj.phone)) {
+                            teacherAccounts.push(loggedObj);
+                        }
+                    } else {
+                        // الحساب اتحذف - امسح loggedInTeacher
+                        localStorage.removeItem('loggedInTeacher');
                     }
                 } catch (e) {}
             }
 
+            // 3. اجمع كل الدروس
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('lessonState_')) {
@@ -1344,7 +1314,6 @@
                         if (!state.createdAt) {
                             state.createdAt = todayISO;
                         }
-                        // 🆕 لو مفيش نوع تليفون في الدرس، خذه من الحساب أو اكتشفه
                         if (!state.phoneType) {
                             const accForType = teacherAccounts.find(a => 
                                 (state.g_teacher && a.name && state.g_teacher.trim() === a.name.trim()) ||
@@ -1404,7 +1373,12 @@
                 }
             }
 
+            // 4. أضف الحسابات اللي ملهاش دروس
             teacherAccounts.forEach(acc => {
+                // 🆕 تحقق إن الحساب لسه موجود فعلاً في localStorage
+                const accountKey = 'teacherAccount_' + acc.phone;
+                if (!localStorage.getItem(accountKey)) return;
+                
                 const hasLesson = lessonsList.some(l => l.phone === acc.phone || l.teacherName === acc.name);
                 if (!hasLesson) {
                     lessonsList.push({
@@ -1439,7 +1413,7 @@
         }
 
         // ==========================================
-        // 5. عرض الكروت والإحصائيات والفلاتر
+        // 5. عرض الكروت والإحصائيات
         // ==========================================
         function populateGradeFilter() {
             const curr = getCurriculum();
@@ -1515,6 +1489,10 @@
                         : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300">🔴 مخفي عن الطلاب</span>`)
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">⏳ حساب بدون مجموعة</span>`;
 
+                // 🆕 تمرير آمن للأقواس
+                const safePhoneAttr = String(r.phone || '').replace(/'/g, "\\'");
+                const safeLessonIdAttr = String(r.lessonId || '').replace(/'/g, "\\'");
+
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'}">
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
@@ -1580,12 +1558,12 @@
                             </button>
 
                             ${r.type === 'lesson' ? `
-                                <button onclick="toggleLessonVisibility('${r.lessonId}')" class="action-chip bg-slate-100 text-slate-700 hover:bg-slate-200">
+                                <button onclick="toggleLessonVisibility('${safeLessonIdAttr}')" class="action-chip bg-slate-100 text-slate-700 hover:bg-slate-200">
                                     ${r.isPublished ? '🙈 إخفاء' : '👁️ إظهار'}
                                 </button>
                             ` : ''}
 
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
+                            <button onclick="deleteRecord('${safeLessonIdAttr}', '${safePhoneAttr}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
                                 🗑️ حذف
                             </button>
                         </div>
@@ -1623,7 +1601,7 @@
         }
 
         // ==========================================
-        // 6. الخريطة المنبثقة لعرض العنوان الفعلي للدرس
+        // 6. الخريطة المنبثقة
         // ==========================================
         let adminMap = null;
         let adminMarker = null;
@@ -1647,7 +1625,7 @@
         }
 
         // ==========================================
-        // 7. إضافة / تعديل / حذف السجلات (مربوطة بمواد كل صف)
+        // 7. إضافة / تعديل / حذف السجلات
         // ==========================================
         function populateModalStages() {
             const curr = getCurriculum();
@@ -1695,7 +1673,6 @@
             document.getElementById('formGroupName').value = '';
             document.getElementById('formCenterName').value = '';
             document.getElementById('formAddress').value = '';
-            // 🆕 كشف نوع التليفون تلقائياً
             refreshPhoneTypeDisplay();
             document.getElementById('editRecordModal').classList.add('active');
         }
@@ -1713,7 +1690,6 @@
             document.getElementById('formCenterName').value = record.centerName !== 'بدون سنتر' && record.centerName !== '--' ? record.centerName : '';
             document.getElementById('formAddress').value = record.address.includes('لم يتم') ? '' : record.address;
 
-            // 🆕 عرض نوع التليفون المحفوظ (أو الكشف الحالي لو مفيش)
             const savedType = record.phoneType || detectPhoneType();
             document.getElementById('formPhoneTypeText').textContent = savedType + ' (محفوظ)';
             document.getElementById('formPhoneType').value = savedType;
@@ -1736,6 +1712,7 @@
 
         function saveRecordFromModal() {
             const lessonIdInput = document.getElementById('editLessonId').value;
+            const originalPhone = document.getElementById('editOriginalPhone').value;
             const title = document.getElementById('formTitle').value;
             const teacherName = document.getElementById('formTeacherName').value.trim();
             const phone = document.getElementById('formPhone').value.trim();
@@ -1747,13 +1724,17 @@
             const subject = document.getElementById('formSubject').value;
             const address = document.getElementById('formAddress').value.trim();
 
-            // 🆕 نوع التليفون: نستخدم المحفوظ أو المكتشف تلقائياً
             let phoneType = document.getElementById('formPhoneType').value;
             if (!phoneType) phoneType = detectPhoneType();
 
             if (!teacherName || !phone) {
                 alert('يرجى إدخال اسم المعلم ورقم التليفون');
                 return;
+            }
+
+            // 🆕 لو الرقم اتغير، امسح الحساب القديم
+            if (originalPhone && originalPhone !== phone && originalPhone !== 'غير مسجل') {
+                localStorage.removeItem('teacherAccount_' + originalPhone);
             }
 
             const existingAccStr = localStorage.getItem('teacherAccount_' + phone);
@@ -1763,7 +1744,7 @@
                 title: title,
                 name: teacherName,
                 phone: phone,
-                phoneType: phoneType, // 🆕
+                phoneType: phoneType,
                 age: existingAcc.age || '30',
                 pass: existingAcc.pass || '1234',
                 createdAt: regDate
@@ -1776,11 +1757,15 @@
             let targetId = lessonIdInput;
             if (!targetId) {
                 targetId = lessonsArr.length > 0 ? Math.max(...lessonsArr.map(l => Number(l.id) || 0)) + 1 : 1;
-                lessonsArr.push({ id: Number(targetId), title: groupName });
+                lessonsArr.push({ id: Number(targetId), title: groupName, phone: phone });
             } else {
                 const idx = lessonsArr.findIndex(l => String(l.id) === String(targetId));
-                if (idx > -1) lessonsArr[idx].title = groupName;
-                else lessonsArr.push({ id: Number(targetId), title: groupName });
+                if (idx > -1) {
+                    lessonsArr[idx].title = groupName;
+                    lessonsArr[idx].phone = phone;
+                } else {
+                    lessonsArr.push({ id: Number(targetId), title: groupName, phone: phone });
+                }
             }
             localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
 
@@ -1790,7 +1775,7 @@
                 t_gender: title,
                 g_teacher: teacherName,
                 g_phone: phone,
-                phoneType: phoneType, // 🆕
+                phoneType: phoneType,
                 createdAt: regDate,
                 g_name: groupName,
                 g_center: centerName,
@@ -1819,8 +1804,15 @@
             showToast(!curr ? '🟢 تم إظهار الدرس للطلاب' : '🔴 تم إخفاء الدرس عن الطلاب');
         }
 
+        // ==========================================
+        // 🆕 8. دالة الحذف الشاملة والمُصلَحة
+        // ==========================================
         function deleteRecord(lessonId, phone) {
-            if (!confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) return;
+            if (!confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟ سيتم حذف الحساب وكل الدروس المرتبطة به.')) return;
+            
+            console.log('🗑️ جاري الحذف:', { lessonId, phone });
+            
+            // 1. احذف الدرس المحدد
             if (lessonId) {
                 localStorage.removeItem('lessonState_' + lessonId);
                 localStorage.removeItem('publishState_' + lessonId);
@@ -1829,9 +1821,53 @@
                     lessonsArr = lessonsArr.filter(l => String(l.id) !== String(lessonId));
                     localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
                 } catch (e) {}
-            } else if (phone) {
-                localStorage.removeItem('teacherAccount_' + phone);
             }
+            
+            // 2. احذف حساب المعلم وكل ما يتعلق بيه
+            if (phone && phone !== 'غير مسجل' && phone !== '--') {
+                // امسح الحساب الأساسي
+                localStorage.removeItem('teacherAccount_' + phone);
+                
+                // امسح من قائمة الدروس
+                try {
+                    let lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]');
+                    lessonsArr = lessonsArr.filter(l => l.phone !== phone && l.teacherPhone !== phone);
+                    localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
+                } catch (e) {}
+                
+                // امسح كل الـ lessonState_ المرتبطة بنفس الرقم
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const key = localStorage.key(i);
+                    if (key && key.startsWith('lessonState_')) {
+                        try {
+                            const st = JSON.parse(localStorage.getItem(key) || '{}');
+                            if (st.g_phone === phone) {
+                                keysToRemove.push(key);
+                                keysToRemove.push('publishState_' + key.replace('lessonState_', ''));
+                            }
+                        } catch (e) {}
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                
+                // امسح loggedInTeacher لو هو نفسه
+                try {
+                    const loggedStr = localStorage.getItem('loggedInTeacher');
+                    if (loggedStr) {
+                        const loggedObj = JSON.parse(loggedStr);
+                        if (loggedObj.phone === phone) {
+                            localStorage.removeItem('loggedInTeacher');
+                        }
+                    }
+                } catch (e) {}
+                
+                // امسح rememberedPhone لو هو نفسه
+                if (localStorage.getItem('rememberedPhone') === phone) {
+                    localStorage.removeItem('rememberedPhone');
+                }
+            }
+            
             renderAllRecords();
             showToast('🗑️ تم حذف السجل بنجاح');
         }
