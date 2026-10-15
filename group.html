@@ -347,6 +347,22 @@
         }
         .sync-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+        /* 🆕 شارة نوع التليفون */
+        .phone-type-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: linear-gradient(135deg, #EDE9FE, #DDD6FE);
+            color: #5B21B6;
+            border: 1.5px solid #C4B5FD;
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 900;
+            width: 100%;
+        }
+        .phone-type-badge .icon { font-size: 16px; }
+
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 18px; }
@@ -491,6 +507,15 @@
                 <div class="form-group">
                     <label>🔢 العدد المطلوب للطلاب</label>
                     <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
+                </div>
+            </div>
+
+            <!-- 🆕 عرض نوع التليفون تلقائياً -->
+            <div class="form-group">
+                <label>📲 نوع التليفون المسجل منه (تلقائي)</label>
+                <div id="phoneTypeBadge" class="phone-type-badge">
+                    <span class="icon">📱</span>
+                    <span id="phoneTypeText">جاري الكشف...</span>
                 </div>
             </div>
 
@@ -669,6 +694,51 @@
 
     <script>
         // ==========================================
+        // 🆕 0. كشف نوع التليفون تلقائياً من المتصفح
+        // ==========================================
+        function detectPhoneType() {
+            const ua = navigator.userAgent || navigator.vendor || window.opera || '';
+            
+            // آيفون / آيباد
+            if (/iPhone/i.test(ua)) return '🍎 آيفون';
+            if (/iPad/i.test(ua)) return '🍎 آيباد';
+            if (/iPod/i.test(ua)) return '🍎 آيفون';
+            
+            // أندرويد - نحاول نعرف الماركة
+            if (/Android/i.test(ua)) {
+                if (/Samsung|SM-/i.test(ua)) return '🤖 سامسونج';
+                if (/Huawei|HUAWEI/i.test(ua)) return '🤖 هواوي';
+                if (/Xiaomi|Redmi|Mi \d|Mi-/i.test(ua)) return '🤖 شاومي';
+                if (/Oppo|OPPO/i.test(ua)) return '🤖 أوبو';
+                if (/Vivo|vivo/i.test(ua)) return '🤖 فيفو';
+                if (/Realme|realme/i.test(ua)) return '🤖 ريلمي';
+                if (/Infinix/i.test(ua)) return '🤖 إنفينكس';
+                if (/Tecno/i.test(ua)) return '🤖 تكنو';
+                if (/OnePlus/i.test(ua)) return '🤖 ون بلس';
+                if (/Nokia/i.test(ua)) return '🤖 نوكيا';
+                return '🤖 أندرويد';
+            }
+            
+            // ويندوز فون
+            if (/Windows Phone/i.test(ua)) return '📱 ويندوز فون';
+            
+            // كمبيوتر
+            if (/Windows/i.test(ua)) return '💻 كمبيوتر ويندوز';
+            if (/Macintosh|Mac OS X/i.test(ua)) return '💻 ماك بوك';
+            if (/Linux/i.test(ua)) return '💻 لينكس';
+            
+            return '📱 غير معروف';
+        }
+
+        // عرض نوع التليفون في الواجهة
+        function displayPhoneType() {
+            const type = detectPhoneType();
+            const textEl = document.getElementById('phoneTypeText');
+            if (textEl) textEl.textContent = type + ' (تم الكشف تلقائياً)';
+            return type;
+        }
+
+        // ==========================================
         // ✅ إضافة تأثيرات الصوت
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -813,7 +883,6 @@
             return copy;
         }
 
-        // جلب المواد الخاصة بصف معين داخل المرحلة
         function getSubjectsForGrade(stageKey, gradeName) {
             const curr = getCurriculum();
             if (!stageKey || !curr[stageKey]) return [];
@@ -888,7 +957,6 @@
             renderQuickSubjectsBox();
         }
 
-        // إظهار المواد الخاصة بالصف المختار كأزرار سريعة تحته مباشرة
         function renderQuickSubjectsBox() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
@@ -946,7 +1014,6 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
-        // الاستماع اللحظي لأي تعديل يتم في school.html بدون ريفريش
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
             curriculumChannel.onmessage = function(ev) {
@@ -1041,6 +1108,8 @@
                 g_center: document.getElementById('g_center').value,
                 g_teacher: document.getElementById('g_teacher').value,
                 g_count: document.getElementById('g_count').value,
+                // 🆕 حفظ نوع التليفون تلقائياً
+                phoneType: detectPhoneType(),
                 start_hour: document.getElementById('start_hour').value,
                 start_min: document.getElementById('start_min').value,
                 start_ampm: document.getElementById('start_ampm').value,
@@ -1150,6 +1219,9 @@
             
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
+
+            // 🆕 عرض نوع التليفون تلقائياً
+            displayPhoneType();
 
             populateTimeSelectors();
             populateStagesDropdown(false);
