@@ -477,7 +477,7 @@
         </div>
     </header>
 
-    <!-- كروت الإحصائيات السريعة (قابلة للضغط لعرض التفاصيل) -->
+    <!-- كروت الإحصائيات السريعة -->
     <section class="stats-container">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div class="stat-card" style="border-bottom-color: #2563EB;" onclick="openTeachersSummaryModal('مستر')" title="اضغط لعرض تفاصيل المستر">
@@ -542,7 +542,6 @@
                 </div>
             </div>
 
-            <!-- شريط المواد الدراسية الذي يظهر تلقائياً تحت الصف الدراسي عند اختياره -->
             <div id="mainGradeSubjectsBar" class="hidden mt-3 pt-3 border-t border-dashed border-emerald-200 bg-emerald-50/60 p-3 rounded-xl">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
                     <span id="mainGradeSubjectsTitle" class="text-xs font-black text-emerald-900">📖 المواد الخاصة بالصف:</span>
@@ -560,22 +559,17 @@
             </div>
         </div>
 
-        <!-- قائمة كروت المعلمين والدروس -->
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل (التليفون، الصف، المادة فقط بدون فتح صفحة الطالب) -->
         <div id="studentInfoSection" class="mt-8 hidden">
             <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
                 <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
             </h2>
             <div id="studentInfoCard" class="bg-white rounded-2xl p-4 border-2 border-emerald-200 shadow-sm"></div>
         </div>
-
     </main>
 
-    <!-- ========================================================================= -->
-    <!-- نافذة تفاصيل المعلمين (المستر / المس) -->
-    <!-- ========================================================================= -->
+    <!-- النوافذ المنبثقة -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -585,18 +579,13 @@
                 </div>
                 <button onclick="closeModal('teachersSummaryModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
-
             <div id="summaryModalContent" class="overflow-x-auto"></div>
-
             <div class="flex justify-end mt-5 pt-3 border-t border-slate-200">
                 <button onclick="closeModal('teachersSummaryModal')" class="action-chip bg-slate-800 text-white px-6 py-2.5 text-sm">إغلاق</button>
             </div>
         </div>
     </div>
 
-    <!-- ========================================================================= -->
-    <!-- نافذة التحكم الهرمي للمراحل والصفوف والمواد -->
-    <!-- ========================================================================= -->
     <div id="curriculumModal" class="modal-overlay" onclick="closeModal('curriculumModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
@@ -606,7 +595,6 @@
                 <button onclick="closeModal('curriculumModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
 
-            <!-- 1. المراحل -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4">
                 <div class="flex gap-2 mb-2">
                     <input type="text" id="newStageNameInput" class="form-input py-1.5 text-xs" placeholder="اسم مرحلة جديدة...">
@@ -615,7 +603,6 @@
                 <div id="stagesTabsContainer" class="flex flex-wrap gap-2 mt-2"></div>
             </div>
 
-            <!-- 2. الصفوف -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                 <div class="flex gap-2 mb-3">
                     <input type="text" id="newGradeInput" class="form-input py-1.5 text-xs" placeholder="أضف صفاً جديداً...">
@@ -624,7 +611,6 @@
                 <div id="gradesListContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
             </div>
 
-            <!-- 3. المواد الخاصة بالصف المحدد -->
             <div id="gradeSubjectsPanel" class="grade-subjects-panel hidden">
                 <div class="flex gap-2 mb-3">
                     <input type="text" id="newSubjectInput" class="form-input py-1.5 text-xs bg-white" placeholder="أضف مادة جديدة...">
@@ -639,7 +625,6 @@
         </div>
     </div>
 
-    <!-- نافذة عرض الموقع الفعلي للدرس -->
     <div id="mapModal" class="modal-overlay" onclick="closeModal('mapModal')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
@@ -656,9 +641,6 @@
     </div>
 
     <script>
-        // ==========================================
-        // 🌟 خاصية سحب الشاشة للتحديث (Pull-to-Refresh)
-        // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
         const ptrIndicator = document.getElementById('pullToRefreshIndicator');
@@ -690,9 +672,6 @@
             touchStartY = 0; pullDistance = 0;
         });
 
-        // ==========================================
-        // الصوت والتزامن اللحظي (المناهج + الحظر والتوثيق)
-        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -709,7 +688,6 @@
         });
 
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
-        // 🌟 قناة تزامن لحظي لإرسال قرار الحظر أو التوثيق وفك الحظر فوراً إلى login.html و group.html
         const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
 
         function showToast(msg) {
@@ -870,48 +848,60 @@
             renderCurriculumManager();
         }
 
-        // دالة لتنظيف اسم المستر من الألقاب لمطابقته بدقة بين صفحة الدخول وصفحة المجموعات
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
-            return String(rawName)
-                .replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '')
-                .replace(/^\/\s*/, '')
-                .trim();
+            return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
         }
 
-        // دالة مساعدة للتحقق هل المعلم محظور (سواء بالرقم أو بالاسم)
         function isTeacherBlockedStatus(phone, cleanName) {
-            if (phone && phone !== 'غير مسجل' && localStorage.getItem('teacherBlocked_' + phone) === 'true') {
-                return true;
-            }
-            if (cleanName && localStorage.getItem('teacherBlocked_name_' + cleanName) === 'true') {
-                return true;
-            }
+            if (phone && phone !== 'غير مسجل' && localStorage.getItem('teacherBlocked_' + phone) === 'true') return true;
+            if (cleanName && localStorage.getItem('teacherBlocked_name_' + cleanName) === 'true') return true;
             return false;
         }
 
-        // دالة مساعدة لجلب توثيق المعلم (سواء بالرقم أو بالاسم)
         function getTeacherVerificationStatus(phone, cleanName) {
-            if (phone && phone !== 'غير مسجل') {
-                const byPhone = localStorage.getItem('teacherVerification_' + phone);
-                if (byPhone) return byPhone;
-            }
-            if (cleanName) {
-                const byName = localStorage.getItem('teacherVerification_name_' + cleanName);
-                if (byName) return byName;
-            }
-            return 'مجاني';
+            if (phone && phone !== 'غير مسجل' && localStorage.getItem('teacherVerification_' + phone)) return localStorage.getItem('teacherVerification_' + phone);
+            if (cleanName && localStorage.getItem('teacherVerification_name_' + cleanName)) return localStorage.getItem('teacherVerification_name_' + cleanName);
+            return '30 يوم تجريبي';
         }
 
         // ==========================================
-        // 🌟 تجميع وتوحيد بيانات المستر ومجموعاته في جدول واحد
+        // 🌟 دوال حساب وقت التسجيل وانتهاء الباقة
         // ==========================================
+        function calculateExpiration(regDateStr, plan) {
+            if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
+            if (!regDateStr) return { expired: false, text: 'تاريخ غير معروف' };
+            
+            let days = 30; // افتراضي
+            if (plan === '30 يوم تجريبي') days = 30;
+            else if (plan === '3 شهور') days = 90;
+            else if (plan === '6 شهور') days = 180;
+            else if (plan === 'سنة واحدة') days = 365;
+
+            const regDate = new Date(regDateStr);
+            if (isNaN(regDate)) return { expired: false, text: 'تاريخ غير صالح' };
+            
+            const expiryDate = new Date(regDate.getTime() + days * 24 * 60 * 60 * 1000);
+            const today = new Date();
+            today.setHours(0,0,0,0);
+            expiryDate.setHours(0,0,0,0);
+            
+            const diffTime = expiryDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays <= 0) {
+                return { expired: true, text: '🔴 الباقة منتهية' };
+            } else {
+                return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
+            }
+        }
+
         function collectAllAppData() {
             const teacherAccounts = [];
             const rawLessons = [];
             const todayISO = new Date().toISOString().split('T')[0];
+            const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة'];
 
-            // 1. جلب جميع حسابات المعلمين المسجلة
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('teacherAccount_')) {
@@ -923,7 +913,6 @@
                 }
             }
 
-            // جلب المعلم المسجل دخوله حالياً إن وجد لضمان عدم فقدان رقم التليفون أو اللقب
             let loggedTeacher = null;
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -938,7 +927,6 @@
 
             const defaultAcc = loggedTeacher || teacherAccounts[0] || {};
 
-            // 2. جلب جميع المجموعات وربطها بحساب المستر
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('lessonState_')) {
@@ -946,7 +934,6 @@
                     try {
                         const state = JSON.parse(localStorage.getItem(key) || '{}');
                         const stateCleanName = cleanTeacherName(state.g_teacher);
-
                         const matchedAcc = teacherAccounts.find(a => {
                             const accCleanName = cleanTeacherName(a.fullName || a.name);
                             return (state.g_phone && a.phone && state.g_phone === a.phone) ||
@@ -954,74 +941,41 @@
                                    (state.g_teacher && a.name && state.g_teacher.trim() === a.name.trim());
                         }) || defaultAcc;
 
-                        const inferredTitle = (state.g_teacher && state.g_teacher.trim().startsWith('مس')) ? 'مس' : null;
-                        const title = state.t_gender || matchedAcc.title || inferredTitle || 'مستر';
+                        const title = state.t_gender || matchedAcc.title || ((state.g_teacher && state.g_teacher.trim().startsWith('مس')) ? 'مس' : 'مستر');
                         const teacherName = cleanTeacherName(state.g_teacher || matchedAcc.name || matchedAcc.fullName) || 'غير محدد';
                         const phone = state.g_phone || matchedAcc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
                         const regDate = state.createdAt || matchedAcc.createdAt || todayISO;
-                        const verification = getTeacherVerificationStatus(phone, teacherName);
-                        const isBlocked = isTeacherBlockedStatus(phone, teacherName);
-
-                        const subjectsArr = Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s) : [];
-                        const isPublished = localStorage.getItem('publishState_' + lessonId) !== 'false';
-                        const waClicks = parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10);
-
+                        
                         rawLessons.push({
-                            type: 'lesson',
-                            lessonId,
-                            title,
-                            teacherName,
-                            phone,
-                            regDate,
-                            verification,
-                            isBlocked,
+                            type: 'lesson', lessonId, title, teacherName, phone, regDate,
                             groupName: state.g_name || `مجموعة رقم ${lessonId}`,
                             grade: state.s_grade || 'غير محدد',
                             stageKey: state.s_stage || 'primary',
-                            subjects: subjectsArr.length ? subjectsArr.join('، ') : 'غير محدد',
+                            subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s).join('، ') : 'غير محدد',
                             locType: state.g_loc === 'l_teach' ? 'بيت المستر' : (state.g_loc === 'l_stud' ? 'منزل الطالب' : 'السنتر'),
                             address: state.m_address || 'لم يتم تحديد العنوان',
                             days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
                             timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
                             timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
-                            isPublished,
-                            waClicks
+                            isPublished: localStorage.getItem('publishState_' + lessonId) !== 'false',
+                            waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10)
                         });
                     } catch (e) {}
                 }
             }
 
-            // 3. توحيد بيانات كل معلم وجميع مجموعاته في سجل/جدول واحد
             const unifiedMap = new Map();
-
             teacherAccounts.forEach(acc => {
                 const cleanName = cleanTeacherName(acc.name || acc.fullName) || 'بدون اسم';
                 const phone = acc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
                 const mapKey = (phone && phone !== 'غير مسجل') ? `phone_${phone}` : `name_${cleanName}`;
-
                 if (!unifiedMap.has(mapKey)) {
                     unifiedMap.set(mapKey, {
-                        type: 'account_only',
-                        lessonId: null,
-                        lessonIds: [],
-                        title: acc.title || 'مستر',
-                        teacherName: cleanName,
-                        phone: phone,
-                        regDate: acc.createdAt || todayISO,
-                        verification: getTeacherVerificationStatus(phone, cleanName),
-                        isBlocked: isTeacherBlockedStatus(phone, cleanName),
-                        groupName: 'لم يُنشئ مجموعة بعد',
-                        grade: 'غير محدد',
-                        stageKey: 'primary',
-                        subjects: 'غير محدد',
-                        locType: '--',
-                        address: '--',
-                        days: '--',
-                        timeFrom: '--',
-                        timeTo: '--',
-                        isPublished: false,
-                        waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10),
-                        groups: []
+                        type: 'account_only', lessonId: null, lessonIds: [], title: acc.title || 'مستر',
+                        teacherName: cleanName, phone: phone, regDate: acc.createdAt || todayISO,
+                        groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
+                        locType: '--', address: '--', days: '--', timeFrom: '--', timeTo: '--',
+                        isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: []
                     });
                 }
             });
@@ -1029,80 +983,74 @@
             rawLessons.forEach(lesson => {
                 let targetKey = null;
                 for (const [k, v] of unifiedMap.entries()) {
-                    if (
-                        (lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) ||
-                        (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))
-                    ) {
-                        targetKey = k;
-                        break;
-                    }
+                    if ((lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) || (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))) { targetKey = k; break; }
                 }
-
                 if (!targetKey) {
                     targetKey = (lesson.phone && lesson.phone !== 'غير مسجل') ? `phone_${lesson.phone}` : `name_${cleanTeacherName(lesson.teacherName)}`;
-                    unifiedMap.set(targetKey, {
-                        ...lesson,
-                        lessonIds: [],
-                        groups: []
-                    });
+                    unifiedMap.set(targetKey, { ...lesson, lessonIds: [], groups: [] });
                 }
-
                 const entry = unifiedMap.get(targetKey);
                 entry.type = 'lesson';
                 if (!entry.lessonId) entry.lessonId = lesson.lessonId;
                 entry.lessonIds.push(lesson.lessonId);
                 if (entry.phone === 'غير مسجل' && lesson.phone !== 'غير مسجل') entry.phone = lesson.phone;
-                entry.isBlocked = isTeacherBlockedStatus(entry.phone, entry.teacherName);
-                entry.verification = getTeacherVerificationStatus(entry.phone, entry.teacherName);
                 entry.groups.push(lesson);
-
-                // تحديث البيانات المجمعة للبحث والفلترة والبطاقة الموحدة
                 entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
                 entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
                 entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
-                entry.locType = entry.groups[0].locType;
-                entry.address = entry.groups[0].address;
-                entry.days = entry.groups[0].days;
-                entry.timeFrom = entry.groups[0].timeFrom;
-                entry.timeTo = entry.groups[0].timeTo;
+                entry.locType = entry.groups[0].locType; entry.address = entry.groups[0].address;
+                entry.days = entry.groups[0].days; entry.timeFrom = entry.groups[0].timeFrom; entry.timeTo = entry.groups[0].timeTo;
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
-            const unifiedRecords = Array.from(unifiedMap.values());
+            // 🌟 معالجة بيانات التوثيق والحظر والوقت المتبقي لكل حساب
+            const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
+                let verifRaw = getTeacherVerificationStatus(entry.phone, entry.teacherName);
+                if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي'; // تحويل أي قيمة قديمة للمنظومة الجديدة
+                
+                entry.verification = verifRaw;
+                entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification);
+                
+                entry.isBlocked = isTeacherBlockedStatus(entry.phone, entry.teacherName);
+                // 🌟 تفعيل الحظر برمجياً بشكل فوري إذا انتهت الباقة أو تم اختيار חظر
+                if (entry.verification === 'حظر' || entry.expiryInfo.expired) {
+                    entry.isBlocked = true;
+                }
+                return entry;
+            });
+
             return { records: unifiedRecords, totalLessonsCount: rawLessons.length, teacherAccounts };
         }
 
-        // ==========================================
-        // 🌟 التحكم في توثيق الحساب والحظر وفك الحظر من school.html وإرساله لحظياً لـ login.html و group.html
-        // ==========================================
         function broadcastAuthStatusChange(phone, teacherName, isBlocked, verification) {
             localStorage.setItem('ehgezly_auth_status_updated_at', String(Date.now()));
             if (authStatusChannel) {
-                authStatusChannel.postMessage({
-                    type: 'AUTH_STATUS_CHANGED',
-                    phone: phone || '',
-                    teacherName: cleanTeacherName(teacherName),
-                    isBlocked: isBlocked,
-                    verification: verification
-                });
+                authStatusChannel.postMessage({ type: 'AUTH_STATUS_CHANGED', phone: phone || '', teacherName: cleanTeacherName(teacherName), isBlocked: isBlocked, verification: verification });
             }
         }
 
+        // 🌟 تحديث التوثيق والحظر في نفس الوقت
         function updateVerification(phone, val, teacherName = '') {
             const cleanName = cleanTeacherName(teacherName);
+            
+            // جلب تاريخ التسجيل لفحص ما إذا كانت الباقة الجديدة منتهية الصلاحية مسبقاً
+            let regDate = new Date().toISOString().split('T')[0];
+            const accKey = 'teacherAccount_' + phone;
+            if (phone && phone !== 'غير مسجل' && localStorage.getItem(accKey)) {
+                regDate = JSON.parse(localStorage.getItem(accKey)).createdAt || regDate;
+            }
+            
+            const expiryInfo = calculateExpiration(regDate, val);
+            const isBlocked = (val === 'حظر' || expiryInfo.expired);
 
             if (phone && phone !== 'غير مسجل') {
                 localStorage.setItem('teacherVerification_' + phone, val);
-                const accKey = 'teacherAccount_' + phone;
+                localStorage.setItem('teacherBlocked_' + phone, String(isBlocked));
                 if (localStorage.getItem(accKey)) {
                     try {
                         const acc = JSON.parse(localStorage.getItem(accKey));
                         acc.verification = val;
-                        // إذا تم التوثيق بباقة مدفوعة (شهر / 6 شهور / سنة) يتم فك الحظر تلقائياً
-                        if (val !== 'مجاني') {
-                            acc.isBlocked = false;
-                            localStorage.setItem('teacherBlocked_' + phone, 'false');
-                        }
+                        acc.isBlocked = isBlocked;
                         localStorage.setItem(accKey, JSON.stringify(acc));
                     } catch (e) {}
                 }
@@ -1110,62 +1058,30 @@
 
             if (cleanName) {
                 localStorage.setItem('teacherVerification_name_' + cleanName, val);
-                if (val !== 'مجاني') {
-                    localStorage.setItem('teacherBlocked_name_' + cleanName, 'false');
-                }
+                localStorage.setItem('teacherBlocked_name_' + cleanName, String(isBlocked));
             }
 
-            const currentBlocked = isTeacherBlockedStatus(phone, cleanName);
-            broadcastAuthStatusChange(phone, cleanName, currentBlocked, val);
-            renderAllRecords();
-            showToast(val !== 'مجاني' ? `✅ تم توثيق الحساب (${val}) وفك الحظر بنجاح` : `✨ تم تحديث توثيق الحساب إلى: ${val}`);
-        }
-
-        function toggleTeacherBlock(phone, teacherName) {
-            const cleanName = cleanTeacherName(teacherName);
-            const currentlyBlocked = isTeacherBlockedStatus(phone, cleanName);
-            const newBlockedState = !currentlyBlocked;
-
-            // حفظ حالة الحظر بالرقم وبالاسم لضمان وصولها إلى login.html و group.html في جميع الحالات
-            if (phone && phone !== 'غير مسجل') {
-                localStorage.setItem('teacherBlocked_' + phone, String(newBlockedState));
-                const accKey = 'teacherAccount_' + phone;
-                if (localStorage.getItem(accKey)) {
-                    try {
-                        const acc = JSON.parse(localStorage.getItem(accKey));
-                        acc.isBlocked = newBlockedState;
-                        localStorage.setItem(accKey, JSON.stringify(acc));
-                    } catch (e) {}
-                }
-            }
-
-            if (cleanName) {
-                localStorage.setItem('teacherBlocked_name_' + cleanName, String(newBlockedState));
-            }
-
-            // تحديث جميع حسابات المعلمين المطابقة للاسم
+            // تحديث الحظر المتبقي لجميع السجلات المطابقة
             for (let i = 0; i < localStorage.length; i++) {
                 const k = localStorage.key(i);
                 if (k && k.startsWith('teacherAccount_')) {
                     try {
                         const acc = JSON.parse(localStorage.getItem(k) || '{}');
                         if (cleanTeacherName(acc.name || acc.fullName) === cleanName) {
-                            acc.isBlocked = newBlockedState;
+                            acc.isBlocked = isBlocked;
                             localStorage.setItem(k, JSON.stringify(acc));
-                            if (acc.phone) localStorage.setItem('teacherBlocked_' + acc.phone, String(newBlockedState));
+                            if (acc.phone) localStorage.setItem('teacherBlocked_' + acc.phone, String(isBlocked));
                         }
                     } catch (e) {}
                 }
             }
 
-            const currentVerification = getTeacherVerificationStatus(phone, cleanName);
-            broadcastAuthStatusChange(phone, cleanName, newBlockedState, currentVerification);
+            broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
-
-            if (newBlockedState) {
-                showToast(`🚫 تم حظر المعلم (${teacherName}) — ستظهر له رسالة توثيق الحساب في login و group`);
+            if(isBlocked && val !== 'حظر') {
+                showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`);
             } else {
-                showToast(`✅ تم فك الحظر عن المعلم (${teacherName}) بنجاح!`);
+                showToast(`✨ تم تحديث الباقة وتوثيق الحساب إلى: ${val}`);
             }
         }
 
@@ -1262,7 +1178,6 @@
                 const blockClass = r.isBlocked ? 'is-blocked' : '';
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
 
-                // بناء جدول المستر الموحد لجميع مجموعاته ومواعيده في جدول واحد
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
                     const rowsHTML = r.groups.map(g => `
@@ -1273,21 +1188,11 @@
                             <td>[${g.locType}] ${g.address}</td>
                         </tr>
                     `).join('');
-
                     unifiedScheduleHTML = `
                         <div class="unified-schedule-box">
                             <table class="unified-schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th>👥 المجموعة</th>
-                                        <th>👑 الصف والمادة</th>
-                                        <th>⏰ المواعيد</th>
-                                        <th>📍 العنوان</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    ${rowsHTML}
-                                </tbody>
+                                <thead><tr><th>👥 المجموعة</th><th>👑 الصف والمادة</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead>
+                                <tbody>${rowsHTML}</tbody>
                             </table>
                         </div>
                     `;
@@ -1299,29 +1204,38 @@
                     `;
                 }
 
+                // تحديد شكل علامة حالة الحساب
+                const statusBadgeHTML = r.isBlocked 
+                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>` 
+                    : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ نشط</span>`;
+
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass}">
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
                             <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-400">(${r.groupName})</span></div>
                             <div class="flex items-center gap-1.5">
-                                ${r.isBlocked ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 محظور (بانتظار توثيق الحساب)</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ ${r.verification}</span>`}
+                                ${statusBadgeHTML}
                                 <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
                             </div>
                         </div>
                         <div class="space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
-                                <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 تاريخ التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
+                                <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                             </div>
                             
-                            <!-- توثيق الحساب بالتحكم من school.html -->
-                            <div class="info-pill flex items-center justify-between" style="background:#FEF3C7; border-color:#FCD34D;">
-                                <span class="label text-amber-900">🛡️ توثيق الحساب:</span>
-                                <select onchange="updateVerification('${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer">
-                                    <option value="مجاني" ${r.verification === 'مجاني' ? 'selected' : ''}>مجاني</option>
-                                    <option value="شهر" ${r.verification === 'شهر' ? 'selected' : ''}>شهر واحد</option>
-                                    <option value="٦ شهور" ${r.verification === '٦ شهور' ? 'selected' : ''}>6 شهور</option>
+                            <!-- 🌟 توثيق الحساب وعداد الوقت -->
+                            <div class="info-pill flex flex-col gap-2" style="background:#FEF3C7; border-color:#FCD34D;">
+                                <div class="flex items-center justify-between w-full">
+                                    <span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span>
+                                    <span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span>
+                                </div>
+                                <select onchange="updateVerification('${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1.5 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer w-full">
+                                    <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
+                                    <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
+                                    <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
                                     <option value="سنة واحدة" ${r.verification === 'سنة واحدة' ? 'selected' : ''}>سنة واحدة</option>
+                                    <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
                                 </select>
                             </div>
 
@@ -1330,8 +1244,8 @@
                         <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
                             ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white">💬 واتساب</a>` : ''}
                             
-                            <button onclick="toggleTeacherBlock('${r.phone}', '${safeTeacherName}')" class="action-chip ${r.isBlocked ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">
-                                ${r.isBlocked ? '✅ فك الحظر وتفعيل الحساب' : '🚫 حظر المعلم (طلب توثيق)'}
+                            <button onclick="updateVerification('${r.phone}', '${r.isBlocked ? '30 يوم تجريبي' : 'حظر'}', '${safeTeacherName}')" class="action-chip ${r.isBlocked ? 'bg-emerald-600 text-white' : 'bg-amber-600 text-white'}">
+                                ${r.isBlocked ? '✅ فك الحظر (تفعيل باقة تجريبية)' : '🚫 حظر المعلم'}
                             </button>
 
                             <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white mr-auto">🗑️ حذف المعلم</button>
@@ -1343,7 +1257,6 @@
             renderStudentSection();
         }
 
-        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب
         function renderStudentSection() {
             const raw = localStorage.getItem('talep_data');
             const sec = document.getElementById('studentInfoSection');
@@ -1375,37 +1288,22 @@
                 if (k && k.startsWith('lessonState_')) {
                     try {
                         const st = JSON.parse(localStorage.getItem(k) || '{}');
-                        if (
-                            (lessonId && k === 'lessonState_' + lessonId) ||
-                            (phone && phone !== 'غير مسجل' && st.g_phone === phone) ||
-                            (cleanName && cleanTeacherName(st.g_teacher) === cleanName)
-                        ) {
+                        if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
                             const id = k.replace('lessonState_', '');
-                            keysToRemove.push('lessonState_' + id);
-                            keysToRemove.push('publishState_' + id);
+                            keysToRemove.push('lessonState_' + id); keysToRemove.push('publishState_' + id);
                         }
                     } catch (e) {}
                 }
             }
             keysToRemove.forEach(k => localStorage.removeItem(k));
-
-            if (phone && phone !== 'غير مسجل') {
-                localStorage.removeItem('teacherAccount_' + phone);
-                localStorage.removeItem('teacherVerification_' + phone);
-                localStorage.removeItem('teacherBlocked_' + phone);
-            }
-            if (cleanName) {
-                localStorage.removeItem('teacherVerification_name_' + cleanName);
-                localStorage.removeItem('teacherBlocked_name_' + cleanName);
-            }
+            if (phone && phone !== 'غير مسجل') { localStorage.removeItem('teacherAccount_' + phone); localStorage.removeItem('teacherVerification_' + phone); localStorage.removeItem('teacherBlocked_' + phone); }
+            if (cleanName) { localStorage.removeItem('teacherVerification_name_' + cleanName); localStorage.removeItem('teacherBlocked_name_' + cleanName); }
             renderAllRecords();
             showToast('🗑️ تم حذف المعلم بنجاح');
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            populateGradeFilter();
-            renderMainGradeSubjectsBar();
-            renderAllRecords();
+            populateGradeFilter(); renderMainGradeSubjectsBar(); renderAllRecords();
         });
     </script>
 </body>
