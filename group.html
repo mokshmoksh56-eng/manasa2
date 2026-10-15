@@ -499,8 +499,8 @@
 
             <div class="grid-2">
                 <div class="form-group">
-                    <label>👤 اسم المستر (يأتي تلقائياً من تسجيل الدخول)</label>
-                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
+                    <label>👤 اسم المستر (يأتي تلقائياً من تسجيل الدخول - مقفول)</label>
+                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم" readonly style="background-color: #F1F5F9; cursor: not-allowed;">
                 </div>
                 <div class="form-group">
                     <label>🔢 العدد المطلوب للطلاب</label>
@@ -1109,7 +1109,6 @@
                 
                 if(state.g_name) document.getElementById('g_name').value = state.g_name;
                 if(state.g_center) document.getElementById('g_center').value = state.g_center;
-                if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher; // سيتم تحديثه لاحقاً إذا كان هناك loggedInTeacher جديد
                 if(state.g_count) document.getElementById('g_count').value = state.g_count;
                 
                 if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
@@ -1175,15 +1174,15 @@
                 }
             }
 
-            // 🌟 الربط التلقائي لاسم المستر القادم من login.html
+            // 🌟 الربط التلقائي لاسم المستر القادم من بيانات تسجيل الدخول وتثبيته تماماً
             const loggedInTeacherStr = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacherStr) {
                 try {
                     const teacher = JSON.parse(loggedInTeacherStr);
                     const teacherInput = document.getElementById('g_teacher');
-                    // إذا كان الحقل فارغاً أو لم يتم حفظ اسم مسبقاً، نضعه تلقائياً
-                    if (teacherInput && (!teacherInput.value || !saved)) {
-                        teacherInput.value = teacher.fullName || `${teacher.title || ''} ${teacher.name || ''}`.trim();
+                    if (teacherInput) {
+                        const tName = teacher.fullName || `${teacher.title || ''} ${teacher.name || ''}`.trim();
+                        if (tName) teacherInput.value = tName;
                     }
                 } catch (e) {}
             }
@@ -1208,6 +1207,7 @@
             loadState();
 
             document.querySelectorAll('input, select').forEach(el => {
+                if(el.id === 'g_teacher') return; // منع التعديل على الحقل المقفول
                 el.addEventListener('input', saveState);
                 el.addEventListener('change', saveState);
             });
