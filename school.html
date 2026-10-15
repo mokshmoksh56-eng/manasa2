@@ -28,7 +28,7 @@
             margin: 0;
         }
 
-        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh) */
+        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_5](start_span)[span_5](end_span) */
         #pullToRefreshIndicator {
             position: fixed;
             top: -60px;
@@ -285,7 +285,7 @@
             overflow-y: auto;
         }
         .modal-box.wide-modal {
-            max-width: 860px;
+            max-width: 820px;
             border-bottom-color: #F59E0B;
         }
 
@@ -415,7 +415,7 @@
 </head>
 <body>
 
-    <!-- مؤشر سحب الشاشة للتحديث -->
+    <!-- مؤشر سحب الشاشة للتحديث[span_6](start_span)[span_6](end_span) -->
     <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
 
     <!-- إشعار منبثق -->
@@ -534,7 +534,7 @@
         <!-- قائمة كروت المعلمين والدروس -->
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل على الجهاز (إن وجد) -->
+        <!-- قسم بيانات الطالب المسجل على الجهاز (يظهر التليفون، الصف، المادة فقط دون زر فتح صفحة الطالب)[span_7](start_span)[span_7](end_span) -->
         <div id="studentInfoSection" class="mt-8 hidden">
             <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
                 <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
@@ -545,14 +545,14 @@
     </main>
 
     <!-- ========================================================================= -->
-    <!-- نافذة تفاصيل المعلمين (المستر / المس) مع جدول البيانات المباشر وأزرار الحظر والإلغاء -->
+    <!-- نافذة تفاصيل المعلمين (المستر / المس) بالصيغة الأصلية[span_8](start_span)[span_8](end_span) -->
     <!-- ========================================================================= -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
                 <div>
                     <h3 id="summaryModalTitle" class="text-lg font-black text-slate-800">📋 تفاصيل المعلمين</h3>
-                    <p class="text-xs font-bold text-slate-500 mt-0.5">جدول البيانات المباشر، مع إمكانية الحظر أو الإلغاء</p>
+                    <p class="text-xs font-bold text-slate-500 mt-0.5">أرقام التليفونات، المجموعات، ومجموع ضغطات الواتساب</p>
                 </div>
                 <button onclick="closeModal('teachersSummaryModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
@@ -762,7 +762,7 @@
 
     <script>
         // ==========================================
-        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)
+        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_9](start_span)[span_9](end_span)
         // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
@@ -1323,7 +1323,7 @@
             return { records: lessonsList, teacherAccounts };
         }
 
-        // نافذة الجدول المباشر عند الضغط على إحصائيات المستر أو المس (مع أزرار الحظر والإلغاء)
+        // نافذة الجدول بالصيغة الأصلية عند الضغط على كارت المستر أو المس
         function openTeachersSummaryModal(titleType) {
             const { records } = collectAllAppData();
             const filtered = records.filter(r => r.title === titleType);
@@ -1346,11 +1346,11 @@
                     <table class="w-full text-right border-collapse text-xs font-bold text-slate-700">
                         <thead>
                             <tr class="bg-slate-100 border-b-2 border-slate-300 text-slate-900">
-                                <th class="p-2">الاسم</th>
-                                <th class="p-2">رقم التليفون</th>
-                                <th class="p-2">المجموعة / المادة</th>
-                                <th class="p-2">العنوان</th>
-                                <th class="p-2 text-center">الإجراءات (حظر / إلغاء)</th>
+                                <th class="p-2.5">الاسم</th>
+                                <th class="p-2.5">رقم التليفون</th>
+                                <th class="p-2.5">المجموعة / الصف / المادة</th>
+                                <th class="p-2.5 text-center">ضغطات الواتس</th>
+                                <th class="p-2.5 text-center">إجراء</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1362,24 +1362,14 @@
                     
                     html += `
                         <tr class="border-b border-slate-200 hover:bg-slate-50">
-                            <td class="p-2 font-black text-slate-900">${r.teacherName}</td>
-                            <td class="p-2 font-black text-blue-900" dir="ltr">${r.phone}</td>
-                            <td class="p-2">${r.groupName} <br><span class="text-[10px] text-slate-500">${r.grade} - ${r.subjects}</span></td>
-                            <td class="p-2 text-[11px] text-slate-600">${r.address}</td>
-                            <td class="p-2 text-center flex flex-wrap items-center justify-center gap-1">
+                            <td class="p-2.5 font-black text-slate-900">${r.teacherName}</td>
+                            <td class="p-2.5 font-black text-blue-900" dir="ltr">${r.phone}</td>
+                            <td class="p-2.5">${r.groupName} <br><span class="text-[10px] text-slate-500">${r.grade} (${r.subjects})</span></td>
+                            <td class="p-2.5 text-center font-black text-emerald-700">${r.waClicks || 0}</td>
+                            <td class="p-2.5 text-center">
                                 ${cleanPhone ? `
-                                    <a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2 py-1 text-[10px]">💬 واتس</a>
-                                ` : ''}
-                                
-                                ${r.lessonId ? `
-                                    <button onclick="toggleLessonVisibility('${r.lessonId}'); openTeachersSummaryModal('${titleType}');" class="action-chip bg-amber-500 text-white px-2 py-1 text-[10px]" title="حظر أو إخفاء الدرس عن الطلاب">
-                                        ${r.isPublished ? '🔒 حظر' : '🔓 تفعيل'}
-                                    </button>
-                                ` : ''}
-
-                                <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}', '${r.teacherName || ''}'); openTeachersSummaryModal('${titleType}');" class="action-chip bg-rose-600 text-white px-2 py-1 text-[10px]" title="حذف وإلغاء المعلم نهائياً">
-                                    ❌ إلغاء
-                                </button>
+                                    <a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>
+                                ` : '--'}
                             </td>
                         </tr>
                     `;
@@ -1480,7 +1470,7 @@
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
 
                 const statusBadge = r.type === 'lesson'
-                    ? (r.isPublished ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ظاهر للطلاب</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-rose-300">🔴 مخفي عن الطلاب</span>`)
+                    ? (r.isPublished ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-300">🟢 ظاهر للطلاب</span>` : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-100 text-rose-800 border border-emerald-300">🔴 مخفي عن الطلاب</span>`)
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-amber-100 text-amber-800 border border-amber-300">⏳ حساب بدون مجموعة</span>`;
 
                 return `
@@ -1563,6 +1553,7 @@
             renderStudentSection();
         }
 
+        // عرض التليفون، الصف، المادة فقط في قسم الطالب دون فتح صفحة الطالب[span_10](start_span)[span_10](end_span)
         function renderStudentSection() {
             const raw = localStorage.getItem('talep_data');
             const sec = document.getElementById('studentInfoSection');
@@ -1573,17 +1564,13 @@
                 if (!st.st_name && !st.st_phone) { sec.classList.add('hidden'); return; }
                 sec.classList.remove('hidden');
                 card.innerHTML = `
-                    <div class="flex flex-wrap items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black">
-                                ${st.st_gender === 'st_girl' ? '👩‍🎓' : '👨‍🎓'}
-                            </div>
-                            <div>
-                                <div class="text-base font-black text-slate-800">${st.st_name || 'طالب بدون اسم'} <span class="text-xs text-emerald-600">(${st.st_age || '--'} سنة)</span></div>
-                                <div class="text-xs font-extrabold text-slate-500">📱 التليفون: <span dir="ltr">${st.st_phone || 'غير مسجل'}</span> | 👑 الصف: ${st.s_grade || '--'} | 📚 المادة: ${st.s_subject || '--'}</div>
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black">🎓</div>
+                        <div>
+                            <div class="text-xs font-extrabold text-slate-700">
+                                📱 التليفون: <span dir="ltr">${st.st_phone || 'غير مسجل'}</span> | 👑 الصف: ${st.s_grade || '--'} | 📚 المادة: ${st.s_subject || '--'}
                             </div>
                         </div>
-                        <a href="./talep.html" class="action-chip bg-emerald-600 text-white">فتح صفحة الطالب ➔</a>
                     </div>
                 `;
             } catch (e) { sec.classList.add('hidden'); }
@@ -1749,16 +1736,13 @@
             showToast(!curr ? '🟢 تم إظهار الدرس للطلاب' : '🔴 تم إخفاء الدرس عن الطلاب');
         }
 
-        // دذف الحساب والمعلم وكل ما يخصه من الذاكرة والجدول بالكامل
         function deleteRecord(lessonId, phone, teacherName) {
             if (!confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) وحسابه وجميع دروسه نهائياً؟`)) return;
             
-            // 1. حذف حساب المعلم
             if (phone && phone !== 'غير مسجل') {
                 localStorage.removeItem('teacherAccount_' + phone);
             }
 
-            // 2. حذف الدروس المرتبطة بـ lessonId أو برقم الهاتف / الاسم
             if (lessonId) {
                 localStorage.removeItem('lessonState_' + lessonId);
                 localStorage.removeItem('publishState_' + lessonId);
@@ -1769,7 +1753,6 @@
                 } catch (e) {}
             }
 
-            // البحث وفحص أي lessonState أو teacherAccount مطابق بالاسم أو الهاتف لتنظيف كامل
             for (let i = localStorage.length - 1; i >= 0; i--) {
                 const k = localStorage.key(i);
                 if (k && k.startsWith('lessonState_')) {
