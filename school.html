@@ -28,6 +28,25 @@
             margin: 0;
         }
 
+        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh) */
+        #pullToRefreshIndicator {
+            position: fixed;
+            top: -60px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #0F2D5C, #2563EB);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 13px;
+            z-index: 999999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
         /* الهيدر العلوي */
         .hero-banner {
             position: relative;
@@ -396,6 +415,9 @@
 </head>
 <body>
 
+    <!-- مؤشر سحب الشاشة للتحديث -->
+    <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
+
     <!-- إشعار منبثق -->
     <div id="toastMsg" class="custom-toast">✨ تمت العملية بنجاح</div>
 
@@ -532,9 +554,13 @@
                 </div>
                 <button onclick="closeModal('teachersSummaryModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
+
             <div id="summaryModalContent" class="overflow-x-auto"></div>
+
             <div class="flex justify-end mt-5 pt-3 border-t border-slate-200">
-                <button onclick="closeModal('teachersSummaryModal')" class="action-chip bg-slate-800 text-white px-6 py-2.5 text-sm">إغلاق</button>
+                <button onclick="closeModal('teachersSummaryModal')" class="action-chip bg-slate-800 text-white px-6 py-2.5 text-sm">
+                    إغلاق
+                </button>
             </div>
         </div>
     </div>
@@ -550,12 +576,14 @@
                     <p class="text-xs font-bold text-emerald-600 mt-0.5">⚡ اضغط على أي صف دراسي بالأسفل لتظهر مواده تحته مباشرة وتعدلها لحظياً</p>
                 </div>
                 <div class="flex items-center gap-2">
-                    <button onclick="resetCurriculumToDefault()" class="action-chip bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs">🔄 استعادة الافتراضي</button>
+                    <button onclick="resetCurriculumToDefault()" class="action-chip bg-slate-100 text-slate-600 hover:bg-slate-200 text-xs">
+                        🔄 استعادة الافتراضي
+                    </button>
                     <button onclick="closeModal('curriculumModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
                 </div>
             </div>
 
-            <!-- 1. المراحل -->
+            <!-- 1. قسم المراحل الدراسية -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <label class="text-xs font-black text-slate-700">🎓 1. المراحل الدراسية (اختر المرحلة):</label>
@@ -564,19 +592,25 @@
                         <button onclick="addNewStage()" class="action-chip bg-blue-600 text-white px-4 whitespace-nowrap">➕ إضافة مرحلة</button>
                     </div>
                 </div>
+
                 <div id="stagesTabsContainer" class="flex flex-wrap gap-2 mt-2"></div>
+
                 <div id="activeStageControlBar" class="flex flex-wrap items-center justify-between gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 mt-3">
                     <div class="text-xs font-black text-blue-900">
                         المرحلة النشطة: <span id="currentStageTitleLabel" class="text-sm font-black text-blue-700 underline"></span>
                     </div>
                     <div class="flex items-center gap-2">
-                        <button onclick="renameCurrentStage()" class="action-chip bg-amber-100 text-amber-800 border border-amber-300 text-xs">✏️ تعديل اسم المرحلة</button>
-                        <button onclick="deleteCurrentStage()" class="action-chip bg-rose-100 text-rose-700 border border-rose-300 text-xs">🗑️ إلغاء المرحلة</button>
+                        <button onclick="renameCurrentStage()" class="action-chip bg-amber-100 text-amber-800 border border-amber-300 hover:bg-amber-500 hover:text-white text-xs">
+                            ✏️ تعديل اسم المرحلة
+                        </button>
+                        <button onclick="deleteCurrentStage()" class="action-chip bg-rose-100 text-rose-700 border border-rose-300 hover:bg-rose-600 hover:text-white text-xs">
+                            🗑️ إلغاء المرحلة
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- 2. الصفوف -->
+            <!-- 2. قسم الصفوف الدراسية -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
                     <div>
@@ -591,10 +625,11 @@
                         <button onclick="addNewGrade()" class="action-chip bg-emerald-600 text-white px-3.5 whitespace-nowrap">➕ إضافة صف</button>
                     </div>
                 </div>
+
                 <div id="gradesListContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
             </div>
 
-            <!-- 3. المواد الخاصة بالصف المحدد -->
+            <!-- 3. قسم المواد الدراسية -->
             <div id="gradeSubjectsPanel" class="grade-subjects-panel hidden">
                 <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-emerald-200">
                     <div>
@@ -606,14 +641,19 @@
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
                         <input type="text" id="newSubjectInput" onkeydown="if(event.key==='Enter') addNewSubjectToGrade()" class="form-input py-1.5 text-xs bg-white" placeholder="أضف مادة جديدة...">
-                        <button onclick="addNewSubjectToGrade()" class="action-chip bg-emerald-600 text-white px-4 whitespace-nowrap">➕ إضافة مادة</button>
+                        <button onclick="addNewSubjectToGrade()" class="action-chip bg-emerald-600 text-white px-4 whitespace-nowrap hover:bg-emerald-700">
+                            ➕ إضافة مادة
+                        </button>
                     </div>
                 </div>
+
                 <div id="subjectsListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
             </div>
 
             <div class="flex justify-end mt-5 pt-3 border-t border-slate-200">
-                <button onclick="closeModal('curriculumModal')" class="action-chip bg-slate-800 text-white px-8 py-2.5 text-sm">✔️ تم الحفظ والإغلاق</button>
+                <button onclick="closeModal('curriculumModal')" class="action-chip bg-slate-800 text-white px-8 py-2.5 text-sm">
+                    ✔️ تم الحفظ والإغلاق
+                </button>
             </div>
         </div>
     </div>
@@ -664,7 +704,7 @@
 
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs font-black text-slate-700 mb-1">📱 رقم التليفون / الواتس</label>
+                        <label class="block text-xs font-black text-slate-700 mb-1">📱 رقم التليفون</label>
                         <input type="tel" id="formPhone" class="form-input" maxlength="11" placeholder="01012345678">
                     </div>
                     <div>
@@ -717,6 +757,52 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)
+        // ==========================================
+        let touchStartY = 0;
+        let pullDistance = 0;
+        const ptrIndicator = document.getElementById('pullToRefreshIndicator');
+
+        window.addEventListener('touchstart', (e) => {
+            if (window.scrollY === 0) {
+                touchStartY = e.touches[0].clientY;
+            } else {
+                touchStartY = 0;
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchmove', (e) => {
+            if (touchStartY === 0) return;
+            const currentY = e.touches[0].clientY;
+            pullDistance = currentY - touchStartY;
+
+            if (pullDistance > 0 && window.scrollY === 0) {
+                const translateVal = Math.min(pullDistance * 0.4, 75);
+                ptrIndicator.style.transform = `translateY(${translateVal}px)`;
+                if (translateVal > 50) {
+                    ptrIndicator.textContent = 'اتركه لتحديث الصفحة 🔄';
+                } else {
+                    ptrIndicator.textContent = '🔄 اسحب للأسفل للتحديث...';
+                }
+            }
+        }, { passive: true });
+
+        window.addEventListener('touchend', () => {
+            if (touchStartY === 0) return;
+            if (pullDistance * 0.4 > 50) {
+                ptrIndicator.style.transform = `translateY(60px)`;
+                ptrIndicator.textContent = '⏳ جاري تحديث البيانات...';
+                setTimeout(() => {
+                    location.reload();
+                }, 400);
+            } else {
+                ptrIndicator.style.transform = `translateY(0px)`;
+            }
+            touchStartY = 0;
+            pullDistance = 0;
+        });
+
         // ==========================================
         // 1. تأثير الصوت عند الضغط + قناة التزامن اللحظي
         // ==========================================
@@ -1271,7 +1357,7 @@
                         <thead>
                             <tr class="bg-slate-100 border-b-2 border-slate-300 text-slate-900">
                                 <th class="p-2.5">الاسم</th>
-                                <th class="p-2.5">رقم التليفون / الواتس</th>
+                                <th class="p-2.5">رقم التليفون</th>
                                 <th class="p-2.5">المجموعة / الصف / المادة</th>
                                 <th class="p-2.5 text-center">ضغطات الواتس</th>
                                 <th class="p-2.5 text-center">إجراء</th>
@@ -1564,7 +1650,10 @@
             document.getElementById('formTitle').value = record.title === 'مس' ? 'مس' : 'مستر';
             document.getElementById('formTeacherName').value = record.teacherName !== 'غير محدد' ? record.teacherName : '';
             document.getElementById('formPhone').value = record.phone !== 'غير مسجل' ? record.phone : '';
+            document.getElementById('formRegDate').value = record.regDate || new Date().toISOString().split('T')[0];
             document.getElementById('formGroupName').value = record.groupName !== 'لم يُنشئ مجموعة بعد' ? record.groupName : '';
+            document.getElementById('formCenterName').value = record.centerName !== 'بدون سنتر' && record.centerName !== '--' ? record.centerName : '';
+            document.getElementById('formAddress').value = record.address.includes('لم يتم') ? '' : record.address;
 
             if (record.stageKey && getCurriculum()[record.stageKey]) {
                 document.getElementById('formStage').value = record.stageKey;
@@ -1573,6 +1662,10 @@
             if (record.grade) {
                 document.getElementById('formGrade').value = record.grade;
                 populateModalSubjects();
+            }
+            const firstSubj = (record.subjects || '').split('،')[0].trim();
+            if (firstSubj) {
+                document.getElementById('formSubject').value = firstSubj;
             }
 
             document.getElementById('editRecordModal').classList.add('active');
@@ -1583,10 +1676,13 @@
             const title = document.getElementById('formTitle').value;
             const teacherName = document.getElementById('formTeacherName').value.trim();
             const phone = document.getElementById('formPhone').value.trim();
+            const regDate = document.getElementById('formRegDate').value || new Date().toISOString().split('T')[0];
             const groupName = document.getElementById('formGroupName').value.trim() || 'مجموعة جديدة';
+            const centerName = document.getElementById('formCenterName').value.trim();
             const stageKey = document.getElementById('formStage').value;
             const grade = document.getElementById('formGrade').value;
             const subject = document.getElementById('formSubject').value;
+            const address = document.getElementById('formAddress').value.trim();
 
             if (!teacherName || !phone) { alert('يرجى إدخال اسم المعلم ورقم التليفون'); return; }
 
@@ -1597,14 +1693,25 @@
                 title: title,
                 name: teacherName,
                 phone: phone,
-                createdAt: existingAcc.createdAt || new Date().toISOString().split('T')[0]
+                age: existingAcc.age || '30',
+                pass: existingAcc.pass || '1234',
+                createdAt: regDate
             };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(updatedAcc));
 
+            let lessonsArr = [];
+            try { lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]'); } catch (e) {}
+
             let targetId = lessonIdInput;
             if (!targetId) {
-                targetId = '1';
+                targetId = lessonsArr.length > 0 ? Math.max(...lessonsArr.map(l => Number(l.id) || 0)) + 1 : 1;
+                lessonsArr.push({ id: Number(targetId), title: groupName });
+            } else {
+                const idx = lessonsArr.findIndex(l => String(l.id) === String(targetId));
+                if (idx > -1) lessonsArr[idx].title = groupName;
+                else lessonsArr.push({ id: Number(targetId), title: groupName });
             }
+            localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
 
             const existingState = JSON.parse(localStorage.getItem('lessonState_' + targetId) || '{}');
             const updatedState = {
@@ -1612,12 +1719,20 @@
                 t_gender: title,
                 g_teacher: teacherName,
                 g_phone: phone,
+                createdAt: regDate,
                 g_name: groupName,
+                g_center: centerName,
                 s_stage: stageKey,
                 s_grade: grade,
-                selectedSubjects: [`${grade} - ${subject}`]
+                selectedSubjects: [`${grade} - ${subject}`],
+                m_address: address || existingState.m_address || 'محدد بواسطة الإدارة',
+                lat: existingState.lat || 31.0409,
+                lng: existingState.lng || 31.3785
             };
             localStorage.setItem('lessonState_' + targetId, JSON.stringify(updatedState));
+            if (localStorage.getItem('publishState_' + targetId) === null) {
+                localStorage.setItem('publishState_' + targetId, 'true');
+            }
 
             closeModal('editRecordModal');
             populateGradeFilter();
@@ -1642,6 +1757,11 @@
             if (lessonId) {
                 localStorage.removeItem('lessonState_' + lessonId);
                 localStorage.removeItem('publishState_' + lessonId);
+                try {
+                    let lessonsArr = JSON.parse(localStorage.getItem('teacher_lessons') || '[]');
+                    lessonsArr = lessonsArr.filter(l => String(l.id) !== String(lessonId));
+                    localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
+                } catch (e) {}
             }
 
             for (let i = localStorage.length - 1; i >= 0; i--) {
@@ -1673,9 +1793,9 @@
         function exportToCSV() {
             const { records } = collectAllAppData();
             if (!records.length) { showToast('⚠️ لا توجد بيانات لتصديرها'); return; }
-            const headers = ['اللقب', 'اسم المعلم', 'رقم التليفون', 'اسم المجموعة', 'الصف الدراسي', 'المادة', 'المكان', 'العنوان الفعلي للدرس', 'الأيام', 'من الساعة', 'إلى الساعة'];
+            const headers = ['اللقب', 'اسم المعلم', 'رقم التليفون', 'تاريخ التسجيل', 'اسم المجموعة', 'الصف الدراسي', 'المادة', 'المكان', 'العنوان الفعلي للدرس', 'الأيام', 'من الساعة', 'إلى الساعة'];
             const rows = records.map(r => [
-                r.title, r.teacherName, r.phone, r.groupName, r.grade, r.subjects, r.locType, r.address, r.days, r.timeFrom, r.timeTo
+                r.title, r.teacherName, r.phone, r.regDate, r.groupName, r.grade, r.subjects, r.locType, r.address, r.days, r.timeFrom, r.timeTo
             ].map(v => `"${String(v || '').replace(/"/g, '""')}"`).join(','));
 
             const csvContent = '\uFEFF' + [headers.join(','), ...rows].join('\n');
