@@ -426,6 +426,22 @@
 </head>
 <body>
 
+    <!-- نافذة منبثقة لتنبيه توثيق الحساب عند الحظر -->
+    <div id="blockedModal" class="modal-overlay">
+        <div class="success-modal error-modal" style="max-width: 360px;">
+            <div class="success-icon error-icon" style="background: #FEF3C7; color: #D97706; border-bottom-color: #B45309;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 36px; height: 36px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+            </div>
+            <h3 style="color: #92400E;">تنبيه هامة للإدارة</h3>
+            <p id="blockedModalDesc" style="color: #78350F; font-size: 14px; font-weight: 900; line-height: 1.6; margin-bottom: 20px;">
+                عذراً، هذا الحساب بانتظار تفعيل وتوثيق الحساب من إدارة المنصة لتتمكن من إضافة ومتابعة مجموعاتك. يرجى التواصل مع الإدارة.
+            </p>
+            <button class="btn-close-error" style="background: #D97706; border-color: #B45309; border-bottom-color: #92400E;" onclick="window.location.href='./login.html'">العودة لتسجيل الدخول</button>
+        </div>
+    </div>
+
     <div id="syncToast" class="sync-toast">🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة</div>
 
     <div id="editAlert" class="edit-alert" style="display: none;">
@@ -684,6 +700,67 @@
     </div>
 
     <script>
+        // دالة لتنظيف اسم المعلم من الألقاب لمطابقته بدقة
+        function cleanTeacherName(rawName) {
+            if (!rawName) return '';
+            return String(rawName)
+                .replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '')
+                .replace(/^\/\s*/, '')
+                .trim();
+        }
+
+        // فحص حالة الحظر للمعلم الحالي
+        function checkTeacherBlockedStatus() {
+            let currentPhone = localStorage.getItem('rememberedPhone') || '';
+            let currentTeacherName = '';
+
+            try {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (loggedStr) {
+                    const loggedObj = JSON.parse(loggedStr);
+                    if (loggedObj.phone) currentPhone = loggedObj.phone;
+                    if (loggedObj.name) currentTeacherName = cleanTeacherName(loggedObj.name);
+                }
+            } catch (e) {}
+
+            const teacherInput = document.getElementById('g_teacher');
+            if (teacherInput && teacherInput.value) {
+                const cleanInputName = cleanTeacherName(teacherInput.value);
+                if (cleanInputName) currentTeacherName = cleanInputName;
+            }
+
+            let isBlocked = false;
+            if (currentPhone && localStorage.getItem('teacherBlocked_' + currentPhone) === 'true') {
+                isBlocked = true;
+            }
+            if (currentTeacherName && localStorage.getItem('teacherBlocked_name_' + currentTeacherName) === 'true') {
+                isBlocked = true;
+            }
+
+            const blockedModal = document.getElementById('blockedModal');
+            if (isBlocked) {
+                if (blockedModal) blockedModal.classList.add('active');
+            } else {
+                if (blockedModal) blockedModal.classList.remove('active');
+            }
+        }
+
+        // 🌟 استقبال تحديثات الحظر أو فك الحظر لحظياً من school.html عبر BroadcastChannel
+        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
+        if (authStatusChannel) {
+            authStatusChannel.onmessage = function(ev) {
+                if (ev.data && ev.data.type === 'AUTH_STATUS_CHANGED') {
+                    checkTeacherBlockedStatus();
+                }
+            };
+        }
+
+        window.addEventListener('storage', function(e) {
+            if (e.key && (e.key.startsWith('teacherBlocked_') || e.key === 'ehgezly_auth_status_updated_at')) {
+                checkTeacherBlockedStatus();
+            }
+        });
+
         function detectPhoneType() {
             const ua = navigator.userAgent || navigator.vendor || window.opera || '';
             if (/iPhone/i.test(ua)) return '🍎 آيفون';
@@ -1026,6 +1103,7 @@
             const errorModal = document.getElementById('errorModal');
             if (successModal) successModal.classList.remove('active');
             if (errorModal) errorModal.classList.remove('active');
+            checkTeacherBlockedStatus();
         });
 
         function showError(message) {
@@ -1186,6 +1264,7 @@
                     }
                 } catch (e) {}
             }
+            checkTeacherBlockedStatus();
         }
 
         window.onload = () => {
@@ -1214,6 +1293,7 @@
         };
 
         function nextStep(step, skipValidation = false) {
+            checkTeacherBlockedStatus();
             if (!skipValidation) {
                 if (step === 2) {
                     const gName = document.getElementById('g_name').value.trim();
@@ -1391,6 +1471,7 @@
         }
 
         function finishSetup() {
+            checkTeacherBlockedStatus();
             const address = document.getElementById('m_address').value.trim();
 
             if (!address || address.includes("جاري")) {
