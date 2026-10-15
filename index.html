@@ -426,7 +426,7 @@
         <div class="container mx-auto max-w-5xl">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full animate-fade-in delay-1 px-2 md:px-6">
                 
-                <!-- ✅ كارت المعلم مع التوجيه المباشر لـ login.html (تم التعديل) -->
+                <!-- ✅ كارت المعلم -->
                 <a href="./login.html" class="portal-card card-teacher">
                     <div class="card-image-box">
                         <img src="./teacher.png" alt="صورة المعلم">
@@ -440,7 +440,7 @@
                     </div>
                 </a>
 
-                <!-- ✅ كارت الطالب مع صورة student.png -->
+                <!-- ✅ كارت الطالب -->
                 <a href="./talep.html" class="portal-card card-student">
                     <div class="card-image-box">
                         <img src="./student.png" alt="صورة الطالب">
@@ -458,9 +458,34 @@
         </div>
     </section>
 
-    <!-- الفوتر -->
-    <footer class="py-6 text-center text-slate-400 font-bold text-sm">
-        <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
+    <!-- ✅ الفوتر والشروط القانونية -->
+    <footer class="py-8 px-4 text-center bg-white border-t border-slate-100 mt-auto">
+        <div class="container mx-auto max-w-xl">
+            
+            <!-- حقوق الملكية -->
+            <p class="text-slate-600 font-extrabold text-sm md:text-base mb-5">
+                جميع الحقوق محفوظة &copy; 2026 - <span class="text-amber-500">منصة احجزلي</span>
+            </p>
+
+            <!-- صندوق إخلاء المسؤولية والشروط -->
+            <div class="border border-dashed border-slate-300 rounded-2xl p-5 md:p-6 bg-slate-50/60 text-slate-600 text-xs md:text-sm leading-relaxed font-semibold shadow-sm">
+                <div class="text-2xl mb-2 select-none">⚖️</div>
+                <p>
+                    <strong class="font-extrabold text-slate-700">عهدُنا شفافية التواصل:</strong> منصة "احجزلي" هي همزة وصل تقنية مُصممة للارتقاء بالمسيرة التعليمية وتسهيل حجز المجموعات. نُخلي مسؤوليتنا القانونية تماماً عن أية معاملات مالية مباشرة تتم بين المعلم والطالب؛ دورنا يقتصر على ربط الأطراف ببعضها فقط، ونترك التفاصيل المالية لثقتكم المتبادلة.
+                </p>
+            </div>
+
+            <!-- رابط الشكاوى والاقتراحات عبر الإيميل -->
+            <div class="mt-5">
+                <a href="mailto:mmoksh162@gmail.com?subject=شكوى أو اقتراح - منصة احجزلي" class="inline-flex items-center justify-center gap-2 text-slate-400 hover:text-amber-600 transition-colors font-bold text-xs md:text-sm">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
+                    <span>صوتك يهمنا.. للشكاوى والاقتراحات</span>
+                </a>
+            </div>
+
+        </div>
     </footer>
 
     <!-- ✅ سكريبت تأثير الصوت عند الضغط -->
