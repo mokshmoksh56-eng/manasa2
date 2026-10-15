@@ -28,7 +28,7 @@
             margin: 0;
         }
 
-        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_4](start_span)[span_4](end_span) */
+        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh)[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span)[span_6](start_span)[span_6](end_span) */
         #pullToRefreshIndicator {
             position: fixed;
             top: -60px;
@@ -415,7 +415,7 @@
 </head>
 <body>
 
-    <!-- مؤشر سحب الشاشة للتحديث[span_5](start_span)[span_5](end_span) -->
+    <!-- مؤشر سحب الشاشة للتحديث[span_7](start_span)[span_7](end_span)[span_8](start_span)[span_8](end_span)[span_9](start_span)[span_9](end_span) -->
     <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
 
     <!-- إشعار منبثق -->
@@ -480,7 +480,7 @@
     <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
         
-        <!-- شريط البحث والفلترة (تم إلغاء زر التصدير وزر إدارة المراحل من هنا كما طلبتم) -->
+        <!-- شريط البحث والفلترة -->
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-2">
@@ -526,7 +526,7 @@
         <!-- قائمة كروت المعلمين والدروس -->
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
 
-        <!-- قسم بيانات الطالب المسجل (عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب)[span_6](start_span)[span_6](end_span) -->
+        <!-- قسم بيانات الطالب المسجل على الجهاز (يعرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب)[span_10](start_span)[span_10](end_span) -->
         <div id="studentInfoSection" class="mt-8 hidden">
             <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
                 <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
@@ -537,7 +537,7 @@
     </main>
 
     <!-- ========================================================================= -->
-    <!-- نافذة تفاصيل المعلمين (المستر / المس) بالصيغة الأصلية بدون تعديل/إخفاء داخلي -->
+    <!-- نافذة تفاصيل المعلمين (المستر / المس) -->
     <!-- ========================================================================= -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
@@ -754,7 +754,7 @@
 
     <script>
         // ==========================================
-        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_7](start_span)[span_7](end_span)
+        // 🌟 خاصية سحب الشاشة للأعلى/الأسفل لتحديث الصفحة (Pull-to-Refresh)[span_11](start_span)[span_11](end_span)[span_12](start_span)[span_12](end_span)[span_13](start_span)[span_13](end_span)
         // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
@@ -1524,15 +1524,7 @@
                                 </button>
                             ` : ''}
 
-                            <button onclick='openEditRecordModal(${JSON.stringify(r).replace(/'/g, "&#39;")})' class="action-chip bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-500 hover:text-white">
-                                ✏️ تعديل
-                            </button>
-
-                            ${r.type === 'lesson' ? `
-                                <button onclick="toggleLessonVisibility('${r.lessonId}')" class="action-chip bg-slate-100 text-slate-700 hover:bg-slate-200">
-                                    ${r.isPublished ? '🙈 إخفاء' : '👁️ إظهار'}
-                                </button>
-                            ` : ''}
+                            <!-- تم إلغاء زر التعديل وزر إخفاء/إظهار بناءً على طلبكم وجعل الأزرار مقتصرة على الاتصال، واتساب، الخريطة، وحذف المعلم -->
 
                             <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}', '${r.teacherName || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
                                 🗑️ حذف المعلم
@@ -1545,7 +1537,7 @@
             renderStudentSection();
         }
 
-        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب[span_8](start_span)[span_8](end_span)
+        // عرض التليفون، الصف، المادة فقط دون فتح صفحة الطالب[span_14](start_span)[span_14](end_span)
         function renderStudentSection() {
             const raw = localStorage.getItem('talep_data');
             const sec = document.getElementById('studentInfoSection');
@@ -1623,35 +1615,6 @@
             });
         }
 
-        function openEditRecordModal(record) {
-            populateModalStages();
-            document.getElementById('editModalHeading').textContent = `✏️ تعديل بيانات: ${record.title} / ${record.teacherName}`;
-            document.getElementById('editLessonId').value = record.lessonId || '';
-            document.getElementById('editOriginalPhone').value = record.phone || '';
-            document.getElementById('formTitle').value = record.title === 'مس' ? 'مس' : 'مستر';
-            document.getElementById('formTeacherName').value = record.teacherName !== 'غير محدد' ? record.teacherName : '';
-            document.getElementById('formPhone').value = record.phone !== 'غير مسجل' ? record.phone : '';
-            document.getElementById('formRegDate').value = record.regDate || new Date().toISOString().split('T')[0];
-            document.getElementById('formGroupName').value = record.groupName !== 'لم يُنشئ مجموعة بعد' ? record.groupName : '';
-            document.getElementById('formCenterName').value = record.centerName !== 'بدون سنتر' && record.centerName !== '--' ? record.centerName : '';
-            document.getElementById('m_address').value = record.address.includes('لم يتم') ? '' : record.address;
-
-            if (record.stageKey && getCurriculum()[record.stageKey]) {
-                document.getElementById('formStage').value = record.stageKey;
-                populateModalGrades();
-            }
-            if (record.grade) {
-                document.getElementById('formGrade').value = record.grade;
-                populateModalSubjects();
-            }
-            const firstSubj = (record.subjects || '').split('،')[0].trim();
-            if (firstSubj) {
-                document.getElementById('formSubject').value = firstSubj;
-            }
-
-            document.getElementById('editRecordModal').classList.add('active');
-        }
-
         function saveRecordFromModal() {
             const lessonIdInput = document.getElementById('editLessonId').value;
             const title = document.getElementById('formTitle').value;
@@ -1719,13 +1682,6 @@
             populateGradeFilter();
             renderAllRecords();
             showToast('✨ تم حفظ بيانات المعلم بنجاح');
-        }
-
-        function toggleLessonVisibility(lessonId) {
-            const curr = localStorage.getItem('publishState_' + lessonId) !== 'false';
-            localStorage.setItem('publishState_' + lessonId, String(!curr));
-            renderAllRecords();
-            showToast(!curr ? '🟢 تم إظهار الدرس للطلاب' : '🔴 تم إخفاء الدرس عن الطلاب');
         }
 
         function deleteRecord(lessonId, phone, teacherName) {
