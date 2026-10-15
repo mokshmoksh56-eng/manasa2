@@ -337,7 +337,6 @@
         }
         .btn-close-error:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-        /* إشعار التحديث اللحظي من school.html */
         .sync-toast {
             position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px);
             background: #0F2D5C; color: #fff; padding: 10px 20px; border-radius: 99px;
@@ -347,7 +346,6 @@
         }
         .sync-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* 🆕 شارة نوع التليفون */
         .phone-type-badge {
             display: inline-flex;
             align-items: center;
@@ -501,7 +499,7 @@
 
             <div class="grid-2">
                 <div class="form-group">
-                    <label>👤 اسم المستر</label>
+                    <label>👤 اسم المستر (يأتي تلقائياً من تسجيل الدخول)</label>
                     <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
                 </div>
                 <div class="form-group">
@@ -510,7 +508,6 @@
                 </div>
             </div>
 
-            <!-- 🆕 عرض نوع التليفون تلقائياً -->
             <div class="form-group">
                 <label>📲 نوع التليفون المسجل منه (تلقائي)</label>
                 <div id="phoneTypeBadge" class="phone-type-badge">
@@ -543,7 +540,7 @@
         </div>
     </div>
 
-    <!-- الخطوة 2 (مرتبطة لحظياً مع school.html بنظام مواد كل صف على حدة) -->
+    <!-- الخطوة 2 -->
     <div id="step2" class="step-content theme-turq">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
@@ -570,7 +567,6 @@
                 </div>
             </div>
 
-            <!-- شريط يظهر تحت الصف مباشرة يعرض مواد هذا الصف لاختيارها بضغطة واحدة -->
             <div id="quickSubjectsBox" class="quick-subjects-box">
                 <div id="quickSubjectsTitle" style="font-size: 12px; font-weight: 900; color: #008B82; margin-bottom: 8px;">
                     👇 مواد الصف المتاحة (اضغط على المادة لإضافتها):
@@ -592,7 +588,6 @@
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي وجدول المواعيد</h3>
             
-            <!-- أيام الأسبوع -->
             <div class="form-group">
                 <label>📅 أيام الحصص (اختر أيام الأسبوع)</label>
                 <div class="days-grid">
@@ -606,7 +601,6 @@
                 </div>
             </div>
 
-            <!-- الشهور الميلادية -->
             <div class="form-group">
                 <label>🗓️ الشهور الميلادية (اختر الشهر أو الشهور)</label>
                 <div class="months-grid">
@@ -625,7 +619,6 @@
                 </div>
             </div>
 
-            <!-- أوقات الحصة بالساعة الرقمية الكلاسيكية -->
             <div class="grid-2" style="margin-top: 15px;">
                 <div class="form-group">
                     <label>⏰ من الساعة</label>
@@ -660,7 +653,6 @@
                 </label>
             </div>
 
-            <!-- الخريطة -->
             <div class="map-container" style="margin-top: 15px;">
                 <div id="map"></div>
                 <button type="button" class="locate-btn" onclick="requestCurrentLocation()" title="انتقل إلى موقعي الحالي">
@@ -677,7 +669,6 @@
                 <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
             </div>
 
-            <!-- خيار إظهار الخريطة للطلاب -->
             <div class="form-group" style="background: #F0F9FF; padding: 12px; border-radius: 10px; border: 1.5px solid #BAE6FD; border-bottom: 4px solid #0284C7; display: flex; align-items: center; gap: 12px; transition: transform 0.2s; cursor: pointer; margin-top: 15px;">
                 <input type="checkbox" id="g_publish_map" checked style="width: 22px; height: 22px; accent-color: #0284C7; cursor: pointer;">
                 <label for="g_publish_map" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #075985;">
@@ -693,18 +684,11 @@
     </div>
 
     <script>
-        // ==========================================
-        // 🆕 0. كشف نوع التليفون تلقائياً من المتصفح
-        // ==========================================
         function detectPhoneType() {
             const ua = navigator.userAgent || navigator.vendor || window.opera || '';
-            
-            // آيفون / آيباد
             if (/iPhone/i.test(ua)) return '🍎 آيفون';
             if (/iPad/i.test(ua)) return '🍎 آيباد';
             if (/iPod/i.test(ua)) return '🍎 آيفون';
-            
-            // أندرويد - نحاول نعرف الماركة
             if (/Android/i.test(ua)) {
                 if (/Samsung|SM-/i.test(ua)) return '🤖 سامسونج';
                 if (/Huawei|HUAWEI/i.test(ua)) return '🤖 هواوي';
@@ -718,19 +702,13 @@
                 if (/Nokia/i.test(ua)) return '🤖 نوكيا';
                 return '🤖 أندرويد';
             }
-            
-            // ويندوز فون
             if (/Windows Phone/i.test(ua)) return '📱 ويندوز فون';
-            
-            // كمبيوتر
             if (/Windows/i.test(ua)) return '💻 كمبيوتر ويندوز';
             if (/Macintosh|Mac OS X/i.test(ua)) return '💻 ماك بوك';
             if (/Linux/i.test(ua)) return '💻 لينكس';
-            
             return '📱 غير معروف';
         }
 
-        // عرض نوع التليفون في الواجهة
         function displayPhoneType() {
             const type = detectPhoneType();
             const textEl = document.getElementById('phoneTypeText');
@@ -738,9 +716,6 @@
             return type;
         }
 
-        // ==========================================
-        // ✅ إضافة تأثيرات الصوت
-        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         function resumeAudio() {
@@ -807,9 +782,6 @@
             }
         });
 
-        // ==========================================
-        // ✅ قراءة المنهج الدراسي الموحد (app_curriculum) بنظام مواد كل صف والربط اللحظي مع school.html
-        // ==========================================
         const defaultCurriculum = {
             primary: {
                 name: '🎒 المرحلة الابتدائية',
@@ -1035,9 +1007,6 @@
             populateStagesDropdown(true);
         });
 
-        // ==========================================
-        // بقية سكريبتات الصفحة
-        // ==========================================
         let currentLessonId = '1';
         let isEditMode = false;
         let mapInitialized = false;
@@ -1108,7 +1077,6 @@
                 g_center: document.getElementById('g_center').value,
                 g_teacher: document.getElementById('g_teacher').value,
                 g_count: document.getElementById('g_count').value,
-                // 🆕 حفظ نوع التليفون تلقائياً
                 phoneType: detectPhoneType(),
                 start_hour: document.getElementById('start_hour').value,
                 start_min: document.getElementById('start_min').value,
@@ -1141,7 +1109,7 @@
                 
                 if(state.g_name) document.getElementById('g_name').value = state.g_name;
                 if(state.g_center) document.getElementById('g_center').value = state.g_center;
-                if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher;
+                if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher; // سيتم تحديثه لاحقاً إذا كان هناك loggedInTeacher جديد
                 if(state.g_count) document.getElementById('g_count').value = state.g_count;
                 
                 if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
@@ -1206,6 +1174,19 @@
                     nextStep(state.step, true);
                 }
             }
+
+            // 🌟 الربط التلقائي لاسم المستر القادم من login.html
+            const loggedInTeacherStr = localStorage.getItem('loggedInTeacher');
+            if (loggedInTeacherStr) {
+                try {
+                    const teacher = JSON.parse(loggedInTeacherStr);
+                    const teacherInput = document.getElementById('g_teacher');
+                    // إذا كان الحقل فارغاً أو لم يتم حفظ اسم مسبقاً، نضعه تلقائياً
+                    if (teacherInput && (!teacherInput.value || !saved)) {
+                        teacherInput.value = teacher.fullName || `${teacher.title || ''} ${teacher.name || ''}`.trim();
+                    }
+                } catch (e) {}
+            }
         }
 
         window.onload = () => {
@@ -1220,7 +1201,6 @@
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
 
-            // 🆕 عرض نوع التليفون تلقائياً
             displayPhoneType();
 
             populateTimeSelectors();
