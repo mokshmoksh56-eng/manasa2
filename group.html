@@ -230,6 +230,38 @@
         }
         .chip span { cursor: pointer; color: #EF4444; }
 
+        /* أزرار المواد السريعة التي تظهر تحت الصف المختار */
+        .quick-subjects-box {
+            background: #F2FDFD;
+            border: 1.5px dashed #008B82;
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 8px;
+            margin-bottom: 12px;
+            display: none;
+        }
+        .quick-subjects-box.show { display: block; animation: fadeIn 0.25s ease; }
+        .quick-subj-btn {
+            background: #FFFFFF;
+            color: #0F172A;
+            border: 1.5px solid #CBD5E1;
+            border-bottom: 3px solid #008B82;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 12.5px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .quick-subj-btn:hover, .quick-subj-btn.selected {
+            background: #008B82;
+            color: #FFFFFF;
+            border-color: #005f59;
+        }
+
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 2px solid var(--c-border); border-bottom: 5px solid var(--c-dark); overflow: hidden; z-index: 1; }
         #map { width: 100%; height: 260px; }
         
@@ -380,7 +412,7 @@
 </head>
 <body>
 
-    <div id="syncToast" class="sync-toast">🔄 تم تحديث المراحل والمواد الدراسية لحظياً من الإدارة</div>
+    <div id="syncToast" class="sync-toast">🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة</div>
 
     <div id="editAlert" class="edit-alert" style="display: none;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
@@ -486,7 +518,7 @@
         </div>
     </div>
 
-    <!-- الخطوة 2 (مرتبطة لحظياً مع school.html) -->
+    <!-- الخطوة 2 (مرتبطة لحظياً مع school.html بنظام مواد كل صف على حدة) -->
     <div id="step2" class="step-content theme-turq">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
@@ -506,11 +538,19 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>📖 المادة</label>
+                    <label>📖 المادة (تظهر حسب الصف المختار)</label>
                     <select id="s_subject" class="form-control" disabled onchange="addSubject()">
                         <option value="">-- اختر الصف أولاً --</option>
                     </select>
                 </div>
+            </div>
+
+            <!-- شريط يظهر تحت الصف مباشرة يعرض مواد هذا الصف لاختيارها بضغطة واحدة -->
+            <div id="quickSubjectsBox" class="quick-subjects-box">
+                <div id="quickSubjectsTitle" style="font-size: 12px; font-weight: 900; color: #008B82; margin-bottom: 8px;">
+                    👇 مواد الصف المتاحة (اضغط على المادة لإضافتها):
+                </div>
+                <div id="quickSubjectsList" style="display: flex; flex-wrap: wrap; gap: 6px;"></div>
             </div>
 
             <div id="subjectChips" class="subject-chips"></div>
@@ -690,7 +730,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickable = e.target.closest('button, input, select, label, .step-indicator, .chip, .time-unit');
+            const clickable = e.target.closest('button, input, select, label, .step-indicator, .chip, .time-unit, .quick-subj-btn');
             if (clickable) {
                 if (clickable.closest('.locate-btn')) return;
                 playClickSound();
@@ -698,24 +738,90 @@
         });
 
         // ==========================================
-        // ✅ قراءة المنهج الدراسي الموحد (app_curriculum) والربط اللحظي مع school.html
+        // ✅ قراءة المنهج الدراسي الموحد (app_curriculum) بنظام مواد كل صف والربط اللحظي مع school.html
         // ==========================================
         const defaultCurriculum = {
-            primary: { name: '🎒 المرحلة الابتدائية', grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم'] },
-            prep: { name: '📐 المرحلة الإعدادية', grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
-            secondary: { name: '🎓 المرحلة الثانوية', grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات'] }
+            primary: {
+                name: '🎒 المرحلة الابتدائية',
+                grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                gradeSubjects: {
+                    'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الثاني': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الثالث': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الرابع': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
+                    'الخامس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
+                    'السادس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات']
+                },
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            prep: {
+                name: '📐 المرحلة الإعدادية',
+                grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                gradeSubjects: {
+                    'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
+                    'الثاني الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
+                    'الثالث الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي']
+                },
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            secondary: {
+                name: '🎓 المرحلة الثانوية',
+                grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                gradeSubjects: {
+                    'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
+                    'الثاني الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا', 'علم نفس', 'فلسفة'],
+                    'الثالث الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+                },
+                subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات']
+            }
         };
+
+        function normalizeCurriculum(currObj) {
+            Object.keys(currObj).forEach(stageKey => {
+                const st = currObj[stageKey];
+                if (!Array.isArray(st.grades)) st.grades = [];
+                if (!Array.isArray(st.subjs)) st.subjs = [];
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object') {
+                    st.gradeSubjects = {};
+                }
+                st.grades.forEach(g => {
+                    if (!Array.isArray(st.gradeSubjects[g])) {
+                        const defStage = defaultCurriculum[stageKey];
+                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
+                            st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
+                        } else {
+                            st.gradeSubjects[g] = [...st.subjs];
+                        }
+                    }
+                });
+            });
+            return currObj;
+        }
 
         function getCurriculum() {
             try {
                 const saved = localStorage.getItem('app_curriculum');
                 if (saved) {
                     const parsed = JSON.parse(saved);
-                    if (parsed && Object.keys(parsed).length > 0) return parsed;
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        return normalizeCurriculum(parsed);
+                    }
                 }
             } catch (e) {}
-            localStorage.setItem('app_curriculum', JSON.stringify(defaultCurriculum));
-            return defaultCurriculum;
+            const copy = JSON.parse(JSON.stringify(defaultCurriculum));
+            localStorage.setItem('app_curriculum', JSON.stringify(copy));
+            return copy;
+        }
+
+        // جلب المواد الخاصة بصف معين داخل المرحلة
+        function getSubjectsForGrade(stageKey, gradeName) {
+            const curr = getCurriculum();
+            if (!stageKey || !curr[stageKey]) return [];
+            const st = curr[stageKey];
+            if (gradeName && st.gradeSubjects && Array.isArray(st.gradeSubjects[gradeName])) {
+                return st.gradeSubjects[gradeName];
+            }
+            return st.subjs || [];
         }
 
         function populateStagesDropdown(preserveSelection = true) {
@@ -760,24 +866,77 @@
                 const sSelect = document.getElementById('s_subject');
                 sSelect.innerHTML = '<option value="">-- اختر الصف أولاً --</option>';
                 sSelect.disabled = true;
+                renderQuickSubjectsBox();
             }
         }
 
         function updateSubjects() {
-            const curr = getCurriculum();
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
             const sSelect = document.getElementById('s_subject');
 
             sSelect.innerHTML = '<option value="">-- اختر مادة --</option>';
-            if (stage && curr[stage] && grade) {
-                (curr[stage].subjs || []).forEach(s => {
+            if (stage && grade) {
+                const gradeSubjs = getSubjectsForGrade(stage, grade);
+                gradeSubjs.forEach(s => {
                     sSelect.innerHTML += `<option value="${s}">${s}</option>`;
                 });
                 sSelect.disabled = false;
             } else {
                 sSelect.disabled = true;
             }
+            renderQuickSubjectsBox();
+        }
+
+        // إظهار المواد الخاصة بالصف المختار كأزرار سريعة تحته مباشرة
+        function renderQuickSubjectsBox() {
+            const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
+            const box = document.getElementById('quickSubjectsBox');
+            const list = document.getElementById('quickSubjectsList');
+            const title = document.getElementById('quickSubjectsTitle');
+
+            if (!stage || !grade) {
+                box.classList.remove('show');
+                list.innerHTML = '';
+                return;
+            }
+
+            const gradeSubjs = getSubjectsForGrade(stage, grade);
+            box.classList.add('show');
+            title.textContent = `📖 المواد الخاصة بـ (${grade}) — اضغط على المادة لإضافتها:`;
+
+            if (gradeSubjs.length === 0) {
+                list.innerHTML = `<span style="font-size:12px; color:#64748B; font-weight:800;">لا توجد مواد مضافة لهذا الصف حالياً في لوحة التحكم.</span>`;
+                return;
+            }
+
+            list.innerHTML = gradeSubjs.map(s => {
+                const fullChipName = `${grade} - ${s}`;
+                const isSelected = selectedSubjects.includes(fullChipName);
+                const safeSubj = s.replace(/'/g, "\\'");
+                return `
+                    <button type="button" onclick="toggleQuickSubject('${safeSubj}')" class="quick-subj-btn ${isSelected ? 'selected' : ''}">
+                        <span>${isSelected ? '✔' : '➕'}</span>
+                        <span>${s}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function toggleQuickSubject(subj) {
+            const grade = document.getElementById('s_grade').value;
+            if (!grade || !subj) return;
+            const entry = `${grade} - ${subj}`;
+            const idx = selectedSubjects.indexOf(entry);
+            if (idx > -1) {
+                selectedSubjects.splice(idx, 1);
+            } else {
+                selectedSubjects.push(entry);
+            }
+            renderChips();
+            renderQuickSubjectsBox();
+            saveState();
         }
 
         function showSyncNotification() {
@@ -953,14 +1112,14 @@
                 if(state.g_gender && document.getElementById(state.g_gender)) document.getElementById(state.g_gender).checked = true;
                 if(state.g_loc && document.getElementById(state.g_loc)) document.getElementById(state.g_loc).checked = true;
                 
-                if(state.s_stage && getCurriculum()[state.s_stage]) {
-                    document.getElementById('s_stage').value = state.s_stage;
-                    updateGrades(state.s_grade || '');
-                }
-                
                 if(state.selectedSubjects) {
                     selectedSubjects = state.selectedSubjects;
                     renderChips();
+                }
+
+                if(state.s_stage && getCurriculum()[state.s_stage]) {
+                    document.getElementById('s_stage').value = state.s_stage;
+                    updateGrades(state.s_grade || '');
                 }
 
                 if(state.m_address) document.getElementById('m_address').value = state.m_address;
@@ -1055,6 +1214,7 @@
             if (!selectedSubjects.includes(newSubject)) {
                 selectedSubjects.push(newSubject);
                 renderChips();
+                renderQuickSubjectsBox();
                 saveState();
             }
             document.getElementById('s_subject').value = '';
@@ -1070,7 +1230,8 @@
         
         function removeSubj(idx) { 
             selectedSubjects.splice(idx, 1); 
-            renderChips(); 
+            renderChips();
+            renderQuickSubjectsBox();
             saveState();
         }
 
