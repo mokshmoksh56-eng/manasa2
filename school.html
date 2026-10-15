@@ -285,7 +285,7 @@
             overflow-y: auto;
         }
         .modal-box.wide-modal {
-            max-width: 820px;
+            max-width: 860px;
             border-bottom-color: #F59E0B;
         }
 
@@ -544,13 +544,15 @@
 
     </main>
 
-    <!-- نافذة تفاصيل المعلمين (المستر / المس) -->
+    <!-- ========================================================================= -->
+    <!-- نافذة تفاصيل المعلمين (المستر / المس) مع جدول البيانات المباشر وأزرار الحظر والإلغاء -->
+    <!-- ========================================================================= -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
                 <div>
                     <h3 id="summaryModalTitle" class="text-lg font-black text-slate-800">📋 تفاصيل المعلمين</h3>
-                    <p class="text-xs font-bold text-slate-500 mt-0.5">أرقام التليفونات، المجموعات، ومجموع ضغطات الواتساب</p>
+                    <p class="text-xs font-bold text-slate-500 mt-0.5">جدول البيانات المباشر، مع إمكانية الحظر أو الإلغاء</p>
                 </div>
                 <button onclick="closeModal('teachersSummaryModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
@@ -565,7 +567,9 @@
         </div>
     </div>
 
+    <!-- ========================================================================= -->
     <!-- نافذة التحكم الهرمي للمراحل والصفوف والمواد -->
+    <!-- ========================================================================= -->
     <div id="curriculumModal" class="modal-overlay" onclick="closeModal('curriculumModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
@@ -765,26 +769,17 @@
         const ptrIndicator = document.getElementById('pullToRefreshIndicator');
 
         window.addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) {
-                touchStartY = e.touches[0].clientY;
-            } else {
-                touchStartY = 0;
-            }
+            if (window.scrollY === 0) touchStartY = e.touches[0].clientY;
+            else touchStartY = 0;
         }, { passive: true });
 
         window.addEventListener('touchmove', (e) => {
             if (touchStartY === 0) return;
-            const currentY = e.touches[0].clientY;
-            pullDistance = currentY - touchStartY;
-
+            pullDistance = e.touches[0].clientY - touchStartY;
             if (pullDistance > 0 && window.scrollY === 0) {
                 const translateVal = Math.min(pullDistance * 0.4, 75);
                 ptrIndicator.style.transform = `translateY(${translateVal}px)`;
-                if (translateVal > 50) {
-                    ptrIndicator.textContent = 'اتركه لتحديث الصفحة 🔄';
-                } else {
-                    ptrIndicator.textContent = '🔄 اسحب للأسفل للتحديث...';
-                }
+                ptrIndicator.textContent = translateVal > 50 ? 'اتركه لتحديث الصفحة 🔄' : '🔄 اسحب للأسفل للتحديث...';
             }
         }, { passive: true });
 
@@ -792,15 +787,12 @@
             if (touchStartY === 0) return;
             if (pullDistance * 0.4 > 50) {
                 ptrIndicator.style.transform = `translateY(60px)`;
-                ptrIndicator.textContent = '⏳ جاري تحديث البيانات...';
-                setTimeout(() => {
-                    location.reload();
-                }, 400);
+                ptrIndicator.textContent = '⏳ جاري التحديث...';
+                setTimeout(() => location.reload(), 400);
             } else {
                 ptrIndicator.style.transform = `translateY(0px)`;
             }
-            touchStartY = 0;
-            pullDistance = 0;
+            touchStartY = 0; pullDistance = 0;
         });
 
         // ==========================================
@@ -1288,7 +1280,6 @@
                             phone: phone,
                             groupName: state.g_name || `مجموعة رقم ${lessonId}`,
                             grade: state.s_grade || 'غير محدد',
-                            stageKey: state.s_stage || 'primary',
                             subjects: subjectsArr.length ? subjectsArr.join('، ') : 'غير محدد',
                             locType: locTypeLabel,
                             address: state.m_address || 'لم يتم تحديد العنوان',
@@ -1315,7 +1306,6 @@
                         phone: acc.phone || 'غير مسجل',
                         groupName: 'لم يُنشئ مجموعة بعد',
                         grade: 'غير محدد',
-                        stageKey: 'primary',
                         subjects: 'غير محدد',
                         locType: '--',
                         address: '--',
@@ -1333,7 +1323,7 @@
             return { records: lessonsList, teacherAccounts };
         }
 
-        // نافذة الجدول الصغير عند الضغط على كارت المستر أو المس
+        // نافذة الجدول المباشر عند الضغط على إحصائيات المستر أو المس (مع أزرار الحظر والإلغاء)
         function openTeachersSummaryModal(titleType) {
             const { records } = collectAllAppData();
             const filtered = records.filter(r => r.title === titleType);
@@ -1356,11 +1346,11 @@
                     <table class="w-full text-right border-collapse text-xs font-bold text-slate-700">
                         <thead>
                             <tr class="bg-slate-100 border-b-2 border-slate-300 text-slate-900">
-                                <th class="p-2.5">الاسم</th>
-                                <th class="p-2.5">رقم التليفون</th>
-                                <th class="p-2.5">المجموعة / الصف / المادة</th>
-                                <th class="p-2.5 text-center">ضغطات الواتس</th>
-                                <th class="p-2.5 text-center">إجراء</th>
+                                <th class="p-2">الاسم</th>
+                                <th class="p-2">رقم التليفون</th>
+                                <th class="p-2">المجموعة / المادة</th>
+                                <th class="p-2">العنوان</th>
+                                <th class="p-2 text-center">الإجراءات (حظر / إلغاء)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1372,14 +1362,24 @@
                     
                     html += `
                         <tr class="border-b border-slate-200 hover:bg-slate-50">
-                            <td class="p-2.5 font-black text-slate-900">${r.teacherName}</td>
-                            <td class="p-2.5 font-black text-blue-900" dir="ltr">${r.phone}</td>
-                            <td class="p-2.5">${r.groupName} <br><span class="text-[10px] text-slate-500">${r.grade} (${r.subjects})</span></td>
-                            <td class="p-2.5 text-center font-black text-emerald-700">${r.waClicks || 0}</td>
-                            <td class="p-2.5 text-center">
+                            <td class="p-2 font-black text-slate-900">${r.teacherName}</td>
+                            <td class="p-2 font-black text-blue-900" dir="ltr">${r.phone}</td>
+                            <td class="p-2">${r.groupName} <br><span class="text-[10px] text-slate-500">${r.grade} - ${r.subjects}</span></td>
+                            <td class="p-2 text-[11px] text-slate-600">${r.address}</td>
+                            <td class="p-2 text-center flex flex-wrap items-center justify-center gap-1">
                                 ${cleanPhone ? `
-                                    <a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>
-                                ` : '--'}
+                                    <a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2 py-1 text-[10px]">💬 واتس</a>
+                                ` : ''}
+                                
+                                ${r.lessonId ? `
+                                    <button onclick="toggleLessonVisibility('${r.lessonId}'); openTeachersSummaryModal('${titleType}');" class="action-chip bg-amber-500 text-white px-2 py-1 text-[10px]" title="حظر أو إخفاء الدرس عن الطلاب">
+                                        ${r.isPublished ? '🔒 حظر' : '🔓 تفعيل'}
+                                    </button>
+                                ` : ''}
+
+                                <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}', '${r.teacherName || ''}'); openTeachersSummaryModal('${titleType}');" class="action-chip bg-rose-600 text-white px-2 py-1 text-[10px]" title="حذف وإلغاء المعلم نهائياً">
+                                    ❌ إلغاء
+                                </button>
                             </td>
                         </tr>
                     `;
@@ -1425,7 +1425,9 @@
 
             teacherAccounts.forEach(acc => {
                 const tTitle = acc.title || 'مستر';
-                const identifier = acc.phone || acc.name;
+                const tName = acc.name || '';
+                const tPhone = acc.phone || '';
+                const identifier = tPhone || tName;
                 if (tTitle === 'مس') uniqueMsSet.add(identifier);
                 else uniqueMrSet.add(identifier);
             });
@@ -1495,7 +1497,7 @@
                         <div class="space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div class="info-pill" style="background:#EFF6FF; border-color:#BFDBFE;">
-                                    <span class="label">📱 التليفون / الواتس:</span>
+                                    <span class="label">📱 التليفون:</span>
                                     <span class="font-black text-blue-900" dir="ltr">${r.phone}</span>
                                 </div>
                                 <div class="info-pill" style="background:#FFFBEB; border-color:#FDE68A;">
@@ -1747,13 +1749,16 @@
             showToast(!curr ? '🟢 تم إظهار الدرس للطلاب' : '🔴 تم إخفاء الدرس عن الطلاب');
         }
 
+        // دذف الحساب والمعلم وكل ما يخصه من الذاكرة والجدول بالكامل
         function deleteRecord(lessonId, phone, teacherName) {
             if (!confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) وحسابه وجميع دروسه نهائياً؟`)) return;
             
+            // 1. حذف حساب المعلم
             if (phone && phone !== 'غير مسجل') {
                 localStorage.removeItem('teacherAccount_' + phone);
             }
 
+            // 2. حذف الدروس المرتبطة بـ lessonId أو برقم الهاتف / الاسم
             if (lessonId) {
                 localStorage.removeItem('lessonState_' + lessonId);
                 localStorage.removeItem('publishState_' + lessonId);
@@ -1764,6 +1769,7 @@
                 } catch (e) {}
             }
 
+            // البحث وفحص أي lessonState أو teacherAccount مطابق بالاسم أو الهاتف لتنظيف كامل
             for (let i = localStorage.length - 1; i >= 0; i--) {
                 const k = localStorage.key(i);
                 if (k && k.startsWith('lessonState_')) {
