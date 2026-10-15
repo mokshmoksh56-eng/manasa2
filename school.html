@@ -503,7 +503,7 @@
                         📥 تصدير جدول Excel (CSV)
                     </button>
                     <button onclick="openCurriculumModal()" class="action-chip bg-amber-50 text-amber-800 border border-amber-200 hover:bg-amber-500 hover:text-white">
-                        ⚙️ إدارة المراحل والصفوف والمواد (تسميع لحظي في group)
+                        ⚙️ إدارة المراحل والصفوف والمواد
                     </button>
                 </div>
             </div>
@@ -546,7 +546,7 @@
     </div>
 
     <!-- ========================================================================= -->
-    <!-- نافذة التحكم الهرمي: تضغط على المرحلة -> تضغط على الصف -> تظهر مواده من تحته -->
+    <!-- نافذة التحكم الهرمي للمراحل والصفوف والمواد -->
     <!-- ========================================================================= -->
     <div id="curriculumModal" class="modal-overlay" onclick="closeModal('curriculumModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
@@ -570,15 +570,13 @@
                 <div class="flex flex-wrap items-center justify-between gap-2 mb-2.5">
                     <label class="text-xs font-black text-slate-700">🎓 1. المراحل الدراسية (اختر المرحلة):</label>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <input type="text" id="newStageNameInput" onkeydown="if(event.key==='Enter') addNewStage()" class="form-input py-1.5 text-xs" placeholder="اسم مرحلة جديدة (مثال: المرحلة الجامعية)">
+                        <input type="text" id="newStageNameInput" onkeydown="if(event.key==='Enter') addNewStage()" class="form-input py-1.5 text-xs" placeholder="اسم مرحلة جديدة...">
                         <button onclick="addNewStage()" class="action-chip bg-blue-600 text-white px-4 whitespace-nowrap">➕ إضافة مرحلة</button>
                     </div>
                 </div>
 
-                <!-- أزرار المراحل -->
                 <div id="stagesTabsContainer" class="flex flex-wrap gap-2 mt-2"></div>
 
-                <!-- شريط تعديل أو حذف المرحلة المختارة -->
                 <div id="activeStageControlBar" class="flex flex-wrap items-center justify-between gap-2 bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 mt-3">
                     <div class="text-xs font-black text-blue-900">
                         المرحلة النشطة: <span id="currentStageTitleLabel" class="text-sm font-black text-blue-700 underline"></span>
@@ -605,12 +603,11 @@
                         <p class="text-[11px] font-bold text-slate-500">👇 اضغط على أي صف لفتح المواد الخاصة به بالأسفل</p>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <input type="text" id="newGradeInput" onkeydown="if(event.key==='Enter') addNewGrade()" class="form-input py-1.5 text-xs" placeholder="أضف صفاً جديداً لهذه المرحلة...">
+                        <input type="text" id="newGradeInput" onkeydown="if(event.key==='Enter') addNewGrade()" class="form-input py-1.5 text-xs" placeholder="أضف صفاً جديداً...">
                         <button onclick="addNewGrade()" class="action-chip bg-emerald-600 text-white px-3.5 whitespace-nowrap">➕ إضافة صف</button>
                     </div>
                 </div>
 
-                <!-- شبكة الصفوف الدراسية -->
                 <div id="gradesListContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
             </div>
 
@@ -625,9 +622,9 @@
                         </h4>
                     </div>
                     <div class="flex gap-2 w-full sm:w-auto">
-                        <input type="text" id="newSubjectInput" onkeydown="if(event.key==='Enter') addNewSubjectToGrade()" class="form-input py-1.5 text-xs bg-white" placeholder="أضف مادة جديدة لهذا الصف...">
+                        <input type="text" id="newSubjectInput" onkeydown="if(event.key==='Enter') addNewSubjectToGrade()" class="form-input py-1.5 text-xs bg-white" placeholder="أضف مادة جديدة...">
                         <button onclick="addNewSubjectToGrade()" class="action-chip bg-emerald-600 text-white px-4 whitespace-nowrap hover:bg-emerald-700">
-                            ➕ إضافة مادة للصف
+                            ➕ إضافة مادة
                         </button>
                     </div>
                 </div>
@@ -661,7 +658,7 @@
         </div>
     </div>
 
-    <!-- نافذة تعديل بيانات معلم ودرس كامل -->
+    <!-- نافذة تعديل بيانات معلم ودرس -->
     <div id="editRecordModal" class="modal-overlay" onclick="closeModal('editRecordModal')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -726,7 +723,7 @@
 
                 <div>
                     <label class="block text-xs font-black text-slate-700 mb-1">📍 العنوان الفعلي التفصيلي للدرس</label>
-                    <input type="text" id="formAddress" class="form-input" placeholder="المحافظة - المدينة - الشارع - بجوار...">
+                    <input type="text" id="formAddress" class="form-input" placeholder="المحافظة - المدينة - الشارع...">
                 </div>
             </div>
 
@@ -920,7 +917,7 @@
             if (keys.length === 0) {
                 activeStageKey = null;
                 activeGradeName = null;
-                tabsContainer.innerHTML = `<div class="text-xs font-bold text-rose-600 p-2">لا توجد مراحل دراسية حالياً، أضف مرحلة جديدة من الأعلى.</div>`;
+                tabsContainer.innerHTML = `<div class="text-xs font-bold text-rose-600 p-2">لا توجد مراحل دراسية حالياً.</div>`;
                 controlBar.classList.add('hidden');
                 document.getElementById('gradesListContainer').innerHTML = '';
                 subjectsPanel.classList.add('hidden');
@@ -953,7 +950,7 @@
             const gradesContainer = document.getElementById('gradesListContainer');
 
             if (grades.length === 0) {
-                gradesContainer.innerHTML = `<div class="col-span-full text-xs text-slate-400 font-bold text-center py-6">لا توجد صفوف مضافة في هذه المرحلة، أضف صفاً من الأعلى.</div>`;
+                gradesContainer.innerHTML = `<div class="col-span-full text-xs text-slate-400 font-bold text-center py-6">لا توجد صفوف مضافة في هذه المرحلة.</div>`;
                 subjectsPanel.classList.add('hidden');
                 return;
             }
@@ -974,8 +971,8 @@
                             </span>
                         </div>
                         <div class="flex items-center gap-1" onclick="event.stopPropagation()">
-                            <button onclick="editGradeItem(${idx})" title="تعديل اسم الصف" class="action-chip bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-500 hover:text-white px-2 py-1 text-xs">✏️</button>
-                            <button onclick="deleteGradeItem(${idx})" title="حذف الصف" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white px-2 py-1 text-xs">🗑️</button>
+                            <button onclick="editGradeItem(${idx})" title="تعديل" class="action-chip bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-500 hover:text-white px-2 py-1 text-xs">✏️</button>
+                            <button onclick="deleteGradeItem(${idx})" title="حذف" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white px-2 py-1 text-xs">🗑️</button>
                         </div>
                     </div>
                 `;
@@ -991,7 +988,7 @@
                 if (subjs.length === 0) {
                     subjsContainer.innerHTML = `
                         <div class="col-span-full text-xs text-slate-500 font-bold text-center py-6 bg-white rounded-xl border border-dashed border-emerald-300">
-                            لا توجد مواد مضافة لصف "${activeGradeName}" حتى الآن، أضف مادة جديدة من الخانة بالأعلى ⬆️
+                            لا توجد مواد مضافة لصف "${activeGradeName}" حتى الآن.
                         </div>
                     `;
                 } else {
@@ -999,8 +996,8 @@
                         <div class="subject-item-badge">
                             <span>📘 ${s}</span>
                             <div class="flex items-center gap-1">
-                                <button onclick="editSubjectInGrade(${idx})" title="تعديل المادة" class="action-chip bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-500 hover:text-white px-2.5 py-1 text-xs">✏️</button>
-                                <button onclick="deleteSubjectFromGrade(${idx})" title="حذف المادة" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white px-2.5 py-1 text-xs">🗑️</button>
+                                <button onclick="editSubjectInGrade(${idx})" title="تعديل" class="action-chip bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-500 hover:text-white px-2.5 py-1 text-xs">✏️</button>
+                                <button onclick="deleteSubjectFromGrade(${idx})" title="حذف" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white px-2.5 py-1 text-xs">🗑️</button>
                             </div>
                         </div>
                     `).join('');
@@ -1026,7 +1023,7 @@
         function addNewStage() {
             const input = document.getElementById('newStageNameInput');
             const name = input.value.trim();
-            if (!name) { alert('يرجى كتابة اسم المرحلة الدراسية الجديدة'); return; }
+            if (!name) { alert('يرجى كتابة اسم المرحلة'); return; }
             const curr = getCurriculum();
             const newKey = 'stage_' + Date.now();
             curr[newKey] = {
@@ -1038,15 +1035,14 @@
             input.value = '';
             activeStageKey = newKey;
             activeGradeName = 'الصف الأول';
-            saveCurriculumAndBroadcast(curr, '✨ تم إضافة المرحلة الجديدة');
+            saveCurriculumAndBroadcast(curr, '✨ تم إضافة المرحلة بنجاح');
             renderCurriculumManager();
         }
 
         function renameCurrentStage() {
             if (!activeStageKey) return;
             const curr = getCurriculum();
-            const currentName = curr[activeStageKey].name;
-            const updatedName = prompt('أدخل الاسم الجديد للمرحلة الدراسية:', currentName);
+            const updatedName = prompt('أدخل الاسم الجديد للمرحلة:', curr[activeStageKey].name);
             if (updatedName && updatedName.trim()) {
                 curr[activeStageKey].name = updatedName.trim();
                 saveCurriculumAndBroadcast(curr, '✏️ تم تعديل اسم المرحلة بنجاح');
@@ -1058,7 +1054,7 @@
             if (!activeStageKey) return;
             const curr = getCurriculum();
             if (Object.keys(curr).length <= 1) { alert('لا يمكن حذف جميع المراحل.'); return; }
-            if (!confirm(`هل أنت متأكد من حذف "${curr[activeStageKey].name}"؟`)) return;
+            if (!confirm(`هل أنت متأكد من حذف المرحلة؟`)) return;
             delete curr[activeStageKey];
             activeStageKey = Object.keys(curr)[0];
             activeGradeName = (curr[activeStageKey].grades || [])[0] || null;
@@ -1089,7 +1085,7 @@
             const curr = getCurriculum();
             const st = curr[activeStageKey];
             const oldVal = st.grades[idx];
-            const newVal = prompt('تعديل اسم الصف الدراسي:', oldVal);
+            const newVal = prompt('تعديل اسم الصف:', oldVal);
             if (newVal && newVal.trim() && newVal.trim() !== oldVal) {
                 const trimmed = newVal.trim();
                 st.grades[idx] = trimmed;
@@ -1124,7 +1120,7 @@
             if (!st.gradeSubjects[activeGradeName]) st.gradeSubjects[activeGradeName] = [];
             if (!st.gradeSubjects[activeGradeName].includes(val)) {
                 st.gradeSubjects[activeGradeName].push(val);
-                saveCurriculumAndBroadcast(curr, `✨ تمت إضافة مادة "${val}" لصف ${activeGradeName}`);
+                saveCurriculumAndBroadcast(curr, `✨ تمت إضافة مادة "${val}"`);
                 renderCurriculumManager();
             } else { alert('المادة مضافة بالفعل لهذا الصف'); }
             input.value = '';
@@ -1135,7 +1131,7 @@
             const curr = getCurriculum();
             const list = curr[activeStageKey].gradeSubjects[activeGradeName] || [];
             const oldVal = list[idx];
-            const newVal = prompt(`تعديل اسم المادة في صف (${activeGradeName}):`, oldVal);
+            const newVal = prompt('تعديل اسم المادة:', oldVal);
             if (newVal && newVal.trim() && newVal.trim() !== oldVal) {
                 list[idx] = newVal.trim();
                 saveCurriculumAndBroadcast(curr, '✏️ تم تعديل المادة');
@@ -1155,7 +1151,7 @@
         }
 
         function resetCurriculumToDefault() {
-            if (!confirm('هل تريد استعادة المراحل الافتراضية؟')) return;
+            if (!confirm('هل تريد استعادة المراحل والصفوف الافتراضية؟')) return;
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             activeStageKey = Object.keys(copy)[0];
             activeGradeName = copy[activeStageKey].grades[0];
@@ -1164,7 +1160,7 @@
         }
 
         // ==========================================
-        // 3. تجميع بيانات المعلمين والإحصائيات وجدول التفاصيل (عند الضغط على الكارت)
+        // 3. تجميع بيانات المعلمين والإحصائيات وجدول التفاصيل
         // ==========================================
         function collectAllAppData() {
             const teacherAccounts = [];
@@ -1218,7 +1214,6 @@
                         else if (state.g_loc === 'l_stud') locTypeLabel = 'منزل الطالب';
 
                         const isPublished = localStorage.getItem('publishState_' + lessonId) !== 'false';
-                        // احتساب عدد مرات الضغط على الواتساب إن وجدت في الذاكرة
                         const waClicks = parseInt(localStorage.getItem('wa_clicks_' + (phone || teacherName)) || '0', 10);
 
                         lessonsList.push({
@@ -1272,7 +1267,7 @@
             return { records: lessonsList, teacherAccounts };
         }
 
-        // دالة عند الضغط على كارت عدد المستر أو المس لعرض الجدول الصغير المفصل
+        // نافذة الجدول الصغير عند الضغط على كارت المستر أو المس
         function openTeachersSummaryModal(titleType) {
             const { records } = collectAllAppData();
             const filtered = records.filter(r => r.title === titleType);
@@ -1280,7 +1275,7 @@
             const modalTitle = document.getElementById('summaryModalTitle');
             const modalContent = document.getElementById('summaryModalContent');
 
-            modalTitle.textContent = titleType === 'مستر' ? '👨‍🏫 جدول تفاصيل المستر (الذكور)' : '👩‍🏫 جدول تفاصيل المس (الإناث)';
+            modalTitle.textContent = titleType === 'مستر' ? '👨‍🏫 تفاصيل المستر (الذكور)' : '👩‍🏫 تفاصيل المس (الإناث)';
 
             if (filtered.length === 0) {
                 modalContent.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">لا توجد سجلات مسجلة لـ (${titleType}) حالياً.</div>`;
@@ -1289,7 +1284,7 @@
                 
                 let html = `
                     <div class="mb-3 p-3 bg-blue-50 border border-blue-200 rounded-xl flex items-center justify-between text-xs font-black text-blue-900">
-                        <span>📊 إجمالي عدد المعلمين: ${filtered.length}</span>
+                        <span>📊 عدد المعلمين: ${filtered.length}</span>
                         <span class="text-emerald-700 bg-emerald-100 px-3 py-1 rounded-lg">💬 إجمالي ضغطات الواتساب: ${totalClicks} ضغطة</span>
                     </div>
                     <table class="w-full text-right border-collapse text-xs font-bold text-slate-700">
@@ -1298,14 +1293,14 @@
                                 <th class="p-2.5">الاسم</th>
                                 <th class="p-2.5">رقم التليفون</th>
                                 <th class="p-2.5">المجموعة / الصف / المادة</th>
-                                <th class="p-2.5 text-center">ضغطات الواتساب</th>
+                                <th class="p-2.5 text-center">ضغطات الواتس</th>
                                 <th class="p-2.5 text-center">إجراء</th>
                             </tr>
                         </thead>
                         <tbody>
                 `;
 
-                filtered.forEach((r, idx) => {
+                filtered.forEach((r) => {
                     const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                     const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                     
@@ -1359,13 +1354,28 @@
             const { records, teacherAccounts } = collectAllAppData();
             const curr = getCurriculum();
 
-            const mrCount = records.filter(r => r.title === 'مستر').length;
-            const msCount = records.filter(r => r.title === 'مس').length;
-            const actualLessons = records.filter(r => r.type === 'lesson').length;
+            // حساب عدد المستر والمس الفريدين بدقة من حسابات المعلمين والدروس
+            const uniqueMrSet = new Set();
+            const uniqueMsSet = new Set();
 
-            document.getElementById('statMrCount').textContent = mrCount;
-            document.getElementById('statMsCount').textContent = msCount;
-            document.getElementById('statLessonsCount').textContent = actualLessons;
+            teacherAccounts.forEach(acc => {
+                const tTitle = acc.title || 'مستر';
+                const tName = acc.name || '';
+                const tPhone = acc.phone || '';
+                const identifier = tPhone || tName;
+                if (tTitle === 'مس') uniqueMsSet.add(identifier);
+                else uniqueMrSet.add(identifier);
+            });
+
+            records.forEach(r => {
+                const identifier = (r.phone && r.phone !== 'غير مسجل') ? r.phone : r.teacherName;
+                if (r.title === 'مس') uniqueMsSet.add(identifier);
+                else uniqueMrSet.add(identifier);
+            });
+
+            document.getElementById('statMrCount').textContent = uniqueMrSet.size;
+            document.getElementById('statMsCount').textContent = uniqueMsSet.size;
+            document.getElementById('statLessonsCount').textContent = records.filter(r => r.type === 'lesson').length;
             document.getElementById('statAccountsCount').textContent = teacherAccounts.length;
 
             const q = document.getElementById('searchInput').value.trim().toLowerCase();
@@ -1391,7 +1401,7 @@
                     <div class="col-span-full bg-white rounded-3xl p-10 text-center border-2 border-dashed border-slate-300">
                         <div class="text-5xl mb-3">📭</div>
                         <h3 class="text-lg font-black text-slate-700 mb-1">لا توجد بيانات مطابقة حالياً</h3>
-                        <p class="text-xs font-bold text-slate-500">يمكنك تعديل فلاتر البحث أو إضافة مجموعات جديدة من صفحة إعداد المجموعة</p>
+                        <p class="text-xs font-bold text-slate-500">يمكنك تعديل فلاتر البحث</p>
                     </div>
                 `;
                 return;
@@ -1477,8 +1487,8 @@
                                 </button>
                             ` : ''}
 
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
-                                🗑️ حذف
+                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone || ''}', '${r.teacherName || ''}')" class="action-chip bg-rose-50 text-rose-600 border border-rose-200 hover:bg-rose-600 hover:text-white mr-auto">
+                                🗑️ حذف المعلم
                             </button>
                         </div>
                     </div>
@@ -1674,8 +1684,16 @@
             showToast(!curr ? '🟢 تم إظهار الدرس للطلاب' : '🔴 تم إخفاء الدرس عن الطلاب');
         }
 
-        function deleteRecord(lessonId, phone) {
-            if (!confirm('هل أنت متأكد من حذف هذا السجل نهائياً؟')) return;
+        // دذف الحساب والمعلم وكل ما يخصه من الذاكرة والجدول بالكامل
+        function deleteRecord(lessonId, phone, teacherName) {
+            if (!confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) وحسابه وجميع دروسه نهائياً؟`)) return;
+            
+            // 1. حذف حساب المعلم
+            if (phone && phone !== 'غير مسجل') {
+                localStorage.removeItem('teacherAccount_' + phone);
+            }
+
+            // 2. حذف الدروس المرتبطة بـ lessonId أو برقم الهاتف / الاسم
             if (lessonId) {
                 localStorage.removeItem('lessonState_' + lessonId);
                 localStorage.removeItem('publishState_' + lessonId);
@@ -1684,11 +1702,33 @@
                     lessonsArr = lessonsArr.filter(l => String(l.id) !== String(lessonId));
                     localStorage.setItem('teacher_lessons', JSON.stringify(lessonsArr));
                 } catch (e) {}
-            } else if (phone) {
-                localStorage.removeItem('teacherAccount_' + phone);
             }
+
+            // البحث وفحص أي lessonState أو teacherAccount مطابق بالاسم أو الهاتف لتنظيف كامل
+            for (let i = localStorage.length - 1; i >= 0; i--) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('lessonState_')) {
+                    try {
+                        const st = JSON.parse(localStorage.getItem(k) || '{}');
+                        if ((phone && st.g_phone === phone) || (teacherName && st.g_teacher === teacherName)) {
+                            const lid = k.replace('lessonState_', '');
+                            localStorage.removeItem(k);
+                            localStorage.removeItem('publishState_' + lid);
+                        }
+                    } catch (e) {}
+                }
+                if (k && k.startsWith('teacherAccount_')) {
+                    try {
+                        const acc = JSON.parse(localStorage.getItem(k) || '{}');
+                        if ((phone && acc.phone === phone) || (teacherName && acc.name === teacherName)) {
+                            localStorage.removeItem(k);
+                        }
+                    } catch (e) {}
+                }
+            }
+
             renderAllRecords();
-            showToast('🗑️ تم حذف السجل بنجاح');
+            showToast('🗑️ تم حذف المعلم وحسابه نهائياً');
         }
 
         function exportToCSV() {
@@ -1707,6 +1747,67 @@
             a.download = `بيانات_احجزلى_${new Date().toISOString().split('T')[0]}.csv`;
             a.click();
             showToast('📥 تم تحميل ملف البيانات بنجاح');
+        }
+
+        let selectedMainSubjectFilter = 'all';
+        function onMainGradeFilterChange() {
+            selectedMainSubjectFilter = 'all';
+            renderMainGradeSubjectsBar();
+            renderAllRecords();
+        }
+
+        function renderMainGradeSubjectsBar() {
+            const gradeVal = document.getElementById('filterGrade').value;
+            const bar = document.getElementById('mainGradeSubjectsBar');
+            const pillsContainer = document.getElementById('mainGradeSubjectsPills');
+            const titleEl = document.getElementById('mainGradeSubjectsTitle');
+
+            if (gradeVal === 'all') {
+                bar.classList.add('hidden');
+                return;
+            }
+
+            const curr = getCurriculum();
+            let foundSubjects = [];
+            Object.keys(curr).forEach(stageKey => {
+                if ((curr[stageKey].grades || []).includes(gradeVal)) {
+                    foundSubjects = getSubjectsForGrade(stageKey, gradeVal);
+                }
+            });
+
+            bar.classList.remove('hidden');
+            titleEl.textContent = `📖 المواد الدراسية الخاصة بـ (${gradeVal}):`;
+
+            let html = `
+                <button onclick="selectMainSubjectPill('all')" class="subj-filter-pill ${selectedMainSubjectFilter === 'all' ? 'active' : ''}">
+                    الكل (${foundSubjects.length})
+                </button>
+            `;
+            foundSubjects.forEach(s => {
+                const safeS = s.replace(/'/g, "\\'");
+                html += `
+                    <button onclick="selectMainSubjectPill('${safeS}')" class="subj-filter-pill ${selectedMainSubjectFilter === s ? 'active' : ''}">
+                        📘 ${s}
+                    </button>
+                `;
+            });
+            pillsContainer.innerHTML = html;
+        }
+
+        function selectMainSubjectPill(subjName) {
+            selectedMainSubjectFilter = subjName;
+            renderMainGradeSubjectsBar();
+            renderAllRecords();
+        }
+
+        function openCurriculumForSelectedFilterGrade() {
+            const gradeVal = document.getElementById('filterGrade').value;
+            const curr = getCurriculum();
+            let targetStage = null;
+            Object.keys(curr).forEach(k => {
+                if ((curr[k].grades || []).includes(gradeVal)) targetStage = k;
+            });
+            openCurriculumModal(targetStage, gradeVal !== 'all' ? gradeVal : null);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
