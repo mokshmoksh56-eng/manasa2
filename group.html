@@ -109,6 +109,7 @@
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
         .radio-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+        .radio-grid.grid-2-cols { grid-template-columns: repeat(2, 1fr); }
         .radio-grid input { display: none; }
         .radio-grid label {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -126,6 +127,10 @@
             transform: translateY(2px); 
             border-bottom-width: 2px; margin-bottom: 2px; 
         }
+
+        /* تمييز مستر ومس بألوان واضحة */
+        #t_title_mr:checked + label { border-color: #2563EB; border-bottom-color: #1D4ED8; background: #EFF6FF; color: #1E40AF; }
+        #t_title_ms:checked + label { border-color: #EC4899; border-bottom-color: #BE185D; background: #FDF2F8; color: #9D174D; }
 
         .days-grid, .months-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
         .days-grid input, .months-grid input { display: none; }
@@ -177,7 +182,7 @@
             border: 1px solid transparent;
             border-radius: 6px;
             padding: 5px 0;
-            font-family: 'Rajdhani', sans-serif; /* ✅ استخدام خط Rajdhani لصفر مفرغ وشكل رقمي كلاسيكي */
+            font-family: 'Rajdhani', sans-serif;
             font-size: 32px;
             font-weight: 700;
             letter-spacing: 1px;
@@ -187,9 +192,7 @@
             cursor: pointer; outline: none; 
             appearance: none; -webkit-appearance: none; width: 34%; transition: all 0.2s;
         }
-        .time-unit:focus { 
-            background: rgba(0, 0, 0, 0.05); 
-        }
+        .time-unit:focus { background: rgba(0, 0, 0, 0.05); }
         
         .time-unit option {
             background: #ffffff;
@@ -202,7 +205,7 @@
         }
 
         .time-colon {
-            font-family: 'Rajdhani', sans-serif; /* ✅ توافق الخط */
+            font-family: 'Rajdhani', sans-serif;
             font-size: 32px;
             font-weight: 700;
             color: #1a1c1a;
@@ -265,9 +268,10 @@
 
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px);
+            background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px);
             display: flex; align-items: center; justify-content: center;
             z-index: 9999; opacity: 0; visibility: hidden; transition: all 0.3s ease;
+            padding: 12px;
         }
         .modal-overlay.active { opacity: 1; visibility: visible; }
         
@@ -304,6 +308,74 @@
             font-size: 15px; font-weight: 900; cursor: pointer; transition: all 0.2s; width: 100%;
         }
         .btn-close-error:active { transform: translateY(2px); border-bottom-width: 2px; }
+
+        /* ======================================================== */
+        /* ✅ ستايل نافذة التحكم في المواد والصفوف والمراحل بداخل الصفحة */
+        /* ======================================================== */
+        .btn-manage-curriculum {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #FFFFFF;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12.5px;
+            font-weight: 900;
+            border: 1px solid #B45309;
+            border-bottom: 3px solid #78350F;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+        }
+        .btn-manage-curriculum:active { transform: translateY(2px); border-bottom-width: 1px; }
+
+        .curriculum-modal-box {
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 560px;
+            max-height: 88vh;
+            border-radius: 24px;
+            padding: 20px;
+            border: 2px solid #E2E8F0;
+            border-bottom: 6px solid #008B82;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            display: flex;
+            flex-direction: column;
+            text-align: right;
+        }
+        .curriculum-modal-body {
+            overflow-y: auto;
+            padding-left: 4px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .manage-section-box {
+            background: #F8FAFC;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 16px;
+            padding: 12px;
+        }
+        .manage-tag {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .manage-tag-grade { background: #EFF6FF; color: #1E40AF; border: 1px solid #BFDBFE; }
+        .manage-tag-subj { background: #ECFDF5; color: #065F46; border: 1px solid #A7F3D0; }
+        .manage-del-btn {
+            width: 20px; height: 20px; border-radius: 50%;
+            background: #FEE2E2; color: #DC2626; border: 1px solid #FECACA;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 11px; font-weight: 900; cursor: pointer;
+        }
+        .manage-del-btn:hover { background: #EF4444; color: #FFFFFF; }
 
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
@@ -377,6 +449,7 @@
         <span>أنت الآن في وضع تعديل بيانات المجموعة</span>
     </div>
 
+    <!-- نافذة النجاح -->
     <div id="successModal" class="modal-overlay">
         <div class="success-modal">
             <div class="success-icon">
@@ -390,6 +463,7 @@
         </div>
     </div>
 
+    <!-- نافذة الخطأ -->
     <div id="errorModal" class="modal-overlay">
         <div class="success-modal error-modal">
             <div class="success-icon error-icon">
@@ -400,6 +474,80 @@
             <h3>لا يمكن الحفظ!</h3>
             <p id="errorDesc">يوجد تعارض في المواعيد مع مجموعة أخرى. برجاء مراجعة الوقت أو الأيام.</p>
             <button class="btn-close-error" onclick="document.getElementById('errorModal').classList.remove('active')">حسناً، سأقوم بالتعديل</button>
+        </div>
+    </div>
+
+    <!-- ======================================================== -->
+    <!-- ✅ نافذة التحكم المباشر في المراحل والصفوف والمواد (زيادة وإلغاء) -->
+    <!-- ======================================================== -->
+    <div id="curriculumManagerModal" class="modal-overlay" onclick="closeCurriculumModal()">
+        <div class="curriculum-modal-box" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between border-b-2 border-dashed border-slate-200 pb-3 mb-3">
+                <h3 class="text-base md:text-lg font-black text-slate-800 flex items-center gap-2">
+                    <span>⚙️</span> التحكم في المواد والصفوف والمراحل
+                </h3>
+                <button type="button" onclick="closeCurriculumModal()" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black flex items-center justify-center">✕</button>
+            </div>
+
+            <div class="curriculum-modal-body">
+                
+                <!-- 1. اختيار المرحلة الحالية أو زيادة مرحلة جديدة -->
+                <div class="manage-section-box">
+                    <label class="block text-xs font-black text-slate-700 mb-1.5">🎓 اختر المرحلة للتعديل عليها (أو أضف مرحلة جديدة):</label>
+                    <div class="flex gap-2 mb-2.5">
+                        <select id="mgr_stage_select" onchange="renderManagerItems()" class="form-control py-2 text-xs flex-1"></select>
+                        <button type="button" onclick="mgrDeleteCurrentStage()" class="px-3 py-2 rounded-xl bg-rose-100 text-rose-700 font-black text-xs border border-rose-200 hover:bg-rose-600 hover:text-white transition whitespace-nowrap">
+                            🗑️ إلغاء المرحلة
+                        </button>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="mgr_new_stage_input" class="form-control py-2 text-xs" placeholder="اسم مرحلة جديدة (مثال: المرحلة الأزهرية أو KG)...">
+                        <button type="button" onclick="mgrAddStage()" class="px-4 py-2 rounded-xl bg-amber-500 text-white font-black text-xs whitespace-nowrap border-b-2 border-amber-700">
+                            + مرحلة جديدة
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. زيادة وإلغاء الصفوف الدراسية -->
+                <div class="manage-section-box" style="background: #F0F7FF; border-color: #BFDBFE;">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black text-blue-900">👑 الصفوف الدراسية في هذه المرحلة:</span>
+                        <span class="text-[11px] font-bold text-slate-500">اضغط ✕ لإلغاء أي صف</span>
+                    </div>
+                    <div id="mgr_grades_list" class="flex flex-wrap gap-1.5 mb-3"></div>
+                    <div class="flex gap-2">
+                        <input type="text" id="mgr_new_grade_input" class="form-control py-2 text-xs" placeholder="اكتب اسم الصف الجديد..." onkeypress="if(event.key==='Enter') mgrAddGrade()">
+                        <button type="button" onclick="mgrAddGrade()" class="px-4 py-2 rounded-xl bg-blue-600 text-white font-black text-xs whitespace-nowrap border-b-2 border-blue-800">
+                            + زيادة صف
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. زيادة وإلغاء المواد الدراسية -->
+                <div class="manage-section-box" style="background: #F0FDF4; border-color: #BBF7D0;">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-black text-emerald-900">📚 المواد الدراسية في هذه المرحلة:</span>
+                        <span class="text-[11px] font-bold text-slate-500">اضغط ✕ لإلغاء أي مادة</span>
+                    </div>
+                    <div id="mgr_subjects_list" class="flex flex-wrap gap-1.5 mb-3"></div>
+                    <div class="flex gap-2">
+                        <input type="text" id="mgr_new_subj_input" class="form-control py-2 text-xs" placeholder="اكتب اسم المادة الجديدة (مثال: فرنساوي، ألماني)..." onkeypress="if(event.key==='Enter') mgrAddSubject()">
+                        <button type="button" onclick="mgrAddSubject()" class="px-4 py-2 rounded-xl bg-emerald-600 text-white font-black text-xs whitespace-nowrap border-b-2 border-emerald-800">
+                            + زيادة مادة
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flex items-center justify-between gap-2 pt-3 mt-3 border-t border-slate-200">
+                <button type="button" onclick="mgrResetDefaults()" class="px-3 py-2.5 rounded-xl bg-slate-100 text-slate-600 font-black text-xs hover:bg-rose-50 hover:text-rose-600">
+                    🔄 استعادة المواد الافتراضية
+                </button>
+                <button type="button" onclick="closeCurriculumModal()" class="px-6 py-2.5 rounded-xl bg-teal-600 text-white font-black text-sm border-b-2 border-teal-800">
+                    ✅ تم الحفظ والعودة
+                </button>
+            </div>
         </div>
     </div>
 
@@ -423,22 +571,53 @@
         </div>
     </div>
 
-    <!-- الخطوة 1 المعدلة -->
+    <!-- الخطوة 1 -->
     <div id="step1" class="step-content active theme-pink">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة الأساسية</h3>
             
-            <!-- 1. مكان الدرس الأساسي -->
+            <!-- اختيار اللقب (مستر / مس) -->
             <div class="form-group">
-                <label>📍 مكان الدرس الأساسي</label>
-                <div class="radio-grid">
-                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked onchange="toggleCenterVisibility()"><label for="l_center"><i>🏫</i> السنتر</label></div>
-                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر" onchange="toggleCenterVisibility()"><label for="l_teach"><i>🏠</i> المستر</label></div>
-                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب" onchange="toggleCenterVisibility()"><label for="l_stud"><i>🚗</i> الطالب</label></div>
+                <label>👤 اللقب (مستر أم مس؟)</label>
+                <div class="radio-grid grid-2-cols">
+                    <div>
+                        <input type="radio" name="t_gender_radio" id="t_title_mr" value="مستر" checked>
+                        <label for="t_title_mr"><i>👨‍🏫</i> مستر</label>
+                    </div>
+                    <div>
+                        <input type="radio" name="t_gender_radio" id="t_title_ms" value="مس">
+                        <label for="t_title_ms"><i>👩‍🏫</i> مس</label>
+                    </div>
                 </div>
             </div>
 
-            <!-- 2. الفئات المسموح بها -->
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>👥 اسم المجموعة</label>
+                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة الفيزياء العامة">
+                </div>
+                <div class="form-group">
+                    <label>🏫 اسم السنتر (اختياري)</label>
+                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
+                </div>
+            </div>
+
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>✍️ اسم المعلم (مستر / مس)</label>
+                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
+                </div>
+                <div class="form-group">
+                    <label>📱 رقم التليفون للتواصل والواتساب</label>
+                    <input type="tel" id="g_phone" class="form-control" placeholder="01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>🔢 العدد المطلوب للطلاب</label>
+                <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
+            </div>
+
             <div class="form-group" style="margin-top: 15px;">
                 <label>🎓 الفئات المسموح بها</label>
                 <div class="radio-grid">
@@ -448,27 +627,12 @@
                 </div>
             </div>
 
-            <!-- 3. اسم المستر واسم المجموعة -->
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>👤 اسم المستر</label>
-                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم">
-                </div>
-                <div class="form-group">
-                    <label>👥 اسم المجموعة</label>
-                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة الفيزياء العامة">
-                </div>
-            </div>
-
-            <!-- 4. اسم السنتر والعدد المطلوب -->
-            <div class="grid-2" id="center_count_grid">
-                <div class="form-group" id="center_wrapper">
-                    <label>🏫 اسم السنتر (اختياري)</label>
-                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
-                </div>
-                <div class="form-group">
-                    <label>🔢 العدد المطلوب للطلاب</label>
-                    <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
+            <div class="form-group">
+                <label>📍 مكان الدرس الأساسي</label>
+                <div class="radio-grid">
+                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> السنتر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر"><label for="l_teach"><i>🏠</i> المستر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب"><label for="l_stud"><i>🚗</i> الطالب</label></div>
                 </div>
             </div>
             
@@ -481,15 +645,19 @@
     <!-- الخطوة 2 -->
     <div id="step2" class="step-content theme-turq">
         <div class="smart-card">
-            <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                <h3 style="color: var(--c-dark); font-weight: 900; margin: 0;">📚 ما هي المادة التي تدرسها؟</h3>
+                
+                <!-- ✅ زر فتح نافذة التحكم في المواد والصفوف والمراحل مباشرة -->
+                <button type="button" class="btn-manage-curriculum" onclick="openCurriculumModal()">
+                    ⚙️ زيادة / إلغاء المواد والصفوف
+                </button>
+            </div>
             
             <div class="form-group">
                 <label>🎓 المرحلة الدراسية</label>
                 <select id="s_stage" class="form-control" onchange="updateGrades()">
                     <option value="">-- اختر المرحلة --</option>
-                    <option value="primary">🎒 المرحلة الابتدائية</option>
-                    <option value="prep">📐 المرحلة الإعدادية</option>
-                    <option value="secondary">🎓 المرحلة الثانوية</option>
                 </select>
             </div>
 
@@ -603,7 +771,7 @@
             </div>
             
             <div class="form-group" style="margin-top: 15px;">
-                <label>🏠 العنوان التفصيلي (للتسهيل على الطالب)</label>
+                <label>🏠 العنوان التفصيلي الفعلي للدرس (للتسهيل على الطالب)</label>
                 <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
             </div>
 
@@ -624,7 +792,7 @@
 
     <script>
         // ==========================================
-        // ✅ إضافة تأثيرات الصوت
+        // ✅ 1. تأثيرات الصوت الكاملة
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -693,7 +861,202 @@
         });
 
         // ==========================================
-        // بقية سكريبتات الصفحة
+        // ✅ 2. إدارة المراحل والصفوف والمواد الدراسية (ديناميكياً)
+        // ==========================================
+        const defaultCurriculum = {
+            primary: {
+                name: '🎒 المرحلة الابتدائية',
+                grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            prep: {
+                name: '📐 المرحلة الإعدادية',
+                grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'فرنساوي']
+            },
+            secondary: {
+                name: '🎓 المرحلة الثانوية',
+                grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                subjs: ['عربي', 'إنجليزي', 'فرنساوي', 'ألماني', 'فيزياء', 'كيمياء', 'أحياء', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة', 'علم نفس']
+            }
+        };
+
+        let curriculum = {};
+
+        function loadCurriculumFromStorage() {
+            try {
+                const saved = localStorage.getItem('app_curriculum');
+                if (saved) {
+                    curriculum = JSON.parse(saved);
+                    if (curriculum.primary && !curriculum.primary.name) curriculum.primary.name = '🎒 المرحلة الابتدائية';
+                    if (curriculum.prep && !curriculum.prep.name) curriculum.prep.name = '📐 المرحلة الإعدادية';
+                    if (curriculum.secondary && !curriculum.secondary.name) curriculum.secondary.name = '🎓 المرحلة الثانوية';
+                } else {
+                    curriculum = JSON.parse(JSON.stringify(defaultCurriculum));
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculum));
+                }
+            } catch (e) {
+                curriculum = JSON.parse(JSON.stringify(defaultCurriculum));
+            }
+            syncStageDropdown();
+        }
+
+        function saveCurriculumToStorage() {
+            localStorage.setItem('app_curriculum', JSON.stringify(curriculum));
+            syncStageDropdown();
+        }
+
+        function syncStageDropdown() {
+            const stageSelect = document.getElementById('s_stage');
+            const prevStage = stageSelect.value;
+            const prevGrade = document.getElementById('s_grade').value;
+
+            stageSelect.innerHTML = '<option value="">-- اختر المرحلة --</option>';
+            Object.keys(curriculum).forEach(key => {
+                const title = curriculum[key].name || key;
+                stageSelect.innerHTML += `<option value="${key}">${title}</option>`;
+            });
+
+            if (prevStage && curriculum[prevStage]) {
+                stageSelect.value = prevStage;
+                updateGrades();
+                if (prevGrade && curriculum[prevStage].grades.includes(prevGrade)) {
+                    document.getElementById('s_grade').value = prevGrade;
+                    updateSubjects();
+                }
+            }
+        }
+
+        // دوال نافذة التحكم في المواد والصفوف بداخل الصفحة
+        function openCurriculumModal() {
+            const mgrSelect = document.getElementById('mgr_stage_select');
+            const currentSelectedStage = document.getElementById('s_stage').value;
+            mgrSelect.innerHTML = '';
+            Object.keys(curriculum).forEach(k => {
+                mgrSelect.innerHTML += `<option value="${k}">${curriculum[k].name || k}</option>`;
+            });
+            if (currentSelectedStage && curriculum[currentSelectedStage]) {
+                mgrSelect.value = currentSelectedStage;
+            }
+            renderManagerItems();
+            document.getElementById('curriculumManagerModal').classList.add('active');
+        }
+
+        function closeCurriculumModal() {
+            document.getElementById('curriculumManagerModal').classList.remove('active');
+            syncStageDropdown();
+        }
+
+        function renderManagerItems() {
+            const stageKey = document.getElementById('mgr_stage_select').value;
+            const gradesContainer = document.getElementById('mgr_grades_list');
+            const subjsContainer = document.getElementById('mgr_subjects_list');
+
+            if (!stageKey || !curriculum[stageKey]) {
+                gradesContainer.innerHTML = '';
+                subjsContainer.innerHTML = '';
+                return;
+            }
+
+            const st = curriculum[stageKey];
+            gradesContainer.innerHTML = (st.grades || []).map((g, idx) => `
+                <span class="manage-tag manage-tag-grade">
+                    <span>👑 ${g}</span>
+                    <button type="button" class="manage-del-btn" onclick="mgrRemoveGrade(${idx})" title="إلغاء هذا الصف">✕</button>
+                </span>
+            `).join('') || '<span class="text-xs text-slate-400 font-bold">لا توجد صفوف حالياً</span>';
+
+            subjsContainer.innerHTML = (st.subjs || []).map((s, idx) => `
+                <span class="manage-tag manage-tag-subj">
+                    <span>📖 ${s}</span>
+                    <button type="button" class="manage-del-btn" onclick="mgrRemoveSubject(${idx})" title="إلغاء هذه المادة">✕</button>
+                </span>
+            `).join('') || '<span class="text-xs text-slate-400 font-bold">لا توجد مواد حالياً</span>';
+        }
+
+        function mgrAddStage() {
+            const inp = document.getElementById('mgr_new_stage_input');
+            const name = inp.value.trim();
+            if (!name) return;
+            const newKey = 'stage_' + Date.now();
+            curriculum[newKey] = {
+                name: '🎓 ' + name,
+                grades: ['الصف الأول', 'الصف الثاني'],
+                subjs: ['عربي', 'إنجليزي']
+            };
+            inp.value = '';
+            saveCurriculumToStorage();
+            const mgrSelect = document.getElementById('mgr_stage_select');
+            mgrSelect.innerHTML += `<option value="${newKey}">${curriculum[newKey].name}</option>`;
+            mgrSelect.value = newKey;
+            renderManagerItems();
+            playSuccessSound();
+        }
+
+        function mgrDeleteCurrentStage() {
+            const stageKey = document.getElementById('mgr_stage_select').value;
+            if (Object.keys(curriculum).length <= 1) {
+                showError("يجب الإبقاء على مرحلة دراسية واحدة على الأقل.");
+                return;
+            }
+            delete curriculum[stageKey];
+            saveCurriculumToStorage();
+            openCurriculumModal();
+        }
+
+        function mgrAddGrade() {
+            const stageKey = document.getElementById('mgr_stage_select').value;
+            const inp = document.getElementById('mgr_new_grade_input');
+            const val = inp.value.trim();
+            if (!stageKey || !val) return;
+            if (!curriculum[stageKey].grades.includes(val)) {
+                curriculum[stageKey].grades.push(val);
+                inp.value = '';
+                saveCurriculumToStorage();
+                renderManagerItems();
+                playSuccessSound();
+            }
+        }
+
+        function mgrRemoveGrade(idx) {
+            const stageKey = document.getElementById('mgr_stage_select').value;
+            if (!stageKey) return;
+            curriculum[stageKey].grades.splice(idx, 1);
+            saveCurriculumToStorage();
+            renderManagerItems();
+        }
+
+        function mgrAddSubject() {
+            const stageKey = document.getElementById('mgr_stage_select').value;
+            const inp = document.getElementById('mgr_new_subj_input');
+            const val = inp.value.trim();
+            if (!stageKey || !val) return;
+            if (!curriculum[stageKey].subjs.includes(val)) {
+                curriculum[stageKey].subjs.push(val);
+                inp.value = '';
+                saveCurriculumToStorage();
+                renderManagerItems();
+                playSuccessSound();
+            }
+        }
+
+        function mgrRemoveSubject(idx) {
+            const stageKey = document.getElementById('mgr_stage_select').value;
+            if (!stageKey) return;
+            curriculum[stageKey].subjs.splice(idx, 1);
+            saveCurriculumToStorage();
+            renderManagerItems();
+        }
+
+        function mgrResetDefaults() {
+            curriculum = JSON.parse(JSON.stringify(defaultCurriculum));
+            saveCurriculumToStorage();
+            openCurriculumModal();
+            playSuccessSound();
+        }
+
+        // ==========================================
+        // ✅ 3. منطق الخطوات وحفظ واسترجاع البيانات
         // ==========================================
         let currentLessonId = '1';
         let isEditMode = false;
@@ -710,7 +1073,7 @@
             history.pushState(null, null, location.href);
         });
 
-        window.addEventListener('pageshow', function (event) {
+        window.addEventListener('pageshow', function () {
             const successModal = document.getElementById('successModal');
             const errorModal = document.getElementById('errorModal');
             if (successModal) successModal.classList.remove('active');
@@ -747,23 +1110,6 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
-        // ✅ دالة إخفاء وإظهار حقل السنتر
-        function toggleCenterVisibility() {
-            const isCenter = document.getElementById('l_center').checked;
-            const centerWrapper = document.getElementById('center_wrapper');
-            const gridWrapper = document.getElementById('center_count_grid');
-
-            if (isCenter) {
-                centerWrapper.style.display = 'block'; // إظهار حقل السنتر
-                // إعادة تقسيم الجريد لعمودين (للشاشات العادية) أو عمود (للموبايل)
-                gridWrapper.style.gridTemplateColumns = window.innerWidth <= 480 ? '1fr' : '1fr 1fr'; 
-            } else {
-                centerWrapper.style.display = 'none'; // إخفاء حقل السنتر
-                gridWrapper.style.gridTemplateColumns = '1fr'; // جعل حقل العدد يأخذ العرض بالكامل
-                document.getElementById('g_center').value = ''; // تصفير حقل السنتر
-            }
-        }
-
         function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
@@ -777,12 +1123,19 @@
                 if (el && el.checked) selectedMonths.push(el.value);
             });
 
+            const existingState = JSON.parse(localStorage.getItem('lessonState_' + currentLessonId) || '{}');
+            const selectedTitle = document.querySelector('input[name="t_gender_radio"]:checked')?.value || 'مستر';
+
             const state = {
+                ...existingState,
                 step: currentStepNumber,
+                t_gender: selectedTitle,
                 g_name: document.getElementById('g_name').value,
                 g_center: document.getElementById('g_center').value,
                 g_teacher: document.getElementById('g_teacher').value,
+                g_phone: document.getElementById('g_phone').value,
                 g_count: document.getElementById('g_count').value,
+                createdAt: existingState.createdAt || new Date().toISOString().split('T')[0],
                 start_hour: document.getElementById('start_hour').value,
                 start_min: document.getElementById('start_min').value,
                 start_ampm: document.getElementById('start_ampm').value,
@@ -798,9 +1151,7 @@
                 s_grade: document.getElementById('s_grade').value,
                 selectedSubjects: selectedSubjects,
                 m_address: document.getElementById('m_address').value,
-                
                 g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
-                
                 lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
                 lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng
             };
@@ -810,13 +1161,24 @@
         }
 
         function loadState() {
+            // سحب بيانات المعلم الافتراضية من login.html إن وجدت
+            const loggedTeacher = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}');
+            if (loggedTeacher.name) document.getElementById('g_teacher').value = loggedTeacher.name;
+            if (loggedTeacher.phone) document.getElementById('g_phone').value = loggedTeacher.phone;
+            else if (localStorage.getItem('rememberedPhone')) document.getElementById('g_phone').value = localStorage.getItem('rememberedPhone');
+            if (loggedTeacher.title === 'مس') document.getElementById('t_title_ms').checked = true;
+
             const saved = localStorage.getItem('lessonState_' + currentLessonId);
             if (saved) {
                 const state = JSON.parse(saved);
                 
+                if (state.t_gender === 'مس') document.getElementById('t_title_ms').checked = true;
+                else if (state.t_gender === 'مستر') document.getElementById('t_title_mr').checked = true;
+
                 if(state.g_name) document.getElementById('g_name').value = state.g_name;
                 if(state.g_center) document.getElementById('g_center').value = state.g_center;
                 if(state.g_teacher) document.getElementById('g_teacher').value = state.g_teacher;
+                if(state.g_phone) document.getElementById('g_phone').value = state.g_phone;
                 if(state.g_count) document.getElementById('g_count').value = state.g_count;
                 
                 if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
@@ -853,13 +1215,10 @@
                     document.getElementById('g_repeat_weekly').checked = state.g_repeat_weekly;
                 }
 
-                if(state.g_gender) document.getElementById(state.g_gender).checked = true;
-                if(state.g_loc) {
-                    document.getElementById(state.g_loc).checked = true;
-                    toggleCenterVisibility(); // ✅ استدعاء التحديث بناءً على القيمة المحفوظة
-                }
+                if(state.g_gender && document.getElementById(state.g_gender)) document.getElementById(state.g_gender).checked = true;
+                if(state.g_loc && document.getElementById(state.g_loc)) document.getElementById(state.g_loc).checked = true;
                 
-                if(state.s_stage) {
+                if(state.s_stage && curriculum[state.s_stage]) {
                     document.getElementById('s_stage').value = state.s_stage;
                     updateGrades();
                 }
@@ -902,17 +1261,16 @@
             const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
             document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
 
+            loadCurriculumFromStorage();
             populateTimeSelectors();
-            toggleCenterVisibility(); // ✅ تفعيل الإخفاء أو الإظهار عند بدء الصفحة
             loadState();
 
             document.querySelectorAll('input, select').forEach(el => {
-                el.addEventListener('input', saveState);
-                el.addEventListener('change', saveState);
+                if (!el.id.startsWith('mgr_')) {
+                    el.addEventListener('input', saveState);
+                    el.addEventListener('change', saveState);
+                }
             });
-            
-            // ✅ تحديث العرض في حالة دوران الشاشة أو تغيير حجمها
-            window.addEventListener('resize', toggleCenterVisibility);
         };
 
         function nextStep(step, skipValidation = false) {
@@ -923,7 +1281,7 @@
                     const gCount = document.getElementById('g_count').value.trim();
 
                     if (!gName || !gTeacher || !gCount) {
-                        showError("برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، والعدد).");
+                        showError("برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، اسم المعلم، والعدد).");
                         return; 
                     }
                 }
@@ -959,30 +1317,29 @@
             nextStep(step, true);
         }
 
-        const curriculum = {
-            primary: { grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم'] },
-            prep: { grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
-            secondary: { grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات'] }
-        };
-
         function updateGrades() {
             const stage = document.getElementById('s_stage').value;
             const gSelect = document.getElementById('s_grade');
             gSelect.innerHTML = '<option value="">-- اختر الصف --</option>';
-            if(stage) {
+            if(stage && curriculum[stage]) {
                 curriculum[stage].grades.forEach(g => gSelect.innerHTML += `<option value="${g}">${g}</option>`);
                 gSelect.disabled = false;
-            } else { gSelect.disabled = true; document.getElementById('s_subject').disabled = true; }
+            } else {
+                gSelect.disabled = true;
+                document.getElementById('s_subject').disabled = true;
+            }
         }
 
         function updateSubjects() {
             const stage = document.getElementById('s_stage').value;
             const sSelect = document.getElementById('s_subject');
             sSelect.innerHTML = '<option value="">-- اختر مادة --</option>';
-            if(stage && document.getElementById('s_grade').value) {
+            if(stage && curriculum[stage] && document.getElementById('s_grade').value) {
                 curriculum[stage].subjs.forEach(s => sSelect.innerHTML += `<option value="${s}">${s}</option>`);
                 sSelect.disabled = false;
-            } else { sSelect.disabled = true; }
+            } else {
+                sSelect.disabled = true;
+            }
         }
 
         function addSubject() {
@@ -1013,6 +1370,9 @@
             saveState();
         }
 
+        // ==========================================
+        // ✅ 4. الخريطة وتحديد الموقع بالعد التنازلي
+        // ==========================================
         function initMap() {
             let defaultLatLng = (savedLat && savedLng) ? [savedLat, savedLng] : [30.0444, 31.2357];
             
@@ -1026,7 +1386,7 @@
                 requestCurrentLocation();
             }
 
-            marker.on('dragend', function(e) {
+            marker.on('dragend', function() {
                 const pos = marker.getLatLng();
                 document.getElementById('m_address').value = "جاري تحديث العنوان...";
                 fetchAddress(pos.lat, pos.lng);
@@ -1066,7 +1426,7 @@
                                 fetchAddress(lat, lng);
                                 isLocating = false;
                             },
-                            function(error) {
+                            function() {
                                 showError("تعذر تحديد موقعك. يرجى التأكد من تفعيل خدمة الـ GPS في جهازك.");
                                 addressInput.value = ""; 
                                 isLocating = false;
