@@ -65,6 +65,38 @@
         .bg-yellow-solid .form-control:focus { border-color: #A16207 !important; box-shadow: 0 0 0 3px rgba(250,204,21,0.4) !important; }
         .bg-yellow-solid .form-control:disabled { background-color: #FEF9C3 !important; color: #A16207 !important; border-color: #FDE047 !important; border-bottom-color: #EAB308 !important; }
 
+        /* شريط أزرار مواد الصف السريعة داخل البطاقة الصفراء */
+        .student-grade-subjects-box {
+            margin-top: 10px;
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.75);
+            border: 1.5px dashed #CA8A04;
+            border-radius: 10px;
+            display: none;
+        }
+        .student-grade-subjects-box.show { display: block; }
+        .student-subj-pill {
+            padding: 5px 12px;
+            border-radius: 99px;
+            font-size: 11.5px;
+            font-weight: 900;
+            background: #FFFFFF;
+            color: #713F12;
+            border: 1.5px solid #FACC15;
+            border-bottom: 2.5px solid #CA8A04;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .student-subj-pill.active {
+            background: #10B981;
+            color: #FFFFFF;
+            border-color: #059669;
+            border-bottom-color: #064E3B;
+        }
+
         /* ⚪ البطاقة الأبيض الغامق (تفضيلات) ⚪ */
         .bg-offwhite-card {
             background-color: #F1F5F9 !important; border: 1.5px solid #E2E8F0 !important;
@@ -331,7 +363,7 @@
             </div>
         </div>
 
-        <!-- 2. المرحلة الدراسية (الخلفية الصفراء) -->
+        <!-- 2. المرحلة الدراسية والمادة (الخلفية الصفراء - مرتبطة لحظياً مع school.html) -->
         <div class="smart-card bg-yellow-solid">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="grid-2-always">
@@ -339,9 +371,6 @@
                     <label>المرحلة</label>
                     <select id="s_stage" class="form-control" onchange="updateGrades()">
                         <option value="">-- اختر --</option>
-                        <option value="primary">🎒 الابتدائية</option>
-                        <option value="prep">📐 الإعدادية</option>
-                        <option value="secondary">🎓 الثانوية</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -353,9 +382,17 @@
             </div>
             <div class="form-group" style="margin-bottom: 0;">
                 <label>المادة التي تبحث عنها</label>
-                <select id="s_subject" class="form-control" disabled>
+                <select id="s_subject" class="form-control" disabled onchange="onSubjectSelectChange()">
                     <option value="">-- اختر الصف أولاً --</option>
                 </select>
+            </div>
+
+            <!-- شريط المواد الخاص بالصف المختار يظهر تحت الصف مباشرة -->
+            <div id="studentGradeSubjectsBox" class="student-grade-subjects-box">
+                <div id="studentGradeSubjectsTitle" style="font-size: 11px; font-weight: 900; color: #854D0E; margin-bottom: 6px;">
+                    📖 مواد الصف المتاحة (اضغط لاختيار المادة):
+                </div>
+                <div id="studentGradeSubjectsPills" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
             </div>
         </div>
 
@@ -492,7 +529,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            if (e.target.closest('.clickable-element, label, select, input[type="radio"], button')) playHighPitchSound();
+            if (e.target.closest('.clickable-element, label, select, input[type="radio"], button, .student-subj-pill')) playHighPitchSound();
         });
 
         function showToast(message, isError = false) {
@@ -505,7 +542,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 3500);
         }
 
-        // دالة تنظيف الرقم وفتح محادثة واتساب المستر بشكل مضمون
         window.openTeacherWhatsApp = function(rawPhone, teacherName = '', subject = '', grade = '', groupName = '') {
             let cleanPhone = String(rawPhone || '').replace(/\D/g, '');
             if (!cleanPhone) {
@@ -581,7 +617,7 @@
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
 
-        window.addEventListener('popstate', function(event) {
+        window.addEventListener('popstate', function() {
             if (isMapFullscreen) {
                 closeMapFullscreen();
             }
@@ -598,7 +634,7 @@
         }
 
         // ==========================================
-        // 2. منطق العمر والمناهج
+        // 2. منطق العمر والربط اللحظي للمراحل والصفوف ومواد كل صف مع school.html
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
@@ -613,27 +649,222 @@
             }
         }
 
-        const curriculum = {
-            primary: { grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم'] },
-            prep: { grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'], subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات'] },
-            secondary: { grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'], subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات'] }
+        const defaultCurriculum = {
+            primary: {
+                name: '🎒 المرحلة الابتدائية',
+                grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                gradeSubjects: {
+                    'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الثاني': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الثالث': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الرابع': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
+                    'الخامس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
+                    'السادس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات']
+                },
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            prep: {
+                name: '📐 المرحلة الإعدادية',
+                grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                gradeSubjects: {
+                    'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
+                    'الثاني الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
+                    'الثالث الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي']
+                },
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            secondary: {
+                name: '🎓 المرحلة الثانوية',
+                grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                gradeSubjects: {
+                    'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
+                    'الثاني الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا', 'علم نفس', 'فلسفة'],
+                    'الثالث الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+                },
+                subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات']
+            }
         };
 
-        function updateGrades() {
+        function normalizeCurriculum(currObj) {
+            Object.keys(currObj).forEach(stageKey => {
+                const st = currObj[stageKey];
+                if (!Array.isArray(st.grades)) st.grades = [];
+                if (!Array.isArray(st.subjs)) st.subjs = [];
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object') {
+                    st.gradeSubjects = {};
+                }
+                st.grades.forEach(g => {
+                    if (!Array.isArray(st.gradeSubjects[g])) {
+                        const defStage = defaultCurriculum[stageKey];
+                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
+                            st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
+                        } else {
+                            st.gradeSubjects[g] = [...st.subjs];
+                        }
+                    }
+                });
+            });
+            return currObj;
+        }
+
+        function getCurriculum() {
+            try {
+                const saved = localStorage.getItem('app_curriculum');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        return normalizeCurriculum(parsed);
+                    }
+                }
+            } catch (e) {}
+            const copy = JSON.parse(JSON.stringify(defaultCurriculum));
+            localStorage.setItem('app_curriculum', JSON.stringify(copy));
+            return copy;
+        }
+
+        function getSubjectsForGrade(stageKey, gradeName) {
+            const curr = getCurriculum();
+            if (!stageKey || !curr[stageKey]) return [];
+            const st = curr[stageKey];
+            if (gradeName && st.gradeSubjects && Array.isArray(st.gradeSubjects[gradeName])) {
+                return st.gradeSubjects[gradeName];
+            }
+            return st.subjs || [];
+        }
+
+        function populateStagesDropdown(preserveSelection = true) {
+            const curr = getCurriculum();
+            const stageSelect = document.getElementById('s_stage');
+            const prevStage = preserveSelection ? stageSelect.value : '';
+            const prevGrade = preserveSelection ? document.getElementById('s_grade').value : '';
+            const prevSubj = preserveSelection ? document.getElementById('s_subject').value : '';
+
+            stageSelect.innerHTML = '<option value="">-- اختر --</option>';
+            Object.keys(curr).forEach(stageKey => {
+                const stageName = curr[stageKey].name || stageKey;
+                stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
+            });
+
+            if (prevStage && curr[prevStage]) {
+                stageSelect.value = prevStage;
+                updateGrades(prevGrade, prevSubj);
+            } else {
+                updateGrades('', '');
+            }
+        }
+
+        function updateGrades(preferredGrade = '', preferredSubj = '') {
+            const curr = getCurriculum();
             const stage = document.getElementById('s_stage').value;
             const gSelect = document.getElementById('s_grade');
             const sSelect = document.getElementById('s_subject');
+            const currentGrade = preferredGrade || gSelect.value;
+
             gSelect.innerHTML = '<option value="">-- اختر --</option>';
             sSelect.innerHTML = '<option value="">-- المادة --</option>';
             sSelect.disabled = true;
-            if(stage) { curriculum[stage].grades.forEach(g => gSelect.innerHTML += `<option value="${g}">${g}</option>`); gSelect.disabled = false; } else { gSelect.disabled = true; }
+
+            if (stage && curr[stage]) {
+                (curr[stage].grades || []).forEach(g => {
+                    gSelect.innerHTML += `<option value="${g}">${g}</option>`;
+                });
+                gSelect.disabled = false;
+
+                if (currentGrade && (curr[stage].grades || []).includes(currentGrade)) {
+                    gSelect.value = currentGrade;
+                }
+                updateSubjects(preferredSubj);
+            } else {
+                gSelect.disabled = true;
+                renderStudentGradeSubjectsBar();
+            }
         }
 
-        function updateSubjects() {
+        function updateSubjects(preferredSubj = '') {
             const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
             const sSelect = document.getElementById('s_subject');
+            const currentSubj = preferredSubj || sSelect.value;
+
             sSelect.innerHTML = '<option value="">-- المادة --</option>';
-            if(stage && document.getElementById('s_grade').value) { curriculum[stage].subjs.forEach(s => sSelect.innerHTML += `<option value="${s}">${s}</option>`); sSelect.disabled = false; } else { sSelect.disabled = true; }
+            if (stage && grade) {
+                const subjs = getSubjectsForGrade(stage, grade);
+                subjs.forEach(s => {
+                    sSelect.innerHTML += `<option value="${s}">${s}</option>`;
+                });
+                sSelect.disabled = false;
+
+                if (currentSubj && subjs.includes(currentSubj)) {
+                    sSelect.value = currentSubj;
+                }
+            } else {
+                sSelect.disabled = true;
+            }
+            renderStudentGradeSubjectsBar();
+            updateStudentSummary();
+        }
+
+        function onSubjectSelectChange() {
+            renderStudentGradeSubjectsBar();
+            saveStudentData();
+        }
+
+        // إظهار أزرار المواد الخاصة بالصف المختار تحته مباشرة
+        function renderStudentGradeSubjectsBar() {
+            const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
+            const selectedSubj = document.getElementById('s_subject').value;
+            const box = document.getElementById('studentGradeSubjectsBox');
+            const pills = document.getElementById('studentGradeSubjectsPills');
+            const title = document.getElementById('studentGradeSubjectsTitle');
+
+            if (!stage || !grade) {
+                box.classList.remove('show');
+                pills.innerHTML = '';
+                return;
+            }
+
+            const subjs = getSubjectsForGrade(stage, grade);
+            box.classList.add('show');
+            title.textContent = `📖 المواد المقررة لـ (${grade}) — اضغط لاختيار المادة:`;
+
+            if (subjs.length === 0) {
+                pills.innerHTML = `<span style="font-size:11px; color:#854D0E; font-weight:800;">لا توجد مواد مضافة لهذا الصف حالياً</span>`;
+                return;
+            }
+
+            pills.innerHTML = subjs.map(s => {
+                const isActive = (s === selectedSubj);
+                const safeS = s.replace(/'/g, "\\'");
+                return `
+                    <button type="button" onclick="pickStudentSubjectPill('${safeS}')" class="student-subj-pill ${isActive ? 'active' : ''}">
+                        <span>${isActive ? '✔' : '📘'}</span>
+                        <span>${s}</span>
+                    </button>
+                `;
+            }).join('');
+        }
+
+        function pickStudentSubjectPill(subjName) {
+            const sSelect = document.getElementById('s_subject');
+            sSelect.value = subjName;
+            renderStudentGradeSubjectsBar();
+            saveStudentData();
+            if (currentCenter && map) {
+                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+            }
+        }
+
+        // قناة التزامن اللحظي مع school.html
+        const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
+        if (curriculumChannel) {
+            curriculumChannel.onmessage = function(ev) {
+                if (ev.data && ev.data.type === 'CURRICULUM_UPDATED') {
+                    populateStagesDropdown(true);
+                    updateStudentSummary();
+                    showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة");
+                }
+            };
         }
 
         function updateRadiusDisplay() {
@@ -658,7 +889,7 @@
 
         function updateStudentSummary() {
             const name = document.getElementById('st_name').value;
-            const stage = document.getElementById('s_stage').options[document.getElementById('s_stage').selectedIndex]?.text;
+            const stage = document.getElementById('s_stage').options[document.getElementById('s_stage').selectedIndex]?.text || '';
             const grade = document.getElementById('s_grade').value;
             const subject = document.getElementById('s_subject').value;
             const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value;
@@ -696,26 +927,42 @@
 
         function loadStudentData() {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
-            if (data.st_gender) document.getElementById(data.st_gender).checked = true;
+            if (data.st_gender && document.getElementById(data.st_gender)) document.getElementById(data.st_gender).checked = true;
             if (data.st_name) document.getElementById('st_name').value = data.st_name;
             if (data.st_age) { document.getElementById('st_age').value = data.st_age; checkAge(); }
             if (data.st_phone) document.getElementById('st_phone').value = data.st_phone;
-            if (data.s_stage) { document.getElementById('s_stage').value = data.s_stage; updateGrades(); }
-            if (data.s_grade) { document.getElementById('s_grade').value = data.s_grade; updateSubjects(); }
-            if (data.s_subject) { document.getElementById('s_subject').value = data.s_subject; }
-            if (data.pref_teacher) document.getElementById(data.pref_teacher).checked = true;
-            if (data.pref_loc) document.getElementById(data.pref_loc).checked = true;
+            if (data.s_stage && getCurriculum()[data.s_stage]) {
+                document.getElementById('s_stage').value = data.s_stage;
+                updateGrades(data.s_grade || '', data.s_subject || '');
+            }
+            if (data.pref_teacher && document.getElementById(data.pref_teacher)) document.getElementById(data.pref_teacher).checked = true;
+            if (data.pref_loc && document.getElementById(data.pref_loc)) document.getElementById(data.pref_loc).checked = true;
             if (data.search_radius) { document.getElementById('search_radius').value = data.search_radius; updateRadiusDisplay(); }
             
             updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
         }
 
         window.onload = () => {
+            populateStagesDropdown(false);
             loadStudentData();
             document.querySelectorAll('input, select').forEach(el => {
                 if(el.id !== 'search_radius') { el.addEventListener('input', saveStudentData); el.addEventListener('change', saveStudentData); }
             });
-            window.addEventListener('storage', () => {
+
+            // الاستماع اللحظي لأي تعديل يتم في school.html (سواء في المنهج أو في المعلمين والدروس)
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
+                    populateStagesDropdown(true);
+                    updateStudentSummary();
+                    showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً");
+                }
+                if (currentCenter && map) {
+                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                }
+            });
+
+            window.addEventListener('focus', () => {
+                populateStagesDropdown(true);
                 if (currentCenter && map) {
                     renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
                 }
@@ -824,7 +1071,6 @@
             if (!existingData.saved_teachers) existingData.saved_teachers = [];
             const existingIdx = existingData.saved_teachers.findIndex(t => t.name === name && t.groupName === groupName);
             if(existingIdx > -1) { 
-                // تحديث الرقم إذا كان محفوظاً مسبقاً بدون رقم
                 existingData.saved_teachers[existingIdx].phone = phone;
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
                 renderSavedTeachersList(true);
@@ -898,7 +1144,7 @@
         }
 
         // ==========================================
-        // 4. جلب بيانات المستر المسجل ورقم التليفون من end.html
+        // 4. جلب بيانات المستر المسجل ورقم التليفون من school.html / group.html
         // ==========================================
         function extractTeacherPhone(state) {
             const directKeys = ['g_phone', 't_phone', 'm_phone', 'phone', 'whatsapp', 'teacher_phone', 'teacherPhone', 'mobile', 'tel'];
@@ -1016,7 +1262,7 @@
                 (pos) => {
                     onSuccess(pos.coords.latitude, pos.coords.longitude);
                 },
-                (err) => {
+                () => {
                     navigator.geolocation.getCurrentPosition(
                         (pos2) => {
                             onSuccess(pos2.coords.latitude, pos2.coords.longitude);
@@ -1046,7 +1292,7 @@
                     btn.classList.remove('loading');
                     buildRadarMap(lat, lng);
                 },
-                (err) => {
+                () => {
                     btn.innerHTML = originalBtnHTML;
                     btn.classList.remove('loading');
                     const fallbackLat = currentCenter ? currentCenter[0] : 31.0409;
@@ -1064,7 +1310,7 @@
                     buildRadarMap(lat, lng);
                     showToast("تم تحديث موقعك الحالي بنجاح 🎯");
                 },
-                (err) => {
+                () => {
                     showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح!", true);
                 }
             );
@@ -1102,7 +1348,7 @@
             }, 300);
         }
 
-        // ✅ إظهار أيقونة المستر مع عرض رقم التليفون وتفعيل زر الواتساب
+        // ✅ إظهار أيقونة المستر/المس مع عرض رقم التليفون وتفعيل زر الواتساب
         function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
             
@@ -1129,8 +1375,11 @@
                     const displaySubject = t.subject || selectedSubject;
                     const displayGrade = t.grade || selectedGrade;
                     const displayPhone = t.phone ? t.phone : 'غير مسجل';
+                    const isMs = (t.gender === 'مس');
+                    const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
+                    const titlePrefix = isMs ? 'مس' : 'مستر';
 
-                    const iconHtml = `<div class="registered-teacher-marker">👨‍🏫</div>`;
+                    const iconHtml = `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
                     const customIcon = L.divIcon({
                         className: 'custom-leaflet-marker',
                         html: iconHtml,
@@ -1139,9 +1388,8 @@
                         popupAnchor: [0, -16]
                     });
 
-                    // نافذة البيانات تعرض رقم التليفون بوضوح وتفتح الواتساب عبر دالة مضمونة
                     const popupContent = `
-                        <div class="teacher-popup-title">👨‍🏫 أ/ ${t.teacherName}</div>
+                        <div class="teacher-popup-title">${emoji} ${titlePrefix}/ ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
                         <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${displaySubject} (${displayGrade})</span></div>
                         <div class="teacher-popup-detail"><span>📅 الأيام:</span> <span style="color:#2563EB;">${t.days}</span></div>
@@ -1167,7 +1415,7 @@
             if (shownCount === 0) {
                 showToast("المستر المسجل خارج نطاق الدائرة الحالية، وسّع النطاق أو حرّك النقطة الزرقاء!", true);
             } else {
-                showToast(`تم العثور على (${shownCount}) معلم، اضغط على أيقونة المستر لعرض بياناته ✨`);
+                showToast(`تم العثور على (${shownCount}) معلم، اضغط على أيقونة المعلم لعرض بياناته ✨`);
             }
         }
     </script>
