@@ -771,9 +771,10 @@
             if (!activeGradeName || !grades.includes(activeGradeName)) activeGradeName = grades[0] || null;
 
             tabsContainer.innerHTML = keys.map(k => `
-                <button type="button" onclick="selectStageTab('${k}')" class="stage-tab ${k === activeStageKey ? 'active' : ''}">
-                    ${curr[k].name}
-                </button>
+                <div onclick="selectStageTab('${k}')" class="stage-tab ${k === activeStageKey ? 'active' : ''}">
+                    <span>${curr[k].name}</span>
+                    <button type="button" onclick="deleteStage('${k}'); event.stopPropagation();" class="text-rose-600 font-bold mr-2 hover:scale-110 transition-transform" title="حذف المرحلة">🗑️</button>
+                </div>
             `).join('');
 
             gradesContainer.innerHTML = grades.map((g, idx) => `
@@ -807,6 +808,35 @@
             curr['stage_' + Date.now()] = { name: val, grades: ['الصف الأول'], gradeSubjects: {'الصف الأول': ['مادة عامة']}, subjs: ['مادة عامة'] };
             document.getElementById('newStageNameInput').value = '';
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة');
+            renderCurriculumManager();
+        }
+
+        function deleteStage(stageKey) {
+            const curr = getCurriculum();
+            const stageName = curr[stageKey].name;
+
+            // 1. إظهار رسالة تأكيد قبل الحذف
+            if (!confirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`)) {
+                return; // التراجع إذا اختار المستخدم "إلغاء"
+            }
+
+            // 2. إتمام عملية الحذف من البيانات
+            delete curr[stageKey];
+
+            // 3. ضبط المرحلة النشطة في حال تم حذف المرحلة المفتوحة حالياً
+            if (activeStageKey === stageKey) {
+                const remainingKeys = Object.keys(curr);
+                if (remainingKeys.length > 0) {
+                    activeStageKey = remainingKeys[0];
+                    activeGradeName = curr[activeStageKey].grades[0] || null;
+                } else {
+                    activeStageKey = null;
+                    activeGradeName = null;
+                }
+            }
+
+            // 4. حفظ التغييرات وتحديث الواجهة
+            saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
             renderCurriculumManager();
         }
 
