@@ -882,9 +882,26 @@
 
         function deleteGradeItem(idx) {
             const curr = getCurriculum();
-            curr[activeStageKey].grades.splice(idx, 1);
-            saveCurriculumAndBroadcast(curr, '🗑️ تم الحذف');
-            renderCurriculumManager();
+            const gradeName = curr[activeStageKey].grades[idx];
+
+            // استدعاء رسالة التأكيد المخصصة
+            showCustomConfirm(`هل أنت متأكد من حذف (${gradeName}) وجميع المواد التابعة له نهائياً؟`, () => {
+                // يتم تنفيذ هذا الكود فقط إذا ضغط المستخدم على "نعم، متأكد"
+                curr[activeStageKey].grades.splice(idx, 1);
+                
+                // مسح المواد المرتبطة بهذا الصف من الذاكرة (للتنظيف)
+                if (curr[activeStageKey].gradeSubjects && curr[activeStageKey].gradeSubjects[gradeName]) {
+                    delete curr[activeStageKey].gradeSubjects[gradeName];
+                }
+
+                // إذا كان الصف المحذوف هو الصف النشط حالياً، قم بإلغاء التحديد
+                if (activeGradeName === gradeName) {
+                    activeGradeName = curr[activeStageKey].grades[0] || null;
+                }
+
+                saveCurriculumAndBroadcast(curr, '🗑️ تم حذف الصف بنجاح');
+                renderCurriculumManager();
+            });
         }
 
         function addNewSubjectToGrade() {
@@ -900,9 +917,16 @@
 
         function deleteSubjectFromGrade(idx) {
             const curr = getCurriculum();
-            curr[activeStageKey].gradeSubjects[activeGradeName].splice(idx, 1);
-            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة');
-            renderCurriculumManager();
+            const subjectName = curr[activeStageKey].gradeSubjects[activeGradeName][idx];
+
+            // استدعاء رسالة التأكيد المخصصة
+            showCustomConfirm(`هل أنت متأكد من حذف مادة (${subjectName}) من ${activeGradeName}؟`, () => {
+                // يتم تنفيذ هذا الكود فقط إذا ضغط المستخدم على "نعم، متأكد"
+                curr[activeStageKey].gradeSubjects[activeGradeName].splice(idx, 1);
+                
+                saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة بنجاح');
+                renderCurriculumManager();
+            });
         }
 
         function cleanTeacherName(rawName) {
