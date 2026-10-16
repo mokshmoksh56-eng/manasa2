@@ -1356,10 +1356,11 @@
 
                             ${unifiedScheduleHTML}
                         </div>
-                        <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
-                            ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white">💬 واتساب</a>` : ''}
-                            
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white mr-auto">🗑️ حذف المعلم</button>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
+                            <div class="flex gap-2">
+                                ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}
+                            </div>
+                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
                         </div>
                     </div>
                 `;
