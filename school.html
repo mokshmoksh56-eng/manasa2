@@ -778,7 +778,7 @@
             `).join('');
 
             gradesContainer.innerHTML = grades.map((g, idx) => `
-                <div onclick="selectGradeTab('${g.replace(/'/g, "\\'")}')" class="grade-selectable-card ${g === activeGradeName ? 'active' : ''}">
+                <div onclick="selectGradeTab('${g.replace(/'/g, "\'")}')" class="grade-selectable-card ${g === activeGradeName ? 'active' : ''}">
                     <span>👑 ${g}</span>
                     <button onclick="deleteGradeItem(${idx}); event.stopPropagation();" class="text-rose-600 font-bold">🗑️</button>
                 </div>
@@ -815,15 +815,12 @@
             const curr = getCurriculum();
             const stageName = curr[stageKey].name;
 
-            // 1. إظهار رسالة تأكيد قبل الحذف
             if (!confirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`)) {
-                return; // التراجع إذا اختار المستخدم "إلغاء"
+                return;
             }
 
-            // 2. إتمام عملية الحذف من البيانات
             delete curr[stageKey];
 
-            // 3. ضبط المرحلة النشطة في حال تم حذف المرحلة المفتوحة حالياً
             if (activeStageKey === stageKey) {
                 const remainingKeys = Object.keys(curr);
                 if (remainingKeys.length > 0) {
@@ -835,7 +832,6 @@
                 }
             }
 
-            // 4. حفظ التغييرات وتحديث الواجهة
             saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
             renderCurriculumManager();
         }
@@ -855,8 +851,23 @@
 
         function deleteGradeItem(idx) {
             const curr = getCurriculum();
+            const gradeName = curr[activeStageKey].grades[idx];
+            
+            if (!confirm(`هل أنت متأكد من حذف الصف (${gradeName}) وجميع مواده نهائياً؟`)) {
+                return;
+            }
+            
             curr[activeStageKey].grades.splice(idx, 1);
-            saveCurriculumAndBroadcast(curr, '🗑️ تم الحذف');
+            
+            if (curr[activeStageKey].gradeSubjects && curr[activeStageKey].gradeSubjects[gradeName]) {
+                delete curr[activeStageKey].gradeSubjects[gradeName];
+            }
+            
+            if (activeGradeName === gradeName) {
+                activeGradeName = curr[activeStageKey].grades[0] || null;
+            }
+            
+            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف الصف بنجاح');
             renderCurriculumManager();
         }
 
@@ -873,8 +884,14 @@
 
         function deleteSubjectFromGrade(idx) {
             const curr = getCurriculum();
+            const subjName = curr[activeStageKey].gradeSubjects[activeGradeName][idx];
+            
+            if (!confirm(`هل أنت متأكد من حذف المادة (${subjName}) من هذا الصف؟`)) {
+                return;
+            }
+            
             curr[activeStageKey].gradeSubjects[activeGradeName].splice(idx, 1);
-            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة');
+            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة بنجاح');
             renderCurriculumManager();
         }
 
@@ -1164,7 +1181,7 @@
             Object.keys(curr).forEach(stageKey => { if ((curr[stageKey].grades || []).includes(gradeVal)) foundSubjects = getSubjectsForGrade(stageKey, gradeVal); });
             bar.classList.remove('hidden');
             let html = `<button onclick="selectMainSubjectPill('all')" class="subj-filter-pill ${selectedMainSubjectFilter === 'all' ? 'active' : ''}">الكل</button>`;
-            foundSubjects.forEach(s => html += `<button onclick="selectMainSubjectPill('${s.replace(/'/g, "\\'")}')" class="subj-filter-pill ${selectedMainSubjectFilter === s ? 'active' : ''}">📘 ${s}</button>`);
+            foundSubjects.forEach(s => html += `<button onclick="selectMainSubjectPill('${s.replace(/'/g, "\'")}')" class="subj-filter-pill ${selectedMainSubjectFilter === s ? 'active' : ''}">📘 ${s}</button>`);
             pillsContainer.innerHTML = html;
         }
         function selectMainSubjectPill(subjName) { selectedMainSubjectFilter = subjName; renderMainGradeSubjectsBar(); renderAllRecords(); }
@@ -1206,7 +1223,7 @@
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                 const blockClass = r.isBlocked ? 'is-blocked' : '';
-                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
+                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\'");
 
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
