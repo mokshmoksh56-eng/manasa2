@@ -513,6 +513,13 @@
             </div>
         </div>
     </section>
+    
+    <!-- زر الأرشيف -->
+    <div class="max-w-7xl mx-auto w-full px-4 mb-4 flex justify-end relative z-10" style="margin-top: -10px;">
+        <button onclick="toggleArchiveView()" id="btnToggleArchive" class="btn-nav bg-slate-800 text-white border-none shadow-md">
+            📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)
+        </button>
+    </div>
 
     <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
@@ -761,6 +768,24 @@
 
         let activeStageKey = null;
         let activeGradeName = null;
+        let showingArchive = false;
+        
+        function toggleArchiveView() {
+            showingArchive = !showingArchive;
+            const btn = document.getElementById('btnToggleArchive');
+            if(showingArchive) {
+                btn.innerHTML = '🔙 الرجوع للمعلمين النشطين';
+                btn.classList.add('bg-rose-700');
+                btn.classList.remove('bg-slate-800');
+                document.getElementById('searchInput').placeholder = 'البحث في الأرشيف...';
+            } else {
+                btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
+                btn.classList.remove('bg-rose-700');
+                btn.classList.add('bg-slate-800');
+                document.getElementById('searchInput').placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
+            }
+            renderAllRecords();
+        }
 
         function openCurriculumModal(targetStageKey = null, targetGradeName = null) {
             const curr = getCurriculum();
@@ -1234,7 +1259,16 @@
             const titleFilter = document.getElementById('filterTitle').value;
             const gradeFilter = document.getElementById('filterGrade').value;
 
+            // تحديث عداد الأرشيف
+            const archivedCount = records.filter(r => r.isBlocked).length;
+            const badge = document.getElementById('archiveCountBadge');
+            if(badge && !showingArchive) badge.textContent = archivedCount;
+
             const filtered = records.filter(r => {
+                // فلترة الأرشيف / النشط
+                if (showingArchive && !r.isBlocked) return false; // في الأرشيف نعرض المحظورين فقط
+                if (!showingArchive && r.isBlocked) return false; // في النشطين لا نعرض المحظورين
+
                 if (titleFilter !== 'all' && r.title !== titleFilter) return false;
                 if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
                 if (selectedMainSubjectFilter !== 'all' && !String(r.subjects || '').includes(selectedMainSubjectFilter)) return false;
