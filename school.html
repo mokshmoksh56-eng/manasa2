@@ -1409,8 +1409,29 @@
                     }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
-                if (phone && phone !== 'غير مسجل') { localStorage.removeItem('teacherAccount_' + phone); localStorage.removeItem('teacherVerification_' + phone); localStorage.removeItem('teacherBlocked_' + phone); }
-                if (cleanName) { localStorage.removeItem('teacherVerification_name_' + cleanName); localStorage.removeItem('teacherBlocked_name_' + cleanName); }
+                
+                if (phone && phone !== 'غير مسجل') { 
+                    localStorage.removeItem('teacherAccount_' + phone); 
+                    localStorage.removeItem('teacherVerification_' + phone); 
+                    localStorage.removeItem('teacherBlocked_' + phone); 
+                }
+                if (cleanName) { 
+                    localStorage.removeItem('teacherVerification_name_' + cleanName); 
+                    localStorage.removeItem('teacherBlocked_name_' + cleanName); 
+                }
+
+                // تفريغ الجلسة المفتوحة (لوحة التحكم تقرأ منها أحياناً وتنشئ كارت فارغ)
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (loggedStr) {
+                    try {
+                        const logged = JSON.parse(loggedStr);
+                        if ((phone && phone !== 'غير مسجل' && logged.phone === phone) || 
+                            (cleanName && cleanTeacherName(logged.name || logged.fullName) === cleanName)) {
+                            localStorage.removeItem('loggedInTeacher');
+                        }
+                    } catch(e){}
+                }
+
                 renderAllRecords();
                 showToast('🗑️ تم حذف المعلم بنجاح');
             });
