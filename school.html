@@ -640,6 +640,19 @@
         </div>
     </div>
 
+    <!-- رسالة التأكيد المخصصة -->
+    <div id="customConfirmModal" class="modal-overlay" onclick="closeModal('customConfirmModal')" style="z-index: 999999;">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 380px; border-bottom-color: #EF4444; text-align: center;">
+            <div class="text-5xl mb-3">⚠️</div>
+            <h3 class="text-lg font-black text-slate-800 mb-2">تأكيد الحذف</h3>
+            <p id="customConfirmMessage" class="text-sm font-bold text-slate-600 mb-6">هل أنت متأكد؟</p>
+            <div class="flex gap-3 justify-center">
+                <button id="btnConfirmYes" class="action-chip bg-rose-600 text-white px-6 py-2.5 flex-1 text-sm shadow-md">نعم، متأكد 🗑️</button>
+                <button onclick="closeModal('customConfirmModal')" class="action-chip bg-slate-200 text-slate-700 px-6 py-2.5 flex-1 text-sm">إلغاء وتراجع</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         let touchStartY = 0;
         let pullDistance = 0;
@@ -697,6 +710,25 @@
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // متغير لحفظ الأمر الذي سيتم تنفيذه عند الضغط على "نعم"
+        let confirmActionCallback = null;
+
+        // دالة إظهار رسالة التأكيد المخصصة
+        function showCustomConfirm(message, callback) {
+            document.getElementById('customConfirmMessage').textContent = message;
+            confirmActionCallback = callback;
+            document.getElementById('customConfirmModal').classList.add('active');
+        }
+
+        // تنفيذ الأمر عند الضغط على زر "نعم، متأكد"
+        document.getElementById('btnConfirmYes').addEventListener('click', () => {
+            closeModal('customConfirmModal');
+            if (confirmActionCallback) {
+                confirmActionCallback();
+                confirmActionCallback = null;
+            }
+        });
 
         const defaultCurriculum = {
             primary: { name: '🎒 المرحلة الابتدائية', grades: ['الأول', 'الثاني'], subjs: ['عربي', 'رياضيات'], gradeSubjects: {'الأول':['عربي','رياضيات'], 'الثاني':['عربي','رياضيات']} },
@@ -815,25 +847,24 @@
             const curr = getCurriculum();
             const stageName = curr[stageKey].name;
 
-            if (!confirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`)) {
-                return;
-            }
+            // إظهار النافذة المخصصة الظريفة بدلاً من confirm الافتراضية
+            showCustomConfirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`, () => {
+                delete curr[stageKey];
 
-            delete curr[stageKey];
-
-            if (activeStageKey === stageKey) {
-                const remainingKeys = Object.keys(curr);
-                if (remainingKeys.length > 0) {
-                    activeStageKey = remainingKeys[0];
-                    activeGradeName = curr[activeStageKey].grades[0] || null;
-                } else {
-                    activeStageKey = null;
-                    activeGradeName = null;
+                if (activeStageKey === stageKey) {
+                    const remainingKeys = Object.keys(curr);
+                    if (remainingKeys.length > 0) {
+                        activeStageKey = remainingKeys[0];
+                        activeGradeName = curr[activeStageKey].grades[0] || null;
+                    } else {
+                        activeStageKey = null;
+                        activeGradeName = null;
+                    }
                 }
-            }
 
-            saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
-            renderCurriculumManager();
+                saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
+                renderCurriculumManager();
+            });
         }
 
         function addNewGrade() {
@@ -851,23 +882,8 @@
 
         function deleteGradeItem(idx) {
             const curr = getCurriculum();
-            const gradeName = curr[activeStageKey].grades[idx];
-            
-            if (!confirm(`هل أنت متأكد من حذف الصف (${gradeName}) وجميع مواده نهائياً؟`)) {
-                return;
-            }
-            
             curr[activeStageKey].grades.splice(idx, 1);
-            
-            if (curr[activeStageKey].gradeSubjects && curr[activeStageKey].gradeSubjects[gradeName]) {
-                delete curr[activeStageKey].gradeSubjects[gradeName];
-            }
-            
-            if (activeGradeName === gradeName) {
-                activeGradeName = curr[activeStageKey].grades[0] || null;
-            }
-            
-            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف الصف بنجاح');
+            saveCurriculumAndBroadcast(curr, '🗑️ تم الحذف');
             renderCurriculumManager();
         }
 
@@ -884,14 +900,8 @@
 
         function deleteSubjectFromGrade(idx) {
             const curr = getCurriculum();
-            const subjName = curr[activeStageKey].gradeSubjects[activeGradeName][idx];
-            
-            if (!confirm(`هل أنت متأكد من حذف المادة (${subjName}) من هذا الصف؟`)) {
-                return;
-            }
-            
             curr[activeStageKey].gradeSubjects[activeGradeName].splice(idx, 1);
-            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة بنجاح');
+            saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة');
             renderCurriculumManager();
         }
 
@@ -1327,26 +1337,28 @@
         }
 
         function deleteRecord(lessonId, phone, teacherName) {
-            if (!confirm(`هل أنت متأكد من حذف المعلم (${teacherName}) نهائياً؟`)) return;
-            const cleanName = cleanTeacherName(teacherName);
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
-                if (k && k.startsWith('lessonState_')) {
-                    try {
-                        const st = JSON.parse(localStorage.getItem(k) || '{}');
-                        if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
-                            const id = k.replace('lessonState_', '');
-                            keysToRemove.push('lessonState_' + id); keysToRemove.push('publishState_' + id);
-                        }
-                    } catch (e) {}
+            // إظهار النافذة المخصصة الظريفة بدلاً من confirm الافتراضية
+            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع المواعيد نهائياً؟`, () => {
+                const cleanName = cleanTeacherName(teacherName);
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && k.startsWith('lessonState_')) {
+                        try {
+                            const st = JSON.parse(localStorage.getItem(k) || '{}');
+                            if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
+                                const id = k.replace('lessonState_', '');
+                                keysToRemove.push('lessonState_' + id); keysToRemove.push('publishState_' + id);
+                            }
+                        } catch (e) {}
+                    }
                 }
-            }
-            keysToRemove.forEach(k => localStorage.removeItem(k));
-            if (phone && phone !== 'غير مسجل') { localStorage.removeItem('teacherAccount_' + phone); localStorage.removeItem('teacherVerification_' + phone); localStorage.removeItem('teacherBlocked_' + phone); }
-            if (cleanName) { localStorage.removeItem('teacherVerification_name_' + cleanName); localStorage.removeItem('teacherBlocked_name_' + cleanName); }
-            renderAllRecords();
-            showToast('🗑️ تم حذف المعلم بنجاح');
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                if (phone && phone !== 'غير مسجل') { localStorage.removeItem('teacherAccount_' + phone); localStorage.removeItem('teacherVerification_' + phone); localStorage.removeItem('teacherBlocked_' + phone); }
+                if (cleanName) { localStorage.removeItem('teacherVerification_name_' + cleanName); localStorage.removeItem('teacherBlocked_name_' + cleanName); }
+                renderAllRecords();
+                showToast('🗑️ تم حذف المعلم بنجاح');
+            });
         }
 
         window.addEventListener('DOMContentLoaded', () => {
