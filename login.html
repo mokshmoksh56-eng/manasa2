@@ -331,14 +331,6 @@
 </head>
 <body>
 
-    <div id="successModal" class="custom-modal-overlay">
-        <div class="custom-modal-box" style="border-bottom-color: #10B981;">
-            <div class="modal-icon-circle" style="background: #D1FAE5; color: #059669;">🎉</div>
-            <h3 id="successModalTitle" class="modal-title-text" style="color: #065F46;">تم التسجيل بنجاح!</h3>
-            <p id="successModalDesc" class="modal-desc-text">مرحباً بك، جاري تحويلك لإدارة مجموعاتك...</p>
-        </div>
-    </div>
-
     <div id="confirmDeleteModal" class="custom-modal-overlay" onclick="closeCustomModal('confirmDeleteModal')">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">⚠️</div>
@@ -446,27 +438,19 @@
         });
 
         window.onload = function() {
-            // مسح جلسة الدخول السابقة لإجبار المستخدم على إدخال الرقم السري في كل مرة يفتح فيها الصفحة
+            // مسح جلسة الدخول السابقة لإجبار المعلم على إدخال الرقم السري في كل مرة يفتح فيها الصفحة
             localStorage.removeItem('loggedInTeacher');
 
-            // الاحتفاظ برقم التليفون فقط في الحقول
+            // الاحتفاظ برقم التليفون فقط في الحقول إذا كان محفوظاً مسبقاً
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
-                
-                // تفريغ خانة الرقم السري لضمان إدخاله يدوياً
-                document.getElementById('loginPassword').value = '';
+                document.getElementById('loginPassword').value = ''; // تفريغ حقل الرقم السري
             }
         };
 
         function closeCustomModal(id) { document.getElementById(id).classList.remove('active'); }
-        function showSuccessPopup(title, desc, url) {
-            document.getElementById('successModalTitle').textContent = title;
-            document.getElementById('successModalDesc').textContent = desc;
-            document.getElementById('successModal').classList.add('active');
-            setTimeout(() => { window.location.href = url; }, 1400);
-        }
 
         function switchTab(tab) {
             document.getElementById('alertMsg').style.display = 'none';
@@ -509,11 +493,10 @@
             const accountData = { title, name, age, phone, pass: pass1, createdAt: new Date().toISOString().split('T')[0] };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
             localStorage.setItem('rememberedPhone', phone);
-
-            // تفعيل الدخول المباشر بعد التسجيل الجديد فقط
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
 
-            showSuccessPopup('تم إنشاء الحساب بنجاح! 🎉', `مرحباً بك يا ${title} / ${name}`, './index2.html');
+            // التوجه المباشر بدون رسالة ترحيب منبثقة
+            window.location.href = './index2.html';
         }
 
         function handleLogin() {
@@ -536,7 +519,8 @@
             localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
             localStorage.setItem('rememberedPhone', phone);
 
-            showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.title || ''} / ${savedData.name || ''}`, './index2.html');
+            // التوجه المباشر بدون رسالة ترحيب منبثقة
+            window.location.href = './index2.html';
         }
 
         function handleLogout() { 
