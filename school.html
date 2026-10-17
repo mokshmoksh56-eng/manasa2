@@ -425,24 +425,6 @@
             color: #1E293B;
         }
 
-        /* أزرار فلترة المواد تحت الصف في الصفحة الرئيسية */
-        .subj-filter-pill {
-            padding: 5px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            border: 1.5px solid #CBD5E1;
-            background: #F8FAFC;
-            color: #475569;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .subj-filter-pill.active {
-            background: #10B981;
-            color: #FFFFFF;
-            border-color: #059669;
-        }
-
         .custom-toast {
             position: fixed;
             bottom: 20px;
@@ -558,21 +540,11 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-black text-slate-600 mb-1">👑 اضغط على الصف لإظهار مواده تحته</label>
-                    <select id="filterGrade" onchange="onMainGradeFilterChange()" class="form-input cursor-pointer">
+                    <label class="block text-xs font-black text-slate-600 mb-1">👑 فلترة حسب الصف الدراسي</label>
+                    <select id="filterGrade" onchange="renderAllRecords()" class="form-input cursor-pointer">
                         <option value="all">جميع الصفوف الدراسية</option>
                     </select>
                 </div>
-            </div>
-
-            <div id="mainGradeSubjectsBar" class="hidden mt-3 pt-3 border-t border-dashed border-emerald-200 bg-emerald-50/60 p-3 rounded-xl">
-                <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
-                    <span id="mainGradeSubjectsTitle" class="text-xs font-black text-emerald-900">📖 المواد الخاصة بالصف:</span>
-                    <button onclick="openCurriculumForSelectedFilterGrade()" class="text-xs font-black text-blue-700 hover:underline">
-                        ⚙️ تعديل أو إضافة مواد لهذا الصف
-                    </button>
-                </div>
-                <div id="mainGradeSubjectsPills" class="flex flex-wrap gap-1.5"></div>
             </div>
 
             <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-slate-100">
@@ -813,20 +785,6 @@
             }
             renderCurriculumManager();
             document.getElementById('curriculumModal').classList.add('active');
-        }
-
-        function openCurriculumForSelectedFilterGrade() {
-            const gradeVal = document.getElementById('filterGrade').value;
-            if (!gradeVal || gradeVal === 'all') {
-                openCurriculumModal();
-                return;
-            }
-            const curr = getCurriculum();
-            let foundStageKey = null;
-            Object.keys(curr).forEach(stageKey => {
-                if ((curr[stageKey].grades || []).includes(gradeVal)) foundStageKey = stageKey;
-            });
-            openCurriculumModal(foundStageKey, gradeVal);
         }
 
         function renderCurriculumManager() {
@@ -1263,23 +1221,6 @@
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
 
-        let selectedMainSubjectFilter = 'all';
-        function onMainGradeFilterChange() { selectedMainSubjectFilter = 'all'; renderMainGradeSubjectsBar(); renderAllRecords(); }
-        function renderMainGradeSubjectsBar() {
-            const gradeVal = document.getElementById('filterGrade').value;
-            const bar = document.getElementById('mainGradeSubjectsBar');
-            const pillsContainer = document.getElementById('mainGradeSubjectsPills');
-            if (gradeVal === 'all') { bar.classList.add('hidden'); return; }
-            const curr = getCurriculum();
-            let foundSubjects = [];
-            Object.keys(curr).forEach(stageKey => { if ((curr[stageKey].grades || []).includes(gradeVal)) foundSubjects = getSubjectsForGrade(stageKey, gradeVal); });
-            bar.classList.remove('hidden');
-            let html = `<button onclick="selectMainSubjectPill('all')" class="subj-filter-pill ${selectedMainSubjectFilter === 'all' ? 'active' : ''}">الكل</button>`;
-            foundSubjects.forEach(s => html += `<button onclick="selectMainSubjectPill('${s.replace(/'/g, "\'")}')" class="subj-filter-pill ${selectedMainSubjectFilter === s ? 'active' : ''}">📘 ${s}</button>`);
-            pillsContainer.innerHTML = html;
-        }
-        function selectMainSubjectPill(subjName) { selectedMainSubjectFilter = subjName; renderMainGradeSubjectsBar(); renderAllRecords(); }
-
         function renderAllRecords() {
             const { records, totalLessonsCount } = collectAllAppData();
             const uniqueMrSet = new Set(), uniqueMsSet = new Set();
@@ -1306,7 +1247,6 @@
 
                 if (titleFilter !== 'all' && r.title !== titleFilter) return false;
                 if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
-                if (selectedMainSubjectFilter !== 'all' && !String(r.subjects || '').includes(selectedMainSubjectFilter)) return false;
                 if (q && !`${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects} ${r.address}`.toLowerCase().includes(q)) return false;
                 return true;
             });
@@ -1512,7 +1452,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            populateGradeFilter(); renderMainGradeSubjectsBar(); renderAllRecords();
+            populateGradeFilter(); renderAllRecords();
         });
     </script>
 </body>
