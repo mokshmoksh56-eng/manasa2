@@ -534,36 +534,17 @@
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة الأساسية</h3>
             
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>👥 اسم المجموعة</label>
-                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة الفيزياء العامة">
-                </div>
-                <div class="form-group">
-                    <label>🏫 اسم السنتر (اختياري)</label>
-                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
-                </div>
-            </div>
-
-            <div class="grid-2">
-                <div class="form-group">
-                    <label>👤 اسم المستر (يأتي تلقائياً من تسجيل الدخول - مقفول)</label>
-                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم" readonly style="background-color: #F1F5F9; cursor: not-allowed;">
-                </div>
-                <div class="form-group">
-                    <label>🔢 العدد المطلوب للطلاب</label>
-                    <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
-                </div>
-            </div>
-
+            <!-- 1. مكان الدرس الأساسي -->
             <div class="form-group">
-                <label>📲 نوع التليفون المسجل منه (تلقائي)</label>
-                <div id="phoneTypeBadge" class="phone-type-badge">
-                    <span class="icon">📱</span>
-                    <span id="phoneTypeText">جاري الكشف...</span>
+                <label>📍 مكان الدرس الأساسي</label>
+                <div class="radio-grid">
+                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> السنتر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر"><label for="l_teach"><i>🏠</i> المستر</label></div>
+                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب"><label for="l_stud"><i>🚗</i> الطالب</label></div>
                 </div>
             </div>
 
+            <!-- 2. الفئات المسموح بها -->
             <div class="form-group" style="margin-top: 15px;">
                 <label>🎓 الفئات المسموح بها</label>
                 <div class="radio-grid">
@@ -573,12 +554,36 @@
                 </div>
             </div>
 
-            <div class="form-group">
-                <label>📍 مكان الدرس الأساسي</label>
-                <div class="radio-grid">
-                    <div><input type="radio" name="g_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> السنتر</label></div>
-                    <div><input type="radio" name="g_loc" id="l_teach" value="بيت المستر"><label for="l_teach"><i>🏠</i> المستر</label></div>
-                    <div><input type="radio" name="g_loc" id="l_stud" value="منزل الطالب"><label for="l_stud"><i>🚗</i> الطالب</label></div>
+            <!-- 3. اسم المستر وجنبها اسم السنتر -->
+            <div class="grid-2" style="margin-top: 15px;">
+                <div class="form-group">
+                    <label>👤 اسم المستر (يأتي تلقائياً - مقفول)</label>
+                    <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم" readonly style="background-color: #F1F5F9; cursor: not-allowed;">
+                </div>
+                <div class="form-group">
+                    <label>🏫 اسم السنتر (اختياري)</label>
+                    <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
+                </div>
+            </div>
+
+            <!-- 4. اسم المجموعه وجنبها العدد المطلوب -->
+            <div class="grid-2">
+                <div class="form-group">
+                    <label>👥 اسم المجموعة</label>
+                    <input type="text" id="g_name" class="form-control" placeholder="مثال: مجموعة الفيزياء العامة">
+                </div>
+                <div class="form-group">
+                    <label>🔢 العدد المطلوب للطلاب</label>
+                    <input type="number" id="g_count" class="form-control" placeholder="مثال: 25" min="1">
+                </div>
+            </div>
+
+            <!-- 5. نوع التليفون (مخفي برمجياً مع الحفاظ على عمل الكود) -->
+            <div class="form-group" style="display: none;">
+                <label>📲 نوع التليفون المسجل منه (تلقائي)</label>
+                <div id="phoneTypeBadge" class="phone-type-badge">
+                    <span class="icon">📱</span>
+                    <span id="phoneTypeText">جاري الكشف...</span>
                 </div>
             </div>
             
