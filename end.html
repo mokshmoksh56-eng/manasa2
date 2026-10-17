@@ -240,6 +240,10 @@
             <div class="report-card">
                 <div class="card-header"><span>⏰</span> المواعيد والمادة</div>
                 <div class="data-row">
+                    <span class="data-label">🎓 المرحلة</span>
+                    <span class="data-value" id="val-stage">--</span>
+                </div>
+                <div class="data-row">
                     <span class="data-label">📚 المادة</span>
                     <span class="data-value" id="val-subject">--</span>
                 </div>
@@ -481,6 +485,26 @@
                 if(state.g_phone) teacherPhone = state.g_phone;
                 
                 if(state.g_count) document.getElementById('val-count').innerText = `${state.g_count} طالب`;
+                
+                // جلب وعرض المرحلة الدراسية
+                if(state.s_stage) {
+                    let stageName = state.s_stage;
+                    if(stageName === 'primary') stageName = 'المرحلة الابتدائية';
+                    else if(stageName === 'prep') stageName = 'المرحلة الإعدادية';
+                    else if(stageName === 'secondary') stageName = 'المرحلة الثانوية';
+                    else {
+                        // محاولة جلب الاسم الحقيقي للمرحلة المخصصة من قائمة المناهج
+                        try {
+                            const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
+                            if(curr[state.s_stage] && curr[state.s_stage].name) {
+                                stageName = curr[state.s_stage].name;
+                            }
+                        } catch(e) {}
+                    }
+                    // إزالة الإيموجي الافتراضي من الاسم لتجنب تكراره
+                    document.getElementById('val-stage').innerText = stageName.replace(/^[🎒📐🎓]\s*/, '');
+                }
+
                 if(state.s_grade) document.getElementById('val-grade').innerText = state.s_grade;
 
                 if(state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) {
