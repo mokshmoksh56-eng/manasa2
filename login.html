@@ -447,14 +447,7 @@
         });
 
         window.onload = function() {
-            const loggedInTeacher = localStorage.getItem('loggedInTeacher');
-            
-            // التعديل الأول: عدم مسح تسجيل الدخول، وتحويله مباشرة إذا كان مسجلاً
-            if (loggedInTeacher) {
-                window.location.href = './index2.html';
-                return; // إيقاف تنفيذ الباقي
-            }
-
+            // مسحنا الكود اللي كان بيعمل Redirect مباشر (عشان تلحق تشوف الصفحة)
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
