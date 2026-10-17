@@ -551,13 +551,6 @@
         </div>
 
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
-
-        <div id="studentInfoSection" class="mt-8 hidden">
-            <h2 class="text-lg font-black text-slate-800 mb-3 flex items-center gap-2">
-                <span>🎒</span> بيانات الطالب المسجل حالياً على الجهاز
-            </h2>
-            <div id="studentInfoCard" class="bg-white rounded-2xl p-4 border-2 border-emerald-200 shadow-sm"></div>
-        </div>
     </main>
 
     <!-- Modals -->
@@ -656,7 +649,10 @@
           getDoc,
           collection,
           getDocs,
-          onSnapshot
+          onSnapshot,
+          deleteDoc,
+          updateDoc,
+          increment
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -678,13 +674,16 @@
       window.fsCollection = collection;
       window.fsGetDocs = getDocs;
       window.fsOnSnapshot = onSnapshot;
+      window.fsDeleteDoc = deleteDoc;
+      window.fsUpdateDoc = updateDoc;
+      window.fsIncrement = increment;
 
-      console.log("✅ Firebase + Firestore جاهز في school.html");
+      console.log("✅ Firebase + Firestore جاهز ويعمل كليةً على السحابة");
     </script>
 
     <script>
         // ==========================================
-        // 0. المتغيرات الأساسية والمزامنة
+        // 0. المتغيرات الأساسية
         // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
@@ -743,9 +742,6 @@
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
-        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
-
         let confirmActionCallback = null;
         function showCustomConfirm(message, callback) {
             document.getElementById('customConfirmMessage').textContent = message;
@@ -761,7 +757,7 @@
         });
 
         // ==========================================
-        // 🌟 المنهج الافتراضي الكامل الموحّد
+        // 🌟 المنهج (مخزن كمتغير مؤقت في الذاكرة + فايربيس)
         // ==========================================
         const defaultCurriculum = {
             primary: {
@@ -855,16 +851,6 @@
 
         function getCurriculum() {
             if (curriculumCache) return curriculumCache;
-            try {
-                const saved = localStorage.getItem('app_curriculum');
-                if (saved) {
-                    const parsed = JSON.parse(saved);
-                    if (parsed && Object.keys(parsed).length > 0) {
-                        curriculumCache = normalizeCurriculum(parsed);
-                        return curriculumCache;
-                    }
-                }
-            } catch (e) {}
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             curriculumCache = copy;
             return copy;
@@ -872,13 +858,10 @@
 
         async function saveCurriculumAndBroadcast(currObj, toastText) {
             curriculumCache = normalizeCurriculum(JSON.parse(JSON.stringify(currObj)));
-            localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
-            localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
-            if (curriculumChannel) curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
 
             if (window.db && window.fsDoc && window.fsSetDoc) {
                 try {
-                    setCloudStatus('syncing', '⏳ جاري الرفع...');
+                    setCloudStatus('syncing', '⏳ جاري الرفع للسحابة...');
                     await window.fsSetDoc(
                         window.fsDoc(window.db, CURRICULUM_DOC_PATH.collection, CURRICULUM_DOC_PATH.id),
                         { ...curriculumCache, updatedAt: Date.now() }
@@ -886,8 +869,8 @@
                     setCloudStatus('synced', '☁️ متزامن مع السحابة');
                 } catch (err) {
                     console.error("❌ فشل حفظ المنهج في Firebase:", err);
-                    setCloudStatus('offline', '⚠️ حفظ محلي فقط');
-                    showToast("⚠️ تم الحفظ محلياً لكن فشل الرفع للسحابة", true);
+                    setCloudStatus('offline', '⚠️ فشل الرفع للسحابة');
+                    showToast("⚠️ فشل الاتصال بقاعدة البيانات", true);
                 }
             }
             populateGradeFilter();
@@ -910,9 +893,6 @@
                     const data = snap.data() || {};
                     delete data.updatedAt;
                     curriculumCache = normalizeCurriculum(data);
-                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
-                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
-                    if (curriculumChannel) curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
 
                     if (isFirstSnapshot) {
                         isFirstSnapshot = false;
@@ -929,14 +909,14 @@
                     const defaultCopy = JSON.parse(JSON.stringify(defaultCurriculum));
                     curriculumCache = defaultCopy;
                     window.fsSetDoc(ref, { ...defaultCopy, updatedAt: Date.now() })
-                        .then(() => setCloudStatus('synced', '☁️ تم إنشاء المستند'))
+                        .then(() => setCloudStatus('synced', '☁️ تم إنشاء المنهج الافتراضي'))
                         .catch(err => setCloudStatus('offline', '⚠️ تعذر إنشاء المستند'));
                     populateGradeFilter();
                     renderAllRecords();
                 }
             }, (error) => {
                 setCloudStatus('offline', '⚠️ غير متصل بالسحابة');
-                showToast("⚠️ تعذر الاتصال بالسحابة — يتم استخدام النسخة المحلية", true);
+                showToast("⚠️ تعذر الاتصال بالسحابة", true);
             });
         }
 
@@ -1111,7 +1091,7 @@
         }
 
         function resetCurriculumToDefault() {
-            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟ سيتم مسح أي تعديلات سابقة، وسيتم رفع النسخة الافتراضية إلى السحابة أيضاً.', () => {
+            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟ سيتم رفع النسخة الافتراضية إلى السحابة ومسح التعديلات.', () => {
                 const copy = JSON.parse(JSON.stringify(defaultCurriculum));
                 saveCurriculumAndBroadcast(copy, '✨ تم استعادة المنهج الافتراضي الكامل');
                 activeStageKey = Object.keys(copy)[0];
@@ -1122,23 +1102,11 @@
         }
 
         // ==========================================
-        // Teacher Records & Firebase Sync
+        // Teacher Records & Firebase Pure Sync
         // ==========================================
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
-        }
-
-        function isTeacherBlockedStatus(phone, cleanName) {
-            if (phone && phone !== 'غير مسجل' && localStorage.getItem('teacherBlocked_' + phone) === 'true') return true;
-            if (cleanName && localStorage.getItem('teacherBlocked_name_' + cleanName) === 'true') return true;
-            return false;
-        }
-
-        function getTeacherVerificationStatus(phone, cleanName) {
-            if (phone && phone !== 'غير مسجل' && localStorage.getItem('teacherVerification_' + phone)) return localStorage.getItem('teacherVerification_' + phone);
-            if (cleanName && localStorage.getItem('teacherVerification_name_' + cleanName)) return localStorage.getItem('teacherVerification_name_' + cleanName);
-            return '30 يوم تجريبي';
         }
 
         function calculateExpiration(regDateStr, plan) {
@@ -1161,7 +1129,7 @@
             return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
         }
 
-        // ✅ دالة جلب الدروس من Firebase
+        // جلب الدروس من السحابة فقط
         async function fetchLessonsFromFirebase() {
             try {
                 if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
@@ -1177,7 +1145,7 @@
             }
         }
 
-        // ✅ دالة جديدة لجلب حالات توثيق وحظر المعلمين من Firebase
+        // جلب المعلمين من السحابة فقط
         async function fetchTeachersFromFirebase() {
             try {
                 if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
@@ -1193,87 +1161,92 @@
             }
         }
 
-        // ✅ الدالة المعدلة: تدمج بيانات السحابة (الدروس + المعلمين) مع البيانات المحلية
+        // تجميع كل البيانات والاعتماد كلياً على السحابة Firebase
         async function collectAllAppData() {
-            const teacherAccounts = [];
-            const rawLessons = [];
-            const todayISO = new Date().toISOString().split('T')[0];
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة'];
 
             // 1. جلب الدروس والمعلمين من السحابة
             const firebaseLessons = await fetchLessonsFromFirebase();
             const firebaseTeachers = await fetchTeachersFromFirebase();
 
-            // 2. دمج دروس السحابة مع دروس الهاتف المحلية
-            const allLessonsData = [];
-            const localLessonKeys = new Set();
+            const unifiedMap = new Map();
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('lessonState_')) {
-                    const lessonId = key.replace('lessonState_', '');
-                    localLessonKeys.add(lessonId);
-                    try {
-                        const state = JSON.parse(localStorage.getItem(key) || '{}');
-                        allLessonsData.push({ id: lessonId, source: 'local', data: state });
-                    } catch (e) {}
-                }
-            }
+            // 2. إدراج حسابات المعلمين القادمة من السحابة
+            firebaseTeachers.forEach(t => {
+                const phone = t.phone || 'غير مسجل';
+                const cleanName = cleanTeacherName(t.teacherName || t.name || t.fullName) || 'بدون اسم';
+                const targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${cleanName}`;
+                
+                let verifRaw = t.verification || '30 يوم تجريبي';
+                if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
 
-            // إضافة دروس السحابة التي لا توجد في الهاتف
-            firebaseLessons.forEach(fLesson => {
-                if (!localLessonKeys.has(fLesson.id)) {
-                    allLessonsData.push({ id: fLesson.id, source: 'cloud', data: fLesson });
-                }
+                unifiedMap.set(targetKey, {
+                    type: 'account_only', 
+                    docId: t.id,
+                    lessonIds: [], 
+                    title: t.title || 'مستر',
+                    teacherName: cleanName, 
+                    phone: phone, 
+                    regDate: t.createdAt || new Date().toISOString().split('T')[0],
+                    groupName: 'لم يُنشئ مجموعة بعد', 
+                    grade: 'غير محدد', 
+                    stageKey: 'primary', 
+                    subjects: 'غير محدد',
+                    locType: '--', 
+                    address: '--', 
+                    lat: null, 
+                    lng: null, 
+                    days: '--', 
+                    timeFrom: '--', 
+                    timeTo: '--',
+                    isPublished: false, 
+                    waClicks: t.waClicks || 0, 
+                    groups: [], 
+                    phoneType: t.phoneType || '',
+                    verification: verifRaw,
+                    isBlocked: t.isBlocked || false
+                });
             });
 
-            // 3. قراءة حسابات المعلمين من الهاتف
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('teacherAccount_')) {
-                    try {
-                        const acc = JSON.parse(localStorage.getItem(key) || '{}');
-                        if (!acc.createdAt) { acc.createdAt = todayISO; localStorage.setItem(key, JSON.stringify(acc)); }
-                        teacherAccounts.push(acc);
-                    } catch (e) {}
-                }
-            }
-
-            let loggedTeacher = null;
-            try {
-                const loggedStr = localStorage.getItem('loggedInTeacher');
-                if (loggedStr) {
-                    loggedTeacher = JSON.parse(loggedStr);
-                    if (loggedTeacher && !teacherAccounts.some(a => (a.phone && a.phone === loggedTeacher.phone) || (cleanTeacherName(a.name) && cleanTeacherName(a.name) === cleanTeacherName(loggedTeacher.name)))) {
-                        if (!loggedTeacher.createdAt) loggedTeacher.createdAt = todayISO;
-                        teacherAccounts.push(loggedTeacher);
+            // 3. ربط الدروس بالحسابات السحابية
+            firebaseLessons.forEach(lesson => {
+                const state = lesson;
+                const phone = state.g_phone || 'غير مسجل';
+                const teacherName = cleanTeacherName(state.g_teacher);
+                
+                let targetKey = null;
+                for (const [k, v] of unifiedMap.entries()) {
+                    if ((phone !== 'غير مسجل' && v.phone === phone) || (cleanTeacherName(v.teacherName) === teacherName)) {
+                        targetKey = k; break;
                     }
                 }
-            } catch (e) {}
 
-            const defaultAcc = loggedTeacher || teacherAccounts[0] || {};
+                if (!targetKey) {
+                    targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${teacherName}`;
+                    unifiedMap.set(targetKey, { 
+                        type: 'lesson',
+                        docId: (phone !== 'غير مسجل') ? phone : teacherName,
+                        lessonIds: [],
+                        title: state.t_gender || (teacherName.startsWith('مس') ? 'مس' : 'مستر'),
+                        teacherName: teacherName || 'بدون اسم',
+                        phone: phone,
+                        regDate: state.createdAt || new Date().toISOString().split('T')[0],
+                        waClicks: 0,
+                        groups: [],
+                        verification: '30 يوم تجريبي',
+                        isBlocked: false
+                    });
+                }
 
-            // 4. تجهيز بيانات الحصص
-            allLessonsData.forEach(item => {
-                const state = item.data;
-                const lessonId = item.id;
-                const stateCleanName = cleanTeacherName(state.g_teacher);
+                const entry = unifiedMap.get(targetKey);
+                entry.type = 'lesson';
+                entry.lessonIds.push(lesson.id);
+                if (entry.phone === 'غير مسجل' && phone !== 'غير مسجل') entry.phone = phone;
+                if (!entry.phoneType && state.phoneType) entry.phoneType = state.phoneType;
                 
-                const matchedAcc = teacherAccounts.find(a => {
-                    const accCleanName = cleanTeacherName(a.fullName || a.name);
-                    return (state.g_phone && a.phone && state.g_phone === a.phone) ||
-                           (stateCleanName && accCleanName && stateCleanName === accCleanName) ||
-                           (state.g_teacher && a.name && state.g_teacher.trim() === a.name.trim());
-                }) || defaultAcc;
-
-                const title = state.t_gender || matchedAcc.title || ((state.g_teacher && state.g_teacher.trim().startsWith('مس')) ? 'مس' : 'مستر');
-                const teacherName = cleanTeacherName(state.g_teacher || matchedAcc.name || matchedAcc.fullName) || 'غير محدد';
-                const phone = state.g_phone || matchedAcc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
-                const regDate = state.createdAt || matchedAcc.createdAt || todayISO;
-                
-                rawLessons.push({
-                    type: 'lesson', lessonId, title, teacherName, phone, regDate,
-                    groupName: state.g_name || `مجموعة رقم ${lessonId}`,
+                const groupObj = {
+                    lessonId: lesson.id,
+                    groupName: state.g_name || `مجموعة رقم ${lesson.id}`,
                     grade: state.s_grade || 'غير محدد',
                     stageKey: state.s_stage || 'primary',
                     subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s).join('، ') : 'غير محدد',
@@ -1285,46 +1258,9 @@
                     timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
                     timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
                     isPublished: state.g_publish_map !== false,
-                    waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10),
-                    phoneType: state.phoneType || ''
-                });
-            });
+                };
 
-            // 5. توحيد السجلات
-            const unifiedMap = new Map();
-            teacherAccounts.forEach(acc => {
-                const cleanName = cleanTeacherName(acc.name || acc.fullName) || 'بدون اسم';
-                const phone = acc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
-                const mapKey = (phone && phone !== 'غير مسجل') ? `phone_${phone}` : `name_${cleanName}`;
-                if (!unifiedMap.has(mapKey)) {
-                    unifiedMap.set(mapKey, {
-                        type: 'account_only', lessonId: null, lessonIds: [], title: acc.title || 'مستر',
-                        teacherName: cleanName, phone: phone, regDate: acc.createdAt || todayISO,
-                        groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
-                        locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
-                        isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: [], phoneType: ''
-                    });
-                }
-            });
-
-            rawLessons.forEach(lesson => {
-                let targetKey = null;
-                for (const [k, v] of unifiedMap.entries()) {
-                    if ((lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) || (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))) {
-                        targetKey = k; break;
-                    }
-                }
-                if (!targetKey) {
-                    targetKey = (lesson.phone && lesson.phone !== 'غير مسجل') ? `phone_${lesson.phone}` : `name_${cleanTeacherName(lesson.teacherName)}`;
-                    unifiedMap.set(targetKey, { ...lesson, lessonIds: [], groups: [] });
-                }
-                const entry = unifiedMap.get(targetKey);
-                entry.type = 'lesson';
-                if (!entry.lessonId) entry.lessonId = lesson.lessonId;
-                entry.lessonIds.push(lesson.lessonId);
-                if (entry.phone === 'غير مسجل' && lesson.phone !== 'غير مسجل') entry.phone = lesson.phone;
-                if (!entry.phoneType && lesson.phoneType) entry.phoneType = lesson.phoneType;
-                entry.groups.push(lesson);
+                entry.groups.push(groupObj);
                 entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
                 entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
                 entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
@@ -1338,82 +1274,40 @@
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
-            // 6. التحقق من حالات التوثيق والحظر بناءً على بيانات السحابة
+            // 4. تقييم التواريخ وصلاحية الحسابات
             const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
-                // البحث عن حالة المعلم في بيانات السحابة (Firebase)
-                const cloudTeacher = firebaseTeachers.find(t => 
-                    (entry.phone !== 'غير مسجل' && t.phone === entry.phone) || 
-                    (t.teacherName && cleanTeacherName(t.teacherName) === entry.teacherName)
-                );
-
-                // إذا وجدت بيانات في السحابة تُعتمد، وإلا يتم الرجوع للمحلي كاحتياطي
-                let verifRaw = cloudTeacher ? cloudTeacher.verification : getTeacherVerificationStatus(entry.phone, entry.teacherName);
-                if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
-                
-                entry.verification = verifRaw;
                 entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification);
-                
-                // جلب حالة الحظر من السحابة إذا وُجدت، وإلا من المحلي
-                let isBlockedFinal = cloudTeacher ? cloudTeacher.isBlocked : isTeacherBlockedStatus(entry.phone, entry.teacherName);
-                
-                entry.isBlocked = isBlockedFinal;
-                if (entry.verification === 'حظر' || entry.expiryInfo.expired) entry.isBlocked = true;
-                
+                if (entry.verification === 'حظر' || entry.expiryInfo.expired) {
+                    entry.isBlocked = true;
+                }
                 return entry;
             });
 
-            return { records: unifiedRecords, totalLessonsCount: rawLessons.length, teacherAccounts };
+            return { records: unifiedRecords, totalLessonsCount: firebaseLessons.length };
         }
 
-        function broadcastAuthStatusChange(phone, teacherName, isBlocked, verification) {
-            localStorage.setItem('ehgezly_auth_status_updated_at', String(Date.now()));
-            if (authStatusChannel) {
-                authStatusChannel.postMessage({
-                    type: 'AUTH_STATUS_CHANGED',
-                    phone: phone || '',
-                    teacherName: cleanTeacherName(teacherName),
-                    isBlocked: isBlocked,
-                    verification: verification
-                });
-            }
-        }
-
-        async function updateVerification(phone, val, teacherName = '') {
+        async function updateVerification(docId, phone, val, teacherName = '') {
             const cleanName = cleanTeacherName(teacherName);
-            let regDate = new Date().toISOString().split('T')[0];
-            const accKey = 'teacherAccount_' + phone;
-            
-            if (phone && phone !== 'غير مسجل' && localStorage.getItem(accKey)) {
-                regDate = JSON.parse(localStorage.getItem(accKey)).createdAt || regDate;
-            }
-            
-            const expiryInfo = calculateExpiration(regDate, val);
-            const isBlocked = (val === 'حظر' || expiryInfo.expired);
+            const isBlocked = (val === 'حظر' || calculateExpiration(new Date().toISOString().split('T')[0], val).expired);
 
-            // 1. تحديث البيانات محلياً لتسريع الاستجابة
-            if (phone && phone !== 'غير مسجل') {
-                localStorage.setItem('teacherVerification_' + phone, val);
-                localStorage.setItem('teacherBlocked_' + phone, String(isBlocked));
-            }
-
-            // 2. إرسال التحديث إلى قاعدة بيانات فايربيس السحابية ليتزامن مع جميع الأجهزة
             if (window.db && window.fsDoc && window.fsSetDoc) {
                 try {
-                    setCloudStatus('syncing', '⏳ جاري تحديث حالة المعلم السحابية...');
-                    const docId = (phone && phone !== 'غير مسجل') ? phone : cleanName;
+                    setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
+                    const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
                     
-                    await window.fsSetDoc(window.fsDoc(window.db, "teachers", docId), {
+                    await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
                         phone: phone,
                         teacherName: cleanName,
                         verification: val,
                         isBlocked: isBlocked,
                         updatedAt: Date.now()
-                    }, { merge: true }); // merge: true تضمن تحديث الحقول المحددة فقط
+                    }, { merge: true });
                     
                     setCloudStatus('synced', '☁️ متزامن مع السحابة');
                 } catch (error) {
-                    console.error("خطأ في تحديث حالة المعلم على فايربيس:", error);
-                    showToast("⚠️ تم التحديث محلياً، لكن فشل الاتصال بالسحابة", true);
+                    console.error("خطأ في التحديث:", error);
+                    showToast("⚠️ فشل الاتصال بالسحابة", true);
+                    return;
                 }
             }
 
@@ -1429,7 +1323,6 @@
                 if (searchInput) searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
             }
             
-            broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
             
             if (isBlocked && val !== 'حظر') {
@@ -1439,10 +1332,18 @@
             }
         }
 
-        function recordWaClick(identifier) {
-            const key = 'wa_clicks_' + identifier;
-            const current = parseInt(localStorage.getItem(key) || '0', 10);
-            localStorage.setItem(key, String(current + 1));
+        // زيادة النقرات مباشرة في قاعدة البيانات Firebase
+        async function recordWaClick(docId, phone, teacherName) {
+            const targetId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
+            if (!targetId || !window.db || !window.fsUpdateDoc || !window.fsIncrement) return;
+            try {
+                const ref = window.fsDoc(window.db, "teachers", targetId);
+                await window.fsUpdateDoc(ref, {
+                    waClicks: window.fsIncrement(1)
+                });
+            } catch (e) {
+                console.warn("Could not record WA click in Firebase:", e);
+            }
         }
 
         async function openTeachersSummaryModal(titleType) {
@@ -1459,7 +1360,8 @@
                 filtered.forEach(r => {
                     const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                     const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr">${r.phone}</td><td class="p-2.5">${r.groupName} (${r.grade} - ${r.subjects})</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
+                    const docIdSafe = r.docId || '';
+                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr">${r.phone}</td><td class="p-2.5">${r.groupName} (${r.grade} - ${r.subjects})</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
                 });
                 html += `</tbody></table>`;
                 modalContent.innerHTML = html;
@@ -1508,7 +1410,6 @@
 
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="col-span-full bg-white rounded-3xl p-10 text-center font-bold text-slate-500">لا توجد سجلات مطابقة حالياً</div>`;
-                renderStudentSection();
                 return;
             }
 
@@ -1529,6 +1430,8 @@
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                 const blockClass = r.isBlocked ? 'is-blocked' : '';
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
+                const docIdSafe = r.docId || '';
+                const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
 
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
@@ -1587,7 +1490,7 @@
                             </div>
                             <div class="info-pill flex flex-col gap-2" style="background:#FEF3C7; border-color:#FCD34D;">
                                 <div class="flex items-center justify-between w-full"><span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span><span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span></div>
-                                <select onchange="updateVerification('${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1.5 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer w-full">
+                                <select onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1.5 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer w-full">
                                     <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
                                     <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
                                     <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
@@ -1598,67 +1501,45 @@
                             ${unifiedScheduleHTML}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
-                            <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
+                            <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
+                            <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            renderStudentSection();
         }
 
-        function renderStudentSection() {
-            const raw = localStorage.getItem('talep_data');
-            const sec = document.getElementById('studentInfoSection');
-            const card = document.getElementById('studentInfoCard');
-            if (!raw) { sec.classList.add('hidden'); return; }
-            try {
-                const st = JSON.parse(raw);
-                if (!st.st_name && !st.st_phone) { sec.classList.add('hidden'); return; }
-                sec.classList.remove('hidden');
-                card.innerHTML = `<div class="flex items-center gap-3"><div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black">🎓</div><div><div class="text-xs font-extrabold text-slate-700">📱 التليفون: <span dir="ltr">${st.st_phone || 'غير مسجل'}</span> | 👑 الصف: ${st.s_grade || '--'} | 📚 المادة: ${st.s_subject || '--'}</div></div></div>`;
-            } catch (e) { sec.classList.add('hidden'); }
-        }
-
-        function deleteRecord(lessonId, phone, teacherName) {
-            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع المواعيد نهائياً؟`, () => {
-                const cleanName = cleanTeacherName(teacherName);
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (k && k.startsWith('lessonState_')) {
-                        try {
-                            const st = JSON.parse(localStorage.getItem(k) || '{}');
-                            if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
-                                const id = k.replace('lessonState_', '');
-                                keysToRemove.push('lessonState_' + id);
-                                keysToRemove.push('publishState_' + id);
-                            }
-                        } catch (e) {}
+        // الحذف الفعلي من السحابة Firebase
+        function deleteRecord(lessonsStr, phone, teacherName, docId) {
+            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً من قاعدة البيانات السحابية؟`, async () => {
+                if (!window.db || !window.fsDeleteDoc) return;
+                
+                setCloudStatus('syncing', '⏳ جاري الحذف من السحابة...');
+                try {
+                    // حذف حساب المعلم
+                    const targetDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
+                    if (targetDocId) {
+                        await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", targetDocId));
                     }
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                if (phone && phone !== 'غير مسجل') {
-                    localStorage.removeItem('teacherAccount_' + phone);
-                    localStorage.removeItem('teacherVerification_' + phone);
-                    localStorage.removeItem('teacherBlocked_' + phone);
-                }
-                if (cleanName) {
-                    localStorage.removeItem('teacherVerification_name_' + cleanName);
-                    localStorage.removeItem('teacherBlocked_name_' + cleanName);
-                }
-                const loggedStr = localStorage.getItem('loggedInTeacher');
-                if (loggedStr) {
-                    try {
-                        const logged = JSON.parse(loggedStr);
-                        if ((phone && phone !== 'غير مسجل' && logged.phone === phone) || (cleanName && cleanTeacherName(logged.name || logged.fullName) === cleanName)) {
-                            localStorage.removeItem('loggedInTeacher');
+                    
+                    // حذف كل دروس المعلم المرتبطة به
+                    if (lessonsStr) {
+                        const lessonIds = lessonsStr.split(',');
+                        for (const lId of lessonIds) {
+                            if (lId.trim()) {
+                                await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", lId.trim()));
+                            }
                         }
-                    } catch (e) {}
+                    }
+
+                    setCloudStatus('synced', '☁️ تم الحذف بنجاح');
+                    showToast('🗑️ تم الحذف من السحابة بنجاح');
+                    renderAllRecords();
+                } catch (error) {
+                    console.error("خطأ في الحذف:", error);
+                    setCloudStatus('offline', '⚠️ فشل الحذف');
+                    showToast('⚠️ حدث خطأ أثناء الحذف من قاعدة البيانات', true);
                 }
-                renderAllRecords();
-                showToast('🗑️ تم حذف المعلم بنجاح');
             });
         }
 
@@ -1692,24 +1573,11 @@
             renderAllRecords(); 
             loadCurriculumFromFirebase();
 
-            window.addEventListener('storage', (e) => {
-                if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
-                    try {
-                        const saved = localStorage.getItem('app_curriculum');
-                        if (saved) {
-                            curriculumCache = normalizeCurriculum(JSON.parse(saved));
-                            populateGradeFilter();
-                            renderAllRecords();
-                        }
-                    } catch (err) {}
-                }
-            });
-
             window.addEventListener('focus', () => {
                 if (firebaseReady && !curriculumUnsubscribe) {
                     loadCurriculumFromFirebase();
                 }
-                renderAllRecords(); // تحديث البيانات عند العودة للصفحة
+                renderAllRecords(); // تحديث فوري عند العودة للصفحة لضمان المزامنة
             });
         });
     </script>
