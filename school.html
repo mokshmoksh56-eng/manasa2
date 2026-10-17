@@ -1,8 +1,10 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="ar" dir="rtl" class="notranslate">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- منع متصفح جوجل كروم من تشغيل الترجمة التلقائية التي تكسر الأكواد -->
+    <meta name="google" content="notranslate">
     <title>لوحة التحكم الشاملة - منصة احجزلى</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -197,6 +199,20 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
+        }
+        
+        .badge-device {
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #CBD5E1;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         /* كارت بيانات المعلم والدرس */
@@ -513,6 +529,13 @@
             </div>
         </div>
     </section>
+    
+    <!-- زر الأرشيف -->
+    <div class="max-w-7xl mx-auto w-full px-4 mb-4 flex justify-end relative z-10" style="margin-top: -10px;">
+        <button onclick="toggleArchiveView()" id="btnToggleArchive" class="btn-nav bg-slate-800 text-white border-none shadow-md">
+            📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)
+        </button>
+    </div>
 
     <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
@@ -761,6 +784,24 @@
 
         let activeStageKey = null;
         let activeGradeName = null;
+        let showingArchive = false;
+        
+        function toggleArchiveView() {
+            showingArchive = !showingArchive;
+            const btn = document.getElementById('btnToggleArchive');
+            if(showingArchive) {
+                btn.innerHTML = '🔙 الرجوع للمعلمين النشطين';
+                btn.classList.add('bg-rose-700');
+                btn.classList.remove('bg-slate-800');
+                document.getElementById('searchInput').placeholder = 'البحث في الأرشيف...';
+            } else {
+                btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
+                btn.classList.remove('bg-rose-700');
+                btn.classList.add('bg-slate-800');
+                document.getElementById('searchInput').placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
+            }
+            renderAllRecords();
+        }
 
         function openCurriculumModal(targetStageKey = null, targetGradeName = null) {
             const curr = getCurriculum();
@@ -1039,7 +1080,8 @@
                             timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
                             timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
                             isPublished: localStorage.getItem('publishState_' + lessonId) !== 'false',
-                            waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10)
+                            waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10),
+                            phoneType: state.phoneType || ''
                         });
                     } catch (e) {}
                 }
@@ -1056,7 +1098,7 @@
                         teacherName: cleanName, phone: phone, regDate: acc.createdAt || todayISO,
                         groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
                         locType: '--', address: '--', days: '--', timeFrom: '--', timeTo: '--',
-                        isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: []
+                        isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: [], phoneType: ''
                     });
                 }
             });
@@ -1075,6 +1117,7 @@
                 if (!entry.lessonId) entry.lessonId = lesson.lessonId;
                 entry.lessonIds.push(lesson.lessonId);
                 if (entry.phone === 'غير مسجل' && lesson.phone !== 'غير مسجل') entry.phone = lesson.phone;
+                if (!entry.phoneType && lesson.phoneType) entry.phoneType = lesson.phoneType;
                 entry.groups.push(lesson);
                 entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
                 entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
@@ -1157,6 +1200,23 @@
                 }
             }
 
+            // ==========================================
+            // 🌟 التعديل الجديد: الرجوع التلقائي للنشطين عند فك الحظر لكي يظهر الجدول فوراً
+            // ==========================================
+            if (showingArchive && !isBlocked) {
+                showingArchive = false;
+                const btn = document.getElementById('btnToggleArchive');
+                if (btn) {
+                    btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
+                    btn.classList.remove('bg-rose-700');
+                    btn.classList.add('bg-slate-800');
+                }
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
+                }
+            }
+
             broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
             if(isBlocked && val !== 'حظر') {
@@ -1234,7 +1294,16 @@
             const titleFilter = document.getElementById('filterTitle').value;
             const gradeFilter = document.getElementById('filterGrade').value;
 
+            // تحديث عداد الأرشيف
+            const archivedCount = records.filter(r => r.isBlocked).length;
+            const badge = document.getElementById('archiveCountBadge');
+            if(badge && !showingArchive) badge.textContent = archivedCount;
+
             const filtered = records.filter(r => {
+                // فلترة الأرشيف / النشط
+                if (showingArchive && !r.isBlocked) return false; // في الأرشيف نعرض المحظورين فقط
+                if (!showingArchive && r.isBlocked) return false; // في النشطين لا نعرض المحظورين
+
                 if (titleFilter !== 'all' && r.title !== titleFilter) return false;
                 if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
                 if (selectedMainSubjectFilter !== 'all' && !String(r.subjects || '').includes(selectedMainSubjectFilter)) return false;
@@ -1254,6 +1323,21 @@
             container.innerHTML = filtered.map(r => {
                 const isMs = r.title === 'مس';
                 const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
+                
+                // === التعديل المطلوب: استبدال علامة الـ Apple/Android بحذف كلمة أبل/أندرويد والإبقاء على الأيقونة ===
+                let iconOnlyPhoneBadge = '';
+                if (r.phoneType) {
+                    // استخراج الرمز التعبيري الأول من النص
+                    const emojiMatch = r.phoneType.match(/[\p{Emoji}\u200d]+/gu);
+                    const iconChar = emojiMatch ? emojiMatch[0] : '📱';
+                    
+                    iconOnlyPhoneBadge = `
+                        <span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">
+                            ${iconChar}
+                        </span>
+                    `;
+                }
+                
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                 const blockClass = r.isBlocked ? 'is-blocked' : '';
@@ -1295,6 +1379,7 @@
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
                             <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-400">(${r.groupName})</span></div>
                             <div class="flex items-center gap-1.5">
+                                ${iconOnlyPhoneBadge}
                                 ${statusBadgeHTML}
                                 <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
                             </div>
@@ -1322,10 +1407,11 @@
 
                             ${unifiedScheduleHTML}
                         </div>
-                        <div class="flex flex-wrap items-center gap-2 mt-4 pt-3 border-t border-slate-100">
-                            ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white">💬 واتساب</a>` : ''}
-                            
-                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white mr-auto">🗑️ حذف المعلم</button>
+                        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
+                            <div class="flex gap-2">
+                                ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}
+                            </div>
+                            <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
                         </div>
                     </div>
                 `;
@@ -1359,70 +1445,6 @@
         function deleteRecord(lessonId, phone, teacherName) {
             // إظهار النافذة المخصصة الظريفة بدلاً من confirm الافتراضية
             showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع المواعيد نهائياً؟`, () => {
-                const cleanName = cleanTeacherName(teacherName);
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (k && k.startsWith('lessonState_')) {
-                        try {
-                            const st = JSON.parse(localStorage.getItem(k) || '{}');
-                            if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
-                                const id = k.replace('lessonState_', '');
-                                keysToRemove.push('lessonState_' + id); keysToRemove.push('publishState_' + id);
-                            }
-                        } catch (e) {}
-                    }
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                if (phone && phone !== 'غير مسجل') { localStorage.removeItem('teacherAccount_' + phone); localStorage.removeItem('teacherVerification_' + phone); localStorage.removeItem('teacherBlocked_' + phone); }
-                if (cleanName) { localStorage.removeItem('teacherVerification_name_' + cleanName); localStorage.removeItem('teacherBlocked_name_' + cleanName); }
-                renderAllRecords();
-                showToast('🗑️ تم حذف المعلم بنجاح');
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            populateGradeFilter(); renderMainGradeSubjectsBar(); renderAllRecords();
-        });
-    </script>
-</body>
-</html>div>
-                    </div>
-                `;
-            } catch (e) { sec.classList.add('hidden'); }
-        }
-
-        function deleteRecord(lessonId, phone, teacherName) {
-            // إظهار النافذة المخصصة الظريفة بدلاً من confirm الافتراضية
-            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع المواعيد نهائياً؟`, () => {
-                const cleanName = cleanTeacherName(teacherName);
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (k && k.startsWith('lessonState_')) {
-                        try {
-                            const st = JSON.parse(localStorage.getItem(k) || '{}');
-                            if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
-                                const id = k.replace('lessonState_', '');
-                                keysToRemove.push('lessonState_' + id); keysToRemove.push('publishState_' + id);
-                            }
-                        } catch (e) {}
-                    }
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                if (phone && phone !== 'غير مسجل') { localStorage.removeItem('teacherAccount_' + phone); localStorage.removeItem('teacherVerification_' + phone); localStorage.removeItem('teacherBlocked_' + phone); }
-                if (cleanName) { localStorage.removeItem('teacherVerification_name_' + cleanName); localStorage.removeItem('teacherBlocked_name_' + cleanName); }
-                renderAllRecords();
-                showToast('🗑️ تم حذف المعلم بنجاح');
-            });
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            populateGradeFilter(); renderMainGradeSubjectsBar(); renderAllRecords();
-        });
-    </script>
-</body>
-</html>teacherName}) وجميع المواعيد نهائياً؟`, () => {
                 const cleanName = cleanTeacherName(teacherName);
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
