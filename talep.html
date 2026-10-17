@@ -1241,7 +1241,11 @@
                     }
 
                     let subjectsText = '';
+                    // ✅ الاحتفاظ بالمصفوفة الأصلية للمطابقة الدقيقة
+                    let rawSubjectsArray = [];
+                    
                     if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
+                        rawSubjectsArray = state.selectedSubjects;
                         subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1] : sub).join('، ');
                     }
 
@@ -1267,6 +1271,7 @@
                         count: state.g_count || '--',
                         grade: state.s_grade || '',
                         subject: subjectsText || '',
+                        rawSubjects: rawSubjectsArray, // ✅ تمرير المصفوفة هنا
                         days: daysText,
                         startTime: startTime,
                         endTime: endTime,
@@ -1391,12 +1396,15 @@
             }, 300);
         }
 
-        // 🌟 إظهار أيقونة المستر/المس بالاعتماد على بيانات السحابة 🌟
+        // 🌟 إظهار أيقونة المستر/المس بالاعتماد على بيانات السحابة والفلترة الدقيقة 🌟
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
             
             const selectedSubject = document.getElementById('s_subject').value;
             const selectedGrade = document.getElementById('s_grade').value;
+            
+            // ✅ تشكيل نص المطابقة الدقيق (مثل: "الثاني الثانوي - فيزياء")
+            const exactMatchString = `${selectedGrade} - ${selectedSubject}`;
             
             // جلب البيانات من السحابة (فايربيس)
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
@@ -1415,7 +1423,17 @@
             registeredList.forEach(t => {
                 const distanceInMeters = map.distance(centerPos, [t.lat, t.lng]);
 
-                if (distanceInMeters <= radiusInMeters) {
+                // ✅ الفلترة: التأكد أن المعلم يدرس نفس الصف والمادة بالضبط
+                let teachesExactSubject = false;
+                if (t.rawSubjects && t.rawSubjects.length > 0) {
+                    teachesExactSubject = t.rawSubjects.includes(exactMatchString);
+                } else {
+                    // كإجراء احتياطي إذا تم التسجيل بطريقة قديمة
+                    teachesExactSubject = (t.grade === selectedGrade && t.subject.includes(selectedSubject));
+                }
+
+                // ✅ عرض المعلم فقط إذا كان في النطاق ويدرس المادة المطلوبة
+                if (distanceInMeters <= radiusInMeters && teachesExactSubject) {
                     shownCount++;
                     const displaySubject = t.subject || selectedSubject;
                     const displayGrade = t.grade || selectedGrade;
@@ -1458,9 +1476,9 @@
             });
 
             if (shownCount === 0) {
-                showToast("المستر المسجل خارج نطاق الدائرة الحالية، وسّع النطاق أو حرّك النقطة الزرقاء!", true);
+                showToast(`لم نتمكن من العثور على معلم لمادة (${selectedSubject}) في هذا النطاق!`, true);
             } else {
-                showToast(`تم العثور على (${shownCount}) معلم، اضغط على أيقونة المعلم لعرض بياناته ✨`);
+                showToast(`تم العثور على (${shownCount}) معلم لمادة (${selectedSubject}) ✨`);
             }
         }
     </script>
