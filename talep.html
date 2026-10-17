@@ -537,6 +537,28 @@
         </div>
     </div>
 
+    <!-- 🌟 كود الاتصال بقاعدة بيانات فايربيس 🌟 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.collection = collection;
+      window.getDocs = getDocs;
+    </script>
+
     <script>
         // ==========================================
         // 0. المتغيرات والتأثيرات والمشاركة والواتساب
@@ -989,16 +1011,10 @@
                     updateStudentSummary();
                     showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً");
                 }
-                if (currentCenter && map) {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-                }
             });
 
             window.addEventListener('focus', () => {
                 populateStagesDropdown(true);
-                if (currentCenter && map) {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-                }
             });
         };
 
@@ -1203,97 +1219,67 @@
             closeDeleteModal();
         }
 
-        // ==========================================
-        // 4. جلب بيانات المستر المسجل ورقم التليفون من school.html / group.html
-        // ==========================================
-        function extractTeacherPhone(state) {
-            const directKeys = ['g_phone', 't_phone', 'm_phone', 'phone', 'whatsapp', 'teacher_phone', 'teacherPhone', 'mobile', 'tel'];
-            for (const k of directKeys) {
-                if (state[k] && String(state[k]).trim() !== '') {
-                    return String(state[k]).trim();
-                }
-            }
-            const phoneRegex = /(?:01[0125]\d{8})/;
-            for (const key in state) {
-                if (typeof state[key] === 'string' && phoneRegex.test(state[key])) {
-                    return state[key].match(phoneRegex)[0];
-                }
-            }
-            for (let i = 0; i < localStorage.length; i++) {
-                const storageKey = localStorage.key(i);
-                if (storageKey && storageKey !== 'talep_data' && !storageKey.startsWith('publishState_')) {
-                    const rawVal = localStorage.getItem(storageKey) || '';
-                    if (phoneRegex.test(rawVal)) {
-                        return rawVal.match(phoneRegex)[0];
-                    }
-                }
-            }
-            return '';
-        }
-
-        function getRegisteredTeachersFromStorage() {
+        // 🌟 دالة جلب المجموعات والمواعيد مباشرة من فايربيس 🌟
+        async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('lessonState_')) {
-                    const lessonId = key.replace('lessonState_', '');
-                    const publishState = localStorage.getItem('publishState_' + lessonId);
+            if (!window.db) return { registeredList, hiddenCount };
 
-                    if (publishState === 'false') {
+            try {
+                // جلب جميع الحصص من جدول lessons في فايربيس
+                const querySnapshot = await window.getDocs(window.collection(window.db, "lessons"));
+                
+                querySnapshot.forEach((doc) => {
+                    const state = doc.data();
+                    const lessonId = doc.id;
+
+                    // تجاهل الحصص المخفية من الإعدادات
+                    if (state.g_publish_map === false) {
                         hiddenCount++;
-                        continue;
+                        return;
                     }
 
-                    if (publishState === 'true' || publishState === null) {
-                        try {
-                            const state = JSON.parse(localStorage.getItem(key) || '{}');
-                            
-                            let subjectsText = '';
-                            if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
-                                subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1] : sub).join('، ');
-                            }
-
-                            let locLabel = 'السنتر';
-                            if (state.g_loc === 'l_teach') locLabel = 'بيت المستر';
-                            else if (state.g_loc === 'l_stud') locLabel = 'في منزلي';
-
-                            let fullAddress = state.m_address || 'محدد على الخريطة';
-                            if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
-
-                            const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
-                            const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
-
-                            const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
-
-                            const lat = state.lat ? parseFloat(state.lat) : 30.0444;
-                            const lng = state.lng ? parseFloat(state.lng) : 31.2357;
-
-                            const extractedPhone = extractTeacherPhone(state);
-
-                            registeredList.push({
-                                lessonId: lessonId,
-                                groupName: state.g_name || `مجموعة ${lessonId}`,
-                                teacherName: state.g_teacher || 'المعلم',
-                                count: state.g_count || '--',
-                                grade: state.s_grade || '',
-                                subject: subjectsText || '',
-                                days: daysText,
-                                startTime: startTime,
-                                endTime: endTime,
-                                locType: locLabel,
-                                address: fullAddress,
-                                phone: extractedPhone,
-                                gender: state.t_gender || 'مستر',
-                                lat: lat,
-                                lng: lng
-                            });
-                        } catch (e) {
-                            console.error("خطأ في قراءة بيانات المجموعة:", e);
-                        }
+                    let subjectsText = '';
+                    if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
+                        subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1] : sub).join('، ');
                     }
-                }
+
+                    let locLabel = 'السنتر';
+                    if (state.g_loc === 'l_teach') locLabel = 'بيت المستر';
+                    else if (state.g_loc === 'l_stud') locLabel = 'في منزلي';
+
+                    let fullAddress = state.m_address || 'محدد على الخريطة';
+                    if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
+
+                    const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
+                    const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
+
+                    const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+
+                    const lat = state.lat ? parseFloat(state.lat) : 30.0444;
+                    const lng = state.lng ? parseFloat(state.lng) : 31.2357;
+
+                    registeredList.push({
+                        lessonId: lessonId,
+                        groupName: state.g_name || `مجموعة ${lessonId}`,
+                        teacherName: state.g_teacher || 'المعلم',
+                        count: state.g_count || '--',
+                        grade: state.s_grade || '',
+                        subject: subjectsText || '',
+                        days: daysText,
+                        startTime: startTime,
+                        endTime: endTime,
+                        locType: locLabel,
+                        address: fullAddress,
+                        phone: state.g_phone || '',
+                        gender: state.t_gender || 'مستر',
+                        lat: lat,
+                        lng: lng
+                    });
+                });
+            } catch (error) {
+                console.error("خطأ في جلب البيانات من السحابة:", error);
             }
 
             return { registeredList, hiddenCount };
@@ -1405,13 +1391,15 @@
             }, 300);
         }
 
-        // ✅ إظهار أيقونة المستر/المس مع عرض رقم التليفون وتفعيل زر الواتساب
-        function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
+        // 🌟 إظهار أيقونة المستر/المس بالاعتماد على بيانات السحابة 🌟
+        async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
             
             const selectedSubject = document.getElementById('s_subject').value;
             const selectedGrade = document.getElementById('s_grade').value;
-            const { registeredList, hiddenCount } = getRegisteredTeachersFromStorage();
+            
+            // جلب البيانات من السحابة (فايربيس)
+            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
             if (registeredList.length === 0) {
                 if (hiddenCount > 0) {
