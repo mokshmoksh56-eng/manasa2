@@ -506,7 +506,9 @@
           collection,
           getDocs,
           doc,
-          onSnapshot
+          onSnapshot,
+          getDoc,
+          setDoc
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -526,13 +528,15 @@
       window.getDocs = getDocs;
       window.fsDoc = doc;
       window.fsOnSnapshot = onSnapshot;
+      window.fsGetDoc = getDoc;
+      window.fsSetDoc = setDoc;
 
       console.log("✅ Firebase + Firestore جاهز في talep.html");
     </script>
 
     <script>
         // ==========================================
-        // 0. المتغيرات والتأثيرات والمشاركة والواتساب
+        // 0. المتغيرات الأساسية
         // ==========================================
         let map = null; let teachersLayer = null; let studentMarker = null;
         let searchCircle = null; let currentCenter = null; let isMapFullscreen = false;
@@ -542,6 +546,7 @@
         let curriculumCache = null;
         let curriculumUnsubscribe = null;
         let isFirstCurriculumSnapshot = true;
+        let curriculumSyncStarted = false;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -603,7 +608,7 @@
         };
 
         // ==========================================
-        // 1. منطق التكبير والتصغير مع دعم سحبة الرجوع بالهاتف
+        // 1. Fullscreen Map
         // ==========================================
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
@@ -660,7 +665,7 @@
         }
 
         // ==========================================
-        // 2. منطق العمر
+        // 2. Age check
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
@@ -680,7 +685,7 @@
         }
 
         // ==========================================
-        // 🌟 المنهج الافتراضي الكامل الموحّد (مطابق لـ school/group)
+        // 🌟 المنهج الافتراضي الكامل (مطابق لـ school/group)
         // ==========================================
         const defaultCurriculum = {
             primary: {
@@ -719,7 +724,7 @@
         };
 
         // ==========================================
-        // ✅ normalizeCurriculum محصّنة: تكمل الصفوف الناقصة من الافتراضي
+        // ✅ normalizeCurriculum محصّنة: تكمل الصفوف + المواد الناقصة
         // ==========================================
         function normalizeCurriculum(currObj) {
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
@@ -741,14 +746,14 @@
                     st.gradeSubjects = {};
                 }
 
-                // ✅ إضافة الصفوف الناقصة من الافتراضي
+                // ✅ دمج الصفوف (نضيف الناقص فقط، لا نحذف الموجود)
+                const mergedGrades = [...st.grades];
                 (defStage.grades || []).forEach(defGrade => {
-                    if (!st.grades.includes(defGrade)) {
-                        st.grades.push(defGrade);
-                    }
+                    if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
                 });
+                st.grades = mergedGrades;
 
-                // لكل صف: لو gradeSubjects ناقص أو فارغ → يملأ من الافتراضي
+                // ✅ لكل صف: تكملة المواد الناقصة
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
                         if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
@@ -756,6 +761,13 @@
                         } else {
                             st.gradeSubjects[g] = [...st.subjs];
                         }
+                    } else {
+                        const existing = st.gradeSubjects[g];
+                        const defSubjs = (defStage.gradeSubjects && defStage.gradeSubjects[g]) || [];
+                        defSubjs.forEach(ds => {
+                            if (!existing.includes(ds)) existing.push(ds);
+                        });
+                        st.gradeSubjects[g] = existing;
                     }
                 });
             });
@@ -764,7 +776,7 @@
         }
 
         // ==========================================
-        // ✅ getCurriculum: يعيد الافتراضي إذا المحفوظ ناقص
+        // ✅ getCurriculum: كاش → localStorage → افتراضي
         // ==========================================
         function getCurriculum() {
             if (curriculumCache) return curriculumCache;
@@ -923,67 +935,93 @@
         }
 
         // ==========================================
-        // 🌟 جلب سريع من Firebase قبل بناء الواجهة
+        // 🌟 Firebase Sync — استيراد مستقل مضمون
         // ==========================================
-        async function quickFetchCurriculumFromFirebase() {
-            // انتظر تحميل Firebase حتى 3 ثواني
-            for (let i = 0; i < 30 && (!window.db || !window.fsDoc || !window.fsOnSnapshot); i++) {
-                await new Promise(r => setTimeout(r, 100));
+        let firebaseSyncModule = null;
+
+        async function loadFirebaseModule() {
+            if (firebaseSyncModule) return firebaseSyncModule;
+            try {
+                const { initializeApp, getApps } = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"
+                );
+                const fs = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"
+                );
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+                    authDomain: "ehgezly-ea5dd.firebaseapp.com",
+                    projectId: "ehgezly-ea5dd",
+                    storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+                    messagingSenderId: "472216348338",
+                    appId: "1:472216348338:web:db726630ef6781301e0bab"
+                };
+
+                const existingApps = getApps();
+                const app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig);
+                const db = fs.getFirestore(app);
+
+                firebaseSyncModule = {
+                    db,
+                    getDoc: fs.getDoc,
+                    setDoc: fs.setDoc,
+                    onSnapshot: fs.onSnapshot,
+                    doc: fs.doc
+                };
+                return firebaseSyncModule;
+            } catch (err) {
+                console.error("❌ فشل استيراد Firebase:", err);
+                return null;
             }
-            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) {
-                console.warn("⚠️ Firebase غير متاح — سيتم استخدام المحلي");
-                return;
-            }
+        }
+
+        async function fetchCurriculumOnceFromFirebase() {
+            const mod = await loadFirebaseModule();
+            if (!mod) return false;
 
             try {
-                const ref = window.fsDoc(window.db, "curriculum", "main");
-                const snap = await new Promise((resolve) => {
-                    let done = false;
-                    const unsub = window.fsOnSnapshot(ref, (s) => {
-                        if (done) return;
-                        done = true;
-                        try { unsub(); } catch (e) {}
-                        resolve(s);
-                    }, () => {
-                        if (done) return;
-                        done = true;
-                        try { unsub(); } catch (e) {}
-                        resolve(null);
-                    });
-                    setTimeout(() => {
-                        if (done) return;
-                        done = true;
-                        try { unsub(); } catch (e) {}
-                        resolve(null);
-                    }, 2500);
-                });
+                const ref = mod.doc(mod.db, "curriculum", "main");
+                const snap = await mod.getDoc(ref);
 
-                if (snap && snap.exists()) {
+                if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
-                    console.log("⚡ تم جلب المنهج سريعاً من Firebase قبل بناء الواجهة");
+                    console.log("⚡ [talep] تم جلب المنهج من Firebase (getDoc) بنجاح");
+                    return true;
+                } else {
+                    console.log("📤 [talep] مستند curriculum/main غير موجود — رفع الافتراضي");
+                    try {
+                        await mod.setDoc(ref, {
+                            ...JSON.parse(JSON.stringify(defaultCurriculum)),
+                            updatedAt: Date.now()
+                        });
+                        console.log("✅ [talep] تم رفع المنهج الافتراضي إلى Firebase");
+                        curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                        return true;
+                    } catch (e) {
+                        console.warn("⚠️ فشل رفع الافتراضي:", e);
+                        return false;
+                    }
                 }
             } catch (err) {
-                console.warn("⚠️ فشل الجلب السريع:", err);
+                console.warn("⚠️ [talep] getDoc فشلت:", err);
+                return false;
             }
         }
 
-        // ==========================================
-        // 🌟 مزامنة المنهج من Firebase (المستمع اللحظي)
-        // ==========================================
-        function startCurriculumFirebaseSync() {
-            if (!window.db || !window.fsOnSnapshot || !window.fsDoc) {
-                setTimeout(startCurriculumFirebaseSync, 800);
-                return;
-            }
+        async function startCurriculumRealtimeListener() {
+            const mod = await loadFirebaseModule();
+            if (!mod) return;
+
             if (curriculumUnsubscribe) curriculumUnsubscribe();
 
-            const ref = window.fsDoc(window.db, "curriculum", "main");
-
-            curriculumUnsubscribe = window.fsOnSnapshot(ref, (snap) => {
+            const ref = mod.doc(mod.db, "curriculum", "main");
+            curriculumUnsubscribe = mod.onSnapshot(ref, (snap) => {
                 if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
@@ -994,22 +1032,18 @@
                     populateStagesDropdown(true);
                     updateStudentSummary();
 
-                    if (isFirstCurriculumSnapshot) {
-                        isFirstCurriculumSnapshot = false;
-                        console.log("☁️ تم تحميل المنهج من Firebase لأول مرة في talep.html");
-                    } else {
+                    if (!isFirstCurriculumSnapshot) {
                         showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة");
                     }
-                } else {
-                    console.log("📤 مستند المنهج غير موجود في Firebase — talep سيستخدم الافتراضي المحلي");
+                    isFirstCurriculumSnapshot = false;
                 }
-            }, (error) => {
-                console.warn("⚠️ متابعة المنهج من Firebase فشلت في talep:", error);
+            }, (err) => {
+                console.warn("⚠️ [talep] onSnapshot فشل:", err);
             });
         }
 
         // ==========================================
-        // BroadcastChannel + Storage + Focus احتياطي
+        // BroadcastChannel — مزامنة التبويبات
         // ==========================================
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
@@ -1026,6 +1060,9 @@
             };
         }
 
+        // ==========================================
+        // Radius + Summary
+        // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
             const display = document.getElementById('radius_val_display');
@@ -1102,17 +1139,37 @@
         }
 
         // ==========================================
-        // ✅ onload: Firebase أولاً ثم بناء الواجهة
+        // ✅ onload: Firebase أولاً (getDoc) ثم بناء الواجهة
         // ==========================================
         window.onload = async () => {
-            // 1) محاولة جلب سريعة من Firebase أولاً
-            await quickFetchCurriculumFromFirebase();
+            // 1) محاولة جلب مضمونة من Firebase
+            try {
+                await fetchCurriculumOnceFromFirebase();
+            } catch (e) {
+                console.warn("⚠️ فشل الجلب الأولي:", e);
+            }
 
-            // 2) بناء الواجهة
+            // 2) إصلاح تلقائي لو curriculumCache فارغ
+            if (!curriculumCache) {
+                try {
+                    const saved = localStorage.getItem('app_curriculum');
+                    if (saved) {
+                        curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                    } else {
+                        curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    }
+                } catch (e) {
+                    curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                }
+            }
+
+            // 3) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
-            // 3) ربط المستمعات
+            // 4) ربط المستمعات
             document.querySelectorAll('input, select').forEach(el => {
                 if (el.id !== 'search_radius') {
                     el.addEventListener('input', saveStudentData);
@@ -1120,13 +1177,12 @@
                 }
             });
 
+            // 5) مستمعات احتياطية
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
                     try {
                         const saved = localStorage.getItem('app_curriculum');
-                        if (saved) {
-                            curriculumCache = normalizeCurriculum(JSON.parse(saved));
-                        }
+                        if (saved) curriculumCache = normalizeCurriculum(JSON.parse(saved));
                     } catch (err) {}
                     populateStagesDropdown(true);
                     updateStudentSummary();
@@ -1148,10 +1204,13 @@
                 } catch (e) {}
             });
 
-            // 4) تشغيل المستمع اللحظي Firebase
-            startCurriculumFirebaseSync();
+            // 6) المستمع اللحظي من Firebase
+            startCurriculumRealtimeListener();
         };
 
+        // ==========================================
+        // Location flow
+        // ==========================================
         function triggerLocationFlow() {
             const subject = document.getElementById('s_subject').value;
             const grade = document.getElementById('s_grade').value;
@@ -1180,6 +1239,9 @@
             startSmartSearch();
         }
 
+        // ==========================================
+        // Saved locations & teachers
+        // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
             editingLocationIndex = -1;
@@ -1441,7 +1503,7 @@
         }
 
         // ==========================================
-        // 5. منطق الخريطة والرادار
+        // 5. Map + Radar
         // ==========================================
         function initMap() {
             if (!map) {
@@ -1547,7 +1609,7 @@
         }
 
         // ==========================================
-        // ✅ دالة تطبيع النصوص والمقارنة الصارمة
+        // Text normalization + strict matching
         // ==========================================
         function normalizeArabicText(str) {
             if (!str) return '';
@@ -1583,9 +1645,6 @@
             return (teacherSubjs.includes(selSubj)) && (normalizeArabicText(teacher.grade) === selGrade);
         }
 
-        // ==========================================
-        // ✅ الفلترة الصارمة وعرض النتائج
-        // ==========================================
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
 
