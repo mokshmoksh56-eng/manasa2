@@ -447,7 +447,14 @@
         });
 
         window.onload = function() {
-            // مسحنا الكود اللي كان بيعمل Redirect مباشر (عشان تلحق تشوف الصفحة)
+            const loggedInTeacher = localStorage.getItem('loggedInTeacher');
+            
+            // تعديل فترة الانتظار لتتمكن من رؤية الصفحة ورسالة النجاح قبل التحويل المباشر
+            if (loggedInTeacher) {
+                showSuccessPopup('أهلاً بك مجدداً! ✨', 'جاري تحويلك إلى لوحة التحكم الخاصة بك...', './index2.html');
+                return; 
+            }
+
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
@@ -460,7 +467,7 @@
             document.getElementById('successModalTitle').textContent = title;
             document.getElementById('successModalDesc').textContent = desc;
             document.getElementById('successModal').classList.add('active');
-            setTimeout(() => { window.location.href = url; }, 1400);
+            setTimeout(() => { window.location.href = url; }, 2500); // زيادة مدة الانتظار لتلحق تشوفها بوضوح
         }
 
         function switchTab(tab) {
