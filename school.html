@@ -891,7 +891,7 @@
                 }
             }
             populateGradeFilter();
-            await renderAllRecords(); // تأكد من await
+            await renderAllRecords();
             if (toastText) showToast(toastText);
         }
 
@@ -1122,7 +1122,7 @@
         }
 
         // ==========================================
-        // Teacher Records & Firebase Sync (الإصلاح الجذري هنا)
+        // Teacher Records & Firebase Sync
         // ==========================================
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
@@ -1177,15 +1177,32 @@
             }
         }
 
-        // ✅ الدالة المعدلة: تدمج بيانات Firebase مع البيانات المحلية
+        // ✅ دالة جديدة لجلب حالات توثيق وحظر المعلمين من Firebase
+        async function fetchTeachersFromFirebase() {
+            try {
+                if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
+                const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "teachers"));
+                const teachers = [];
+                querySnapshot.forEach((doc) => {
+                    teachers.push({ id: doc.id, ...doc.data() });
+                });
+                return teachers;
+            } catch (e) {
+                console.warn("خطأ في جلب بيانات المعلمين من السحابة:", e);
+                return [];
+            }
+        }
+
+        // ✅ الدالة المعدلة: تدمج بيانات السحابة (الدروس + المعلمين) مع البيانات المحلية
         async function collectAllAppData() {
             const teacherAccounts = [];
             const rawLessons = [];
             const todayISO = new Date().toISOString().split('T')[0];
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة'];
 
-            // 1. جلب المعلمين من السحابة
+            // 1. جلب الدروس والمعلمين من السحابة
             const firebaseLessons = await fetchLessonsFromFirebase();
+            const firebaseTeachers = await fetchTeachersFromFirebase();
 
             // 2. دمج دروس السحابة مع دروس الهاتف المحلية
             const allLessonsData = [];
@@ -1321,13 +1338,27 @@
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
+            // 6. التحقق من حالات التوثيق والحظر بناءً على بيانات السحابة
             const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
-                let verifRaw = getTeacherVerificationStatus(entry.phone, entry.teacherName);
+                // البحث عن حالة المعلم في بيانات السحابة (Firebase)
+                const cloudTeacher = firebaseTeachers.find(t => 
+                    (entry.phone !== 'غير مسجل' && t.phone === entry.phone) || 
+                    (t.teacherName && cleanTeacherName(t.teacherName) === entry.teacherName)
+                );
+
+                // إذا وجدت بيانات في السحابة تُعتمد، وإلا يتم الرجوع للمحلي كاحتياطي
+                let verifRaw = cloudTeacher ? cloudTeacher.verification : getTeacherVerificationStatus(entry.phone, entry.teacherName);
                 if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
+                
                 entry.verification = verifRaw;
                 entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification);
-                entry.isBlocked = isTeacherBlockedStatus(entry.phone, entry.teacherName);
+                
+                // جلب حالة الحظر من السحابة إذا وُجدت، وإلا من المحلي
+                let isBlockedFinal = cloudTeacher ? cloudTeacher.isBlocked : isTeacherBlockedStatus(entry.phone, entry.teacherName);
+                
+                entry.isBlocked = isBlockedFinal;
                 if (entry.verification === 'حظر' || entry.expiryInfo.expired) entry.isBlocked = true;
+                
                 return entry;
             });
 
@@ -1347,45 +1378,45 @@
             }
         }
 
-        function updateVerification(phone, val, teacherName = '') {
+        async function updateVerification(phone, val, teacherName = '') {
             const cleanName = cleanTeacherName(teacherName);
             let regDate = new Date().toISOString().split('T')[0];
             const accKey = 'teacherAccount_' + phone;
+            
             if (phone && phone !== 'غير مسجل' && localStorage.getItem(accKey)) {
                 regDate = JSON.parse(localStorage.getItem(accKey)).createdAt || regDate;
             }
+            
             const expiryInfo = calculateExpiration(regDate, val);
             const isBlocked = (val === 'حظر' || expiryInfo.expired);
 
+            // 1. تحديث البيانات محلياً لتسريع الاستجابة
             if (phone && phone !== 'غير مسجل') {
                 localStorage.setItem('teacherVerification_' + phone, val);
                 localStorage.setItem('teacherBlocked_' + phone, String(isBlocked));
-                if (localStorage.getItem(accKey)) {
-                    try {
-                        const acc = JSON.parse(localStorage.getItem(accKey));
-                        acc.verification = val;
-                        acc.isBlocked = isBlocked;
-                        localStorage.setItem(accKey, JSON.stringify(acc));
-                    } catch (e) {}
+            }
+
+            // 2. إرسال التحديث إلى قاعدة بيانات فايربيس السحابية ليتزامن مع جميع الأجهزة
+            if (window.db && window.fsDoc && window.fsSetDoc) {
+                try {
+                    setCloudStatus('syncing', '⏳ جاري تحديث حالة المعلم السحابية...');
+                    const docId = (phone && phone !== 'غير مسجل') ? phone : cleanName;
+                    
+                    await window.fsSetDoc(window.fsDoc(window.db, "teachers", docId), {
+                        phone: phone,
+                        teacherName: cleanName,
+                        verification: val,
+                        isBlocked: isBlocked,
+                        updatedAt: Date.now()
+                    }, { merge: true }); // merge: true تضمن تحديث الحقول المحددة فقط
+                    
+                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                } catch (error) {
+                    console.error("خطأ في تحديث حالة المعلم على فايربيس:", error);
+                    showToast("⚠️ تم التحديث محلياً، لكن فشل الاتصال بالسحابة", true);
                 }
             }
-            if (cleanName) {
-                localStorage.setItem('teacherVerification_name_' + cleanName, val);
-                localStorage.setItem('teacherBlocked_name_' + cleanName, String(isBlocked));
-            }
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
-                if (k && k.startsWith('teacherAccount_')) {
-                    try {
-                        const acc = JSON.parse(localStorage.getItem(k) || '{}');
-                        if (cleanTeacherName(acc.name || acc.fullName) === cleanName) {
-                            acc.isBlocked = isBlocked;
-                            localStorage.setItem(k, JSON.stringify(acc));
-                            if (acc.phone) localStorage.setItem('teacherBlocked_' + acc.phone, String(isBlocked));
-                        }
-                    } catch (e) {}
-                }
-            }
+
             if (showingArchive && !isBlocked) {
                 showingArchive = false;
                 const btn = document.getElementById('btnToggleArchive');
@@ -1397,10 +1428,15 @@
                 const searchInput = document.getElementById('searchInput');
                 if (searchInput) searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
             }
+            
             broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
-            if (isBlocked && val !== 'حظر') showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`, true);
-            else showToast(`✨ تم تحديث الباقة وتوثيق الحساب إلى: ${val}`);
+            
+            if (isBlocked && val !== 'حظر') {
+                showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`, true);
+            } else {
+                showToast(`✨ تم تحديث الباقة وتوثيق الحساب في السحابة إلى: ${val}`);
+            }
         }
 
         function recordWaClick(identifier) {
@@ -1440,7 +1476,6 @@
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
 
-        // ✅ تم تحويل الدالة إلى async لتنتظر السحابة
         async function renderAllRecords() {
             const { records, totalLessonsCount } = await collectAllAppData();
             const uniqueMrSet = new Set(), uniqueMsSet = new Set();
@@ -1654,7 +1689,7 @@
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
             populateGradeFilter();
-            renderAllRecords(); // سيتم استدعاء collectAllAppData داخلياً
+            renderAllRecords(); 
             loadCurriculumFromFirebase();
 
             window.addEventListener('storage', (e) => {
