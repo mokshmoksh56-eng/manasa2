@@ -8,6 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
@@ -16,6 +17,9 @@
         html, body { overscroll-behavior-x: none; touch-action: pan-y; }
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
+        /* ============================================ */
+        /* ✅ الهيدر */
+        /* ============================================ */
         .hero-banner {
             position: relative; width: 100%; min-height: 120px;
             background-image: url('./teacher2.png'); background-size: cover; background-position: center 20%;
@@ -30,12 +34,16 @@
         .hero-brand .accent { color: #10B981; }
         .hero-headline { font-size: 13px; font-weight: 900; color: #1E293B; margin-top: 2px; }
 
+        /* ============================================ */
+        /* ✅ الحاوية والبطاقات (مضغوطة) */
+        /* ============================================ */
         .main-container { max-width: 800px; margin: -10px auto 0; width: 100%; padding: 0 10px 50px; position: relative; z-index: 10; }
         
         .smart-card {
             background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 12px;
         }
 
+        /* 🟢 البطاقة الخضراء (البيانات) 🟢 */
         .bg-green-solid {
             background: #10B981 !important; border: 1.5px solid #059669 !important;
             border-top: 4px solid #047857 !important; border-bottom: 4px solid #064E3B !important;
@@ -46,6 +54,7 @@
         .bg-green-solid .form-control { border: 1.5px solid #059669 !important; border-bottom: 3px solid #064E3B !important; }
         .bg-green-solid .form-control:focus { border-color: #047857 !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.3) !important; }
         
+        /* 🟡 البطاقة الصفراء (المرحلة والمادة) 🟡 */
         .bg-yellow-solid {
             background-color: #FEF08A !important; border: 1.5px solid #FDE047 !important;
             border-top: 4px solid #FACC15 !important; border-bottom: 4px solid #CA8A04 !important;
@@ -56,6 +65,7 @@
         .bg-yellow-solid .form-control:focus { border-color: #A16207 !important; box-shadow: 0 0 0 3px rgba(250,204,21,0.4) !important; }
         .bg-yellow-solid .form-control:disabled { background-color: #FEF9C3 !important; color: #A16207 !important; border-color: #FDE047 !important; border-bottom-color: #EAB308 !important; }
 
+        /* شريط أزرار مواد الصف السريعة داخل البطاقة الصفراء */
         .student-grade-subjects-box {
             margin-top: 10px;
             padding: 8px 10px;
@@ -87,6 +97,7 @@
             border-bottom-color: #064E3B;
         }
 
+        /* ⚪ البطاقة الأبيض الغامق (تفضيلات) ⚪ */
         .bg-offwhite-card {
             background-color: #F1F5F9 !important; border: 1.5px solid #E2E8F0 !important;
             border-top: 4px solid #94A3B8 !important; border-bottom: 4px solid #475569 !important;
@@ -136,6 +147,7 @@
         #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background-color: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899 !important; }
 
+        /* ✅ ملخص بيانات الطالب */
         .student-summary-card {
             background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 1.5px solid #86EFAC; border-bottom: 3px solid #16A34A;
             border-radius: 10px; padding: 10px 12px; margin-top: 15px; margin-bottom: 10px; display: none; 
@@ -149,9 +161,11 @@
         }
         .summary-badge span { color: #15803D; font-weight: 900; font-size: 9px; }
 
+        /* ✅ شريط تمرير النطاق */
         .styled-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 4px; background: #CBD5E1; outline: none; margin-top: 4px; margin-bottom: 4px; }
         .styled-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #10B981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); border: 2.5px solid #fff; }
         
+        /* ✅ أزرار البحث والتحكم */
         .btn-search {
             width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 900;
             display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
@@ -166,6 +180,9 @@
 
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
+        /* ============================================ */
+        /* ✅ الخريطة والنافذة المنبثقة */
+        /* ============================================ */
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; } 
@@ -200,6 +217,7 @@
         .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
         .teacher-popup-detail { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #475569; font-size: 10.5px; margin-bottom: 4px; background: #F8FAFC; padding: 4px 6px; border-radius: 5px; gap: 6px;}
         
+        /* علامة المستر المسجل */
         .registered-teacher-marker {
             background-color: #10B981; color: white; border-radius: 50%;
             width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
@@ -215,6 +233,9 @@
         path.leaflet-interactive { animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
+        /* ============================================ */
+        /* ✅ تصميم القوائم المحفوظة (Dropdown) المضغوطة */
+        /* ============================================ */
         .saved-sections-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         
         .dropdown-btn {
@@ -242,6 +263,9 @@
         .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 2.5px solid #F87171; }
         .btn-del-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
 
+        /* ============================================ */
+        /* ✅ النوافذ المنبثقة (Modals) والإشعارات */
+        /* ============================================ */
         .custom-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.2s; }
         .custom-modal-overlay.active { opacity: 1; visibility: visible; }
         .custom-modal-box { background: #fff; border-radius: 16px; padding: 20px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); transform: translateY(15px) scale(0.95); transition: all 0.2s; border-bottom: 5px solid #10B981; }
@@ -259,6 +283,7 @@
         .custom-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #10B981; color: white; padding: 10px 20px; border-radius: 99px; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); z-index: 9999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 2.5px solid #059669; white-space: nowrap; }
         .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+        /* تعديلات نافذة الموقع الجغرافي */
         .location-disclosure-box { text-align: right; line-height: 1.6; }
         .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
 
@@ -282,6 +307,7 @@
         <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
     </div>
 
+    <!-- 🟢 1. نافذة الإفصاح عن الموقع (Prominent Disclosure) 🟢 -->
     <div id="locationDisclosureModal" class="custom-modal-overlay">
         <div class="custom-modal-box location-disclosure-box">
             <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">📍</div>
@@ -303,6 +329,7 @@
         </div>
     </div>
 
+    <!-- نافذة إدخال اسم الموقع -->
     <div id="saveLocModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div id="locModalEmoji" style="font-size: 36px; margin-bottom: 8px;">🏡</div>
@@ -315,6 +342,7 @@
         </div>
     </div>
 
+    <!-- نافذة تأكيد الحذف -->
     <div id="deleteModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 36px; margin-bottom: 8px;">🗑️</div>
@@ -335,6 +363,7 @@
     </section>
 
     <div class="main-container">
+        <!-- 1. بيانات الطالب (الخلفية الخضراء) -->
         <div class="smart-card bg-green-solid">
             <h3 class="section-title"><span>👤</span> بياناتك الشخصية</h3>
             <div class="form-group">
@@ -363,6 +392,7 @@
             </p>
         </div>
 
+        <!-- 2. المرحلة الدراسية والمادة (الخلفية الصفراء - مرتبطة لحظياً مع school.html) -->
         <div class="smart-card bg-yellow-solid">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="grid-2-always">
@@ -386,6 +416,7 @@
                 </select>
             </div>
 
+            <!-- شريط المواد الخاص بالصف المختار يظهر تحت الصف مباشرة -->
             <div id="studentGradeSubjectsBox" class="student-grade-subjects-box">
                 <div id="studentGradeSubjectsTitle" style="font-size: 11px; font-weight: 900; color: #854D0E; margin-bottom: 6px;">
                     📖 مواد الصف المتاحة (اضغط لاختيار المادة):
@@ -394,6 +425,7 @@
             </div>
         </div>
 
+        <!-- 3. تفضيلات الدرس والبحث (الأبيض الغامق) -->
         <div class="smart-card bg-offwhite-card">
             <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
@@ -425,6 +457,7 @@
                 </div>
             </div>
 
+            <!-- ✅ ملخص بيانات الطالب -->
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
@@ -441,6 +474,7 @@
                 </div>
             </div>
 
+            <!-- ✅ زر البحث الرئيسي -->
             <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="triggerLocationFlow()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -449,6 +483,7 @@
                 تحديد الموقع والبحث بالـ GPS
             </button>
             
+            <!-- ✅ حاوية الخريطة -->
             <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
@@ -458,6 +493,7 @@
                         <svg id="iconCompress" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" /></svg>
                     </button>
 
+                    <!-- زر تحديث الموقع اللحظي من داخل الخريطة -->
                     <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
                         🎯 موقعي الحالي
                     </button>
@@ -465,8 +501,10 @@
                     <div id="map"></div>
                 </div>
                 
+                <!-- منطقة أزرار الخريطة -->
                 <div class="map-actions-wrapper" style="padding: 10px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-top: none; border-bottom: 4px solid #334155; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                     
+                    <!-- ✅ الجداول (القوائم المنسدلة أولاً تحت الخريطة) -->
                     <div class="saved-sections-wrapper" style="margin-top: 0; margin-bottom: 10px;">
                         <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
                             <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
@@ -489,6 +527,7 @@
                         </div>
                     </div>
 
+                    <!-- ✅ زر حفظ المكان (تحت الجداول مباشرة) -->
                     <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
                         📌 إضافة هذا الموقع للمفضلة
                     </button>
@@ -498,6 +537,7 @@
         </div>
     </div>
 
+    <!-- 🌟 كود الاتصال بقاعدة بيانات فايربيس 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
@@ -520,6 +560,9 @@
     </script>
 
     <script>
+        // ==========================================
+        // 0. المتغيرات والتأثيرات والمشاركة والواتساب
+        // ==========================================
         let map = null; let teachersLayer = null; let studentMarker = null; 
         let searchCircle = null; let currentCenter = null; let isMapFullscreen = false; 
         let deleteType = ''; let deleteIndexToConfirm = -1;
@@ -584,6 +627,9 @@
             }
         };
 
+        // ==========================================
+        // 1. منطق التكبير والتصغير مع دعم سحبة الرجوع بالهاتف
+        // ==========================================
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
                 openMapFullscreen();
@@ -638,6 +684,9 @@
             }
         }
 
+        // ==========================================
+        // 2. منطق العمر والربط اللحظي للمراحل والصفوف ومواد كل صف مع school.html
+        // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
             const phoneLabel = document.getElementById('phone_label');
@@ -814,11 +863,13 @@
             renderStudentGradeSubjectsBar();
             saveStudentData();
             updateStudentSummary();
+            // ✅ إعادة فلترة المعلمين فوراً إذا كانت الخريطة مبنية
             if (currentCenter && map) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             }
         }
 
+        // إظهار أزرار المواد الخاصة بالصف المختار تحته مباشرة
         function renderStudentGradeSubjectsBar() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
@@ -860,11 +911,13 @@
             renderStudentGradeSubjectsBar();
             saveStudentData();
             updateStudentSummary();
+            // ✅ إعادة فلترة المعلمين فوراً إذا كانت الخريطة مبنية
             if (currentCenter && map) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             }
         }
 
+        // قناة التزامن اللحظي مع school.html
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
             curriculumChannel.onmessage = function(ev) {
@@ -958,6 +1011,7 @@
                 if(el.id !== 'search_radius') { el.addEventListener('input', saveStudentData); el.addEventListener('change', saveStudentData); }
             });
 
+            // الاستماع اللحظي لأي تعديل يتم في school.html (سواء في المنهج أو في المعلمين والدروس)
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
                     populateStagesDropdown(true);
@@ -971,6 +1025,9 @@
             });
         };
 
+        // ==========================================
+        // 2.5 منطق الإفصاح عن الموقع (Prominent Disclosure)
+        // ==========================================
         function triggerLocationFlow() {
             const subject = document.getElementById('s_subject').value;
             const grade = document.getElementById('s_grade').value;
@@ -980,11 +1037,12 @@
                 return; 
             }
 
+            // التحقق من أن المستخدم قد وافق على استخدام الموقع مسبقاً
             const hasConsented = localStorage.getItem('location_consent_given');
             if (hasConsented === 'true') {
-                startSmartSearch();
+                startSmartSearch(); // المتابعة مباشرة
             } else {
-                document.getElementById('locationDisclosureModal').classList.add('active');
+                document.getElementById('locationDisclosureModal').classList.add('active'); // إظهار نافذة الإفصاح
             }
         }
 
@@ -995,10 +1053,13 @@
 
         function acceptLocation() {
             document.getElementById('locationDisclosureModal').classList.remove('active');
-            localStorage.setItem('location_consent_given', 'true');
-            startSmartSearch();
+            localStorage.setItem('location_consent_given', 'true'); // تسجيل الموافقة
+            startSmartSearch(); // البدء في طلب الإذن الفعلي من الجهاز
         }
 
+        // ==========================================
+        // 3. النوافذ والقوائم المحفوظة (مع إظهار رقم المستر وفتح الواتساب)
+        // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
             editingLocationIndex = -1;
@@ -1170,13 +1231,15 @@
             closeDeleteModal();
         }
 
-        // ✅ جلب الحصص من فايربيس مع الحقول اللازمة للفلترة
+        // ==========================================
+        // 4. جلب الحصص من فايربيس مع كل الحقول اللازمة للفلترة
+        // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
 
             if (!window.db) {
-                console.warn("Firebase غير متصل بعد");
+                console.warn("⚠️ Firebase لم يتصل بعد");
                 return { registeredList, hiddenCount };
             }
 
@@ -1187,12 +1250,13 @@
                     const state = doc.data();
                     const lessonId = doc.id;
 
-                    // تجاهل الحصص المخفية
+                    // تجاهل الحصص المخفية عن الطلاب
                     if (state.g_publish_map === false) {
                         hiddenCount++;
                         return;
                     }
 
+                    // تجهيز نص المواد للعرض
                     let subjectsText = '';
                     if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
                         subjectsText = state.selectedSubjects.map(sub => {
@@ -1221,8 +1285,9 @@
                         groupName: state.g_name || `مجموعة ${lessonId}`,
                         teacherName: state.g_teacher || 'المعلم',
                         count: state.g_count || '--',
-                        grade: state.s_grade || '',
-                        stage: state.s_stage || '',
+                        grade: (state.s_grade || '').trim(),
+                        stageKey: (state.s_stage || '').trim(),
+                        stageName: getStageNameByKey(state.s_stage),
                         subject: subjectsText || '',
                         subjectsRaw: state.selectedSubjects || [],
                         days: daysText,
@@ -1237,12 +1302,30 @@
                     });
                 });
             } catch (error) {
-                console.error("خطأ في جلب البيانات من السحابة:", error);
+                console.error("❌ خطأ في جلب البيانات من السحابة:", error);
             }
 
             return { registeredList, hiddenCount };
         }
 
+        // ✅ دالة مساعدة لجلب اسم المرحلة من المفتاح
+        function getStageNameByKey(stageKey) {
+            if (!stageKey) return '';
+            if (stageKey === 'primary') return 'المرحلة الابتدائية';
+            if (stageKey === 'prep') return 'المرحلة الإعدادية';
+            if (stageKey === 'secondary') return 'المرحلة الثانوية';
+            try {
+                const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
+                if (curr[stageKey] && curr[stageKey].name) {
+                    return curr[stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                }
+            } catch(e) {}
+            return stageKey;
+        }
+
+        // ==========================================
+        // 5. منطق الخريطة والرادار (مع الفلترة حسب المادة والصف)
+        // ==========================================
         function initMap() {
             if (!map) {
                 map = L.map('map', { zoomControl: false });
@@ -1260,11 +1343,17 @@
             }
 
             navigator.geolocation.getCurrentPosition(
-                (pos) => onSuccess(pos.coords.latitude, pos.coords.longitude),
+                (pos) => {
+                    onSuccess(pos.coords.latitude, pos.coords.longitude);
+                },
                 () => {
                     navigator.geolocation.getCurrentPosition(
-                        (pos2) => onSuccess(pos2.coords.latitude, pos2.coords.longitude),
-                        (err2) => onError(err2),
+                        (pos2) => {
+                            onSuccess(pos2.coords.latitude, pos2.coords.longitude);
+                        },
+                        (err2) => {
+                            onError(err2);
+                        },
                         { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
                     );
                 },
@@ -1340,69 +1429,75 @@
             }, 300);
         }
 
-        // ✅ دالة تطبيع النصوص العربية (إزالة المسافات الزائدة وتوحيد التنسيق)
+        // ==========================================
+        // ✅ تطبيع النصوص العربية للمقارنة الدقيقة
+        // ==========================================
         function normalizeArabicText(str) {
             if (!str) return '';
             return String(str)
-                .replace(/\u0640/g, '') // إزالة تطويل الكشيدة
-                .replace(/[\u064B-\u065F\u0670]/g, '') // إزالة التشكيل
-                .replace(/[إأآا]/g, 'ا')
-                .replace(/ى/g, 'ي')
-                .replace(/ة/g, 'ه')
-                .replace(/\s+/g, ' ')
+                .replace(/\u0640/g, '')                    // إزالة الكشيدة
+                .replace(/[\u064B-\u065F\u0670]/g, '')     // إزالة التشكيل
+                .replace(/[إأآا]/g, 'ا')                   // توحيد الألف
+                .replace(/ى/g, 'ي')                        // توحيد الياء
+                .replace(/ة/g, 'ه')                        // توحيد التاء المربوطة
+                .replace(/\s+/g, ' ')                      // مسافة واحدة
                 .trim();
         }
 
-        // ✅ التحقق من تطابق مادة المعلم مع اختيار الطالب (نسخة محسّنة)
-        function isTeacherSubjectMatches(teacher, selectedSubject, selectedGrade) {
-            const selSubj = normalizeArabicText(selectedSubject);
+        // ✅ التحقق من تطابق المعلم مع اختيار الطالب (صف + مادة)
+        function isTeacherSubjectMatches(teacher, selectedSubject, selectedGrade, selectedStageKey) {
+            const selSubj  = normalizeArabicText(selectedSubject);
             const selGrade = normalizeArabicText(selectedGrade);
-            
-            // لو الطالب مش مختار مادة، يظهر كل المعلمين
+
+            // لو الطالب لم يختر مادة → لا فلترة بالمادة
             if (!selSubj) return true;
 
-            // === الطريقة 1 (الأدق): استخدام subjectsRaw ===
+            // ============ الطريقة 1: فحص subjectsRaw بدقة ============
             if (Array.isArray(teacher.subjectsRaw) && teacher.subjectsRaw.length > 0) {
                 const rawMatch = teacher.subjectsRaw.some(raw => {
                     const parts = String(raw).split(' - ');
                     if (parts.length < 2) return false;
-                    
+
                     const rawGrade = normalizeArabicText(parts[0]);
-                    const rawSubj = normalizeArabicText(parts[1]);
-                    
-                    const subjMatch = rawSubj === selSubj;
+                    const rawSubj  = normalizeArabicText(parts[1]);
+
+                    const subjMatch  = rawSubj === selSubj;
                     const gradeMatch = !selGrade || rawGrade === selGrade;
-                    
+
                     return subjMatch && gradeMatch;
                 });
+
                 if (rawMatch) return true;
             }
 
-            // === الطريقة 2 (احتياطية): النص المجمّع + الصف ===
+            // ============ الطريقة 2 (احتياطية): النص المجمّع ============
             const teacherSubjsList = String(teacher.subject || '')
                 .split(/[،,]/)
                 .map(s => normalizeArabicText(s))
                 .filter(Boolean);
-            
-            const subjMatchFallback = teacherSubjsList.includes(selSubj);
+
+            const subjMatchFallback  = teacherSubjsList.includes(selSubj);
             const gradeMatchFallback = !selGrade || normalizeArabicText(teacher.grade) === selGrade;
-            
+
             return subjMatchFallback && gradeMatchFallback;
         }
 
-        // ✅ إظهار المعلمين المطابقين فقط
+        // ==========================================
+        // ✅ إظهار المعلمين المطابقين للمرحلة + الصف + المادة فقط
+        // ==========================================
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
-            
-            const selectedSubject = (document.getElementById('s_subject').value || '').trim();
-            const selectedGrade = (document.getElementById('s_grade').value || '').trim();
-            const selectedStage = (document.getElementById('s_stage').value || '').trim();
-            const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'أي منهما';
-            
+
+            const selectedSubject  = (document.getElementById('s_subject').value || '').trim();
+            const selectedGrade    = (document.getElementById('s_grade').value || '').trim();
+            const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
+            const prefTeacher      = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'أي منهما';
+
+            console.log("🎯 اختيار الطالب:", { selectedStageKey, selectedGrade, selectedSubject, prefTeacher });
+
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
-            console.log("📊 عدد الحصص المسجلة في السحابة:", registeredList.length);
-            console.log("🔍 اختيار الطالب:", { selectedSubject, selectedGrade, selectedStage, prefTeacher });
+            console.log("📊 حصص في السحابة:", registeredList.length, "| مخفية:", hiddenCount);
 
             if (registeredList.length === 0) {
                 if (hiddenCount > 0) {
@@ -1413,25 +1508,39 @@
                 return;
             }
 
-            // فلترة المعلمين
-            let matched = registeredList.filter(t => {
-                // فلترة المادة والصف
-                if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
+            // ✅ فلترة المعلمين حسب (الصف + المادة + المرحلة + اللقب)
+            const matched = registeredList.filter(t => {
+                // (1) فلترة المادة والصف
+                if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade, selectedStageKey)) return false;
 
-                // فلترة نوع اللقب (مستر/مس)
+                // (2) فلترة المرحلة — نقارن المفتاح أو الاسم
+                if (selectedStageKey) {
+                    const teacherStageKey  = String(t.stageKey  || '').trim();
+                    const teacherStageName = normalizeArabicText(t.stageName || '');
+                    const selStageName     = normalizeArabicText(getStageNameByKey(selectedStageKey));
+
+                    const stageMatchByKey  = teacherStageKey === selectedStageKey;
+                    const stageMatchByName = teacherStageName && selStageName && teacherStageName === selStageName;
+
+                    // لو السجل يحتوي على مرحلة محددة ولا تتطابق مع اختيار الطالب → استبعده
+                    if (teacherStageKey && !stageMatchByKey && !stageMatchByName) return false;
+                }
+
+                // (3) فلترة نوع اللقب
                 if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
-                if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
+                if (prefTeacher === 'مس'  && t.gender !== 'مس') return false;
 
                 return true;
             });
 
-            console.log("✅ عدد المعلمين المطابقين للمادة والصف:", matched.length);
+            console.log("✅ معلمون مطابقون (مرحلة+صف+مادة):", matched.length);
             if (matched.length > 0) {
-                console.log("قائمة المعلمين المطابقين:", matched.map(t => ({
+                console.table(matched.map(t => ({
                     name: t.teacherName,
+                    stageKey: t.stageKey,
+                    stageName: t.stageName,
                     grade: t.grade,
-                    subject: t.subject,
-                    subjectsRaw: t.subjectsRaw
+                    subjectsRaw: t.subjectsRaw.join(' | ')
                 })));
             }
 
@@ -1449,11 +1558,11 @@
                 if (distanceInMeters <= radiusInMeters) {
                     shownCount++;
                     const displaySubject = t.subject || selectedSubject;
-                    const displayGrade = t.grade || selectedGrade;
-                    const displayPhone = t.phone ? t.phone : 'غير مسجل';
-                    const isMs = (t.gender === 'مس');
-                    const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
-                    const titlePrefix = isMs ? 'مس' : 'مستر';
+                    const displayGrade   = t.grade   || selectedGrade;
+                    const displayPhone   = t.phone   || 'غير مسجل';
+                    const isMs           = (t.gender === 'مس');
+                    const emoji          = isMs ? '👩‍🏫' : '👨‍🏫';
+                    const titlePrefix    = isMs ? 'مس'   : 'مستر';
 
                     const iconHtml = `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
                     const customIcon = L.divIcon({
