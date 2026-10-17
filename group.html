@@ -117,6 +117,7 @@
             border-bottom: 4px solid #334155; 
             border-radius: 12px; cursor: pointer;
             font-size: 13px; font-weight: 900; transition: all 0.2s; text-align: center; background: #FFFFFF; color: #1E293B;
+            position: relative; /* إضافة للمساعدة في وضع علامة الصح */
         }
         .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
         .radio-grid input:checked + label {
@@ -136,6 +137,7 @@
             border-bottom: 4px solid #334155; 
             border-radius: 10px; cursor: pointer;
             font-size: 13px; font-weight: 900; transition: all 0.2s; background: #FFFFFF; color: #475569;
+            position: relative; /* إضافة للمساعدة في وضع علامة الصح */
         }
         .days-grid input:checked + label, .months-grid input:checked + label {
             border-color: var(--c-main); 
@@ -143,6 +145,35 @@
             background: var(--c-light); color: var(--c-dark); 
             transform: translateY(2px); 
             border-bottom-width: 2px; margin-bottom: 2px;
+        }
+
+        /* 🟢 علامة الصح الجميلة جداً (Badge) 🟢 */
+        .radio-grid input:checked + label::before,
+        .days-grid input:checked + label::before,
+        .months-grid input:checked + label::before {
+            content: '✔';
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            background: #10B981;
+            color: #fff;
+            font-size: 11px;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-weight: 900;
+            box-shadow: 0 3px 8px rgba(16, 185, 129, 0.5);
+            animation: checkPop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+            z-index: 10;
+            border: 2px solid #fff;
+        }
+
+        @keyframes checkPop {
+            0% { transform: scale(0) rotate(-45deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
         /* ----- ستايل الساعة الرقمية الواقعية جداً (شكل LCD بدون شرطة الصفر) ----- */
