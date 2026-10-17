@@ -862,6 +862,11 @@
         function onSubjectSelectChange() {
             renderStudentGradeSubjectsBar();
             saveStudentData();
+            updateStudentSummary();
+            // ✅ إعادة فلترة المعلمين فوراً إذا كانت الخريطة مبنية
+            if (currentCenter && map) {
+                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+            }
         }
 
         // إظهار أزرار المواد الخاصة بالصف المختار تحته مباشرة
@@ -905,6 +910,8 @@
             sSelect.value = subjName;
             renderStudentGradeSubjectsBar();
             saveStudentData();
+            updateStudentSummary();
+            // ✅ إعادة فلترة المعلمين فوراً إذا كانت الخريطة مبنية
             if (currentCenter && map) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             }
@@ -1241,11 +1248,7 @@
                     }
 
                     let subjectsText = '';
-                    // ✅ الاحتفاظ بالمصفوفة الأصلية للمطابقة الدقيقة
-                    let rawSubjectsArray = [];
-                    
                     if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
-                        rawSubjectsArray = state.selectedSubjects;
                         subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1] : sub).join('، ');
                     }
 
@@ -1270,8 +1273,10 @@
                         teacherName: state.g_teacher || 'المعلم',
                         count: state.g_count || '--',
                         grade: state.s_grade || '',
+                        stage: state.s_stage || '',        // ✅ إضافة المرحلة للفلترة
+                        stageName: state.s_stage || '',    // للتوافق
                         subject: subjectsText || '',
-                        rawSubjects: rawSubjectsArray, // ✅ تمرير المصفوفة هنا
+                        subjectsRaw: state.selectedSubjects || [], // ✅ المواد الخام للفلترة الدقيقة
                         days: daysText,
                         startTime: startTime,
                         endTime: endTime,
@@ -1291,7 +1296,7 @@
         }
 
         // ==========================================
-        // 5. منطق الخريطة والرادار (إظهار التليفون وتفعيل الواتساب)
+        // 5. منطق الخريطة والرادار (مع الفلترة حسب المادة والصف)
         // ==========================================
         function initMap() {
             if (!map) {
@@ -1396,12 +1401,45 @@
             }, 300);
         }
 
-        // 🌟 إظهار أيقونة المستر/المس بالاعتماد على بيانات السحابة والفلترة الدقيقة 🌟
+        // 🌟 التحقق من تطابق مادة المعلم مع مادة الطالب المختارة 🌟
+        function isTeacherSubjectMatches(teacher, selectedSubject, selectedGrade) {
+            if (!selectedSubject) return true; // لو الطالب مش مختار مادة، يظهر كل المعلمين
+
+            // الطريقة الأولى: لو المواد الخام موجودة في selectedSubjects (صيغة "الصف - المادة")
+            if (Array.isArray(teacher.subjectsRaw) && teacher.subjectsRaw.length > 0) {
+                return teacher.subjectsRaw.some(raw => {
+                    // raw = "الثالث الثانوي - فيزياء"
+                    const parts = String(raw).split(' - ');
+                    const rawGrade = parts[0]?.trim() || '';
+                    const rawSubj = parts[1]?.trim() || '';
+
+                    // تطابق المادة
+                    const subjMatch = rawSubj === selectedSubject.trim();
+                    // تطابق الصف (لو الطالب اختار صف)
+                    const gradeMatch = !selectedGrade || rawGrade === selectedGrade.trim();
+
+                    return subjMatch && gradeMatch;
+                });
+            }
+
+            // الطريقة الثانية (احتياطية): نستخدم النص المجمّع
+            const teacherSubjectsList = String(teacher.subject || '')
+                .split(/[،,]/)
+                .map(s => s.trim())
+                .filter(Boolean);
+            const subjMatchFallback = teacherSubjectsList.includes(selectedSubject.trim());
+            const gradeMatchFallback = !selectedGrade || String(teacher.grade || '').trim() === selectedGrade.trim();
+            return subjMatchFallback && gradeMatchFallback;
+        }
+
+        // 🌟 إظهار أيقونة المستر/المس المطابقين فقط للصف والمادة 🌟
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
             
-            const selectedSubject = document.getElementById('s_subject').value;
-            const selectedGrade = document.getElementById('s_grade').value;
+            const selectedSubject = (document.getElementById('s_subject').value || '').trim();
+            const selectedGrade = (document.getElementById('s_grade').value || '').trim();
+            const selectedStage = (document.getElementById('s_stage').value || '').trim();
+            const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'أي منهما';
             
             // جلب البيانات من السحابة (فايربيس)
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
@@ -1415,37 +1453,38 @@
                 return;
             }
 
-            let shownCount = 0;
+            // ✅ فلترة المعلمين:
+            // 1) حسب تطابق الصف والمادة
+            // 2) حسب نوع اللقب (مستر/مس) لو الطالب اختار نوع معين
+            let matched = registeredList.filter(t => {
+                // فلترة المادة والصف
+                if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
 
-            registeredList.forEach(t => {
+                // فلترة المرحلة (لو الطالب اختار مرحلة والبيانات تحتوي على المرحلة)
+                if (selectedStage && t.stage && t.stage !== selectedStage) return false;
+
+                // فلترة نوع اللقب (مستر / مس)
+                if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
+                if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
+
+                return true;
+            });
+
+            if (matched.length === 0) {
+                showToast(`لا يوجد معلم مسجل يطابق اختيارك (${selectedSubject} - ${selectedGrade}) حالياً!`, true);
+                return;
+            }
+
+            let shownCount = 0;
+            let outOfRangeCount = 0;
+
+            matched.forEach(t => {
                 const distanceInMeters = map.distance(centerPos, [t.lat, t.lng]);
 
-                // ✅ الفلترة الصارمة جداً (لضمان تطابق الصف والمادة 100%)
-                
-                // 1. التأكد أن "الصف الأساسي" الذي أنشأ به المستر المجموعة هو نفسه صف الطالب
-                const gradeMatches = (t.grade === selectedGrade);
-                
-                // 2. التأكد أن "المادة" मौजूदة إما في المصفوفة الدقيقة أو في اسم المادة المحفوظ
-                let subjectMatches = false;
-                if (t.rawSubjects && t.rawSubjects.length > 0) {
-                    // التحقق مما إذا كانت المصفوفة تحتوي على المادة اللي يبحث عنها الطالب
-                    subjectMatches = t.rawSubjects.some(sub => sub.includes(selectedSubject));
-                } else {
-                    // إجراء احتياطي للمجموعات القديمة بدون مصفوفة
-                    subjectMatches = (t.subject && t.subject.includes(selectedSubject));
-                }
-
-                // التطابق التام يحدث فقط إذا كان الصف متطابقاً والمادة متطابقة
-                const teachesExactSubject = (gradeMatches && subjectMatches);
-
-                // ✅ عرض المعلم فقط إذا كان في النطاق وحقق التطابق التام
-                if (distanceInMeters <= radiusInMeters && teachesExactSubject) {
+                if (distanceInMeters <= radiusInMeters) {
                     shownCount++;
-                    
-                    // استخدام بيانات الطالب المطلوبة لعرضها في النافذة حتى تكون دقيقة ومتوافقة
-                    const displaySubject = selectedSubject;
-                    const displayGrade = selectedGrade;
-                    
+                    const displaySubject = t.subject || selectedSubject;
+                    const displayGrade = t.grade || selectedGrade;
                     const displayPhone = t.phone ? t.phone : 'غير مسجل';
                     const isMs = (t.gender === 'مس');
                     const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
@@ -1460,7 +1499,6 @@
                         popupAnchor: [0, -16]
                     });
 
-                    // تحديث النافذة لعرض الصف والمادة اللي الطالب بيبحث عنهم بالضبط
                     const popupContent = `
                         <div class="teacher-popup-title">${emoji} ${titlePrefix}/ ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
@@ -1482,13 +1520,19 @@
                     const marker = L.marker([t.lat, t.lng], { icon: customIcon });
                     marker.bindPopup(popupContent);
                     teachersLayer.addLayer(marker);
+                } else {
+                    outOfRangeCount++;
                 }
             });
 
             if (shownCount === 0) {
-                showToast(`لم نتمكن من العثور على معلم لمادة (${selectedSubject}) في هذا النطاق!`, true);
+                if (outOfRangeCount > 0) {
+                    showToast(`وجدنا (${matched.length}) معلم يطابق اختيارك لكنهم خارج النطاق. وسّع النطاق أو حرّك النقطة!`, true);
+                } else {
+                    showToast(`لا يوجد معلم لـ (${selectedSubject} - ${selectedGrade}) في النطاق الحالي!`, true);
+                }
             } else {
-                showToast(`تم العثور على (${shownCount}) معلم لمادة (${selectedSubject}) ✨`);
+                showToast(`تم العثور على (${shownCount}) معلم مطابق لـ (${selectedSubject} - ${selectedGrade}) ✨`);
             }
         }
     </script>
