@@ -331,6 +331,7 @@
 </head>
 <body>
 
+    <!-- نافذة تأكيد حذف الحساب -->
     <div id="confirmDeleteModal" class="custom-modal-overlay" onclick="closeCustomModal('confirmDeleteModal')">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">⚠️</div>
@@ -343,11 +344,30 @@
         </div>
     </div>
 
+    <!-- نافذة نجاح الحذف -->
     <div id="deletedSuccessModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #10B981;">
             <div class="modal-icon-circle" style="background: #D1FAE5; color: #059669;">✅</div>
             <h3 class="modal-title-text" style="color: #065F46;">تم حذف الحساب</h3>
             <p class="modal-desc-text">تم حذف بيانات الحساب بنجاح، جاري الرجوع...</p>
+        </div>
+    </div>
+
+    <!-- نافذة الحساب المحظور (التعديل الجديد) -->
+    <div id="blockedAccountModal" class="custom-modal-overlay" onclick="closeCustomModal('blockedAccountModal')">
+        <div class="custom-modal-box" style="border-bottom-color: #D97706;" onclick="event.stopPropagation()">
+            <div class="modal-icon-circle" style="background: #FEF3C7; color: #D97706;">🔒</div>
+            <h3 class="modal-title-text" style="color: #92400E;">تنبيه هام للإدارة</h3>
+            <p class="modal-desc-text" style="color: #78350F; font-size: 14px; margin-bottom: 12px; font-weight: 800;">
+                عذراً، هذا الحساب بانتظار تفعيل وتوثيق البيانات من قبل الإدارة لتتمكن من الدخول.
+            </p>
+            <span style="display: block; font-size: 12px; color: #B45309; margin-bottom: 6px; font-weight: 800;">يرجى التواصل مع الإدارة عبر الإيميل:</span>
+            <a href="mailto:mmoksh162@gmail.com" style="display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; background: #FFFBEB; color: #D97706; padding: 12px; border-radius: 12px; border: 2px solid #FCD34D; font-size: 14px; font-weight: 900; text-decoration: none; margin-bottom: 18px; transition: transform 0.2s;">
+                📧 mmoksh162@gmail.com
+            </a>
+            <div class="modal-btn-row">
+                <button type="button" class="modal-btn modal-btn-cancel" style="width: 100%;" onclick="closeCustomModal('blockedAccountModal')">العودة للخلف</button>
+            </div>
         </div>
     </div>
 
@@ -469,7 +489,7 @@
 
         function showAlert(msg, isError = true) {
             const el = document.getElementById('alertMsg');
-            el.textContent = msg;
+            el.innerHTML = msg; 
             el.className = 'alert-msg ' + (isError ? 'alert-error' : 'alert-success');
             el.style.display = 'block';
             setTimeout(() => { el.style.display = 'none'; }, 4000);
@@ -512,8 +532,10 @@
 
             const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true' || localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
             
+            // إظهار نافذة الحظر والتواصل مع الإدارة
             if (isBlocked) {
-                return showAlert('عذراً، هذا الحساب محظور (تم إرساله للأرشيف). يرجى التواصل مع الإدارة.');
+                document.getElementById('blockedAccountModal').classList.add('active');
+                return;
             }
 
             localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
