@@ -1161,16 +1161,39 @@
         let selectedSubjects = [];
         let savedLat = null, savedLng = null;
 
-        history.pushState(null, null, location.href);
-        window.addEventListener('popstate', function () {
-            history.pushState(null, null, location.href);
+        // 1. التعامل الذكي مع زر الرجوع (للهاتف والمتصفح)
+        window.addEventListener('popstate', function (event) {
+            // البحث عن أي نافذة أو رسالة منبثقة مفتوحة (ما عدا نافذة الحظر الإجبارية)
+            const activeModal = document.querySelector('.modal-overlay.active:not(#blockedModal)');
+            
+            if (activeModal) {
+                // إذا كانت هناك رسالة مفتوحة، قم بإغلاقها فقط وابقَ في الصفحة
+                activeModal.classList.remove('active');
+                history.pushState(null, null, location.href);
+            } else if (currentStepNumber > 1) {
+                // إذا كنا في الخطوة 2 أو 3، ارجع للخطوة السابقة
+                prevStep(currentStepNumber - 1);
+                history.pushState(null, null, location.href);
+            } else {
+                // إذا كنا في الخطوة الأولى ولا توجد نوافذ، اسمح بالخروج من الصفحة
+                window.history.back();
+            }
         });
+        
+        // دفع حالة مبدئية ليعمل زر الرجوع بشكل صحيح
+        history.pushState(null, null, location.href);
 
-        window.addEventListener('pageshow', function () {
-            const successModal = document.getElementById('successModal');
-            const errorModal = document.getElementById('errorModal');
-            if (successModal) successModal.classList.remove('active');
-            if (errorModal) errorModal.classList.remove('active');
+        // 2. تنظيف الشاشة من أي رسائل عالقة عند الرجوع للصفحة
+        window.addEventListener('pageshow', function (e) {
+            // إخفاء جميع النوافذ المنبثقة ما عدا نافذة الحظر
+            document.querySelectorAll('.modal-overlay:not(#blockedModal)').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            
+            // إخفاء رسالة التحديث العائمة (Toast) إذا كانت عالقة
+            const toast = document.getElementById('syncToast');
+            if (toast) toast.classList.remove('show');
+            
             checkTeacherBlockedStatus();
         });
 
