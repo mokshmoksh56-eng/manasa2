@@ -116,16 +116,30 @@
             border: 1.5px solid #CBD5E1; 
             border-bottom: 4px solid #334155; 
             border-radius: 12px; cursor: pointer;
-            font-size: 13px; font-weight: 900; transition: all 0.2s; text-align: center; background: #FFFFFF; color: #1E293B;
-            position: relative; /* إضافة للمساعدة في وضع علامة الصح */
+            font-size: 13px; font-weight: 900; text-align: center; background: #FFFFFF; color: #1E293B;
+            position: relative; 
+            /* التعديل الجديد: فيزياء الحركة والظل الناعم */
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
         }
         .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
+        
+        .radio-grid label:active {
+            /* التعديل الجديد: تأثير الضغط للداخل مع الهالة المضيئة للحفاظ على الخيال */
+            transform: scale(0.94) translateY(2px);
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 15px rgba(16, 185, 129, 0.3);
+            border-bottom-width: 1.5px;
+        }
+        
         .radio-grid input:checked + label {
             border-color: var(--c-main); 
             border-bottom-color: var(--c-dark); 
             background: var(--c-light); color: var(--c-dark); 
-            transform: translateY(2px); 
-            border-bottom-width: 2px; margin-bottom: 2px; 
+            /* التعديل الجديد: بروز العنصر للأمام وظل احترافي داكن */
+            transform: translateY(-2px) scale(1.02); 
+            box-shadow: 0 12px 20px rgba(16, 185, 129, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.03);
+            border-bottom-width: 4px; 
+            margin-bottom: 0; 
         }
 
         .days-grid, .months-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
@@ -136,15 +150,29 @@
             border: 1.5px solid #CBD5E1; 
             border-bottom: 4px solid #334155; 
             border-radius: 10px; cursor: pointer;
-            font-size: 13px; font-weight: 900; transition: all 0.2s; background: #FFFFFF; color: #475569;
-            position: relative; /* إضافة للمساعدة في وضع علامة الصح */
+            font-size: 13px; font-weight: 900; background: #FFFFFF; color: #475569;
+            position: relative;
+            /* التعديل الجديد: فيزياء الحركة والظل الناعم */
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
         }
+        
+        .days-grid label:active, .months-grid label:active {
+            /* التعديل الجديد: تأثير الضغط للداخل مع الهالة المضيئة للحفاظ على الخيال */
+            transform: scale(0.94) translateY(2px);
+            box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 15px rgba(16, 185, 129, 0.3);
+            border-bottom-width: 1.5px;
+        }
+        
         .days-grid input:checked + label, .months-grid input:checked + label {
             border-color: var(--c-main); 
             border-bottom-color: var(--c-dark); 
             background: var(--c-light); color: var(--c-dark); 
-            transform: translateY(2px); 
-            border-bottom-width: 2px; margin-bottom: 2px;
+            /* التعديل الجديد: بروز العنصر للأمام وظل احترافي داكن */
+            transform: translateY(-2px) scale(1.02); 
+            box-shadow: 0 12px 20px rgba(16, 185, 129, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.03);
+            border-bottom-width: 4px; 
+            margin-bottom: 0;
         }
 
         /* 🟢 علامة الصح الجميلة جداً (Badge) 🟢 */
