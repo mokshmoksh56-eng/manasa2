@@ -802,7 +802,27 @@
             const grade = state.s_grade || '';
             const subj = (state.selectedSubjects && state.selectedSubjects.length > 0) ? state.selectedSubjects[0].split(' - ')[1] || state.selectedSubjects[0] : '';
             
+            // جلب وتنسيق المرحلة الدراسية
+            let stageStr = '';
+            if(state.s_stage) {
+                stageStr = state.s_stage;
+                if(stageStr === 'primary') stageStr = 'ابتدائي';
+                else if(stageStr === 'prep') stageStr = 'إعدادي';
+                else if(stageStr === 'secondary') stageStr = 'ثانوي';
+                else {
+                    try {
+                        const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
+                        if(curr[state.s_stage] && curr[state.s_stage].name) {
+                            stageStr = curr[state.s_stage].name;
+                        }
+                    } catch(e) {}
+                }
+                // تنظيف الاسم من الأيقونات وكلمة المرحلة إذا كانت موجودة
+                stageStr = stageStr.replace(/^[🎒📐🎓]\s*/, '').replace('المرحلة ', '').replace('الابتدائية', 'ابتدائي').replace('الإعدادية', 'إعدادي').replace('الثانوية', 'ثانوي');
+            }
+
             let badges = '';
+            if (stageStr) badges += `<span class="info-badge">🎓 ${stageStr}</span>`;
             if (grade) badges += `<span class="info-badge">👑 ${grade}</span>`;
             if (subj) badges += `<span class="info-badge">📚 ${subj}</span>`;
             
