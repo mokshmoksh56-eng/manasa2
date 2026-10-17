@@ -8,17 +8,14 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- ✅ خط Rajdhani المخصص للساعة الرقمية (شكل LCD كلاسيكي بدون شرطة داخل الصفر) -->
     <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* ✅ منع إيماءات اللمس (السحب الجانبي للرجوع) في الهواتف */
         html, body {
             overscroll-behavior-x: none;
             touch-action: pan-y;
@@ -118,14 +115,12 @@
             border-radius: 12px; cursor: pointer;
             font-size: 13px; font-weight: 900; text-align: center; background: #FFFFFF; color: #1E293B;
             position: relative; 
-            /* التعديل الجديد: فيزياء الحركة والظل الناعم */
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
         }
         .radio-grid label i { font-size: 24px; font-style: normal; margin-bottom: 5px; }
         
         .radio-grid label:active {
-            /* التعديل الجديد: تأثير الضغط للداخل مع الهالة المضيئة للحفاظ على الخيال */
             transform: scale(0.94) translateY(2px);
             box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 15px rgba(16, 185, 129, 0.3);
             border-bottom-width: 1.5px;
@@ -135,7 +130,6 @@
             border-color: var(--c-main); 
             border-bottom-color: var(--c-dark); 
             background: var(--c-light); color: var(--c-dark); 
-            /* التعديل الجديد: بروز العنصر للأمام وظل احترافي داكن */
             transform: translateY(-2px) scale(1.02); 
             box-shadow: 0 12px 20px rgba(16, 185, 129, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.03);
             border-bottom-width: 4px; 
@@ -152,13 +146,11 @@
             border-radius: 10px; cursor: pointer;
             font-size: 13px; font-weight: 900; background: #FFFFFF; color: #475569;
             position: relative;
-            /* التعديل الجديد: فيزياء الحركة والظل الناعم */
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.04);
         }
         
         .days-grid label:active, .months-grid label:active {
-            /* التعديل الجديد: تأثير الضغط للداخل مع الهالة المضيئة للحفاظ على الخيال */
             transform: scale(0.94) translateY(2px);
             box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 15px rgba(16, 185, 129, 0.3);
             border-bottom-width: 1.5px;
@@ -168,14 +160,12 @@
             border-color: var(--c-main); 
             border-bottom-color: var(--c-dark); 
             background: var(--c-light); color: var(--c-dark); 
-            /* التعديل الجديد: بروز العنصر للأمام وظل احترافي داكن */
             transform: translateY(-2px) scale(1.02); 
             box-shadow: 0 12px 20px rgba(16, 185, 129, 0.2), inset 0 -3px 0 rgba(0, 0, 0, 0.03);
             border-bottom-width: 4px; 
             margin-bottom: 0;
         }
 
-        /* 🟢 علامة الصح الجميلة جداً (Badge) 🟢 */
         .radio-grid input:checked + label::before,
         .days-grid input:checked + label::before,
         .months-grid input:checked + label::before {
@@ -204,7 +194,6 @@
             100% { transform: scale(1) rotate(0deg); opacity: 1; }
         }
 
-        /* ----- ستايل الساعة الرقمية الواقعية جداً (شكل LCD بدون شرطة الصفر) ----- */
         .realistic-clock-wrapper {
             background-color: #b5c6b3; 
             border: 4px solid #1e293b; 
@@ -289,7 +278,6 @@
         }
         .chip span { cursor: pointer; color: #EF4444; }
 
-        /* أزرار المواد السريعة التي تظهر تحت الصف المختار */
         .quick-subjects-box {
             background: #F2FDFD;
             border: 1.5px dashed #008B82;
@@ -420,7 +408,6 @@
         }
         .phone-type-badge .icon { font-size: 16px; }
 
-        /* تعديلات نافذة الموقع الجغرافي */
         .location-disclosure-box { text-align: right; line-height: 1.6; }
         .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
         
@@ -495,7 +482,6 @@
 </head>
 <body>
 
-    <!-- 🟢 1. نافذة الإفصاح عن الموقع (Prominent Disclosure) 🟢 -->
     <div id="locationDisclosureModal" class="modal-overlay" style="z-index: 10000;">
         <div class="success-modal location-disclosure-box">
             <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">📍</div>
@@ -517,7 +503,6 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة لتنبيه توثيق الحساب عند الحظر -->
     <div id="blockedModal" class="modal-overlay">
         <div class="success-modal error-modal" style="max-width: 360px;">
             <div class="success-icon error-icon" style="background: #FEF3C7; color: #D97706; border-bottom-color: #B45309;">
@@ -529,7 +514,6 @@
             <div id="blockedModalDesc" style="color: #78350F; font-size: 14px; font-weight: 900; line-height: 1.6; margin-bottom: 20px;">
                 <p style="margin-bottom: 12px;">عذراً، هذا الحساب بانتظار تفعيل وتوثيق الحساب من إدارة المنصة لتتمكن من إضافة ومتابعة مجموعاتك.</p>
                 
-                <!-- الإيميل كزر تفاعلي -->
                 <span style="display: block; font-size: 12px; color: #B45309; margin-bottom: 5px;">يرجى التواصل مع الإدارة عبر الإيميل:</span>
                 <a href="mailto:mmoksh162@gmail.com" style="display: inline-flex; justify-content: center; align-items: center; gap: 8px; width: 100%; background: #FFFBEB; color: #D97706; padding: 10px; border-radius: 12px; border: 1.5px solid #FCD34D; font-size: 14px; font-weight: 900; text-decoration: none; margin-bottom: 5px; transition: transform 0.2s;">
                     📧 mmoksh162@gmail.com
@@ -541,7 +525,6 @@
 
     <div id="syncToast" class="sync-toast">🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة</div>
     
-    <!-- ✅ رسالة الترحيب الظريفة عند فك الحظر ✅ -->
     <div id="unblockedToast" class="sync-toast" style="background: #10B981; border-bottom: 3px solid #059669; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">🎉 مرحباً بعودتك! تم تفعيل وتوثيق حسابك بنجاح.</div>
 
     <div id="editAlert" class="edit-alert" style="display: none;">
@@ -597,12 +580,10 @@
         </div>
     </div>
 
-    <!-- الخطوة 1 -->
     <div id="step1" class="step-content active theme-pink">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🔒 بيانات المجموعة الأساسية</h3>
             
-            <!-- 1. مكان الدرس الأساسي -->
             <div class="form-group">
                 <label>📍 مكان الدرس الأساسي</label>
                 <div class="radio-grid">
@@ -612,7 +593,6 @@
                 </div>
             </div>
 
-            <!-- 2. الفئات المسموح بها -->
             <div class="form-group" style="margin-top: 15px;">
                 <label>🎓 الفئات المسموح بها</label>
                 <div class="radio-grid">
@@ -622,7 +602,6 @@
                 </div>
             </div>
 
-            <!-- 3. اسم المستر وجنبها اسم السنتر -->
             <div class="grid-2" style="margin-top: 15px;">
                 <div class="form-group">
                     <label>👤 اسم المستر (يأتي تلقائياً - مقفول)</label>
@@ -634,7 +613,6 @@
                 </div>
             </div>
 
-            <!-- 4. اسم المجموعه وجنبها العدد المطلوب -->
             <div class="grid-2">
                 <div class="form-group">
                     <label>👥 اسم المجموعة</label>
@@ -646,7 +624,6 @@
                 </div>
             </div>
 
-            <!-- 5. نوع التليفون (مخفي برمجياً مع الحفاظ على عمل الكود) -->
             <div class="form-group" style="display: none;">
                 <label>📲 نوع التليفون المسجل منه (تلقائي)</label>
                 <div id="phoneTypeBadge" class="phone-type-badge">
@@ -661,7 +638,6 @@
         </div>
     </div>
 
-    <!-- الخطوة 2 -->
     <div id="step2" class="step-content theme-turq">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">📚 ما هي المادة التي تدرسها؟</h3>
@@ -704,7 +680,6 @@
         </div>
     </div>
 
-    <!-- الخطوة 3 -->
     <div id="step3" class="step-content theme-teal">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي وجدول المواعيد</h3>
@@ -804,10 +779,19 @@
         </div>
     </div>
 
-    <!-- 🌟 كود الاتصال بقاعدة بيانات فايربيس 🌟 -->
+    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-      import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+      import {
+          getFirestore,
+          doc,
+          setDoc,
+          getDoc,
+          collection,
+          getDocs,
+          deleteDoc,
+          onSnapshot
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
@@ -824,13 +808,25 @@
       window.db = db;
       window.doc = doc;
       window.setDoc = setDoc;
+      window.fsGetDoc = getDoc;
+      window.fsCollection = collection;
+      window.fsGetDocs = getDocs;
+      window.fsDeleteDoc = deleteDoc;
+      window.fsOnSnapshot = onSnapshot;
+
+      console.log("✅ Firebase + Firestore جاهز في group.html");
     </script>
 
     <script>
-        // متغير عالمي لتتبع حالة الحظر السابقة (للتمكن من إظهار رسالة الترحيب عند الفك)
+        // ==========================================
+        // متغيرات مزامنة المنهج مع Firebase
+        // ==========================================
+        let curriculumCache = null;
+        let curriculumUnsubscribe = null;
+        let isFirstCurriculumSnapshot = true;
+
         let previousBlockedState = null;
 
-        // دالة لتنظيف اسم المعلم من الألقاب لمطابقته بدقة
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
             return String(rawName)
@@ -839,7 +835,6 @@
                 .trim();
         }
 
-        // فحص حالة الحظر للمعلم الحالي
         function checkTeacherBlockedStatus() {
             let currentPhone = localStorage.getItem('rememberedPhone') || '';
             let currentTeacherName = '';
@@ -867,21 +862,15 @@
                 isBlocked = true;
             }
 
-            // 🟢 إظهار رسالة الترحيب الظريفة عند فك الحظر 🟢
             if (previousBlockedState === true && isBlocked === false) {
                 const unblockToast = document.getElementById('unblockedToast');
                 if (unblockToast) {
                     unblockToast.classList.add('show');
-                    try { playSuccessSound(); } catch(e) {}
-                    
-                    // إخفاء الرسالة بعد 4 ثوانٍ
-                    setTimeout(() => {
-                        unblockToast.classList.remove('show');
-                    }, 4000);
+                    try { playSuccessSound(); } catch (e) {}
+                    setTimeout(() => { unblockToast.classList.remove('show'); }, 4000);
                 }
             }
             
-            // تحديث حالة الحظر السابقة للاستخدام في المرة القادمة
             previousBlockedState = isBlocked;
 
             const blockedModal = document.getElementById('blockedModal');
@@ -892,7 +881,6 @@
             }
         }
 
-        // 🌟 استقبال تحديثات الحظر أو فك الحظر لحظياً من school.html عبر BroadcastChannel
         const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
         if (authStatusChannel) {
             authStatusChannel.onmessage = function(ev) {
@@ -954,10 +942,10 @@
             const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sine';
-            osc.frequency.setValueAtTime(2000, audioCtx.currentTime); 
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05); 
+            osc.frequency.setValueAtTime(2000, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
 
         function playTickSound() {
@@ -979,7 +967,7 @@
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sine';
             osc.frequency.setValueAtTime(600, audioCtx.currentTime);
-            osc.frequency.setValueAtTime(900, audioCtx.currentTime + 0.1); 
+            osc.frequency.setValueAtTime(900, audioCtx.currentTime + 0.1);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.3);
             osc.start(); osc.stop(audioCtx.currentTime + 0.3);
@@ -992,7 +980,7 @@
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(200, audioCtx.currentTime);
-            osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2); 
+            osc.frequency.linearRampToValueAtTime(150, audioCtx.currentTime + 0.2);
             gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
             gain.gain.linearRampToValueAtTime(0, audioCtx.currentTime + 0.2);
             osc.start(); osc.stop(audioCtx.currentTime + 0.2);
@@ -1006,6 +994,9 @@
             }
         });
 
+        // ==========================================
+        // 🌟 المنهج الافتراضي الكامل الموحّد (مطابق لـ school/talep)
+        // ==========================================
         const defaultCurriculum = {
             primary: {
                 name: '🎒 المرحلة الابتدائية',
@@ -1043,11 +1034,15 @@
         };
 
         function normalizeCurriculum(currObj) {
+            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj)) {
+                currObj = JSON.parse(JSON.stringify(defaultCurriculum));
+            }
             Object.keys(currObj).forEach(stageKey => {
                 const st = currObj[stageKey];
+                if (!st || typeof st !== 'object') return;
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
-                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object') {
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
                     st.gradeSubjects = {};
                 }
                 st.grades.forEach(g => {
@@ -1065,17 +1060,20 @@
         }
 
         function getCurriculum() {
+            if (curriculumCache) return curriculumCache;
             try {
                 const saved = localStorage.getItem('app_curriculum');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     if (parsed && Object.keys(parsed).length > 0) {
-                        return normalizeCurriculum(parsed);
+                        curriculumCache = normalizeCurriculum(parsed);
+                        return curriculumCache;
                     }
                 }
             } catch (e) {}
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             localStorage.setItem('app_curriculum', JSON.stringify(copy));
+            curriculumCache = copy;
             return copy;
         }
 
@@ -1210,25 +1208,87 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
+        // ==========================================
+        // BroadcastChannel — مزامنة عبر التبويبات
+        // ==========================================
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
             curriculumChannel.onmessage = function(ev) {
                 if (ev.data && ev.data.type === 'CURRICULUM_UPDATED') {
+                    if (ev.data.curriculum) {
+                        curriculumCache = normalizeCurriculum(ev.data.curriculum);
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    }
                     populateStagesDropdown(true);
+                    renderQuickSubjectsBox();
                     showSyncNotification();
                 }
             };
         }
 
+        // ==========================================
+        // 🌟 مزامنة المنهج من Firebase (المصدر الدائم)
+        // ==========================================
+        function startCurriculumFirebaseSync() {
+            if (!window.db || !window.fsOnSnapshot || !window.doc) {
+                setTimeout(startCurriculumFirebaseSync, 800);
+                return;
+            }
+            if (curriculumUnsubscribe) curriculumUnsubscribe();
+
+            const ref = window.doc(window.db, "curriculum", "main");
+
+            curriculumUnsubscribe = window.fsOnSnapshot(ref, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    delete data.updatedAt;
+                    curriculumCache = normalizeCurriculum(data);
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+
+                    populateStagesDropdown(true);
+                    renderQuickSubjectsBox();
+
+                    if (isFirstCurriculumSnapshot) {
+                        isFirstCurriculumSnapshot = false;
+                        console.log("☁️ تم تحميل المنهج من Firebase لأول مرة في group.html");
+                    } else {
+                        showSyncNotification();
+                    }
+                } else {
+                    console.log("📤 مستند المنهج غير موجود في Firebase — group سيستخدم الافتراضي المحلي");
+                }
+            }, (error) => {
+                console.warn("⚠️ متابعة المنهج من Firebase فشلت في group:", error);
+            });
+        }
+
         window.addEventListener('storage', function(e) {
             if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
+                try {
+                    const saved = localStorage.getItem('app_curriculum');
+                    if (saved) {
+                        curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                    }
+                } catch (err) {}
                 populateStagesDropdown(true);
+                renderQuickSubjectsBox();
                 showSyncNotification();
             }
         });
 
         window.addEventListener('focus', function() {
-            populateStagesDropdown(true);
+            try {
+                const saved = localStorage.getItem('app_curriculum');
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && JSON.stringify(parsed) !== JSON.stringify(curriculumCache)) {
+                        curriculumCache = normalizeCurriculum(parsed);
+                        populateStagesDropdown(true);
+                        renderQuickSubjectsBox();
+                    }
+                }
+            } catch (e) {}
         });
 
         let currentLessonId = '1';
@@ -1240,36 +1300,27 @@
         let selectedSubjects = [];
         let savedLat = null, savedLng = null;
 
-        // 1. التعامل الذكي مع زر الرجوع (للهاتف والمتصفح)
         window.addEventListener('popstate', function (event) {
-            // البحث عن أي نافذة أو رسالة منبثقة مفتوحة (ما عدا نافذة الحظر الإجبارية)
             const activeModal = document.querySelector('.modal-overlay.active:not(#blockedModal)');
             
             if (activeModal) {
-                // إذا كانت هناك رسالة مفتوحة، قم بإغلاقها فقط وابقَ في الصفحة
                 activeModal.classList.remove('active');
                 history.pushState(null, null, location.href);
             } else if (currentStepNumber > 1) {
-                // إذا كنا في الخطوة 2 أو 3، ارجع للخطوة السابقة
                 prevStep(currentStepNumber - 1);
                 history.pushState(null, null, location.href);
             } else {
-                // إذا كنا في الخطوة الأولى ولا توجد نوافذ، اسمح بالخروج من الصفحة
                 window.history.back();
             }
         });
         
-        // دفع حالة مبدئية ليعمل زر الرجوع بشكل صحيح
         history.pushState(null, null, location.href);
 
-        // 2. تنظيف الشاشة من أي رسائل عالقة عند الرجوع للصفحة
         window.addEventListener('pageshow', function (e) {
-            // إخفاء جميع النوافذ المنبثقة ما عدا نافذة الحظر
             document.querySelectorAll('.modal-overlay:not(#blockedModal)').forEach(modal => {
                 modal.classList.remove('active');
             });
             
-            // إخفاء رسالة التحديث العائمة (Toast) إذا كانت عالقة
             const toast = document.getElementById('syncToast');
             if (toast) toast.classList.remove('show');
             
@@ -1277,7 +1328,7 @@
         });
 
         function showError(message) {
-            playErrorSound(); 
+            playErrorSound();
             document.getElementById('errorDesc').innerHTML = message;
             document.getElementById('errorModal').classList.add('active');
         }
@@ -1360,15 +1411,13 @@
                 createdAt: new Date().toISOString().split('T')[0]
             };
             
-            // حفظ في الهاتف
             localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
             localStorage.setItem('publishState_' + currentLessonId, state.g_publish_map);
             
-            // 🌟 حفظ في فايربيس (جدول lessons) 🌟
             if(window.db && window.setDoc && window.doc) {
                  try {
                      await window.setDoc(window.doc(window.db, "lessons", currentLessonId), state);
-                     console.log("تم تحديث السحابة بنجاح");
+                     console.log("☁️ تم تحديث السحابة بنجاح");
                  } catch(e) {
                      console.error("خطأ في تحديث السحابة", e);
                  }
@@ -1447,7 +1496,6 @@
                 }
             }
 
-            // 🌟 الربط التلقائي لاسم المستر القادم من بيانات تسجيل الدخول وتثبيته تماماً
             const loggedInTeacherStr = localStorage.getItem('loggedInTeacher');
             if (loggedInTeacherStr) {
                 try {
@@ -1481,10 +1529,13 @@
             loadState();
 
             document.querySelectorAll('input, select').forEach(el => {
-                if(el.id === 'g_teacher') return; // منع التعديل على الحقل المقفول
+                if(el.id === 'g_teacher') return;
                 el.addEventListener('input', saveState);
                 el.addEventListener('change', saveState);
             });
+
+            // 🌟 بدء المزامنة مع Firebase
+            startCurriculumFirebaseSync();
         };
 
         function nextStep(step, skipValidation = false) {
@@ -1497,13 +1548,13 @@
 
                     if (!gName || !gTeacher || !gCount) {
                         showError("برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، والعدد).");
-                        return; 
+                        return;
                     }
                 }
                 if (step === 3) {
                     if (selectedSubjects.length === 0) {
                         showError("برجاء إضافة مادة دراسية واحدة على الأقل قبل المتابعة.");
-                        return; 
+                        return;
                     }
                 }
             }
@@ -1555,8 +1606,8 @@
             });
         }
         
-        function removeSubj(idx) { 
-            selectedSubjects.splice(idx, 1); 
+        function removeSubj(idx) {
+            selectedSubjects.splice(idx, 1);
             renderChips();
             renderQuickSubjectsBox();
             saveState();
@@ -1572,7 +1623,6 @@
             map.invalidateSize();
 
             if (!savedLat) {
-                // نطلب الموقع تلقائياً إذا لم يكن هناك موقع محفوظ
                 triggerLocationFlow();
             }
 
@@ -1583,7 +1633,6 @@
             });
         }
 
-        // 2.5 منطق الإفصاح عن الموقع
         function triggerLocationFlow() {
             const hasConsented = localStorage.getItem('teacher_location_consent');
             if (hasConsented === 'true') {
@@ -1607,7 +1656,7 @@
 
         let isLocating = false;
         function requestCurrentLocation() {
-            if (isLocating) return; 
+            if (isLocating) return;
             isLocating = true;
             
             const addressInput = document.getElementById('m_address');
@@ -1640,7 +1689,7 @@
                             },
                             function() {
                                 showError("تعذر تحديد موقعك. يرجى التأكد من تفعيل خدمة الـ GPS في جهازك.");
-                                addressInput.value = ""; 
+                                addressInput.value = "";
                                 isLocating = false;
                             },
                             { enableHighAccuracy: true }
@@ -1650,7 +1699,7 @@
                         isLocating = false;
                     }
                 }
-            }, 800); 
+            }, 800);
         }
 
         function fetchAddress(lat, lng) {
@@ -1660,7 +1709,7 @@
                 .then(data => {
                     if (data && data.display_name) {
                         document.getElementById('m_address').value = data.display_name;
-                        playSuccessSound(); 
+                        playSuccessSound();
                         
                         const successMsg = document.getElementById('locateSuccessMsg');
                         successMsg.classList.add('show');
@@ -1694,7 +1743,7 @@
 
             if (!address || address.includes("جاري")) {
                 showError("برجاء التأكد من كتابة العنوان التفصيلي لتسهيل وصول الطلاب.");
-                return; 
+                return;
             }
 
             const selectedDays = [];
@@ -1739,7 +1788,7 @@
                         
                         if (curStart < otherEnd && curEnd > otherStart) {
                             showError(`عذراً، هذه المجموعة تتعارض مع (<b>${otherState.g_name || 'مجموعة أخرى'}</b>) في نفس الأيام (<b>${commonDays.join('، ')}</b>).<br><br>الرجاء تعديل المواعيد لتتمكن من الحفظ.`);
-                            return; 
+                            return;
                         }
                     }
                 }
@@ -1753,10 +1802,10 @@
             title.innerText = isEditMode ? "تم تحديث بيانات المجموعة بنجاح!" : "تم حفظ إعدادات المجموعة بنجاح!";
             modal.classList.add('active');
             
-            playSuccessSound(); 
+            playSuccessSound();
 
             setTimeout(() => {
-                window.location.href = `end.html?lessonId=${currentLessonId}`; 
+                window.location.href = `end.html?lessonId=${currentLessonId}`;
             }, 1200);
         }
     </script>
