@@ -361,6 +361,16 @@
         }
         .phone-type-badge .icon { font-size: 16px; }
 
+        /* تعديلات نافذة الموقع الجغرافي */
+        .location-disclosure-box { text-align: right; line-height: 1.6; }
+        .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
+        
+        .custom-modal-title { font-size: 18px; font-weight: 900; color: #0F2D5C; margin-bottom: 8px; text-align: center;}
+        .custom-modal-buttons { display: flex; gap: 8px; margin-top: 15px;}
+        .custom-btn { flex: 1; padding: 10px; border-radius: 8px; font-weight: 900; cursor: pointer; border: none; font-size: 13px; color: white;}
+        .custom-btn-cancel { background: #F43F5E; border-bottom: 2.5px solid #E11D48; }
+        .custom-btn-save { background: #10B981; border-bottom: 2.5px solid #059669; }
+
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 18px; }
@@ -425,6 +435,28 @@
     </style>
 </head>
 <body>
+
+    <!-- 🟢 1. نافذة الإفصاح عن الموقع (Prominent Disclosure) 🟢 -->
+    <div id="locationDisclosureModal" class="modal-overlay" style="z-index: 10000;">
+        <div class="success-modal location-disclosure-box">
+            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">📍</div>
+            <div class="custom-modal-title">السماح بالوصول للموقع</div>
+            <p style="font-size: 13px; color: #334155; margin-bottom: 10px; font-weight: 800; text-align: right;">
+                يطلب تطبيق <strong>احجزلي</strong> الوصول إلى موقعك الجغرافي (GPS) وذلك للقيام بـ:
+            </p>
+            <ul style="text-align: right;">
+                <li>تحديد موقع إعطاء الدرس بدقة.</li>
+                <li>تسهيل وصول الطلاب إليك عبر الخريطة المدمجة.</li>
+            </ul>
+            <p style="font-size: 11px; color: #64748B; margin-bottom: 15px; font-weight: 600; text-align: center;">
+                <em>ملاحظة: لا يتم تتبع موقعك في الخلفية، ويستخدم فقط في هذه الخطوة.</em>
+            </p>
+            <div class="custom-modal-buttons">
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="declineLocation()">رفض</button>
+                <button class="custom-btn custom-btn-save clickable-element" onclick="acceptLocation()">موافق، السماح بالموقع</button>
+            </div>
+        </div>
+    </div>
 
     <!-- نافذة منبثقة لتنبيه توثيق الحساب عند الحظر -->
     <div id="blockedModal" class="modal-overlay">
@@ -671,7 +703,7 @@
 
             <div class="map-container" style="margin-top: 15px;">
                 <div id="map"></div>
-                <button type="button" class="locate-btn" onclick="requestCurrentLocation()" title="انتقل إلى موقعي الحالي">
+                <button type="button" class="locate-btn" onclick="triggerLocationFlow()" title="انتقل إلى موقعي الحالي">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                         <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
@@ -1377,7 +1409,8 @@
             map.invalidateSize();
 
             if (!savedLat) {
-                requestCurrentLocation();
+                // نطلب الموقع تلقائياً إذا لم يكن هناك موقع محفوظ
+                triggerLocationFlow();
             }
 
             marker.on('dragend', function() {
@@ -1385,6 +1418,28 @@
                 document.getElementById('m_address').value = "جاري تحديث العنوان...";
                 fetchAddress(pos.lat, pos.lng);
             });
+        }
+
+        // 2.5 منطق الإفصاح عن الموقع
+        function triggerLocationFlow() {
+            const hasConsented = localStorage.getItem('teacher_location_consent');
+            if (hasConsented === 'true') {
+                requestCurrentLocation();
+            } else {
+                document.getElementById('locationDisclosureModal').classList.add('active');
+            }
+        }
+
+        function declineLocation() {
+            document.getElementById('locationDisclosureModal').classList.remove('active');
+            const addressInput = document.getElementById('m_address');
+            addressInput.value = "تم رفض إذن الموقع، يرجى كتابة العنوان يدوياً.";
+        }
+
+        function acceptLocation() {
+            document.getElementById('locationDisclosureModal').classList.remove('active');
+            localStorage.setItem('teacher_location_consent', 'true');
+            requestCurrentLocation();
         }
 
         let isLocating = false;
