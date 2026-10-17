@@ -297,7 +297,7 @@
             display: inline-block;
         }
 
-        /* ✅ أزرار الإجراءات (تعديل، حذف، إخفاء، مشاركة) */
+        /* ✅ أزرار الإجراءات (تعديل، حذف، إخفاء) */
         .card-actions {
             position: absolute;
             top: 15px;
@@ -323,9 +323,6 @@
         
         .btn-edit { background: #E0E7FF; color: #4F46E5; }
         .btn-edit:hover { background: #4F46E5; color: #FFFFFF; transform: scale(1.15) rotate(-15deg); box-shadow: 0 5px 15px rgba(79, 70, 229, 0.4); }
-
-        .btn-share { background: #D1FAE5; color: #059669; }
-        .btn-share:hover { background: #059669; color: #FFFFFF; transform: scale(1.15); box-shadow: 0 5px 15px rgba(5, 150, 105, 0.4); }
 
         .btn-visibility { background: #F1F5F9; color: #475569; }
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
@@ -593,7 +590,7 @@
     </script>
 
     <!-- ✅ توست الرسائل -->
-    <div id="toastMsg">تم النسخ بنجاح ✔</div>
+    <div id="toastMsg">تم الإجراء بنجاح ✔</div>
 
     <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
@@ -833,16 +830,6 @@
             }
         }
 
-        function copyGroupCode(id, event) {
-            event.stopPropagation();
-            // توليد رابط أو كود افتراضي للنسخ
-            const codeToCopy = `انضم لمجموعتي على منصة احجزلى!\nكود المجموعة: GRP-${id}2026\nالرابط: https://ehgezly.com/join/${id}`;
-            
-            navigator.clipboard.writeText(codeToCopy).then(() => {
-                showToast('🔗 تم نسخ رابط وكود المجموعة للمشاركة!');
-            });
-        }
-
         function showToast(msg) {
             const toast = document.getElementById('toastMsg');
             toast.innerText = msg;
@@ -896,10 +883,6 @@
                         <!-- زر تعديل الاسم -->
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal(${lesson.id}, event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
-                        </button>
-                        <!-- زر النسخ والمشاركة -->
-                        <button class="btn-action btn-share" title="نسخ رابط المجموعة للواتس" onclick="copyGroupCode(${lesson.id}, event)">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>
                         </button>
                         <!-- زر الإخفاء والإظهار السريع -->
                         <button class="btn-action btn-visibility ${isPublished ? 'published' : ''}" title="إخفاء/إظهار للطلاب" onclick="toggleVisibility(${lesson.id}, event)">
