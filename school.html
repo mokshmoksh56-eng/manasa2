@@ -1320,14 +1320,14 @@
                 return;
             }
 
+            const curr = getCurriculum();
+
             container.innerHTML = filtered.map(r => {
                 const isMs = r.title === 'مس';
                 const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
                 
-                // === التعديل المطلوب: استبدال علامة الـ Apple/Android بحذف كلمة أبل/أندرويد والإبقاء على الأيقونة ===
                 let iconOnlyPhoneBadge = '';
                 if (r.phoneType) {
-                    // استخراج الرمز التعبيري الأول من النص
                     const emojiMatch = r.phoneType.match(/[\p{Emoji}\u200d]+/gu);
                     const iconChar = emojiMatch ? emojiMatch[0] : '📱';
                     
@@ -1345,24 +1345,47 @@
 
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
-                    const rowsHTML = r.groups.map(g => `
+                    const rowsHTML = r.groups.map(g => {
+                        let stageName = g.stageKey;
+                        if(stageName === 'primary') stageName = 'المرحلة الابتدائية';
+                        else if(stageName === 'prep') stageName = 'المرحلة الإعدادية';
+                        else if(stageName === 'secondary') stageName = 'المرحلة الثانوية';
+                        else if(curr[g.stageKey] && curr[g.stageKey].name) {
+                            stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                        }
+                        
+                        return `
                         <tr>
                             <td class="font-black text-slate-900">${g.groupName}</td>
-                            <td><span class="text-slate-900 font-black">${g.grade}</span> — <span class="text-emerald-700 font-black">${g.subjects}</span></td>
+                            <td>
+                                <div class="text-[11px] text-blue-600 font-black mb-0.5">${stageName}</div>
+                                <span class="text-slate-900 font-black">${g.grade}</span> — <span class="text-emerald-700 font-black">${g.subjects}</span>
+                            </td>
                             <td>${g.days}<br><span class="text-[11px] text-blue-700">من ${g.timeFrom} إلى ${g.timeTo}</span></td>
                             <td>[${g.locType}] ${g.address}</td>
                         </tr>
-                    `).join('');
+                        `;
+                    }).join('');
+                    
                     unifiedScheduleHTML = `
                         <div class="unified-schedule-box">
                             <table class="unified-schedule-table">
-                                <thead><tr><th>👥 المجموعة</th><th>👑 الصف والمادة</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead>
+                                <thead><tr><th>👥 المجموعة</th><th>🎓 المرحلة والصف</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead>
                                 <tbody>${rowsHTML}</tbody>
                             </table>
                         </div>
                     `;
                 } else {
+                    let stageName = r.stageKey;
+                    if(stageName === 'primary') stageName = 'المرحلة الابتدائية';
+                    else if(stageName === 'prep') stageName = 'المرحلة الإعدادية';
+                    else if(stageName === 'secondary') stageName = 'المرحلة الثانوية';
+                    else if(curr[r.stageKey] && curr[r.stageKey].name) {
+                        stageName = curr[r.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                    }
+                    
                     unifiedScheduleHTML = `
+                        <div class="info-pill"><span class="label">🎓 المرحلة:</span><span class="text-slate-900 font-black">${stageName}</span></div>
                         <div class="info-pill"><span class="label">👑 الصف والمادة:</span><span class="text-slate-900 font-black">${r.grade} — <span class="text-emerald-700">${r.subjects}</span></span></div>
                         <div class="info-pill"><span class="label">📍 العنوان:</span><span>[${r.locType}] ${r.address}</span></div>
                         <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>
