@@ -804,6 +804,28 @@
         </div>
     </div>
 
+    <!-- 🌟 كود الاتصال بقاعدة بيانات فايربيس 🌟 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { getFirestore, doc, setDoc, getDoc, collection, getDocs, deleteDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.doc = doc;
+      window.setDoc = setDoc;
+    </script>
+
     <script>
         // متغير عالمي لتتبع حالة الحظر السابقة (للتمكن من إظهار رسالة الترحيب عند الفك)
         let previousBlockedState = null;
@@ -1284,7 +1306,7 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
-        function saveState() {
+        async function saveState() {
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
                 const el = document.getElementById(id);
@@ -1296,6 +1318,17 @@
                 const el = document.getElementById(id);
                 if (el && el.checked) selectedMonths.push(el.value);
             });
+            
+            let teacherPhone = '';
+            let teacherTitle = 'مستر';
+            try {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if(loggedStr) {
+                    const logged = JSON.parse(loggedStr);
+                    teacherPhone = logged.phone || '';
+                    teacherTitle = logged.title || 'مستر';
+                }
+            } catch(e){}
 
             const state = {
                 step: currentStepNumber,
@@ -1303,6 +1336,8 @@
                 g_center: document.getElementById('g_center').value,
                 g_teacher: document.getElementById('g_teacher').value,
                 g_count: document.getElementById('g_count').value,
+                g_phone: teacherPhone,
+                t_gender: teacherTitle,
                 phoneType: detectPhoneType(),
                 start_hour: document.getElementById('start_hour').value,
                 start_min: document.getElementById('start_min').value,
@@ -1321,11 +1356,23 @@
                 m_address: document.getElementById('m_address').value,
                 g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
                 lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
-                lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng
+                lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng,
+                createdAt: new Date().toISOString().split('T')[0]
             };
             
+            // حفظ في الهاتف
             localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
             localStorage.setItem('publishState_' + currentLessonId, state.g_publish_map);
+            
+            // 🌟 حفظ في فايربيس (جدول lessons) 🌟
+            if(window.db && window.setDoc && window.doc) {
+                 try {
+                     await window.setDoc(window.doc(window.db, "lessons", currentLessonId), state);
+                     console.log("تم تحديث السحابة بنجاح");
+                 } catch(e) {
+                     console.error("خطأ في تحديث السحابة", e);
+                 }
+            }
         }
 
         function loadState() {
