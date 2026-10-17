@@ -1034,6 +1034,8 @@
                             subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s).join('، ') : 'غير محدد',
                             locType: state.g_loc === 'l_teach' ? 'بيت المستر' : (state.g_loc === 'l_stud' ? 'منزل الطالب' : 'السنتر'),
                             address: state.m_address || 'لم يتم تحديد العنوان',
+                            lat: state.lat || null,
+                            lng: state.lng || null,
                             days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
                             timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
                             timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
@@ -1055,7 +1057,7 @@
                         type: 'account_only', lessonId: null, lessonIds: [], title: acc.title || 'مستر',
                         teacherName: cleanName, phone: phone, regDate: acc.createdAt || todayISO,
                         groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
-                        locType: '--', address: '--', days: '--', timeFrom: '--', timeTo: '--',
+                        locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
                         isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: [], phoneType: ''
                     });
                 }
@@ -1080,8 +1082,13 @@
                 entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
                 entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
                 entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
-                entry.locType = entry.groups[0].locType; entry.address = entry.groups[0].address;
-                entry.days = entry.groups[0].days; entry.timeFrom = entry.groups[0].timeFrom; entry.timeTo = entry.groups[0].timeTo;
+                entry.locType = entry.groups[0].locType; 
+                entry.address = entry.groups[0].address;
+                entry.lat = entry.groups[0].lat;
+                entry.lng = entry.groups[0].lng;
+                entry.days = entry.groups[0].days; 
+                entry.timeFrom = entry.groups[0].timeFrom; 
+                entry.timeTo = entry.groups[0].timeTo;
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
@@ -1294,6 +1301,11 @@
                             stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
                         }
                         
+                        let mapBtn = '';
+                        if (g.lat && g.lng) {
+                            mapBtn = `<br><button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="mt-1.5 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
+                        }
+                        
                         return `
                         <tr>
                             <td class="font-black text-slate-900">${g.groupName}</td>
@@ -1302,7 +1314,7 @@
                                 <span class="text-slate-900 font-black">${g.grade}</span> — <span class="text-emerald-700 font-black">${g.subjects}</span>
                             </td>
                             <td>${g.days}<br><span class="text-[11px] text-blue-700">من ${g.timeFrom} إلى ${g.timeTo}</span></td>
-                            <td>[${g.locType}] ${g.address}</td>
+                            <td>[${g.locType}] ${g.address}${mapBtn}</td>
                         </tr>
                         `;
                     }).join('');
@@ -1324,10 +1336,15 @@
                         stageName = curr[r.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
                     }
                     
+                    let mapBtn = '';
+                    if (r.lat && r.lng) {
+                        mapBtn = `<button onclick="openMapModal('${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="mt-1 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
+                    }
+                    
                     unifiedScheduleHTML = `
                         <div class="info-pill"><span class="label">🎓 المرحلة:</span><span class="text-slate-900 font-black">${stageName}</span></div>
                         <div class="info-pill"><span class="label">👑 الصف والمادة:</span><span class="text-slate-900 font-black">${r.grade} — <span class="text-emerald-700">${r.subjects}</span></span></div>
-                        <div class="info-pill"><span class="label">📍 العنوان:</span><span>[${r.locType}] ${r.address}</span></div>
+                        <div class="info-pill"><span class="label">📍 العنوان:</span><div><span>[${r.locType}] ${r.address}</span><br>${mapBtn}</div></div>
                         <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>
                     `;
                 }
@@ -1449,6 +1466,32 @@
                 renderAllRecords();
                 showToast('🗑️ تم حذف المعلم بنجاح');
             });
+        }
+
+        // ==========================================
+        // 📍 دوال التعامل مع الخريطة داخل النافذة المنبثقة
+        // ==========================================
+        let adminMap = null;
+        let adminMarker = null;
+
+        function openMapModal(address, lat, lng) {
+            document.getElementById('mapModalAddress').textContent = address;
+            document.getElementById('googleMapsExternalLink').href = `https://www.google.com/maps?q=${lat},${lng}`;
+            document.getElementById('mapModal').classList.add('active');
+
+            if (!adminMap) {
+                adminMap = L.map('adminLeafletMap').setView([lat, lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(adminMap);
+                adminMarker = L.marker([lat, lng]).addTo(adminMap);
+            } else {
+                adminMap.setView([lat, lng], 15);
+                adminMarker.setLatLng([lat, lng]);
+            }
+
+            // تحديث حجم الخريطة لتجنب مشكلة المربعات الرمادية بسبب إخفاء النافذة
+            setTimeout(() => {
+                adminMap.invalidateSize();
+            }, 200);
         }
 
         window.addEventListener('DOMContentLoaded', () => {
