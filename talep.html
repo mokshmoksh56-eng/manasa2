@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
@@ -540,7 +539,6 @@
         let deleteType = ''; let deleteIndexToConfirm = -1;
         let editingLocationIndex = -1;
 
-        // متغيرات مزامنة المنهج مع Firebase
         let curriculumCache = null;
         let curriculumUnsubscribe = null;
         let isFirstCurriculumSnapshot = true;
@@ -662,7 +660,7 @@
         }
 
         // ==========================================
-        // 2. منطق العمر والربط اللحظي للمراحل والصفوف ومواد كل صف
+        // 2. منطق العمر
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
@@ -720,22 +718,40 @@
             }
         };
 
+        // ==========================================
+        // ✅ normalizeCurriculum محصّنة: تكمل الصفوف الناقصة من الافتراضي
+        // ==========================================
         function normalizeCurriculum(currObj) {
-            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj)) {
-                currObj = JSON.parse(JSON.stringify(defaultCurriculum));
+            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
+                return JSON.parse(JSON.stringify(defaultCurriculum));
             }
-            Object.keys(currObj).forEach(stageKey => {
+
+            Object.keys(defaultCurriculum).forEach(stageKey => {
+                if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
+                    currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    return;
+                }
+
                 const st = currObj[stageKey];
-                if (!st || typeof st !== 'object') return;
+                const defStage = defaultCurriculum[stageKey];
+
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
                 if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
                     st.gradeSubjects = {};
                 }
+
+                // ✅ إضافة الصفوف الناقصة من الافتراضي
+                (defStage.grades || []).forEach(defGrade => {
+                    if (!st.grades.includes(defGrade)) {
+                        st.grades.push(defGrade);
+                    }
+                });
+
+                // لكل صف: لو gradeSubjects ناقص أو فارغ → يملأ من الافتراضي
                 st.grades.forEach(g => {
-                    if (!Array.isArray(st.gradeSubjects[g])) {
-                        const defStage = defaultCurriculum[stageKey];
-                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
+                    if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
+                        if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
                             st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
                         } else {
                             st.gradeSubjects[g] = [...st.subjs];
@@ -743,9 +759,13 @@
                     }
                 });
             });
+
             return currObj;
         }
 
+        // ==========================================
+        // ✅ getCurriculum: يعيد الافتراضي إذا المحفوظ ناقص
+        // ==========================================
         function getCurriculum() {
             if (curriculumCache) return curriculumCache;
             try {
@@ -754,6 +774,7 @@
                     const parsed = JSON.parse(saved);
                     if (parsed && Object.keys(parsed).length > 0) {
                         curriculumCache = normalizeCurriculum(parsed);
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                         return curriculumCache;
                     }
                 }
@@ -902,7 +923,56 @@
         }
 
         // ==========================================
-        // 🌟 مزامنة المنهج من Firebase (المصدر الدائم)
+        // 🌟 جلب سريع من Firebase قبل بناء الواجهة
+        // ==========================================
+        async function quickFetchCurriculumFromFirebase() {
+            // انتظر تحميل Firebase حتى 3 ثواني
+            for (let i = 0; i < 30 && (!window.db || !window.fsDoc || !window.fsOnSnapshot); i++) {
+                await new Promise(r => setTimeout(r, 100));
+            }
+            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) {
+                console.warn("⚠️ Firebase غير متاح — سيتم استخدام المحلي");
+                return;
+            }
+
+            try {
+                const ref = window.fsDoc(window.db, "curriculum", "main");
+                const snap = await new Promise((resolve) => {
+                    let done = false;
+                    const unsub = window.fsOnSnapshot(ref, (s) => {
+                        if (done) return;
+                        done = true;
+                        try { unsub(); } catch (e) {}
+                        resolve(s);
+                    }, () => {
+                        if (done) return;
+                        done = true;
+                        try { unsub(); } catch (e) {}
+                        resolve(null);
+                    });
+                    setTimeout(() => {
+                        if (done) return;
+                        done = true;
+                        try { unsub(); } catch (e) {}
+                        resolve(null);
+                    }, 2500);
+                });
+
+                if (snap && snap.exists()) {
+                    const data = snap.data() || {};
+                    delete data.updatedAt;
+                    curriculumCache = normalizeCurriculum(data);
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+                    console.log("⚡ تم جلب المنهج سريعاً من Firebase قبل بناء الواجهة");
+                }
+            } catch (err) {
+                console.warn("⚠️ فشل الجلب السريع:", err);
+            }
+        }
+
+        // ==========================================
+        // 🌟 مزامنة المنهج من Firebase (المستمع اللحظي)
         // ==========================================
         function startCurriculumFirebaseSync() {
             if (!window.db || !window.fsOnSnapshot || !window.fsDoc) {
@@ -931,7 +1001,6 @@
                         showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة");
                     }
                 } else {
-                    // مستند غير موجود → رفع الافتراضي
                     console.log("📤 مستند المنهج غير موجود في Firebase — talep سيستخدم الافتراضي المحلي");
                 }
             }, (error) => {
@@ -1032,11 +1101,23 @@
             updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
         }
 
-        window.onload = () => {
+        // ==========================================
+        // ✅ onload: Firebase أولاً ثم بناء الواجهة
+        // ==========================================
+        window.onload = async () => {
+            // 1) محاولة جلب سريعة من Firebase أولاً
+            await quickFetchCurriculumFromFirebase();
+
+            // 2) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
+
+            // 3) ربط المستمعات
             document.querySelectorAll('input, select').forEach(el => {
-                if (el.id !== 'search_radius') { el.addEventListener('input', saveStudentData); el.addEventListener('change', saveStudentData); }
+                if (el.id !== 'search_radius') {
+                    el.addEventListener('input', saveStudentData);
+                    el.addEventListener('change', saveStudentData);
+                }
             });
 
             window.addEventListener('storage', (e) => {
@@ -1054,7 +1135,6 @@
             });
 
             window.addEventListener('focus', () => {
-                // إعادة قراءة المنهج من localStorage إذا تغير
                 try {
                     const saved = localStorage.getItem('app_curriculum');
                     if (saved) {
@@ -1068,7 +1148,7 @@
                 } catch (e) {}
             });
 
-            // 🌟 بدء المزامنة مع Firebase
+            // 4) تشغيل المستمع اللحظي Firebase
             startCurriculumFirebaseSync();
         };
 
