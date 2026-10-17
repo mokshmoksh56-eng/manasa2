@@ -1403,9 +1403,6 @@
             const selectedSubject = document.getElementById('s_subject').value;
             const selectedGrade = document.getElementById('s_grade').value;
             
-            // ✅ تشكيل نص المطابقة الدقيق (مثل: "الثاني الثانوي - فيزياء")
-            const exactMatchString = `${selectedGrade} - ${selectedSubject}`;
-            
             // جلب البيانات من السحابة (فايربيس)
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
@@ -1423,20 +1420,32 @@
             registeredList.forEach(t => {
                 const distanceInMeters = map.distance(centerPos, [t.lat, t.lng]);
 
-                // ✅ الفلترة: التأكد أن المعلم يدرس نفس الصف والمادة بالضبط
-                let teachesExactSubject = false;
+                // ✅ الفلترة الصارمة جداً (لضمان تطابق الصف والمادة 100%)
+                
+                // 1. التأكد أن "الصف الأساسي" الذي أنشأ به المستر المجموعة هو نفسه صف الطالب
+                const gradeMatches = (t.grade === selectedGrade);
+                
+                // 2. التأكد أن "المادة" मौजूदة إما في المصفوفة الدقيقة أو في اسم المادة المحفوظ
+                let subjectMatches = false;
                 if (t.rawSubjects && t.rawSubjects.length > 0) {
-                    teachesExactSubject = t.rawSubjects.includes(exactMatchString);
+                    // التحقق مما إذا كانت المصفوفة تحتوي على المادة اللي يبحث عنها الطالب
+                    subjectMatches = t.rawSubjects.some(sub => sub.includes(selectedSubject));
                 } else {
-                    // كإجراء احتياطي إذا تم التسجيل بطريقة قديمة
-                    teachesExactSubject = (t.grade === selectedGrade && t.subject.includes(selectedSubject));
+                    // إجراء احتياطي للمجموعات القديمة بدون مصفوفة
+                    subjectMatches = (t.subject && t.subject.includes(selectedSubject));
                 }
 
-                // ✅ عرض المعلم فقط إذا كان في النطاق ويدرس المادة المطلوبة
+                // التطابق التام يحدث فقط إذا كان الصف متطابقاً والمادة متطابقة
+                const teachesExactSubject = (gradeMatches && subjectMatches);
+
+                // ✅ عرض المعلم فقط إذا كان في النطاق وحقق التطابق التام
                 if (distanceInMeters <= radiusInMeters && teachesExactSubject) {
                     shownCount++;
-                    const displaySubject = t.subject || selectedSubject;
-                    const displayGrade = t.grade || selectedGrade;
+                    
+                    // استخدام بيانات الطالب المطلوبة لعرضها في النافذة حتى تكون دقيقة ومتوافقة
+                    const displaySubject = selectedSubject;
+                    const displayGrade = selectedGrade;
+                    
                     const displayPhone = t.phone ? t.phone : 'غير مسجل';
                     const isMs = (t.gender === 'مس');
                     const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
@@ -1451,6 +1460,7 @@
                         popupAnchor: [0, -16]
                     });
 
+                    // تحديث النافذة لعرض الصف والمادة اللي الطالب بيبحث عنهم بالضبط
                     const popupContent = `
                         <div class="teacher-popup-title">${emoji} ${titlePrefix}/ ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
