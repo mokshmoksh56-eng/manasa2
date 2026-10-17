@@ -3,14 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <!-- منع متصفح جوجل كروم من تشغيل الترجمة التلقائية التي تكسر الأكواد -->
     <meta name="google" content="notranslate">
     <title>لوحة التحكم الشاملة - منصة احجزلى</title>
-    
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    
-    <!-- Leaflet CSS للخريطة -->
+
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
@@ -20,7 +18,7 @@
             --emerald-900:#064E3B; --emerald-600:#10B981;
         }
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
+
         body {
             background: #F1F5F9;
             min-height: 100vh;
@@ -30,7 +28,6 @@
             margin: 0;
         }
 
-        /* مؤشر سحب الشاشة للتحديث (Pull-to-Refresh) */
         #pullToRefreshIndicator {
             position: fixed;
             top: -60px;
@@ -49,7 +46,6 @@
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* الهيدر العلوي */
         .hero-banner {
             position: relative;
             width: 100%;
@@ -109,7 +105,6 @@
             color: #fff;
         }
 
-        /* كروت الإحصائيات (قابلة للضغط) */
         .stats-container {
             max-width: 1200px;
             margin: -45px auto 20px;
@@ -145,7 +140,6 @@
             flex-shrink: 0;
         }
 
-        /* شريط البحث والفلترة */
         .filter-bar {
             background: #FFFFFF;
             border-radius: 20px;
@@ -175,7 +169,6 @@
             box-shadow: 0 0 0 3px #DBEAFE;
         }
 
-        /* شارات مستر ومس */
         .badge-mr {
             background: #DBEAFE;
             color: #1E40AF;
@@ -200,7 +193,7 @@
             align-items: center;
             gap: 4px;
         }
-        
+
         .badge-device {
             background: #F1F5F9;
             color: #475569;
@@ -215,7 +208,6 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* كارت بيانات المعلم والدرس */
         .record-card {
             background: #FFFFFF;
             border-radius: 22px;
@@ -254,7 +246,6 @@
             white-space: nowrap;
         }
 
-        /* جدول المستر الموحد داخل البطاقة */
         .unified-schedule-box {
             border: 1.5px solid #E2E8F0;
             border-radius: 14px;
@@ -290,7 +281,6 @@
             background: #F8FAFC;
         }
 
-        /* أزرار الإجراءات */
         .action-chip {
             padding: 7px 12px;
             border-radius: 10px;
@@ -307,7 +297,6 @@
         }
         .action-chip:active { transform: translateY(1px); }
 
-        /* النوافذ المنبثقة */
         .modal-overlay {
             position: fixed;
             inset: 0;
@@ -342,7 +331,6 @@
             border-bottom-color: #F59E0B;
         }
 
-        /* أزرار المراحل والصفوف التفاعلية */
         .stage-tab {
             padding: 9px 15px;
             border-radius: 14px;
@@ -366,7 +354,6 @@
             transform: translateY(-1px);
         }
 
-        /* كارت الصف الدراسي القابل للضغط لإظهار مواده تحته */
         .grade-selectable-card {
             display: flex;
             align-items: center;
@@ -395,7 +382,6 @@
             box-shadow: 0 6px 15px rgba(16, 185, 129, 0.15);
         }
 
-        /* صندوق المواد الذي يظهر تحت الصف المختار */
         .grade-subjects-panel {
             background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%);
             border: 2px solid #86EFAC;
@@ -446,17 +432,36 @@
             transform: translateX(-50%) translateY(0);
             opacity: 1;
         }
+
+        /* مؤشر حالة المزامنة مع السحابة */
+        .cloud-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 900;
+            border: 1.5px solid;
+            transition: all 0.3s;
+        }
+        .cloud-status-badge.syncing {
+            background: #FEF3C7; color: #92400E; border-color: #FCD34D;
+        }
+        .cloud-status-badge.synced {
+            background: #D1FAE5; color: #065F46; border-color: #6EE7B7;
+        }
+        .cloud-status-badge.offline {
+            background: #FEE2E2; color: #991B1B; border-color: #FCA5A5;
+        }
     </style>
 </head>
 <body>
 
-    <!-- مؤشر سحب الشاشة للتحديث -->
     <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
 
-    <!-- إشعار منبثق -->
     <div id="toastMsg" class="custom-toast">✨ تمت العملية بنجاح</div>
 
-    <!-- الهيدر العلوي -->
     <header class="hero-banner">
         <div class="top-nav">
             <div class="flex items-center gap-3">
@@ -468,6 +473,9 @@
             </div>
 
             <div class="nav-links">
+                <span id="cloudStatusBadge" class="cloud-status-badge syncing" title="حالة المزامنة مع السحابة">
+                    ⏳ جاري الاتصال بالسحابة...
+                </span>
                 <button onclick="openCurriculumModal()" class="btn-nav highlight-btn">
                     📚 التحكم في المراحل والصفوف والمواد
                 </button>
@@ -475,7 +483,6 @@
         </div>
     </header>
 
-    <!-- كروت الإحصائيات السريعة -->
     <section class="stats-container">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
             <div class="stat-card" style="border-bottom-color: #2563EB;" onclick="openTeachersSummaryModal('مستر')" title="اضغط لعرض تفاصيل المستر">
@@ -511,18 +518,15 @@
             </div>
         </div>
     </section>
-    
-    <!-- زر الأرشيف -->
+
     <div class="max-w-7xl mx-auto w-full px-4 mb-4 flex justify-end relative z-10" style="margin-top: -10px;">
         <button onclick="toggleArchiveView()" id="btnToggleArchive" class="btn-nav bg-slate-800 text-white border-none shadow-md">
             📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)
         </button>
     </div>
 
-    <!-- المحتوى الرئيسي -->
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
-        
-        <!-- شريط البحث والفلترة -->
+
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-2">
@@ -564,7 +568,6 @@
         </div>
     </main>
 
-    <!-- النوافذ المنبثقة -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -614,7 +617,11 @@
                 <div id="subjectsListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
             </div>
 
-            <div class="flex justify-end mt-5 pt-3 border-t border-slate-200">
+            <!-- 🌟 زر استعادة الافتراضي + تم الحفظ -->
+            <div class="flex flex-wrap justify-between items-center gap-2 mt-5 pt-3 border-t border-slate-200">
+                <button onclick="resetCurriculumToDefault()" class="action-chip bg-rose-600 text-white px-4 py-2.5 text-xs">
+                    🔄 استعادة المنهج الافتراضي الكامل
+                </button>
                 <button onclick="closeModal('curriculumModal')" class="action-chip bg-slate-800 text-white px-8 py-2.5 text-sm">✔️ تم الحفظ</button>
             </div>
         </div>
@@ -635,7 +642,6 @@
         </div>
     </div>
 
-    <!-- رسالة التأكيد المخصصة -->
     <div id="customConfirmModal" class="modal-overlay" onclick="closeModal('customConfirmModal')" style="z-index: 999999;">
         <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 380px; border-bottom-color: #EF4444; text-align: center;">
             <div class="text-5xl mb-3">⚠️</div>
@@ -648,7 +654,44 @@
         </div>
     </div>
 
+    <!-- ═══════════════════════════════════════════════════════════
+         🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي
+         ═══════════════════════════════════════════════════════════ -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+          getFirestore,
+          doc,
+          setDoc,
+          getDoc,
+          onSnapshot
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.fsDoc = doc;
+      window.fsSetDoc = setDoc;
+      window.fsGetDoc = getDoc;
+      window.fsOnSnapshot = onSnapshot;
+
+      console.log("✅ Firebase + Firestore جاهز في school.html");
+    </script>
+
     <script>
+        /* ═══════════════════════════════════════════════════════════
+           Pull-to-Refresh
+           ═══════════════════════════════════════════════════════════ */
         let touchStartY = 0;
         let pullDistance = 0;
         const ptrIndicator = document.getElementById('pullToRefreshIndicator');
@@ -680,6 +723,9 @@
             touchStartY = 0; pullDistance = 0;
         });
 
+        /* ═══════════════════════════════════════════════════════════
+           Audio + Toast
+           ═══════════════════════════════════════════════════════════ */
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -695,28 +741,29 @@
             if (e.target.closest('button, a, select, .grade-selectable-card')) playClickSound();
         });
 
-        const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
-        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
-
-        function showToast(msg) {
+        function showToast(msg, isError = false) {
             const t = document.getElementById('toastMsg');
-            t.textContent = msg; t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 3000);
+            t.textContent = msg;
+            t.style.background = isError ? '#EF4444' : '#10B981';
+            t.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3200);
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
 
-        // متغير لحفظ الأمر الذي سيتم تنفيذه عند الضغط على "نعم"
-        let confirmActionCallback = null;
+        const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
+        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
 
-        // دالة إظهار رسالة التأكيد المخصصة
+        /* ═══════════════════════════════════════════════════════════
+           Confirm Helper
+           ═══════════════════════════════════════════════════════════ */
+        let confirmActionCallback = null;
         function showCustomConfirm(message, callback) {
             document.getElementById('customConfirmMessage').textContent = message;
             confirmActionCallback = callback;
             document.getElementById('customConfirmModal').classList.add('active');
         }
-
-        // تنفيذ الأمر عند الضغط على زر "نعم، متأكد"
         document.getElementById('btnConfirmYes').addEventListener('click', () => {
             closeModal('customConfirmModal');
             if (confirmActionCallback) {
@@ -725,43 +772,208 @@
             }
         });
 
+        /* ═══════════════════════════════════════════════════════════
+           🌟 المنهج الافتراضي الكامل الموحّد (مطابق لـ group/talep)
+           ═══════════════════════════════════════════════════════════ */
         const defaultCurriculum = {
-            primary: { name: '🎒 المرحلة الابتدائية', grades: ['الأول', 'الثاني'], subjs: ['عربي', 'رياضيات'], gradeSubjects: {'الأول':['عربي','رياضيات'], 'الثاني':['عربي','رياضيات']} },
-            prep: { name: '📐 المرحلة الإعدادية', grades: ['الأول الإعدادي'], subjs: ['عربي', 'رياضيات'], gradeSubjects: {'الأول الإعدادي':['عربي','رياضيات']} },
-            secondary: { name: '🎓 المرحلة الثانوية', grades: ['الأول الثانوي'], subjs: ['فيزياء', 'كيمياء'], gradeSubjects: {'الأول الثانوي':['فيزياء','كيمياء']} }
+            primary: {
+                name: '🎒 المرحلة الابتدائية',
+                grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                gradeSubjects: {
+                    'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الثاني': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الثالث': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
+                    'الرابع': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
+                    'الخامس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
+                    'السادس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات']
+                },
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            prep: {
+                name: '📐 المرحلة الإعدادية',
+                grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                gradeSubjects: {
+                    'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
+                    'الثاني الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
+                    'الثالث الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي']
+                },
+                subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
+            },
+            secondary: {
+                name: '🎓 المرحلة الثانوية',
+                grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                gradeSubjects: {
+                    'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
+                    'الثاني الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا', 'علم نفس', 'فلسفة'],
+                    'الثالث الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+                },
+                subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات']
+            }
         };
 
+        function normalizeCurriculum(currObj) {
+            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj)) {
+                currObj = JSON.parse(JSON.stringify(defaultCurriculum));
+            }
+            Object.keys(currObj).forEach(stageKey => {
+                const st = currObj[stageKey];
+                if (!st || typeof st !== 'object') return;
+                if (!Array.isArray(st.grades)) st.grades = [];
+                if (!Array.isArray(st.subjs)) st.subjs = [];
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
+                    st.gradeSubjects = {};
+                }
+                st.grades.forEach(g => {
+                    if (!Array.isArray(st.gradeSubjects[g])) {
+                        const defStage = defaultCurriculum[stageKey];
+                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
+                            st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
+                        } else {
+                            st.gradeSubjects[g] = [...st.subjs];
+                        }
+                    }
+                });
+            });
+            return currObj;
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           🌟 Firebase Curriculum Sync (المصدر الدائم)
+           ═══════════════════════════════════════════════════════════ */
+        const CURRICULUM_DOC_PATH = { collection: 'curriculum', id: 'main' };
+        let curriculumCache = null;
+        let curriculumUnsubscribe = null;
+        let isFirstSnapshot = true;
+        let firebaseReady = false;
+
+        function setCloudStatus(status, text) {
+            const b = document.getElementById('cloudStatusBadge');
+            if (!b) return;
+            b.className = 'cloud-status-badge ' + status;
+            b.textContent = text;
+        }
+
         function getCurriculum() {
+            if (curriculumCache) return curriculumCache;
             try {
                 const saved = localStorage.getItem('app_curriculum');
-                if (saved) return JSON.parse(saved);
+                if (saved) {
+                    const parsed = JSON.parse(saved);
+                    if (parsed && Object.keys(parsed).length > 0) {
+                        curriculumCache = normalizeCurriculum(parsed);
+                        return curriculumCache;
+                    }
+                }
             } catch (e) {}
-            localStorage.setItem('app_curriculum', JSON.stringify(defaultCurriculum));
-            return defaultCurriculum;
+            const copy = JSON.parse(JSON.stringify(defaultCurriculum));
+            curriculumCache = copy;
+            return copy;
         }
 
-        function getSubjectsForGrade(stageKey, gradeName) {
-            const curr = getCurriculum();
-            if (!stageKey || !curr[stageKey]) return [];
-            return curr[stageKey].gradeSubjects?.[gradeName] || curr[stageKey].subjs || [];
-        }
+        async function saveCurriculumAndBroadcast(currObj, toastText) {
+            curriculumCache = normalizeCurriculum(JSON.parse(JSON.stringify(currObj)));
 
-        function saveCurriculumAndBroadcast(currObj, toastText) {
-            localStorage.setItem('app_curriculum', JSON.stringify(currObj));
-            if (curriculumChannel) curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: currObj });
+            // 1) حفظ محلي
+            localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+            localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+
+            // 2) بث لحظي عبر BroadcastChannel
+            if (curriculumChannel) {
+                curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
+            }
+
+            // 3) رفع إلى Firebase
+            if (window.db && window.fsDoc && window.fsSetDoc) {
+                try {
+                    setCloudStatus('syncing', '⏳ جاري الرفع...');
+                    await window.fsSetDoc(
+                        window.fsDoc(window.db, CURRICULUM_DOC_PATH.collection, CURRICULUM_DOC_PATH.id),
+                        { ...curriculumCache, updatedAt: Date.now() }
+                    );
+                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                    console.log("☁️ تم حفظ المنهج في Firebase");
+                } catch (err) {
+                    console.error("❌ فشل حفظ المنهج في Firebase:", err);
+                    setCloudStatus('offline', '⚠️ حفظ محلي فقط');
+                    showToast("⚠️ تم الحفظ محلياً لكن فشل الرفع للسحابة", true);
+                }
+            }
+
             populateGradeFilter();
             renderAllRecords();
             if (toastText) showToast(toastText);
         }
 
+        function loadCurriculumFromFirebase() {
+            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) {
+                setCloudStatus('syncing', '⏳ انتظار Firebase...');
+                setTimeout(loadCurriculumFromFirebase, 500);
+                return;
+            }
+
+            firebaseReady = true;
+            if (curriculumUnsubscribe) curriculumUnsubscribe();
+
+            const ref = window.fsDoc(window.db, CURRICULUM_DOC_PATH.collection, CURRICULUM_DOC_PATH.id);
+
+            curriculumUnsubscribe = window.fsOnSnapshot(ref, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    delete data.updatedAt;
+                    curriculumCache = normalizeCurriculum(data);
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+
+                    if (curriculumChannel) {
+                        curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
+                    }
+
+                    if (isFirstSnapshot) {
+                        isFirstSnapshot = false;
+                        setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                        populateGradeFilter();
+                        renderAllRecords();
+                        console.log("☁️ تم تحميل المنهج من Firebase لأول مرة");
+                    } else {
+                        setCloudStatus('synced', '☁️ تم التحديث لحظياً');
+                        populateGradeFilter();
+                        renderAllRecords();
+                        showToast("🔄 تم تحديث المنهج لحظياً من السحابة");
+                    }
+                } else {
+                    console.log("📤 مستند المنهج غير موجود — رفع الافتراضي");
+                    const defaultCopy = JSON.parse(JSON.stringify(defaultCurriculum));
+                    curriculumCache = defaultCopy;
+                    window.fsSetDoc(ref, { ...defaultCopy, updatedAt: Date.now() })
+                        .then(() => {
+                            setCloudStatus('synced', '☁️ تم إنشاء المستند');
+                            console.log("✅ تم إنشاء مستند المنهج الافتراضي في Firebase");
+                        })
+                        .catch(err => {
+                            console.error("❌ فشل إنشاء مستند المنهج:", err);
+                            setCloudStatus('offline', '⚠️ تعذر إنشاء المستند');
+                        });
+                    populateGradeFilter();
+                    renderAllRecords();
+                }
+            }, (error) => {
+                console.error("❌ خطأ في مراقبة المنهج:", error);
+                setCloudStatus('offline', '⚠️ غير متصل بالسحابة');
+                showToast("⚠️ تعذر الاتصال بالسحابة — يتم استخدام النسخة المحلية", true);
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           Curriculum Manager UI
+           ═══════════════════════════════════════════════════════════ */
         let activeStageKey = null;
         let activeGradeName = null;
         let showingArchive = false;
-        
+
         function toggleArchiveView() {
             showingArchive = !showingArchive;
             const btn = document.getElementById('btnToggleArchive');
-            if(showingArchive) {
+            if (showingArchive) {
                 btn.innerHTML = '🔙 الرجوع للمعلمين النشطين';
                 btn.classList.add('bg-rose-700');
                 btn.classList.remove('bg-slate-800');
@@ -809,7 +1021,7 @@
             `).join('');
 
             gradesContainer.innerHTML = grades.map((g, idx) => `
-                <div onclick="selectGradeTab('${g.replace(/'/g, "\'")}')" class="grade-selectable-card ${g === activeGradeName ? 'active' : ''}">
+                <div onclick="selectGradeTab('${g.replace(/'/g, "\\'")}')" class="grade-selectable-card ${g === activeGradeName ? 'active' : ''}">
                     <span>👑 ${g}</span>
                     <button onclick="deleteGradeItem(${idx}); event.stopPropagation();" class="text-rose-600 font-bold">🗑️</button>
                 </div>
@@ -829,27 +1041,38 @@
             }
         }
 
-        function selectStageTab(k) { activeStageKey = k; activeGradeName = getCurriculum()[k].grades[0] || null; renderCurriculumManager(); }
-        function selectGradeTab(g) { activeGradeName = g; renderCurriculumManager(); }
+        function selectStageTab(k) {
+            activeStageKey = k;
+            activeGradeName = getCurriculum()[k].grades[0] || null;
+            renderCurriculumManager();
+        }
+        function selectGradeTab(g) {
+            activeGradeName = g;
+            renderCurriculumManager();
+        }
 
         function addNewStage() {
             const val = document.getElementById('newStageNameInput').value.trim();
             if (!val) return;
             const curr = getCurriculum();
-            curr['stage_' + Date.now()] = { name: val, grades: ['الصف الأول'], gradeSubjects: {'الصف الأول': ['مادة عامة']}, subjs: ['مادة عامة'] };
+            curr['stage_' + Date.now()] = {
+                name: val,
+                grades: ['الصف الأول'],
+                gradeSubjects: {'الصف الأول': ['مادة عامة']},
+                subjs: ['مادة عامة']
+            };
             document.getElementById('newStageNameInput').value = '';
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة');
+            activeStageKey = Object.keys(curr).slice(-1)[0];
+            activeGradeName = 'الصف الأول';
             renderCurriculumManager();
         }
 
         function deleteStage(stageKey) {
             const curr = getCurriculum();
             const stageName = curr[stageKey].name;
-
-            // إظهار النافذة المخصصة الظريفة بدلاً من confirm الافتراضية
             showCustomConfirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`, () => {
                 delete curr[stageKey];
-
                 if (activeStageKey === stageKey) {
                     const remainingKeys = Object.keys(curr);
                     if (remainingKeys.length > 0) {
@@ -860,7 +1083,6 @@
                         activeGradeName = null;
                     }
                 }
-
                 saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
                 renderCurriculumManager();
             });
@@ -882,22 +1104,14 @@
         function deleteGradeItem(idx) {
             const curr = getCurriculum();
             const gradeName = curr[activeStageKey].grades[idx];
-
-            // استدعاء رسالة التأكيد المخصصة
             showCustomConfirm(`هل أنت متأكد من حذف (${gradeName}) وجميع المواد التابعة له نهائياً؟`, () => {
-                // يتم تنفيذ هذا الكود فقط إذا ضغط المستخدم على "نعم، متأكد"
                 curr[activeStageKey].grades.splice(idx, 1);
-                
-                // مسح المواد المرتبطة بهذا الصف من الذاكرة (للتنظيف)
                 if (curr[activeStageKey].gradeSubjects && curr[activeStageKey].gradeSubjects[gradeName]) {
                     delete curr[activeStageKey].gradeSubjects[gradeName];
                 }
-
-                // إذا كان الصف المحذوف هو الصف النشط حالياً، قم بإلغاء التحديد
                 if (activeGradeName === gradeName) {
                     activeGradeName = curr[activeStageKey].grades[0] || null;
                 }
-
                 saveCurriculumAndBroadcast(curr, '🗑️ تم حذف الصف بنجاح');
                 renderCurriculumManager();
             });
@@ -917,17 +1131,27 @@
         function deleteSubjectFromGrade(idx) {
             const curr = getCurriculum();
             const subjectName = curr[activeStageKey].gradeSubjects[activeGradeName][idx];
-
-            // استدعاء رسالة التأكيد المخصصة
             showCustomConfirm(`هل أنت متأكد من حذف مادة (${subjectName}) من ${activeGradeName}؟`, () => {
-                // يتم تنفيذ هذا الكود فقط إذا ضغط المستخدم على "نعم، متأكد"
                 curr[activeStageKey].gradeSubjects[activeGradeName].splice(idx, 1);
-                
                 saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة بنجاح');
                 renderCurriculumManager();
             });
         }
 
+        function resetCurriculumToDefault() {
+            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟ سيتم مسح أي تعديلات سابقة، وسيتم رفع النسخة الافتراضية إلى السحابة أيضاً.', () => {
+                const copy = JSON.parse(JSON.stringify(defaultCurriculum));
+                saveCurriculumAndBroadcast(copy, '✨ تم استعادة المنهج الافتراضي الكامل');
+                activeStageKey = Object.keys(copy)[0];
+                activeGradeName = copy[activeStageKey].grades[0] || null;
+                renderCurriculumManager();
+                populateGradeFilter();
+            });
+        }
+
+        /* ═══════════════════════════════════════════════════════════
+           Teacher Records (كما هي)
+           ═══════════════════════════════════════════════════════════ */
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
@@ -945,14 +1169,11 @@
             return '30 يوم تجريبي';
         }
 
-        // ==========================================
-        // 🌟 دوال حساب وقت التسجيل وانتهاء الباقة
-        // ==========================================
         function calculateExpiration(regDateStr, plan) {
             if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
             if (!regDateStr) return { expired: false, text: 'تاريخ غير معروف' };
-            
-            let days = 30; // افتراضي
+
+            let days = 30;
             if (plan === '30 يوم تجريبي') days = 30;
             else if (plan === '3 شهور') days = 90;
             else if (plan === '6 شهور') days = 180;
@@ -960,20 +1181,17 @@
 
             const regDate = new Date(regDateStr);
             if (isNaN(regDate)) return { expired: false, text: 'تاريخ غير صالح' };
-            
+
             const expiryDate = new Date(regDate.getTime() + days * 24 * 60 * 60 * 1000);
             const today = new Date();
-            today.setHours(0,0,0,0);
-            expiryDate.setHours(0,0,0,0);
-            
+            today.setHours(0, 0, 0, 0);
+            expiryDate.setHours(0, 0, 0, 0);
+
             const diffTime = expiryDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            
-            if (diffDays <= 0) {
-                return { expired: true, text: '🔴 الباقة منتهية' };
-            } else {
-                return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
-            }
+
+            if (diffDays <= 0) return { expired: true, text: '🔴 الباقة منتهية' };
+            return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
         }
 
         function collectAllAppData() {
@@ -998,7 +1216,10 @@
                 const loggedStr = localStorage.getItem('loggedInTeacher');
                 if (loggedStr) {
                     loggedTeacher = JSON.parse(loggedStr);
-                    if (loggedTeacher && !teacherAccounts.some(a => (a.phone && a.phone === loggedTeacher.phone) || (cleanTeacherName(a.name) && cleanTeacherName(a.name) === cleanTeacherName(loggedTeacher.name)))) {
+                    if (loggedTeacher && !teacherAccounts.some(a =>
+                        (a.phone && a.phone === loggedTeacher.phone) ||
+                        (cleanTeacherName(a.name) && cleanTeacherName(a.name) === cleanTeacherName(loggedTeacher.name))
+                    )) {
                         if (!loggedTeacher.createdAt) loggedTeacher.createdAt = todayISO;
                         teacherAccounts.push(loggedTeacher);
                     }
@@ -1025,7 +1246,7 @@
                         const teacherName = cleanTeacherName(state.g_teacher || matchedAcc.name || matchedAcc.fullName) || 'غير محدد';
                         const phone = state.g_phone || matchedAcc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
                         const regDate = state.createdAt || matchedAcc.createdAt || todayISO;
-                        
+
                         rawLessons.push({
                             type: 'lesson', lessonId, title, teacherName, phone, regDate,
                             groupName: state.g_name || `مجموعة رقم ${lessonId}`,
@@ -1058,7 +1279,9 @@
                         teacherName: cleanName, phone: phone, regDate: acc.createdAt || todayISO,
                         groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
                         locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
-                        isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: [], phoneType: ''
+                        isPublished: false,
+                        waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10),
+                        groups: [], phoneType: ''
                     });
                 }
             });
@@ -1066,7 +1289,10 @@
             rawLessons.forEach(lesson => {
                 let targetKey = null;
                 for (const [k, v] of unifiedMap.entries()) {
-                    if ((lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) || (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))) { targetKey = k; break; }
+                    if ((lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) ||
+                        (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))) {
+                        targetKey = k; break;
+                    }
                 }
                 if (!targetKey) {
                     targetKey = (lesson.phone && lesson.phone !== 'غير مسجل') ? `phone_${lesson.phone}` : `name_${cleanTeacherName(lesson.teacherName)}`;
@@ -1082,29 +1308,23 @@
                 entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
                 entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
                 entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
-                entry.locType = entry.groups[0].locType; 
+                entry.locType = entry.groups[0].locType;
                 entry.address = entry.groups[0].address;
                 entry.lat = entry.groups[0].lat;
                 entry.lng = entry.groups[0].lng;
-                entry.days = entry.groups[0].days; 
-                entry.timeFrom = entry.groups[0].timeFrom; 
+                entry.days = entry.groups[0].days;
+                entry.timeFrom = entry.groups[0].timeFrom;
                 entry.timeTo = entry.groups[0].timeTo;
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
-            // 🌟 معالجة بيانات التوثيق والحظر والوقت المتبقي لكل حساب
             const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
                 let verifRaw = getTeacherVerificationStatus(entry.phone, entry.teacherName);
-                if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي'; // تحويل أي قيمة قديمة للمنظومة الجديدة
-                
+                if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
                 entry.verification = verifRaw;
                 entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification);
-                
                 entry.isBlocked = isTeacherBlockedStatus(entry.phone, entry.teacherName);
-                // 🌟 تفعيل الحظر برمجياً بشكل فوري إذا انتهت الباقة أو تم اختيار חظر
-                if (entry.verification === 'حظر' || entry.expiryInfo.expired) {
-                    entry.isBlocked = true;
-                }
+                if (entry.verification === 'حظر' || entry.expiryInfo.expired) entry.isBlocked = true;
                 return entry;
             });
 
@@ -1114,21 +1334,25 @@
         function broadcastAuthStatusChange(phone, teacherName, isBlocked, verification) {
             localStorage.setItem('ehgezly_auth_status_updated_at', String(Date.now()));
             if (authStatusChannel) {
-                authStatusChannel.postMessage({ type: 'AUTH_STATUS_CHANGED', phone: phone || '', teacherName: cleanTeacherName(teacherName), isBlocked: isBlocked, verification: verification });
+                authStatusChannel.postMessage({
+                    type: 'AUTH_STATUS_CHANGED',
+                    phone: phone || '',
+                    teacherName: cleanTeacherName(teacherName),
+                    isBlocked: isBlocked,
+                    verification: verification
+                });
             }
         }
 
-        // 🌟 تحديث التوثيق والحظر في نفس الوقت
         function updateVerification(phone, val, teacherName = '') {
             const cleanName = cleanTeacherName(teacherName);
-            
-            // جلب تاريخ التسجيل لفحص ما إذا كانت الباقة الجديدة منتهية الصلاحية مسبقاً
+
             let regDate = new Date().toISOString().split('T')[0];
             const accKey = 'teacherAccount_' + phone;
             if (phone && phone !== 'غير مسجل' && localStorage.getItem(accKey)) {
                 regDate = JSON.parse(localStorage.getItem(accKey)).createdAt || regDate;
             }
-            
+
             const expiryInfo = calculateExpiration(regDate, val);
             const isBlocked = (val === 'حظر' || expiryInfo.expired);
 
@@ -1150,7 +1374,6 @@
                 localStorage.setItem('teacherBlocked_name_' + cleanName, String(isBlocked));
             }
 
-            // تحديث الحظر المتبقي لجميع السجلات المطابقة
             for (let i = 0; i < localStorage.length; i++) {
                 const k = localStorage.key(i);
                 if (k && k.startsWith('teacherAccount_')) {
@@ -1165,9 +1388,6 @@
                 }
             }
 
-            // ==========================================
-            // 🌟 التعديل الجديد: الرجوع التلقائي للنشطين عند فك الحظر لكي يظهر الجدول فوراً
-            // ==========================================
             if (showingArchive && !isBlocked) {
                 showingArchive = false;
                 const btn = document.getElementById('btnToggleArchive');
@@ -1177,15 +1397,13 @@
                     btn.classList.add('bg-slate-800');
                 }
                 const searchInput = document.getElementById('searchInput');
-                if (searchInput) {
-                    searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
-                }
+                if (searchInput) searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
             }
 
             broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
-            if(isBlocked && val !== 'حظر') {
-                showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`);
+            if (isBlocked && val !== 'حظر') {
+                showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`, true);
             } else {
                 showToast(`✨ تم تحديث الباقة وتوثيق الحساب إلى: ${val}`);
             }
@@ -1242,16 +1460,13 @@
             const titleFilter = document.getElementById('filterTitle').value;
             const gradeFilter = document.getElementById('filterGrade').value;
 
-            // تحديث عداد الأرشيف
             const archivedCount = records.filter(r => r.isBlocked).length;
             const badge = document.getElementById('archiveCountBadge');
-            if(badge && !showingArchive) badge.textContent = archivedCount;
+            if (badge && !showingArchive) badge.textContent = archivedCount;
 
             const filtered = records.filter(r => {
-                // فلترة الأرشيف / النشط
-                if (showingArchive && !r.isBlocked) return false; // في الأرشيف نعرض المحظورين فقط
-                if (!showingArchive && r.isBlocked) return false; // في النشطين لا نعرض المحظورين
-
+                if (showingArchive && !r.isBlocked) return false;
+                if (!showingArchive && r.isBlocked) return false;
                 if (titleFilter !== 'all' && r.title !== titleFilter) return false;
                 if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
                 if (q && !`${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects} ${r.address}`.toLowerCase().includes(q)) return false;
@@ -1272,40 +1487,39 @@
             container.innerHTML = filtered.map(r => {
                 const isMs = r.title === 'مس';
                 const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
-                
+
                 let iconOnlyPhoneBadge = '';
                 if (r.phoneType) {
                     const emojiMatch = r.phoneType.match(/[\p{Emoji}\u200d]+/gu);
                     const iconChar = emojiMatch ? emojiMatch[0] : '📱';
-                    
                     iconOnlyPhoneBadge = `
                         <span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">
                             ${iconChar}
                         </span>
                     `;
                 }
-                
+
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                 const blockClass = r.isBlocked ? 'is-blocked' : '';
-                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\'");
+                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
 
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
                     const rowsHTML = r.groups.map(g => {
                         let stageName = g.stageKey;
-                        if(stageName === 'primary') stageName = 'المرحلة الابتدائية';
-                        else if(stageName === 'prep') stageName = 'المرحلة الإعدادية';
-                        else if(stageName === 'secondary') stageName = 'المرحلة الثانوية';
-                        else if(curr[g.stageKey] && curr[g.stageKey].name) {
+                        if (stageName === 'primary') stageName = 'المرحلة الابتدائية';
+                        else if (stageName === 'prep') stageName = 'المرحلة الإعدادية';
+                        else if (stageName === 'secondary') stageName = 'المرحلة الثانوية';
+                        else if (curr[g.stageKey] && curr[g.stageKey].name) {
                             stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
                         }
-                        
+
                         let mapBtn = '';
                         if (g.lat && g.lng) {
                             mapBtn = `<br><button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="mt-1.5 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
                         }
-                        
+
                         return `
                         <tr>
                             <td class="font-black text-slate-900">${g.groupName}</td>
@@ -1318,7 +1532,7 @@
                         </tr>
                         `;
                     }).join('');
-                    
+
                     unifiedScheduleHTML = `
                         <div class="unified-schedule-box">
                             <table class="unified-schedule-table">
@@ -1329,18 +1543,18 @@
                     `;
                 } else {
                     let stageName = r.stageKey;
-                    if(stageName === 'primary') stageName = 'المرحلة الابتدائية';
-                    else if(stageName === 'prep') stageName = 'المرحلة الإعدادية';
-                    else if(stageName === 'secondary') stageName = 'المرحلة الثانوية';
-                    else if(curr[r.stageKey] && curr[r.stageKey].name) {
+                    if (stageName === 'primary') stageName = 'المرحلة الابتدائية';
+                    else if (stageName === 'prep') stageName = 'المرحلة الإعدادية';
+                    else if (stageName === 'secondary') stageName = 'المرحلة الثانوية';
+                    else if (curr[r.stageKey] && curr[r.stageKey].name) {
                         stageName = curr[r.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
                     }
-                    
+
                     let mapBtn = '';
                     if (r.lat && r.lng) {
                         mapBtn = `<button onclick="openMapModal('${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="mt-1 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
                     }
-                    
+
                     unifiedScheduleHTML = `
                         <div class="info-pill"><span class="label">🎓 المرحلة:</span><span class="text-slate-900 font-black">${stageName}</span></div>
                         <div class="info-pill"><span class="label">👑 الصف والمادة:</span><span class="text-slate-900 font-black">${r.grade} — <span class="text-emerald-700">${r.subjects}</span></span></div>
@@ -1349,9 +1563,8 @@
                     `;
                 }
 
-                // تحديد شكل علامة حالة الحساب
-                const statusBadgeHTML = r.isBlocked 
-                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>` 
+                const statusBadgeHTML = r.isBlocked
+                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ نشط</span>`;
 
                 return `
@@ -1369,8 +1582,7 @@
                                 <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
                                 <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                             </div>
-                            
-                            <!-- 🌟 توثيق الحساب وعداد الوقت -->
+
                             <div class="info-pill flex flex-col gap-2" style="background:#FEF3C7; border-color:#FCD34D;">
                                 <div class="flex items-center justify-between w-full">
                                     <span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span>
@@ -1423,7 +1635,6 @@
         }
 
         function deleteRecord(lessonId, phone, teacherName) {
-            // إظهار النافذة المخصصة الظريفة بدلاً من confirm الافتراضية
             showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع المواعيد نهائياً؟`, () => {
                 const cleanName = cleanTeacherName(teacherName);
                 const keysToRemove = [];
@@ -1432,35 +1643,37 @@
                     if (k && k.startsWith('lessonState_')) {
                         try {
                             const st = JSON.parse(localStorage.getItem(k) || '{}');
-                            if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
+                            if ((lessonId && k === 'lessonState_' + lessonId) ||
+                                (phone && phone !== 'غير مسجل' && st.g_phone === phone) ||
+                                (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
                                 const id = k.replace('lessonState_', '');
-                                keysToRemove.push('lessonState_' + id); keysToRemove.push('publishState_' + id);
+                                keysToRemove.push('lessonState_' + id);
+                                keysToRemove.push('publishState_' + id);
                             }
                         } catch (e) {}
                     }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
-                
-                if (phone && phone !== 'غير مسجل') { 
-                    localStorage.removeItem('teacherAccount_' + phone); 
-                    localStorage.removeItem('teacherVerification_' + phone); 
-                    localStorage.removeItem('teacherBlocked_' + phone); 
+
+                if (phone && phone !== 'غير مسجل') {
+                    localStorage.removeItem('teacherAccount_' + phone);
+                    localStorage.removeItem('teacherVerification_' + phone);
+                    localStorage.removeItem('teacherBlocked_' + phone);
                 }
-                if (cleanName) { 
-                    localStorage.removeItem('teacherVerification_name_' + cleanName); 
-                    localStorage.removeItem('teacherBlocked_name_' + cleanName); 
+                if (cleanName) {
+                    localStorage.removeItem('teacherVerification_name_' + cleanName);
+                    localStorage.removeItem('teacherBlocked_name_' + cleanName);
                 }
 
-                // تفريغ الجلسة المفتوحة (لوحة التحكم تقرأ منها أحياناً وتنشئ كارت فارغ)
                 const loggedStr = localStorage.getItem('loggedInTeacher');
                 if (loggedStr) {
                     try {
                         const logged = JSON.parse(loggedStr);
-                        if ((phone && phone !== 'غير مسجل' && logged.phone === phone) || 
+                        if ((phone && phone !== 'غير مسجل' && logged.phone === phone) ||
                             (cleanName && cleanTeacherName(logged.name || logged.fullName) === cleanName)) {
                             localStorage.removeItem('loggedInTeacher');
                         }
-                    } catch(e){}
+                    } catch (e) {}
                 }
 
                 renderAllRecords();
@@ -1468,9 +1681,9 @@
             });
         }
 
-        // ==========================================
-        // 📍 دوال التعامل مع الخريطة داخل النافذة المنبثقة
-        // ==========================================
+        /* ═══════════════════════════════════════════════════════════
+           Admin Map Modal
+           ═══════════════════════════════════════════════════════════ */
         let adminMap = null;
         let adminMarker = null;
 
@@ -1488,14 +1701,39 @@
                 adminMarker.setLatLng([lat, lng]);
             }
 
-            // تحديث حجم الخريطة لتجنب مشكلة المربعات الرمادية بسبب إخفاء النافذة
-            setTimeout(() => {
-                adminMap.invalidateSize();
-            }, 200);
+            setTimeout(() => { adminMap.invalidateSize(); }, 200);
         }
 
+        /* ═══════════════════════════════════════════════════════════
+           Bootstrap
+           ═══════════════════════════════════════════════════════════ */
         window.addEventListener('DOMContentLoaded', () => {
-            populateGradeFilter(); renderAllRecords();
+            // 1) عرض محلي سريع أولاً
+            populateGradeFilter();
+            renderAllRecords();
+            // 2) مزامنة مع Firebase
+            loadCurriculumFromFirebase();
+
+            // بث التغييرات عبر التبويبات
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
+                    try {
+                        const saved = localStorage.getItem('app_curriculum');
+                        if (saved) {
+                            curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                            populateGradeFilter();
+                            renderAllRecords();
+                        }
+                    } catch (err) {}
+                }
+            });
+
+            window.addEventListener('focus', () => {
+                // إعادة المزامنة عند العودة للصفحة
+                if (firebaseReady && !curriculumUnsubscribe) {
+                    loadCurriculumFromFirebase();
+                }
+            });
         });
     </script>
 </body>
