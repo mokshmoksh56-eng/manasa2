@@ -381,7 +381,6 @@
             </div>
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <!-- تعديل التمويه البصري -->
                 <input type="password" id="loginPassword" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <button class="btn-submit" onclick="handleLogin()">دخول</button>
@@ -447,18 +446,17 @@
         });
 
         window.onload = function() {
-            const loggedInTeacher = localStorage.getItem('loggedInTeacher');
-            
-            // تعديل فترة الانتظار لتتمكن من رؤية الصفحة ورسالة النجاح قبل التحويل المباشر
-            if (loggedInTeacher) {
-                showSuccessPopup('أهلاً بك مجدداً! ✨', 'جاري تحويلك إلى لوحة التحكم الخاصة بك...', './index2.html');
-                return; 
-            }
+            // مسح جلسة الدخول السابقة لإجبار المستخدم على إدخال الرقم السري في كل مرة يفتح فيها الصفحة
+            localStorage.removeItem('loggedInTeacher');
 
+            // الاحتفاظ برقم التليفون فقط في الحقول
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
+                
+                // تفريغ خانة الرقم السري لضمان إدخاله يدوياً
+                document.getElementById('loginPassword').value = '';
             }
         };
 
@@ -467,7 +465,7 @@
             document.getElementById('successModalTitle').textContent = title;
             document.getElementById('successModalDesc').textContent = desc;
             document.getElementById('successModal').classList.add('active');
-            setTimeout(() => { window.location.href = url; }, 2500); // زيادة مدة الانتظار لتلحق تشوفها بوضوح
+            setTimeout(() => { window.location.href = url; }, 1400);
         }
 
         function switchTab(tab) {
@@ -512,7 +510,7 @@
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
             localStorage.setItem('rememberedPhone', phone);
 
-            // تفعيل الدخول المباشر بعد التسجيل
+            // تفعيل الدخول المباشر بعد التسجيل الجديد فقط
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
 
             showSuccessPopup('تم إنشاء الحساب بنجاح! 🎉', `مرحباً بك يا ${title} / ${name}`, './index2.html');
@@ -529,8 +527,6 @@
             const savedData = JSON.parse(savedDataStr);
             if (savedData.pass !== pass) return showAlert('الرقم السري غير صحيح.');
 
-            // التعديل الثاني: التحقق مما إذا كان المعلم محظوراً في صفحة الإدارة
-            // إذا كان محظوراً، يتم منعه من الدخول وعرض رسالة للمراجعة مع الإدارة
             const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true' || localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
             
             if (isBlocked) {
@@ -543,9 +539,11 @@
             showSuccessPopup('تم تسجيل الدخول بنجاح! ✨', `أهلاً بعودتك يا ${savedData.title || ''} / ${savedData.name || ''}`, './index2.html');
         }
 
-        function handleLogout() { window.location.href = './index.html'; }
+        function handleLogout() { 
+            localStorage.removeItem('loggedInTeacher');
+            window.location.href = './index.html'; 
+        }
 
-        // التعديل الثالث: إجبار المستخدم على إدخال الرقم السري الصحيح قبل الحذف
         function confirmDeleteAccount() {
             const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
             const pass = document.getElementById('loginPassword').value || document.getElementById('regPassword1').value;
@@ -572,7 +570,6 @@
                     } catch(e) {}
                 }
 
-                // مسح حساب المعلم وبيانات التوثيق
                 localStorage.removeItem('teacherAccount_' + phone);
                 localStorage.removeItem('teacherVerification_' + phone);
                 localStorage.removeItem('teacherBlocked_' + phone);
@@ -581,7 +578,6 @@
                     localStorage.removeItem('teacherBlocked_name_' + cleanName);
                 }
                 
-                // مسح جميع الجروبات / الدروس الخاصة بهذا المعلم
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
@@ -600,7 +596,6 @@
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
 
-                // مسح الجلسة
                 localStorage.removeItem('loggedInTeacher'); 
                 
                 document.getElementById('deletedSuccessModal').classList.add('active');
