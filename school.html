@@ -1182,6 +1182,23 @@
                 }
             }
 
+            // ==========================================
+            // 🌟 التعديل الجديد: الرجوع التلقائي للنشطين عند فك الحظر لكي يظهر الجدول فوراً
+            // ==========================================
+            if (showingArchive && !isBlocked) {
+                showingArchive = false;
+                const btn = document.getElementById('btnToggleArchive');
+                if (btn) {
+                    btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
+                    btn.classList.remove('bg-rose-700');
+                    btn.classList.add('bg-slate-800');
+                }
+                const searchInput = document.getElementById('searchInput');
+                if (searchInput) {
+                    searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
+                }
+            }
+
             broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
             if(isBlocked && val !== 'حظر') {
