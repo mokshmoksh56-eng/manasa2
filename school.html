@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google" content="notranslate">
     <title>لوحة التحكم الشاملة - منصة احجزلى</title>
-
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-
+    
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
@@ -18,7 +18,7 @@
             --emerald-900:#064E3B; --emerald-600:#10B981;
         }
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
-
+        
         body {
             background: #F1F5F9;
             min-height: 100vh;
@@ -193,7 +193,7 @@
             align-items: center;
             gap: 4px;
         }
-
+        
         .badge-device {
             background: #F1F5F9;
             color: #475569;
@@ -445,21 +445,14 @@
             border: 1.5px solid;
             transition: all 0.3s;
         }
-        .cloud-status-badge.syncing {
-            background: #FEF3C7; color: #92400E; border-color: #FCD34D;
-        }
-        .cloud-status-badge.synced {
-            background: #D1FAE5; color: #065F46; border-color: #6EE7B7;
-        }
-        .cloud-status-badge.offline {
-            background: #FEE2E2; color: #991B1B; border-color: #FCA5A5;
-        }
+        .cloud-status-badge.syncing { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
+        .cloud-status-badge.synced { background: #D1FAE5; color: #065F46; border-color: #6EE7B7; }
+        .cloud-status-badge.offline { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
     </style>
 </head>
 <body>
 
     <div id="pullToRefreshIndicator">🔄 اسحب للأسفل للتحديث...</div>
-
     <div id="toastMsg" class="custom-toast">✨ تمت العملية بنجاح</div>
 
     <header class="hero-banner">
@@ -526,7 +519,6 @@
     </div>
 
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
-
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-2">
@@ -568,6 +560,7 @@
         </div>
     </main>
 
+    <!-- Modals -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -617,7 +610,6 @@
                 <div id="subjectsListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
             </div>
 
-            <!-- 🌟 زر استعادة الافتراضي + تم الحفظ -->
             <div class="flex flex-wrap justify-between items-center gap-2 mt-5 pt-3 border-t border-slate-200">
                 <button onclick="resetCurriculumToDefault()" class="action-chip bg-rose-600 text-white px-4 py-2.5 text-xs">
                     🔄 استعادة المنهج الافتراضي الكامل
@@ -654,9 +646,7 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي
-         ═══════════════════════════════════════════════════════════ -->
+    <!-- Firebase Module -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
@@ -664,6 +654,8 @@
           doc,
           setDoc,
           getDoc,
+          collection,
+          getDocs,
           onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
@@ -683,15 +675,17 @@
       window.fsDoc = doc;
       window.fsSetDoc = setDoc;
       window.fsGetDoc = getDoc;
+      window.fsCollection = collection;
+      window.fsGetDocs = getDocs;
       window.fsOnSnapshot = onSnapshot;
 
       console.log("✅ Firebase + Firestore جاهز في school.html");
     </script>
 
     <script>
-        /* ═══════════════════════════════════════════════════════════
-           Pull-to-Refresh
-           ═══════════════════════════════════════════════════════════ */
+        // ==========================================
+        // 0. المتغيرات الأساسية والمزامنة
+        // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
         const ptrIndicator = document.getElementById('pullToRefreshIndicator');
@@ -723,9 +717,6 @@
             touchStartY = 0; pullDistance = 0;
         });
 
-        /* ═══════════════════════════════════════════════════════════
-           Audio + Toast
-           ═══════════════════════════════════════════════════════════ */
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -755,9 +746,6 @@
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
 
-        /* ═══════════════════════════════════════════════════════════
-           Confirm Helper
-           ═══════════════════════════════════════════════════════════ */
         let confirmActionCallback = null;
         function showCustomConfirm(message, callback) {
             document.getElementById('customConfirmMessage').textContent = message;
@@ -772,9 +760,9 @@
             }
         });
 
-        /* ═══════════════════════════════════════════════════════════
-           🌟 المنهج الافتراضي الكامل الموحّد (مطابق لـ group/talep)
-           ═══════════════════════════════════════════════════════════ */
+        // ==========================================
+        // 🌟 المنهج الافتراضي الكامل الموحّد
+        // ==========================================
         const defaultCurriculum = {
             primary: {
                 name: '🎒 المرحلة الابتدائية',
@@ -812,34 +800,46 @@
         };
 
         function normalizeCurriculum(currObj) {
-            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj)) {
-                currObj = JSON.parse(JSON.stringify(defaultCurriculum));
+            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
+                return JSON.parse(JSON.stringify(defaultCurriculum));
             }
-            Object.keys(currObj).forEach(stageKey => {
+            Object.keys(defaultCurriculum).forEach(stageKey => {
+                if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
+                    currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    return;
+                }
                 const st = currObj[stageKey];
-                if (!st || typeof st !== 'object') return;
+                const defStage = defaultCurriculum[stageKey];
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
-                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
-                    st.gradeSubjects = {};
-                }
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) st.gradeSubjects = {};
+                
+                const mergedGrades = [...st.grades];
+                (defStage.grades || []).forEach(defGrade => {
+                    if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
+                });
+                st.grades = mergedGrades;
+
                 st.grades.forEach(g => {
-                    if (!Array.isArray(st.gradeSubjects[g])) {
-                        const defStage = defaultCurriculum[stageKey];
-                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
+                    if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
+                        if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
                             st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
                         } else {
                             st.gradeSubjects[g] = [...st.subjs];
                         }
+                    } else {
+                        const existing = st.gradeSubjects[g];
+                        const defSubjs = (defStage.gradeSubjects && defStage.gradeSubjects[g]) || [];
+                        defSubjs.forEach(ds => {
+                            if (!existing.includes(ds)) existing.push(ds);
+                        });
+                        st.gradeSubjects[g] = existing;
                     }
                 });
             });
             return currObj;
         }
 
-        /* ═══════════════════════════════════════════════════════════
-           🌟 Firebase Curriculum Sync (المصدر الدائم)
-           ═══════════════════════════════════════════════════════════ */
         const CURRICULUM_DOC_PATH = { collection: 'curriculum', id: 'main' };
         let curriculumCache = null;
         let curriculumUnsubscribe = null;
@@ -872,17 +872,10 @@
 
         async function saveCurriculumAndBroadcast(currObj, toastText) {
             curriculumCache = normalizeCurriculum(JSON.parse(JSON.stringify(currObj)));
-
-            // 1) حفظ محلي
             localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
             localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+            if (curriculumChannel) curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
 
-            // 2) بث لحظي عبر BroadcastChannel
-            if (curriculumChannel) {
-                curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
-            }
-
-            // 3) رفع إلى Firebase
             if (window.db && window.fsDoc && window.fsSetDoc) {
                 try {
                     setCloudStatus('syncing', '⏳ جاري الرفع...');
@@ -891,16 +884,14 @@
                         { ...curriculumCache, updatedAt: Date.now() }
                     );
                     setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                    console.log("☁️ تم حفظ المنهج في Firebase");
                 } catch (err) {
                     console.error("❌ فشل حفظ المنهج في Firebase:", err);
                     setCloudStatus('offline', '⚠️ حفظ محلي فقط');
                     showToast("⚠️ تم الحفظ محلياً لكن فشل الرفع للسحابة", true);
                 }
             }
-
             populateGradeFilter();
-            renderAllRecords();
+            await renderAllRecords(); // تأكد من await
             if (toastText) showToast(toastText);
         }
 
@@ -910,10 +901,8 @@
                 setTimeout(loadCurriculumFromFirebase, 500);
                 return;
             }
-
             firebaseReady = true;
             if (curriculumUnsubscribe) curriculumUnsubscribe();
-
             const ref = window.fsDoc(window.db, CURRICULUM_DOC_PATH.collection, CURRICULUM_DOC_PATH.id);
 
             curriculumUnsubscribe = window.fsOnSnapshot(ref, (snap) => {
@@ -923,17 +912,13 @@
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
-
-                    if (curriculumChannel) {
-                        curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
-                    }
+                    if (curriculumChannel) curriculumChannel.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
 
                     if (isFirstSnapshot) {
                         isFirstSnapshot = false;
                         setCloudStatus('synced', '☁️ متزامن مع السحابة');
                         populateGradeFilter();
                         renderAllRecords();
-                        console.log("☁️ تم تحميل المنهج من Firebase لأول مرة");
                     } else {
                         setCloudStatus('synced', '☁️ تم التحديث لحظياً');
                         populateGradeFilter();
@@ -941,31 +926,23 @@
                         showToast("🔄 تم تحديث المنهج لحظياً من السحابة");
                     }
                 } else {
-                    console.log("📤 مستند المنهج غير موجود — رفع الافتراضي");
                     const defaultCopy = JSON.parse(JSON.stringify(defaultCurriculum));
                     curriculumCache = defaultCopy;
                     window.fsSetDoc(ref, { ...defaultCopy, updatedAt: Date.now() })
-                        .then(() => {
-                            setCloudStatus('synced', '☁️ تم إنشاء المستند');
-                            console.log("✅ تم إنشاء مستند المنهج الافتراضي في Firebase");
-                        })
-                        .catch(err => {
-                            console.error("❌ فشل إنشاء مستند المنهج:", err);
-                            setCloudStatus('offline', '⚠️ تعذر إنشاء المستند');
-                        });
+                        .then(() => setCloudStatus('synced', '☁️ تم إنشاء المستند'))
+                        .catch(err => setCloudStatus('offline', '⚠️ تعذر إنشاء المستند'));
                     populateGradeFilter();
                     renderAllRecords();
                 }
             }, (error) => {
-                console.error("❌ خطأ في مراقبة المنهج:", error);
                 setCloudStatus('offline', '⚠️ غير متصل بالسحابة');
                 showToast("⚠️ تعذر الاتصال بالسحابة — يتم استخدام النسخة المحلية", true);
             });
         }
 
-        /* ═══════════════════════════════════════════════════════════
-           Curriculum Manager UI
-           ═══════════════════════════════════════════════════════════ */
+        // ==========================================
+        // Curriculum Manager UI
+        // ==========================================
         let activeStageKey = null;
         let activeGradeName = null;
         let showingArchive = false;
@@ -1055,12 +1032,7 @@
             const val = document.getElementById('newStageNameInput').value.trim();
             if (!val) return;
             const curr = getCurriculum();
-            curr['stage_' + Date.now()] = {
-                name: val,
-                grades: ['الصف الأول'],
-                gradeSubjects: {'الصف الأول': ['مادة عامة']},
-                subjs: ['مادة عامة']
-            };
+            curr['stage_' + Date.now()] = { name: val, grades: ['الصف الأول'], gradeSubjects: {'الصف الأول': ['مادة عامة']}, subjs: ['مادة عامة'] };
             document.getElementById('newStageNameInput').value = '';
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة');
             activeStageKey = Object.keys(curr).slice(-1)[0];
@@ -1149,9 +1121,9 @@
             });
         }
 
-        /* ═══════════════════════════════════════════════════════════
-           Teacher Records (كما هي)
-           ═══════════════════════════════════════════════════════════ */
+        // ==========================================
+        // Teacher Records & Firebase Sync (الإصلاح الجذري هنا)
+        // ==========================================
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
@@ -1172,34 +1144,73 @@
         function calculateExpiration(regDateStr, plan) {
             if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
             if (!regDateStr) return { expired: false, text: 'تاريخ غير معروف' };
-
             let days = 30;
             if (plan === '30 يوم تجريبي') days = 30;
             else if (plan === '3 شهور') days = 90;
             else if (plan === '6 شهور') days = 180;
             else if (plan === 'سنة واحدة') days = 365;
-
             const regDate = new Date(regDateStr);
             if (isNaN(regDate)) return { expired: false, text: 'تاريخ غير صالح' };
-
             const expiryDate = new Date(regDate.getTime() + days * 24 * 60 * 60 * 1000);
             const today = new Date();
             today.setHours(0, 0, 0, 0);
             expiryDate.setHours(0, 0, 0, 0);
-
             const diffTime = expiryDate - today;
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
             if (diffDays <= 0) return { expired: true, text: '🔴 الباقة منتهية' };
             return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
         }
 
-        function collectAllAppData() {
+        // ✅ دالة جلب الدروس من Firebase
+        async function fetchLessonsFromFirebase() {
+            try {
+                if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
+                const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                const lessons = [];
+                querySnapshot.forEach((doc) => {
+                    lessons.push({ id: doc.id, ...doc.data() });
+                });
+                return lessons;
+            } catch (e) {
+                console.warn("خطأ في جلب الدروس من السحابة:", e);
+                return [];
+            }
+        }
+
+        // ✅ الدالة المعدلة: تدمج بيانات Firebase مع البيانات المحلية
+        async function collectAllAppData() {
             const teacherAccounts = [];
             const rawLessons = [];
             const todayISO = new Date().toISOString().split('T')[0];
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة'];
 
+            // 1. جلب المعلمين من السحابة
+            const firebaseLessons = await fetchLessonsFromFirebase();
+
+            // 2. دمج دروس السحابة مع دروس الهاتف المحلية
+            const allLessonsData = [];
+            const localLessonKeys = new Set();
+
+            for (let i = 0; i < localStorage.length; i++) {
+                const key = localStorage.key(i);
+                if (key && key.startsWith('lessonState_')) {
+                    const lessonId = key.replace('lessonState_', '');
+                    localLessonKeys.add(lessonId);
+                    try {
+                        const state = JSON.parse(localStorage.getItem(key) || '{}');
+                        allLessonsData.push({ id: lessonId, source: 'local', data: state });
+                    } catch (e) {}
+                }
+            }
+
+            // إضافة دروس السحابة التي لا توجد في الهاتف
+            firebaseLessons.forEach(fLesson => {
+                if (!localLessonKeys.has(fLesson.id)) {
+                    allLessonsData.push({ id: fLesson.id, source: 'cloud', data: fLesson });
+                }
+            });
+
+            // 3. قراءة حسابات المعلمين من الهاتف
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 if (key && key.startsWith('teacherAccount_')) {
@@ -1216,10 +1227,7 @@
                 const loggedStr = localStorage.getItem('loggedInTeacher');
                 if (loggedStr) {
                     loggedTeacher = JSON.parse(loggedStr);
-                    if (loggedTeacher && !teacherAccounts.some(a =>
-                        (a.phone && a.phone === loggedTeacher.phone) ||
-                        (cleanTeacherName(a.name) && cleanTeacherName(a.name) === cleanTeacherName(loggedTeacher.name))
-                    )) {
+                    if (loggedTeacher && !teacherAccounts.some(a => (a.phone && a.phone === loggedTeacher.phone) || (cleanTeacherName(a.name) && cleanTeacherName(a.name) === cleanTeacherName(loggedTeacher.name)))) {
                         if (!loggedTeacher.createdAt) loggedTeacher.createdAt = todayISO;
                         teacherAccounts.push(loggedTeacher);
                     }
@@ -1228,46 +1236,44 @@
 
             const defaultAcc = loggedTeacher || teacherAccounts[0] || {};
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('lessonState_')) {
-                    const lessonId = key.replace('lessonState_', '');
-                    try {
-                        const state = JSON.parse(localStorage.getItem(key) || '{}');
-                        const stateCleanName = cleanTeacherName(state.g_teacher);
-                        const matchedAcc = teacherAccounts.find(a => {
-                            const accCleanName = cleanTeacherName(a.fullName || a.name);
-                            return (state.g_phone && a.phone && state.g_phone === a.phone) ||
-                                   (stateCleanName && accCleanName && stateCleanName === accCleanName) ||
-                                   (state.g_teacher && a.name && state.g_teacher.trim() === a.name.trim());
-                        }) || defaultAcc;
+            // 4. تجهيز بيانات الحصص
+            allLessonsData.forEach(item => {
+                const state = item.data;
+                const lessonId = item.id;
+                const stateCleanName = cleanTeacherName(state.g_teacher);
+                
+                const matchedAcc = teacherAccounts.find(a => {
+                    const accCleanName = cleanTeacherName(a.fullName || a.name);
+                    return (state.g_phone && a.phone && state.g_phone === a.phone) ||
+                           (stateCleanName && accCleanName && stateCleanName === accCleanName) ||
+                           (state.g_teacher && a.name && state.g_teacher.trim() === a.name.trim());
+                }) || defaultAcc;
 
-                        const title = state.t_gender || matchedAcc.title || ((state.g_teacher && state.g_teacher.trim().startsWith('مس')) ? 'مس' : 'مستر');
-                        const teacherName = cleanTeacherName(state.g_teacher || matchedAcc.name || matchedAcc.fullName) || 'غير محدد';
-                        const phone = state.g_phone || matchedAcc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
-                        const regDate = state.createdAt || matchedAcc.createdAt || todayISO;
+                const title = state.t_gender || matchedAcc.title || ((state.g_teacher && state.g_teacher.trim().startsWith('مس')) ? 'مس' : 'مستر');
+                const teacherName = cleanTeacherName(state.g_teacher || matchedAcc.name || matchedAcc.fullName) || 'غير محدد';
+                const phone = state.g_phone || matchedAcc.phone || localStorage.getItem('rememberedPhone') || 'غير مسجل';
+                const regDate = state.createdAt || matchedAcc.createdAt || todayISO;
+                
+                rawLessons.push({
+                    type: 'lesson', lessonId, title, teacherName, phone, regDate,
+                    groupName: state.g_name || `مجموعة رقم ${lessonId}`,
+                    grade: state.s_grade || 'غير محدد',
+                    stageKey: state.s_stage || 'primary',
+                    subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s).join('، ') : 'غير محدد',
+                    locType: state.g_loc === 'l_teach' ? 'بيت المستر' : (state.g_loc === 'l_stud' ? 'منزل الطالب' : 'السنتر'),
+                    address: state.m_address || 'لم يتم تحديد العنوان',
+                    lat: state.lat || null,
+                    lng: state.lng || null,
+                    days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
+                    timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
+                    timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
+                    isPublished: state.g_publish_map !== false,
+                    waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10),
+                    phoneType: state.phoneType || ''
+                });
+            });
 
-                        rawLessons.push({
-                            type: 'lesson', lessonId, title, teacherName, phone, regDate,
-                            groupName: state.g_name || `مجموعة رقم ${lessonId}`,
-                            grade: state.s_grade || 'غير محدد',
-                            stageKey: state.s_stage || 'primary',
-                            subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s).join('، ') : 'غير محدد',
-                            locType: state.g_loc === 'l_teach' ? 'بيت المستر' : (state.g_loc === 'l_stud' ? 'منزل الطالب' : 'السنتر'),
-                            address: state.m_address || 'لم يتم تحديد العنوان',
-                            lat: state.lat || null,
-                            lng: state.lng || null,
-                            days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
-                            timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
-                            timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
-                            isPublished: localStorage.getItem('publishState_' + lessonId) !== 'false',
-                            waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : teacherName)) || '0', 10),
-                            phoneType: state.phoneType || ''
-                        });
-                    } catch (e) {}
-                }
-            }
-
+            // 5. توحيد السجلات
             const unifiedMap = new Map();
             teacherAccounts.forEach(acc => {
                 const cleanName = cleanTeacherName(acc.name || acc.fullName) || 'بدون اسم';
@@ -1279,9 +1285,7 @@
                         teacherName: cleanName, phone: phone, regDate: acc.createdAt || todayISO,
                         groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
                         locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
-                        isPublished: false,
-                        waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10),
-                        groups: [], phoneType: ''
+                        isPublished: false, waClicks: parseInt(localStorage.getItem('wa_clicks_' + (phone !== 'غير مسجل' ? phone : cleanName)) || '0', 10), groups: [], phoneType: ''
                     });
                 }
             });
@@ -1289,8 +1293,7 @@
             rawLessons.forEach(lesson => {
                 let targetKey = null;
                 for (const [k, v] of unifiedMap.entries()) {
-                    if ((lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) ||
-                        (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))) {
+                    if ((lesson.phone !== 'غير مسجل' && v.phone === lesson.phone) || (cleanTeacherName(lesson.teacherName) === cleanTeacherName(v.teacherName))) {
                         targetKey = k; break;
                     }
                 }
@@ -1308,12 +1311,12 @@
                 entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
                 entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
                 entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
-                entry.locType = entry.groups[0].locType;
+                entry.locType = entry.groups[0].locType; 
                 entry.address = entry.groups[0].address;
                 entry.lat = entry.groups[0].lat;
                 entry.lng = entry.groups[0].lng;
-                entry.days = entry.groups[0].days;
-                entry.timeFrom = entry.groups[0].timeFrom;
+                entry.days = entry.groups[0].days; 
+                entry.timeFrom = entry.groups[0].timeFrom; 
                 entry.timeTo = entry.groups[0].timeTo;
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
@@ -1346,13 +1349,11 @@
 
         function updateVerification(phone, val, teacherName = '') {
             const cleanName = cleanTeacherName(teacherName);
-
             let regDate = new Date().toISOString().split('T')[0];
             const accKey = 'teacherAccount_' + phone;
             if (phone && phone !== 'غير مسجل' && localStorage.getItem(accKey)) {
                 regDate = JSON.parse(localStorage.getItem(accKey)).createdAt || regDate;
             }
-
             const expiryInfo = calculateExpiration(regDate, val);
             const isBlocked = (val === 'حظر' || expiryInfo.expired);
 
@@ -1368,12 +1369,10 @@
                     } catch (e) {}
                 }
             }
-
             if (cleanName) {
                 localStorage.setItem('teacherVerification_name_' + cleanName, val);
                 localStorage.setItem('teacherBlocked_name_' + cleanName, String(isBlocked));
             }
-
             for (let i = 0; i < localStorage.length; i++) {
                 const k = localStorage.key(i);
                 if (k && k.startsWith('teacherAccount_')) {
@@ -1387,7 +1386,6 @@
                     } catch (e) {}
                 }
             }
-
             if (showingArchive && !isBlocked) {
                 showingArchive = false;
                 const btn = document.getElementById('btnToggleArchive');
@@ -1399,14 +1397,10 @@
                 const searchInput = document.getElementById('searchInput');
                 if (searchInput) searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
             }
-
             broadcastAuthStatusChange(phone, cleanName, isBlocked, val);
             renderAllRecords();
-            if (isBlocked && val !== 'حظر') {
-                showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`, true);
-            } else {
-                showToast(`✨ تم تحديث الباقة وتوثيق الحساب إلى: ${val}`);
-            }
+            if (isBlocked && val !== 'حظر') showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`, true);
+            else showToast(`✨ تم تحديث الباقة وتوثيق الحساب إلى: ${val}`);
         }
 
         function recordWaClick(identifier) {
@@ -1415,8 +1409,8 @@
             localStorage.setItem(key, String(current + 1));
         }
 
-        function openTeachersSummaryModal(titleType) {
-            const { records } = collectAllAppData();
+        async function openTeachersSummaryModal(titleType) {
+            const { records } = await collectAllAppData();
             const filtered = records.filter(r => r.title === titleType);
             const modalTitle = document.getElementById('summaryModalTitle');
             const modalContent = document.getElementById('summaryModalContent');
@@ -1446,8 +1440,9 @@
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
 
-        function renderAllRecords() {
-            const { records, totalLessonsCount } = collectAllAppData();
+        // ✅ تم تحويل الدالة إلى async لتنتظر السحابة
+        async function renderAllRecords() {
+            const { records, totalLessonsCount } = await collectAllAppData();
             const uniqueMrSet = new Set(), uniqueMsSet = new Set();
             records.forEach(r => r.title === 'مس' ? uniqueMsSet.add(r.phone !== 'غير مسجل' ? r.phone : r.teacherName) : uniqueMrSet.add(r.phone !== 'غير مسجل' ? r.phone : r.teacherName));
 
@@ -1492,11 +1487,7 @@
                 if (r.phoneType) {
                     const emojiMatch = r.phoneType.match(/[\p{Emoji}\u200d]+/gu);
                     const iconChar = emojiMatch ? emojiMatch[0] : '📱';
-                    iconOnlyPhoneBadge = `
-                        <span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">
-                            ${iconChar}
-                        </span>
-                    `;
+                    iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
 
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
@@ -1511,56 +1502,37 @@
                         if (stageName === 'primary') stageName = 'المرحلة الابتدائية';
                         else if (stageName === 'prep') stageName = 'المرحلة الإعدادية';
                         else if (stageName === 'secondary') stageName = 'المرحلة الثانوية';
-                        else if (curr[g.stageKey] && curr[g.stageKey].name) {
-                            stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
-                        }
+                        else if (curr[g.stageKey] && curr[g.stageKey].name) stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
 
                         let mapBtn = '';
                         if (g.lat && g.lng) {
                             mapBtn = `<br><button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="mt-1.5 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
                         }
-
                         return `
                         <tr>
                             <td class="font-black text-slate-900">${g.groupName}</td>
-                            <td>
-                                <div class="text-[11px] text-blue-600 font-black mb-0.5">${stageName}</div>
-                                <span class="text-slate-900 font-black">${g.grade}</span> — <span class="text-emerald-700 font-black">${g.subjects}</span>
-                            </td>
+                            <td><div class="text-[11px] text-blue-600 font-black mb-0.5">${stageName}</div><span class="text-slate-900 font-black">${g.grade}</span> — <span class="text-emerald-700 font-black">${g.subjects}</span></td>
                             <td>${g.days}<br><span class="text-[11px] text-blue-700">من ${g.timeFrom} إلى ${g.timeTo}</span></td>
                             <td>[${g.locType}] ${g.address}${mapBtn}</td>
-                        </tr>
-                        `;
+                        </tr>`;
                     }).join('');
-
-                    unifiedScheduleHTML = `
-                        <div class="unified-schedule-box">
-                            <table class="unified-schedule-table">
-                                <thead><tr><th>👥 المجموعة</th><th>🎓 المرحلة والصف</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead>
-                                <tbody>${rowsHTML}</tbody>
-                            </table>
-                        </div>
-                    `;
+                    unifiedScheduleHTML = `<div class="unified-schedule-box"><table class="unified-schedule-table"><thead><tr><th>👥 المجموعة</th><th>🎓 المرحلة والصف</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead><tbody>${rowsHTML}</tbody></table></div>`;
                 } else {
                     let stageName = r.stageKey;
                     if (stageName === 'primary') stageName = 'المرحلة الابتدائية';
                     else if (stageName === 'prep') stageName = 'المرحلة الإعدادية';
                     else if (stageName === 'secondary') stageName = 'المرحلة الثانوية';
-                    else if (curr[r.stageKey] && curr[r.stageKey].name) {
-                        stageName = curr[r.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
-                    }
+                    else if (curr[r.stageKey] && curr[r.stageKey].name) stageName = curr[r.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
 
                     let mapBtn = '';
                     if (r.lat && r.lng) {
                         mapBtn = `<button onclick="openMapModal('${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="mt-1 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
                     }
-
                     unifiedScheduleHTML = `
                         <div class="info-pill"><span class="label">🎓 المرحلة:</span><span class="text-slate-900 font-black">${stageName}</span></div>
                         <div class="info-pill"><span class="label">👑 الصف والمادة:</span><span class="text-slate-900 font-black">${r.grade} — <span class="text-emerald-700">${r.subjects}</span></span></div>
                         <div class="info-pill"><span class="label">📍 العنوان:</span><div><span>[${r.locType}] ${r.address}</span><br>${mapBtn}</div></div>
-                        <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>
-                    `;
+                        <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>`;
                 }
 
                 const statusBadgeHTML = r.isBlocked
@@ -1571,23 +1543,15 @@
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass}">
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
                             <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-400">(${r.groupName})</span></div>
-                            <div class="flex items-center gap-1.5">
-                                ${iconOnlyPhoneBadge}
-                                ${statusBadgeHTML}
-                                <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
-                            </div>
+                            <div class="flex items-center gap-1.5">${iconOnlyPhoneBadge}${statusBadgeHTML}<span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span></div>
                         </div>
                         <div class="space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
                                 <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                             </div>
-
                             <div class="info-pill flex flex-col gap-2" style="background:#FEF3C7; border-color:#FCD34D;">
-                                <div class="flex items-center justify-between w-full">
-                                    <span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span>
-                                    <span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span>
-                                </div>
+                                <div class="flex items-center justify-between w-full"><span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span><span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span></div>
                                 <select onchange="updateVerification('${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1.5 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer w-full">
                                     <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
                                     <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
@@ -1596,13 +1560,10 @@
                                     <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
                                 </select>
                             </div>
-
                             ${unifiedScheduleHTML}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
-                            <div class="flex gap-2">
-                                ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}
-                            </div>
+                            <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.phone || r.teacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
                             <button onclick="deleteRecord('${r.lessonId || ''}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
                         </div>
                     </div>
@@ -1621,16 +1582,7 @@
                 const st = JSON.parse(raw);
                 if (!st.st_name && !st.st_phone) { sec.classList.add('hidden'); return; }
                 sec.classList.remove('hidden');
-                card.innerHTML = `
-                    <div class="flex items-center gap-3">
-                        <div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black">🎓</div>
-                        <div>
-                            <div class="text-xs font-extrabold text-slate-700">
-                                📱 التليفون: <span dir="ltr">${st.st_phone || 'غير مسجل'}</span> | 👑 الصف: ${st.s_grade || '--'} | 📚 المادة: ${st.s_subject || '--'}
-                            </div>
-                        </div>
-                    </div>
-                `;
+                card.innerHTML = `<div class="flex items-center gap-3"><div class="w-12 h-12 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-2xl font-black">🎓</div><div><div class="text-xs font-extrabold text-slate-700">📱 التليفون: <span dir="ltr">${st.st_phone || 'غير مسجل'}</span> | 👑 الصف: ${st.s_grade || '--'} | 📚 المادة: ${st.s_subject || '--'}</div></div></div>`;
             } catch (e) { sec.classList.add('hidden'); }
         }
 
@@ -1643,9 +1595,7 @@
                     if (k && k.startsWith('lessonState_')) {
                         try {
                             const st = JSON.parse(localStorage.getItem(k) || '{}');
-                            if ((lessonId && k === 'lessonState_' + lessonId) ||
-                                (phone && phone !== 'غير مسجل' && st.g_phone === phone) ||
-                                (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
+                            if ((lessonId && k === 'lessonState_' + lessonId) || (phone && phone !== 'غير مسجل' && st.g_phone === phone) || (cleanName && cleanTeacherName(st.g_teacher) === cleanName)) {
                                 const id = k.replace('lessonState_', '');
                                 keysToRemove.push('lessonState_' + id);
                                 keysToRemove.push('publishState_' + id);
@@ -1654,7 +1604,6 @@
                     }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
-
                 if (phone && phone !== 'غير مسجل') {
                     localStorage.removeItem('teacherAccount_' + phone);
                     localStorage.removeItem('teacherVerification_' + phone);
@@ -1664,26 +1613,23 @@
                     localStorage.removeItem('teacherVerification_name_' + cleanName);
                     localStorage.removeItem('teacherBlocked_name_' + cleanName);
                 }
-
                 const loggedStr = localStorage.getItem('loggedInTeacher');
                 if (loggedStr) {
                     try {
                         const logged = JSON.parse(loggedStr);
-                        if ((phone && phone !== 'غير مسجل' && logged.phone === phone) ||
-                            (cleanName && cleanTeacherName(logged.name || logged.fullName) === cleanName)) {
+                        if ((phone && phone !== 'غير مسجل' && logged.phone === phone) || (cleanName && cleanTeacherName(logged.name || logged.fullName) === cleanName)) {
                             localStorage.removeItem('loggedInTeacher');
                         }
                     } catch (e) {}
                 }
-
                 renderAllRecords();
                 showToast('🗑️ تم حذف المعلم بنجاح');
             });
         }
 
-        /* ═══════════════════════════════════════════════════════════
-           Admin Map Modal
-           ═══════════════════════════════════════════════════════════ */
+        // ==========================================
+        // Admin Map Modal
+        // ==========================================
         let adminMap = null;
         let adminMarker = null;
 
@@ -1700,21 +1646,17 @@
                 adminMap.setView([lat, lng], 15);
                 adminMarker.setLatLng([lat, lng]);
             }
-
             setTimeout(() => { adminMap.invalidateSize(); }, 200);
         }
 
-        /* ═══════════════════════════════════════════════════════════
-           Bootstrap
-           ═══════════════════════════════════════════════════════════ */
+        // ==========================================
+        // Bootstrap
+        // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
-            // 1) عرض محلي سريع أولاً
             populateGradeFilter();
-            renderAllRecords();
-            // 2) مزامنة مع Firebase
+            renderAllRecords(); // سيتم استدعاء collectAllAppData داخلياً
             loadCurriculumFromFirebase();
 
-            // بث التغييرات عبر التبويبات
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
                     try {
@@ -1729,10 +1671,10 @@
             });
 
             window.addEventListener('focus', () => {
-                // إعادة المزامنة عند العودة للصفحة
                 if (firebaseReady && !curriculumUnsubscribe) {
                     loadCurriculumFromFirebase();
                 }
+                renderAllRecords(); // تحديث البيانات عند العودة للصفحة
             });
         });
     </script>
