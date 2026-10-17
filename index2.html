@@ -1046,6 +1046,26 @@
                 if(data.g_loc === 'l_teach') locText = 'بيت المستر';
                 else if(data.g_loc === 'l_stud') locText = 'منزل الطالب';
 
+                // ==========================================
+                // التعديل الجديد: جلب اسم المرحلة المختار
+                // ==========================================
+                let stageStr = 'غير محدد';
+                if(data.s_stage) {
+                    stageStr = data.s_stage;
+                    if(stageStr === 'primary') stageStr = 'المرحلة الابتدائية';
+                    else if(stageStr === 'prep') stageStr = 'المرحلة الإعدادية';
+                    else if(stageStr === 'secondary') stageStr = 'المرحلة الثانوية';
+                    else {
+                        try {
+                            const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
+                            if(curr[data.s_stage] && curr[data.s_stage].name) {
+                                stageStr = curr[data.s_stage].name;
+                            }
+                        } catch(e) {}
+                    }
+                    stageStr = stageStr.replace(/^[🎒📐🎓]\s*/, '');
+                }
+
                 const gradeStr = data.s_grade || 'غير محدد';
                 const subjectsStr = data.selectedSubjects && data.selectedSubjects.length > 0 
                                     ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ') 
@@ -1053,6 +1073,7 @@
 
                 contentEl.innerHTML = `
                     <p>👤 <b>المستر:</b> ${data.g_teacher || 'غير محدد'} | 🏫 <b>السنتر:</b> ${data.g_center || 'غير محدد'}</p>
+                    <p>🎓 <b>المرحلة:</b> ${stageStr}</p>
                     <p>👑 <b>الصف:</b> ${gradeStr} | 📚 <b>المادة:</b> ${subjectsStr}</p>
                     <p>📅 <b>الأيام:</b> ${daysStr}</p>
                     <p>🗓️ <b>الشهور:</b> ${monthsStr}</p>
