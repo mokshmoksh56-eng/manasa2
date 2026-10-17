@@ -540,6 +540,9 @@
     </div>
 
     <div id="syncToast" class="sync-toast">🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة</div>
+    
+    <!-- ✅ رسالة الترحيب الظريفة عند فك الحظر ✅ -->
+    <div id="unblockedToast" class="sync-toast" style="background: #10B981; border-bottom: 3px solid #059669; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">🎉 مرحباً بعودتك! تم تفعيل وتوثيق حسابك بنجاح.</div>
 
     <div id="editAlert" class="edit-alert" style="display: none;">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;">
@@ -802,6 +805,9 @@
     </div>
 
     <script>
+        // متغير عالمي لتتبع حالة الحظر السابقة (للتمكن من إظهار رسالة الترحيب عند الفك)
+        let previousBlockedState = null;
+
         // دالة لتنظيف اسم المعلم من الألقاب لمطابقته بدقة
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
@@ -838,6 +844,23 @@
             if (currentTeacherName && localStorage.getItem('teacherBlocked_name_' + currentTeacherName) === 'true') {
                 isBlocked = true;
             }
+
+            // 🟢 إظهار رسالة الترحيب الظريفة عند فك الحظر 🟢
+            if (previousBlockedState === true && isBlocked === false) {
+                const unblockToast = document.getElementById('unblockedToast');
+                if (unblockToast) {
+                    unblockToast.classList.add('show');
+                    try { playSuccessSound(); } catch(e) {}
+                    
+                    // إخفاء الرسالة بعد 4 ثوانٍ
+                    setTimeout(() => {
+                        unblockToast.classList.remove('show');
+                    }, 4000);
+                }
+            }
+            
+            // تحديث حالة الحظر السابقة للاستخدام في المرة القادمة
+            previousBlockedState = isBlocked;
 
             const blockedModal = document.getElementById('blockedModal');
             if (isBlocked) {
