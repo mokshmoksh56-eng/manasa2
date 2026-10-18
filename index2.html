@@ -110,35 +110,6 @@
             gap: 6px;
         }
 
-        .btn-top-action {
-            background: rgba(255, 255, 255, 0.95);
-            color: var(--primary-900);
-            padding: 7px 14px;
-            border-radius: 999px;
-            font-weight: 900;
-            font-size: 12.5px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            text-decoration: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border: 1.5px solid #E2E8F0;
-            transition: all 0.2s ease;
-            cursor: pointer;
-        }
-
-        .btn-top-action:active {
-            transform: scale(0.95);
-            background: #FFFFFF;
-            border-color: var(--primary-600);
-            color: var(--primary-600);
-        }
-
-        .btn-sync-now {
-            border-color: #A7F3D0;
-            color: #059669;
-        }
-
         .hero-content {
             position: relative;
             z-index: 3;
@@ -221,6 +192,117 @@
             background: #F8FAFC;
             padding: 10px 12px 40px;
             flex: 1;
+        }
+
+        /* ✅ شريط الأزرار العصري */
+        .quick-actions-bar {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+            padding: 0;
+        }
+
+        .quick-action-btn {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 14px;
+            border-radius: 16px;
+            font-family: 'Cairo', sans-serif;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            box-shadow: 0 6px 18px -6px rgba(0,0,0,0.15);
+            overflow: hidden;
+        }
+        .quick-action-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%);
+            pointer-events: none;
+        }
+        .quick-action-btn:active {
+            transform: scale(0.96);
+        }
+
+        .quick-action-home {
+            background: linear-gradient(135deg, #2563EB, #0F2D5C);
+            color: #fff;
+            border-bottom: 3px solid #0A1E3F;
+        }
+        .quick-action-home .quick-action-icon {
+            background: rgba(255,255,255,0.18);
+            border: 1.5px solid rgba(255,255,255,0.3);
+        }
+
+        .quick-action-logout {
+            background: linear-gradient(135deg, #F87171, #DC2626);
+            color: #fff;
+            border-bottom: 3px solid #991B1B;
+        }
+        .quick-action-logout .quick-action-icon {
+            background: rgba(255,255,255,0.18);
+            border: 1.5px solid rgba(255,255,255,0.3);
+        }
+
+        .quick-action-icon {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+        }
+        .quick-action-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: #fff;
+        }
+
+        .quick-action-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: right;
+            flex: 1;
+            z-index: 2;
+            min-width: 0;
+        }
+        .quick-action-title {
+            font-size: 13.5px;
+            font-weight: 900;
+            line-height: 1.2;
+            color: #fff;
+            white-space: nowrap;
+        }
+        .quick-action-sub {
+            font-size: 10px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.75);
+            line-height: 1.2;
+            margin-top: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+        }
+
+        .quick-action-arrow {
+            flex-shrink: 0;
+            font-size: 14px;
+            font-weight: 900;
+            color: rgba(255,255,255,0.6);
+            z-index: 2;
+            transition: transform 0.2s;
+        }
+        .quick-action-btn:hover .quick-action-arrow {
+            transform: translateX(-3px);
         }
 
         .portal-card {
@@ -756,13 +838,25 @@
             width: 100%;
         }
 
+        @media (max-width: 400px) {
+            .quick-actions-bar {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .quick-action-btn { padding: 10px 10px; gap: 8px; border-radius: 14px; }
+            .quick-action-icon { width: 30px; height: 30px; border-radius: 10px; }
+            .quick-action-icon svg { width: 15px; height: 15px; }
+            .quick-action-title { font-size: 12px; }
+            .quick-action-sub { font-size: 9px; }
+            .quick-action-arrow { display: none; }
+        }
+
         @media (max-width: 360px) {
             .hero-brand { font-size: 28px; }
             .portal-card { padding: 12px 10px; gap: 8px; }
             .card-image-box { width: 68px; height: 68px; }
             .card-text { padding-left: 28px; }
             .card-text h2 { font-size: 15px; }
-            .btn-top-action { padding: 6px 10px; font-size: 11px; }
         }
     </style>
 </head>
@@ -804,35 +898,12 @@
     </div>
 
     <section class="hero-banner">
-
         <div class="top-navbar-wrapper">
             <div class="top-nav-logo">
                 <span>📚</span>
                 <span>احجزلي</span>
             </div>
-            
-            <div class="top-nav-actions">
-                <button type="button" id="syncBtn" class="btn-top-action btn-sync-now" title="مزامنة من السحابة">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
-                    </svg>
-                    مزامنة
-                </button>
-
-                <a href="./index.html" class="btn-top-action">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                    </svg>
-                    الرئيسية
-                </a>
-
-                <button type="button" id="logoutBtn" class="btn-top-action" style="border-color: #FECACA; color: #DC2626;">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                    </svg>
-                    خروج
-                </button>
-            </div>
+            <!-- ✅ زر المزامنة اتشال — المزامنة أوتوماتيك -->
         </div>
 
         <div class="hero-content">
@@ -854,6 +925,35 @@
 
     <section class="cards-section">
         <div class="container mx-auto max-w-4xl">
+            <!-- ✅ شريط الأزرار العصري -->
+            <div class="quick-actions-bar">
+                <a href="./index.html" class="quick-action-btn quick-action-home">
+                    <div class="quick-action-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                        </svg>
+                    </div>
+                    <div class="quick-action-text">
+                        <span class="quick-action-title">الرئيسية</span>
+                        <span class="quick-action-sub">الرجوع للمنصة</span>
+                    </div>
+                    <div class="quick-action-arrow">←</div>
+                </a>
+
+                <button type="button" id="logoutBtn" class="quick-action-btn quick-action-logout">
+                    <div class="quick-action-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                        </svg>
+                    </div>
+                    <div class="quick-action-text">
+                        <span class="quick-action-title">تسجيل الخروج</span>
+                        <span class="quick-action-sub">إنهاء الجلسة</span>
+                    </div>
+                    <div class="quick-action-arrow">←</div>
+                </button>
+            </div>
+
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
         </div>
     </section>
@@ -976,7 +1076,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-top-action, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave');
             if (clickableElement) { playHighPitchSound(); }
         });
 
@@ -985,6 +1085,7 @@
         let itemToRename = null;
         let realtimeUnsubscribe = null;
         let deviceWatchUnsub = null;
+        let autoSyncInterval = null;
 
         // ==========================================
         // 📱 Device ID Management (Single Device Login)
@@ -998,24 +1099,21 @@
             return deviceId;
         }
 
-        // ✅ طرد الجهاز وإظهار النافذة
         function showDeviceKickedAndRedirect() {
             const modal = document.getElementById('deviceKickedModal');
             if (modal) modal.classList.add('active');
-            // مسح الجلسة
             try {
                 localStorage.removeItem('loggedInTeacher');
                 localStorage.removeItem('rememberedPhone');
                 if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
                 if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+                if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
             } catch(e) {}
-            // تحويل بعد 2.7 ثانية
             setTimeout(() => {
                 window.location.replace('./login.html');
             }, 2700);
         }
 
-        // ✅ التحقق من الجهاز عند التحميل
         async function verifyCurrentDevice() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
             if (!loggedStr) return true;
@@ -1027,7 +1125,6 @@
 
                 const currentDeviceId = getOrCreateDeviceId();
 
-                // انتظر Firebase يكون جاهز
                 let attempts = 0;
                 while ((!window.db || !window.fsGetDoc) && attempts < 30) {
                     await new Promise(r => setTimeout(r, 100));
@@ -1044,7 +1141,6 @@
                 if (snap.exists()) {
                     const registeredDeviceId = snap.data().deviceId;
                     if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
-                        // 🚪 الجهاز ده اتطرد
                         console.warn("🚪 جهاز مختلف — تسجيل خروج");
                         showDeviceKickedAndRedirect();
                         return false;
@@ -1056,7 +1152,6 @@
             return true;
         }
 
-        // ✅ مراقبة لحظية لتغيير الجهاز
         function startDeviceWatch() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
             if (!loggedStr) return;
@@ -1068,7 +1163,6 @@
 
                 if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
 
-                // انتظر Firebase
                 const tryStart = () => {
                     if (!window.db || !window.fsOnSnapshot) {
                         setTimeout(tryStart, 200);
@@ -1103,7 +1197,7 @@
         }
 
         // ==========================================
-        // ✅ تسجيل الخروج العادي
+        // ✅ تسجيل الخروج
         // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
@@ -1120,6 +1214,7 @@
                 sessionStorage.clear();
                 if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
                 if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+                if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
                 const modal = document.getElementById('logoutModal');
                 if (modal) modal.classList.remove('active');
                 showToast('👋 إلى اللقاء يا مستر!');
@@ -1197,9 +1292,6 @@
             return c1 === c2;
         }
 
-        // ==========================================
-        // ✅ هل الحصة دي للمعلم الحالي؟ (صارم)
-        // ==========================================
         function isLessonForCurrentTeacher(lessonData, teacherPhone, teacherName) {
             if (!lessonData) return false;
 
@@ -1224,7 +1316,7 @@
         }
 
         // ==========================================
-        // ✅ Migration ذكي
+        // ✅ Migration
         // ==========================================
         async function migrateLocalLessonsToFirebase() {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return { migrated: 0, repaired: 0 };
@@ -1266,7 +1358,6 @@
                         };
                         await window.fsSetDoc(ref, stateToUpload, { merge: true });
                         migratedCount++;
-                        console.log(`📤 [Migration] رفع الحصة ${lessonId}`);
                     } else {
                         const existingData = snap.data();
                         const existingTeacher = String(existingData.g_teacher || '').trim();
@@ -1287,7 +1378,6 @@
                         }
 
                         if (belongsToOther) {
-                            console.warn(`⚠️ [Migration] الحصة ${lessonId} تخص معلم تاني — تخطي`);
                             continue;
                         }
 
@@ -1298,7 +1388,6 @@
                         if (Object.keys(updateObj).length > 0) {
                             await window.fsSetDoc(ref, updateObj, { merge: true });
                             repairedCount++;
-                            console.log(`🔧 [Migration] صلّح الحصة ${lessonId}`);
                         }
                     }
                 } catch (err) {
@@ -1306,7 +1395,6 @@
                 }
             }
 
-            console.log(`✅ [Migration] رُفعت ${migratedCount} | صُلحت ${repairedCount}`);
             return { migrated: migratedCount, repaired: repairedCount };
         }
 
@@ -1315,7 +1403,6 @@
         // ==========================================
         async function syncLessonsFromFirebase(showLoader = false) {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
-                console.warn("⚠️ Firebase غير جاهز");
                 return { success: false };
             }
 
@@ -1327,7 +1414,6 @@
             try {
                 const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                 const firebaseLessons = [];
-                let totalCount = snap.size;
 
                 snap.forEach(docSnap => {
                     const data = docSnap.data();
@@ -1343,9 +1429,7 @@
                     const stateToSave = { ...data };
                     delete stateToSave.updatedAt;
                     localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
-
-                    const isPublished = data.g_publish_map === true;
-                    localStorage.setItem('publishState_' + lessonId, isPublished);
+                    localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
                 });
 
                 firebaseLessons.sort((a, b) => {
@@ -1358,7 +1442,6 @@
                 saveLessonsToStorage();
                 renderLessons();
 
-                console.log(`✅ [Sync] Firebase: ${totalCount} | للمعلم: ${lessons.length}`);
                 if (showLoader) updateSyncStatus(`✅ تم جلب ${lessons.length} مجموعة`);
 
                 return { success: true, count: lessons.length };
@@ -1412,43 +1495,74 @@
                             lessons = firebaseLessons;
                             saveLessonsToStorage();
                             renderLessons();
-                            console.log('🔄 [Realtime] تحديث تلقائي');
                             showFbSyncBadge('🔄 تم التحديث من السحابة');
                         }
                     },
                     (err) => console.warn("⚠️ onSnapshot:", err)
                 );
-                console.log('✅ [Realtime] بدء المزامنة اللحظية');
             } catch (err) {
                 console.warn("⚠️ فشل onSnapshot:", err);
             }
         }
 
         // ==========================================
+        // ✅ المزامنة الأوتوماتيك الاحتياطية
+        // ==========================================
+        function startAutoSync() {
+            if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
+
+            // كل دقيقة (احتياطي لو onSnapshot وقع)
+            autoSyncInterval = setInterval(async () => {
+                try {
+                    await syncLessonsFromFirebase(false);
+                } catch (e) {
+                    console.warn('⚠️ [Auto Sync] فشل:', e);
+                }
+            }, 60000);
+
+            // عند رجوع المستر للصفحة
+            window.addEventListener('focus', async () => {
+                try { await syncLessonsFromFirebase(false); } catch(e) {}
+            });
+
+            // عند رجوع التاب
+            document.addEventListener('visibilitychange', async () => {
+                if (!document.hidden) {
+                    try { await syncLessonsFromFirebase(false); } catch(e) {}
+                }
+            });
+
+            // عند رجوع الاتصال
+            window.addEventListener('online', async () => {
+                showToast('🌐 رجع الاتصال - جاري المزامنة...');
+                try { await syncLessonsFromFirebase(false); } catch(e) {}
+            });
+
+            // تنظيف عند الخروج
+            window.addEventListener('beforeunload', () => {
+                if (autoSyncInterval) clearInterval(autoSyncInterval);
+            });
+
+            console.log("✅ [Auto Sync] بدء المزامنة الأوتوماتيك");
+        }
+
+        // ==========================================
         // ✅ التشغيل عند التحميل
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
-            // ✅ 1) التحقق من الجهاز أولاً (Single Device Login)
+            // ✅ 1) التحقق من الجهاز
             const isDeviceValid = await verifyCurrentDevice();
             if (!isDeviceValid) return;
 
-            // ✅ 2) بدء المراقبة اللحظية للجهاز (طرد فوري لو المستر دخل من جهاز تاني)
+            // ✅ 2) مراقبة الجهاز اللحظية
             startDeviceWatch();
 
-            // 3) ربط الأزرار
+            // 3) ربط زر الخروج
             document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation(); openLogoutModal();
             });
 
-            document.getElementById('syncBtn')?.addEventListener('click', async function(e) {
-                e.preventDefault(); e.stopPropagation();
-                showToast('🔄 جاري المزامنة...');
-                const m = await migrateLocalLessonsToFirebase();
-                await syncLessonsFromFirebase(false);
-                showToast(`✅ تمت المزامنة (رُفعت ${m.migrated}، صُلحت ${m.repaired})`);
-            });
-
-            // 4) قراءة أولية من localStorage
+            // 4) قراءة أولية
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
@@ -1468,7 +1582,10 @@
             // 7) Realtime للـ lessons
             startRealtimeSync();
 
-            // 8) إخفاء اللودر
+            // 8) ✅ مزامنة أوتوماتيك احتياطية
+            startAutoSync();
+
+            // 9) إخفاء اللودر
             hideInitialLoader();
         });
 
@@ -1500,7 +1617,6 @@
                             g_publish_map: false,
                             createdAt: new Date().toISOString()
                         }, { merge: true });
-                        console.log(`☁️ [Create] الحصة ${newId}`);
                         showFbSyncBadge('✅ تم إنشاء المجموعة');
                     }
                 } catch (err) {
