@@ -104,6 +104,12 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
+        .top-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .hero-content {
             position: relative;
             z-index: 3;
@@ -2184,10 +2190,35 @@
         }
     </script>
 
+    <!-- ✅ التحديث التلقائي للـ Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js').catch(e => console.log('SW failed:', e));
+                navigator.serviceWorker.register('./sw.js').then((reg) => {
+                    // تحقق من وجود تحديث كل دقيقة
+                    setInterval(() => { reg.update(); }, 60000);
+
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            // لو في نسخة جديدة اتنزلت
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('🔄 تم اكتشاف تحديث جديد، جاري التحديث...');
+                                installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                                setTimeout(() => window.location.reload(), 500);
+                            }
+                        };
+                    };
+                }).catch(e => console.log('SW failed:', e));
+            });
+
+            // لما السيرفيس وركر الجديد يسيطر، اعمل ريفريش مرة واحدة
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
             });
         }
     </script>
