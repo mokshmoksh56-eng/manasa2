@@ -661,7 +661,7 @@
             el.innerHTML = msg; 
             el.className = 'alert-msg ' + (isError ? 'alert-error' : 'alert-success');
             el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 5000);
+            // setTimeout(() => { el.style.display = 'none'; }, 6000); // تعليق الإخفاء التلقائي عشان المستخدم يقرأ الخطأ
         }
 
         // ==========================================
@@ -731,6 +731,7 @@
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
 
             // ✅ 4) حفظ في Firestore
+            let cloudSaveSuccess = false;
             if (fb) {
                 try {
                     btn.innerText = '☁️ جاري حفظ الحساب في السحابة...';
@@ -748,10 +749,17 @@
                         createdAt: accountData.createdAt,
                         updatedAt: Date.now()
                     }, { merge: true });
+                    cloudSaveSuccess = true;
                     console.log("☁️ تم حفظ الحساب في السحابة بنجاح");
                 } catch (e) {
                     console.warn("⚠️ فشل حفظ الحساب في السحابة:", e);
                 }
+            }
+
+            if (!cloudSaveSuccess) {
+                showAlert('⚠️ تنبيه: تم إنشاء الحساب محلياً فقط لأن الاتصال بالسحابة فشل. يرجى التأكد من الإنترنت.', true);
+                setTimeout(() => { window.location.href = './index2.html'; }, 2500);
+                return;
             }
 
             try {
@@ -788,36 +796,47 @@
                 try { savedData = JSON.parse(localStr); } catch (e) {}
             }
 
-            // ✅ 2) لو مش موجود محلياً → جيبه من السحابة (يعني داخل من جهاز جديد)
+            // ✅ 2) لو مش موجود محلياً → جيبه من السحابة
             let fromCloud = false;
-            if (!savedData && fb) {
-                try {
-                    const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
-                    if (snap.exists()) {
-                        const d = snap.data() || {};
-                        if (d.pass && String(d.pass).length === 4) {
-                            savedData = {
-                                title: d.title || 'مستر',
-                                name: d.teacherName || d.name || '',
-                                age: d.age || '',
-                                phone: phone,
-                                pass: d.pass,
-                                createdAt: d.createdAt || new Date().toISOString().split('T')[0]
-                            };
-                            fromCloud = true;
-                            localStorage.setItem('teacherAccount_' + phone, JSON.stringify(savedData));
-                            console.log("☁️ تم استرجاع الحساب من السحابة");
+            if (!savedData) {
+                if (fb) {
+                    try {
+                        const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                        if (snap.exists()) {
+                            const d = snap.data() || {};
+                            if (d.pass && String(d.pass).length === 4) {
+                                savedData = {
+                                    title: d.title || 'مستر',
+                                    name: d.teacherName || d.name || '',
+                                    age: d.age || '',
+                                    phone: phone,
+                                    pass: d.pass,
+                                    createdAt: d.createdAt || new Date().toISOString().split('T')[0]
+                                };
+                                fromCloud = true;
+                                localStorage.setItem('teacherAccount_' + phone, JSON.stringify(savedData));
+                                console.log("☁️ تم استرجاع الحساب من السحابة");
+                            } else {
+                                console.log("⚠️ المستند موجود بس مفيش فيه باسورد صالح");
+                            }
+                        } else {
+                            console.log("⚠️ المستند غير موجود في السحابة");
                         }
+                    } catch (e) {
+                        console.warn("⚠️ جلب الحساب من السحابة فشل:", e);
                     }
-                } catch (e) {
-                    console.warn("⚠️ جلب الحساب من السحابة فشل:", e);
+                } else {
+                    console.warn("⚠️ Firebase لم يتم تحميله، لن نتمكن من البحث في السحابة");
                 }
             }
 
             if (!savedData) {
                 btn.innerText = originalText;
                 btn.disabled = false;
-                return showAlert('هذا الرقم غير مسجل. تأكد من الرقم أو أنشئ حساباً جديداً من تبويب "حساب جديد".');
+                if (!fb) {
+                    return showAlert('تعذر الاتصال بالسحابة. تأكد من الإنترنت أو أوقف مانع الإعلانات.', true);
+                }
+                return showAlert('هذا الرقم غير مسجل. تأكد من الرقم أو أنشئ حساباً جديداً من تبويب "حساب جديد".', true);
             }
 
             if (String(savedData.pass) !== String(pass)) {
@@ -826,7 +845,7 @@
                 return showAlert('الرقم السري غير صحيح.');
             }
 
-            // ✅ 3) فحص الحظر من السحابة (لو الأدمن حظر الحساب من school.html)
+            // ✅ 3) فحص الحظر من السحابة
             let isBlocked =
                 localStorage.getItem('teacherBlocked_' + phone) === 'true' ||
                 localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
@@ -866,10 +885,6 @@
                     btn.innerText = originalText;
                     btn.disabled = false;
                     return showAlert('تعذر تسجيل الدخول. حاول مرة أخرى.');
-                }
-
-                if (deviceCheck.kickedOld) {
-                    console.log("✅ تم طرد الجهاز القديم — دخول من جهاز جديد");
                 }
 
                 if (deviceCheck.error === 'no-firebase') {
