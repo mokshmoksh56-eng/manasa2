@@ -1510,6 +1510,18 @@
             checkTeacherBlockedStatus();
         }
 
+        // ✅ دالة مساعدة لتحديث عنوان الهيدر
+        function updateLessonTitleHeader() {
+            const gNameInput = document.getElementById('g_name');
+            const val = gNameInput ? gNameInput.value.trim() : '';
+            const titlePrefix = isEditMode ? 'تعديل' : 'إعداد';
+            const titleEl = document.getElementById('lessonTitleDisplay');
+            if (!titleEl) return;
+            titleEl.innerText = val
+                ? `${titlePrefix}: ${val}`
+                : `${titlePrefix} المجموعة`;
+        }
+
         window.onload = () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
@@ -1519,14 +1531,32 @@
                 document.getElementById('editAlert').style.display = 'flex';
             }
             
-            const titlePrefix = isEditMode ? 'تعديل مجموعة رقم' : 'إعداد مجموعة رقم';
-            document.getElementById('lessonTitleDisplay').innerText = `${titlePrefix} ${currentLessonId}`;
+            // ✅ نعرض اسم المجموعة من localStorage بدل الـ ID
+            let groupNameForTitle = '';
+            try {
+                const savedStateRaw = localStorage.getItem('lessonState_' + currentLessonId);
+                if (savedStateRaw) {
+                    const st = JSON.parse(savedStateRaw);
+                    groupNameForTitle = (st.g_name || '').trim();
+                }
+            } catch(e) {}
+
+            const titlePrefix = isEditMode ? 'تعديل' : 'إعداد';
+            document.getElementById('lessonTitleDisplay').innerText = groupNameForTitle
+                ? `${titlePrefix}: ${groupNameForTitle}`
+                : `${titlePrefix} المجموعة`;
 
             displayPhoneType();
 
             populateTimeSelectors();
             populateStagesDropdown(false);
             loadState();
+
+            // ✅ مستمع لحظي لتحديث عنوان الهيدر عند تعديل اسم المجموعة
+            const gNameInput = document.getElementById('g_name');
+            if (gNameInput) {
+                gNameInput.addEventListener('input', updateLessonTitleHeader);
+            }
 
             document.querySelectorAll('input, select').forEach(el => {
                 if(el.id === 'g_teacher') return;
