@@ -39,9 +39,6 @@
             overscroll-behavior-y: none;
         }
 
-        /* ============================================ */
-        /* ✅ الهيدر العلوي المتجاوب للموبايل */
-        /* ============================================ */
         .hero-banner {
             position: relative;
             width: 100%;
@@ -80,7 +77,6 @@
             z-index: 2;
         }
 
-        /* شريط علوي أنيق للأزرار */
         .top-navbar-wrapper {
             position: relative;
             z-index: 10;
@@ -215,9 +211,6 @@
             font-weight: 900;
         }
 
-        /* ============================================ */
-        /* ✅ كروت المجموعات (Card Styling for Mobile) */
-        /* ============================================ */
         .cards-section {
             background: #F8FAFC;
             padding: 10px 12px 40px;
@@ -243,20 +236,17 @@
             transform: scale(0.985);
         }
 
-        /* تأثير اللون الرصاصي عند إخفاء الكارت */
         .portal-card.hidden-card {
-            filter: grayscale(100%); /* تحويل الألوان للرمادي */
-            opacity: 0.6; /* تقليل الشفافية قليلاً للإيحاء بأنه مخفي */
-            border-color: #CBD5E1; /* جعل الإطار رمادي */
+            filter: grayscale(100%);
+            opacity: 0.6;
+            border-color: #CBD5E1;
         }
 
-        /* تأكد من أن الأزرار تظل قابلة للضغط وأن ألوانها تُطبق عليها التأثير الرمادي أيضاً */
         .portal-card.hidden-card .btn-go {
              background: linear-gradient(135deg, #94A3B8, #475569);
              box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
         }
 
-        /* مؤشر الحالة */
         .status-badge {
             display: inline-flex;
             align-items: center;
@@ -279,7 +269,6 @@
             100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
-        /* بادجات المادة والصف السريعة */
         .info-badges-row {
             display: flex;
             flex-wrap: wrap;
@@ -297,7 +286,6 @@
             line-height: 1.2;
         }
 
-        /* أزرار الإجراءات العلوية داخل الكارت */
         .card-actions {
             position: absolute;
             top: 10px;
@@ -327,7 +315,6 @@
         .btn-visibility { background: #F1F5F9; color: #64748B; }
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
 
-        /* كارت إنشاء مجموعة جديدة */
         .card-add-new {
             background: #FFFFFF;
             border: 2.5px dashed #94A3B8;
@@ -360,7 +347,6 @@
             font-weight: 900;
         }
 
-        /* صندوق صورة الكارت الدائري */
         .card-image-box {
             flex-shrink: 0;
             width: 80px;
@@ -391,7 +377,6 @@
             border: 3px solid #A7F3D0;
         }
 
-        /* محتوى النص بالبطاقة */
         .card-text {
             display: flex;
             flex-direction: column;
@@ -400,7 +385,7 @@
             z-index: 5;
             flex: 1;
             min-width: 0;
-            padding-left: 35px; /* مسافة أمان لعدم التداخل مع أزرار الإجراءات */
+            padding-left: 35px;
         }
         .card-text h2 {
             font-size: 16.5px;
@@ -458,9 +443,6 @@
             transform: scale(0.95);
         }
 
-        /* ============================================ */
-        /* ✅ النوافذ المنبثقة الشاملة */
-        /* ============================================ */
         .modal-overlay {
             position: fixed; inset: 0;
             background: rgba(15, 23, 42, 0.65);
@@ -479,7 +461,6 @@
         }
         .modal-overlay.active .custom-modal { transform: translateY(0) scale(1); }
 
-        /* نافذة تقرير المجموعة */
         .group-modal-box {
             position: relative; width: 100% !important; max-width: 320px !important;
             padding: 14px 14px 12px !important; border-radius: 18px !important;
@@ -538,6 +519,33 @@
         }
         #toastMsg.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
+        /* ✅ شارة الحفظ اللحظي في Firebase */
+        .fb-sync-badge {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: #10B981;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 900;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            border-bottom: 2px solid #059669;
+        }
+        .fb-sync-badge.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fb-sync-badge.error {
+            background: #EF4444;
+            border-bottom-color: #B91C1C;
+        }
+
         @media (max-width: 360px) {
             .hero-brand { font-size: 28px; }
             .portal-card { padding: 12px 10px; gap: 8px; }
@@ -557,13 +565,15 @@
         }
     </script>
 
+    <!-- ✅ شارة الحفظ اللحظي -->
+    <div id="fbSyncBadge" class="fb-sync-badge">☁️ جاري الحفظ في السحابة...</div>
+
     <!-- ✅ توست الرسائل -->
     <div id="toastMsg">تم الإجراء بنجاح ✔</div>
 
     <!-- ✅ الهيدر العلوي بنمط تطبيق الهاتف -->
     <section class="hero-banner">
 
-        <!-- شريط علوي أفقي يمنع التداخل نهائياً -->
         <div class="top-navbar-wrapper">
             <div class="top-nav-logo">
                 <span>📚</span>
@@ -627,7 +637,7 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف (Delete Modal) -->
+    <!-- ✅ نافذة تأكيد الحذف -->
     <div id="deleteModal" class="modal-overlay" onclick="closeModal('deleteModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #FEE2E2; color: #EF4444;">
@@ -644,7 +654,7 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تعديل الاسم (Rename Modal) -->
+    <!-- ✅ نافذة تعديل الاسم -->
     <div id="renameModal" class="modal-overlay" onclick="closeModal('renameModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #E0E7FF; color: #4F46E5;">
@@ -662,10 +672,45 @@
         </div>
     </div>
 
-    <!-- الفوتر -->
     <footer class="py-5 text-center text-slate-400 font-bold text-xs">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
+
+    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+          getFirestore,
+          doc,
+          getDoc,
+          setDoc,
+          deleteDoc,
+          collection,
+          getDocs
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.fsDoc = doc;
+      window.fsGetDoc = getDoc;
+      window.fsSetDoc = setDoc;
+      window.fsDeleteDoc = deleteDoc;
+      window.fsCollection = collection;
+      window.fsGetDocs = getDocs;
+
+      console.log("✅ Firebase + Firestore جاهز في index2.html");
+    </script>
 
     <!-- ✅ السكريبتات والتفاعل -->
     <script>
@@ -691,18 +736,62 @@
         let itemToDelete = null;
         let itemToRename = null;
 
-        window.addEventListener('DOMContentLoaded', () => {
+        // ✅ إظهار شارة الحفظ اللحظي
+        function showFbSyncBadge(message, isError = false) {
+            const badge = document.getElementById('fbSyncBadge');
+            badge.innerText = message;
+            badge.classList.toggle('error', isError);
+            badge.classList.add('show');
+            clearTimeout(badge._timeout);
+            badge._timeout = setTimeout(() => {
+                badge.classList.remove('show');
+            }, 2000);
+        }
+
+        // ✅ قراءة حالات النشر من Firebase لجميع الحصص
+        async function syncPublishStatesFromFirebase() {
+            if (!window.db || !window.fsCollection || !window.fsGetDocs) {
+                console.warn("⚠️ Firebase غير جاهز للمزامنة");
+                return;
+            }
+            try {
+                const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                let changed = false;
+                snap.forEach(docSnap => {
+                    const data = docSnap.data();
+                    const lessonId = docSnap.id;
+                    // لو g_publish_map === true يبقى ظاهر، غير كده مخفي (default false)
+                    const isPublished = data.g_publish_map === true;
+                    const localState = localStorage.getItem('publishState_' + lessonId) === 'true';
+                    if (isPublished !== localState) {
+                        localStorage.setItem('publishState_' + lessonId, isPublished);
+                        changed = true;
+                    }
+                });
+                if (changed) {
+                    console.log("🔄 [index2] تمت مزامنة حالات النشر من Firebase");
+                    renderLessons();
+                } else {
+                    console.log("✅ [index2] حالات النشر متزامنة بالفعل");
+                }
+            } catch (err) {
+                console.warn("⚠️ فشل مزامنة حالات النشر من Firebase:", err);
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', async () => {
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try {
                     lessons = JSON.parse(savedLessons);
-                    renderLessons();
                 } catch(e) {
                     lessons = [];
                 }
-            } else {
-                renderLessons();
             }
+            renderLessons();
+
+            // ✅ مزامنة حالات النشر من Firebase بعد الريندر الأولي
+            await syncPublishStatesFromFirebase();
         });
 
         function closeModal(modalId) {
@@ -717,7 +806,6 @@
             renderLessons();
         }
 
-        // دالة حساب الوقت المتبقي والحالة
         function calculateSessionStatus(savedState) {
             if (!savedState) return `<span class="status-badge status-none">⚠️ لم يتم الإعداد</span>`;
             
@@ -765,7 +853,6 @@
             return `<span class="status-badge status-future">📅 موعدنا ${state.g_days[0]}</span>`;
         }
 
-        // دالة جلب معلومات الكارت السريعة
         function getQuickInfoBadges(savedState) {
             if (!savedState) return '';
             const state = JSON.parse(savedState);
@@ -797,38 +884,47 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
-        function toggleVisibility(id, event) {
+        // ==========================================
+        // ✅ toggleVisibility محدّثة: بتقرأ وتحفظ في Firebase
+        // ==========================================
+        async function toggleVisibility(id, event) {
             event.stopPropagation();
             const btn = event.currentTarget;
-            
-            // إيجاد الكارت الرئيسي الذي يحتوي على هذا الزر
             const card = btn.closest('.portal-card');
             
             let currentState = localStorage.getItem('publishState_' + id) === 'true';
-            
             let newState = !currentState;
+            
+            // ✅ تحديث localStorage فورًا (للاستجابة السريعة)
             localStorage.setItem('publishState_' + id, newState);
             
             if (newState) {
                 btn.classList.add('published');
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
-                
-                // إزالة كلاس اللون الرمادي عند الإظهار
-                if (card) {
-                    card.classList.remove('hidden-card');
-                }
-                
+                if (card) card.classList.remove('hidden-card');
                 showToast('👁️ أصبحت المجموعة ظاهرة للطلاب');
             } else {
                 btn.classList.remove('published');
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>`;
-                
-                // إضافة كلاس اللون الرمادي عند الإخفاء
-                if (card) {
-                    card.classList.add('hidden-card');
-                }
-                
+                if (card) card.classList.add('hidden-card');
                 showToast('🙈 تم إخفاء المجموعة عن الطلاب');
+            }
+
+            // ✅ حفظ في Firebase (المصدر الحقيقي)
+            try {
+                if (window.db && window.fsDoc && window.fsSetDoc) {
+                    showFbSyncBadge('☁️ جاري الحفظ في السحابة...');
+                    const ref = window.fsDoc(window.db, "lessons", String(id));
+                    await window.fsSetDoc(ref, { g_publish_map: newState }, { merge: true });
+                    console.log(`☁️ [index2] تم تحديث g_publish_map = ${newState} في Firebase للحصة ${id}`);
+                    showFbSyncBadge(newState ? '✅ المجموعة ظاهرة للطلاب' : '🔒 المجموعة مخفية عن الطلاب');
+                } else {
+                    console.warn("⚠️ Firebase غير جاهز — تم الحفظ في localStorage فقط");
+                    showFbSyncBadge('⚠️ حفظ محلي فقط', true);
+                }
+            } catch (err) {
+                console.error("❌ فشل تحديث Firebase:", err);
+                showFbSyncBadge('❌ فشل الحفظ في السحابة', true);
             }
         }
 
@@ -864,7 +960,6 @@
                 const hasReport = savedState !== null;
                 const isPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
                 
-                // إضافة كلاس اللون الرمادي إذا كان الكارت مخفياً في الـ localStorage
                 const hiddenClass = isPublished ? '' : 'hidden-card';
                 
                 const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
@@ -920,13 +1015,26 @@
             document.getElementById('deleteModal').classList.add('active');
         }
 
-        document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+        document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
             if(itemToDelete !== null) {
-                lessons = lessons.filter(l => l.id !== itemToDelete);
+                const idToDelete = itemToDelete;
+                lessons = lessons.filter(l => l.id !== idToDelete);
                 saveLessonsToStorage();
                 
-                localStorage.removeItem('lessonState_' + itemToDelete);
-                localStorage.removeItem('publishState_' + itemToDelete);
+                localStorage.removeItem('lessonState_' + idToDelete);
+                localStorage.removeItem('publishState_' + idToDelete);
+                
+                // ✅ حذف من Firebase كمان
+                try {
+                    if (window.db && window.fsDoc && window.fsDeleteDoc) {
+                        showFbSyncBadge('🗑️ جاري الحذف من السحابة...');
+                        await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", String(idToDelete)));
+                        console.log(`🗑️ [index2] تم حذف الحصة ${idToDelete} من Firebase`);
+                        showFbSyncBadge('✅ تم الحذف من السحابة');
+                    }
+                } catch (err) {
+                    console.warn("⚠️ فشل حذف Firebase:", err);
+                }
                 
                 renderLessons();
                 closeModal('deleteModal');
@@ -947,7 +1055,7 @@
             }
         }
 
-        document.getElementById('confirmRenameBtn').addEventListener('click', function() {
+        document.getElementById('confirmRenameBtn').addEventListener('click', async function() {
             const newName = document.getElementById('newGroupNameInput').value;
             
             if(itemToRename !== null && newName.trim() !== '') {
@@ -963,6 +1071,19 @@
                         stateObj.g_name = lesson.title;
                         localStorage.setItem(stateKey, JSON.stringify(stateObj));
                     }
+
+                    // ✅ تحديث الاسم في Firebase كمان
+                    try {
+                        if (window.db && window.fsDoc && window.fsSetDoc) {
+                            showFbSyncBadge('☁️ جاري تحديث الاسم...');
+                            const ref = window.fsDoc(window.db, "lessons", String(itemToRename));
+                            await window.fsSetDoc(ref, { g_name: lesson.title }, { merge: true });
+                            console.log(`☁️ [index2] تم تحديث اسم الحصة ${itemToRename} في Firebase`);
+                            showFbSyncBadge('✅ تم تحديث الاسم');
+                        }
+                    } catch (err) {
+                        console.warn("⚠️ فشل تحديث Firebase:", err);
+                    }
                     
                     renderLessons();
                 }
@@ -977,7 +1098,6 @@
             }
         });
 
-        // نافذة تفاصيل المجموعة
         function openGroupModal(lessonId) {
             const savedState = localStorage.getItem('lessonState_' + lessonId);
             const isPublished = localStorage.getItem('publishState_' + lessonId) === 'true';
