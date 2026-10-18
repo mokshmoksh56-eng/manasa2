@@ -263,101 +263,46 @@
         .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
 
         /* ============================================ */
-        /* ✅ سهم التحكم في نطاق البحث فوق الخريطة */
+        /* ✅ كارت نطاق البحث الجديد (تحت زر البحث) */
         /* ============================================ */
-        .map-radius-control {
-            position: absolute;
-            top: 56px;
-            right: 10px;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.97);
-            backdrop-filter: blur(6px);
-            border: 1.5px solid #10B981;
-            border-bottom: 3px solid #059669;
+        .radius-card-below-search {
+            margin-top: 12px;
+            padding: 10px;
+            background: #FFFFFF;
             border-radius: 10px;
-            padding: 8px 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            min-width: 200px;
-            max-width: calc(100% - 20px);
-            transition: all 0.2s;
+            border: 1.5px solid #CBD5E1;
+            border-bottom: 3px solid #334155;
         }
 
-        .map-radius-control .radius-header {
+        .radius-card-below-search .radius-label-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            gap: 8px;
             margin-bottom: 6px;
-            font-size: 11px;
-            font-weight: 900;
-            color: #065F46;
         }
 
-        .map-radius-control .radius-value-badge {
+        .radius-card-below-search .radius-label-row span:first-child {
+            font-size: 13px;
+            font-weight: 900;
+            color: #1E293B;
+        }
+
+        .radius-card-below-search .radius-value-badge-display {
+            color: #10B981;
+            font-weight: 900;
+            font-size: 13px;
             background: #D1FAE5;
-            color: #065F46;
-            padding: 2px 8px;
+            padding: 2px 10px;
             border-radius: 20px;
-            font-size: 11px;
-            font-weight: 900;
-            white-space: nowrap;
         }
 
-        .map-radius-control .map-radius-slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 100%;
-            height: 5px;
-            border-radius: 4px;
-            background: #CBD5E1;
-            outline: none;
-            cursor: pointer;
-            display: block;
-        }
-
-        .map-radius-control .map-radius-slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #10B981;
-            cursor: pointer;
-            box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
-            border: 2px solid #fff;
-        }
-
-        .map-radius-control .map-radius-slider::-moz-range-thumb {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #10B981;
-            cursor: pointer;
-            box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
-            border: 2px solid #fff;
-        }
-
-        .map-radius-control .radius-limits {
+        .radius-card-below-search .radius-limits-row {
             display: flex;
             justify-content: space-between;
-            font-size: 9px;
+            font-size: 10px;
             color: #64748B;
+            margin-top: 4px;
             font-weight: 800;
-            margin-top: 3px;
-        }
-
-        /* في وضع ملء الشاشة، نكبّر الحجم شوية */
-        .map-container.is-fullscreen .map-radius-control {
-            top: 60px;
-            padding: 10px 14px;
-            min-width: 240px;
-        }
-        .map-container.is-fullscreen .map-radius-control .map-radius-slider {
-            height: 7px;
-        }
-        .map-container.is-fullscreen .map-radius-control .map-radius-slider::-webkit-slider-thumb {
-            width: 22px;
-            height: 22px;
         }
 
         @media (max-width: 380px) {
@@ -371,7 +316,6 @@
             .radio-grid label i { font-size: 18px; margin-bottom: 2px;}
             .btn-search { padding: 10px; font-size: 13px; }
             #map { height: 260px; }
-            .map-radius-control { min-width: 170px; padding: 6px 10px; }
         }
     </style>
 </head>
@@ -512,18 +456,6 @@
                 </div>
             </div>
 
-            <div class="form-group" style="margin-top: 15px; padding: 10px; background: #FFFFFF; border-radius: 10px; border: 1.5px solid #CBD5E1;">
-                <label style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                    <span style="font-size: 13px;">🎯 نطاق البحث:</span>
-                    <span id="radius_val_display" style="color: #10B981; font-weight: 900; font-size: 13px; background: #D1FAE5; padding: 2px 10px; border-radius: 20px;">3 كيلومتر</span>
-                </label>
-                <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
-                <div style="display: flex; justify-content: space-between; font-size: 10px; color: #64748B; margin-top: 4px; font-weight: 800;">
-                    <span>500 متر</span>
-                    <span>5 كيلو</span>
-                </div>
-            </div>
-
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
@@ -547,6 +479,19 @@
                 </svg>
                 تحديد الموقع والبحث بالـ GPS
             </button>
+
+            <!-- ✅ نطاق البحث الجديد تحت زر GPS مباشرة -->
+            <div class="radius-card-below-search">
+                <div class="radius-label-row">
+                    <span>🎯 نطاق البحث:</span>
+                    <span id="radius_val_display" class="radius-value-badge-display">3 كيلومتر</span>
+                </div>
+                <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
+                <div class="radius-limits-row">
+                    <span>500 متر</span>
+                    <span>5 كيلو</span>
+                </div>
+            </div>
             
             <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
@@ -560,22 +505,6 @@
                     <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
                         🎯 موقعي الحالي
                     </button>
-
-                    <!-- ✅ سهم نطاق البحث فوق الخريطة -->
-                    <div class="map-radius-control" id="mapRadiusControl" onclick="event.stopPropagation()">
-                        <div class="radius-header">
-                            <span>🎯 نطاق البحث</span>
-                            <span class="radius-value-badge" id="mapRadiusValDisplay">3 كيلومتر</span>
-                        </div>
-                        <input type="range" id="mapRadiusSlider" class="map-radius-slider clickable-element"
-                               min="500" max="5000" step="100" value="3000"
-                               oninput="onMapRadiusSliderInput(this.value)"
-                               onchange="onMapRadiusSliderChange()">
-                        <div class="radius-limits">
-                            <span>500 م</span>
-                            <span>5 كم</span>
-                        </div>
-                    </div>
 
                     <div id="map"></div>
                 </div>
@@ -861,14 +790,12 @@
                     st.gradeSubjects = {};
                 }
 
-                // ✅ دمج الصفوف (نضيف الناقص فقط، لا نحذف الموجود)
                 const mergedGrades = [...st.grades];
                 (defStage.grades || []).forEach(defGrade => {
                     if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
                 });
                 st.grades = mergedGrades;
 
-                // ✅ لكل صف: تكملة المواد الناقصة
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
                         if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
@@ -890,9 +817,6 @@
             return currObj;
         }
 
-        // ==========================================
-        // ✅ getCurriculum: كاش → localStorage → افتراضي
-        // ==========================================
         function getCurriculum() {
             if (curriculumCache) return curriculumCache;
             try {
@@ -1189,51 +1113,11 @@
             }
             updateStudentSummary(); saveStudentData();
             if (searchCircle) { searchCircle.setRadius(val); }
-
-            // ✅ مزامنة السهم الجديد فوق الخريطة
-            const mapSlider = document.getElementById('mapRadiusSlider');
-            const mapDisplay = document.getElementById('mapRadiusValDisplay');
-            if (mapSlider) mapSlider.value = val;
-            if (mapDisplay) mapDisplay.innerText = formatRadiusText(val);
         }
 
         function onRadiusChangeEnd() {
             if (currentCenter && searchCircle) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-                map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
-            }
-        }
-
-        // ==========================================
-        // ✅ دوال السهم الجديد فوق الخريطة
-        // ==========================================
-        function formatRadiusText(val) {
-            val = parseInt(val);
-            if (val < 1000) return val + " متر";
-            let kmVal = (val / 1000).toFixed(1);
-            if (kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
-            return kmVal + " كم";
-        }
-
-        function onMapRadiusSliderInput(val) {
-            // تحديث العرض في البطاقة الصغيرة فوق الخريطة
-            document.getElementById('mapRadiusValDisplay').innerText = formatRadiusText(val);
-            // تحديث السلايدر الأصلي في تفضيلات الدرس
-            const originalSlider = document.getElementById('search_radius');
-            if (originalSlider) originalSlider.value = val;
-            // تحديث البادج في تفضيلات الدرس
-            const display = document.getElementById('radius_val_display');
-            if (display) display.innerText = formatRadiusText(val);
-            // تحديث الدائرة على الخريطة فورًا
-            if (searchCircle) searchCircle.setRadius(parseInt(val));
-            // حفظ
-            saveStudentData();
-        }
-
-        function onMapRadiusSliderChange() {
-            const val = parseInt(document.getElementById('mapRadiusSlider').value);
-            if (currentCenter && searchCircle && map) {
-                renderRegisteredTeachersFromEnd(currentCenter, val);
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
             }
         }
@@ -1300,14 +1184,12 @@
         // ✅ onload: Firebase أولاً (getDoc) ثم بناء الواجهة
         // ==========================================
         window.onload = async () => {
-            // 1) محاولة جلب مضمونة من Firebase
             try {
                 await fetchCurriculumOnceFromFirebase();
             } catch (e) {
                 console.warn("⚠️ فشل الجلب الأولي:", e);
             }
 
-            // 2) إصلاح تلقائي لو curriculumCache فارغ
             if (!curriculumCache) {
                 try {
                     const saved = localStorage.getItem('app_curriculum');
@@ -1323,13 +1205,11 @@
                 }
             }
 
-            // 3) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
-            // 4) ربط المستمعات
             document.querySelectorAll('input, select').forEach(el => {
-                if (el.id !== 'search_radius' && el.id !== 'mapRadiusSlider') {
+                if (el.id !== 'search_radius') {
                     el.addEventListener('input', saveStudentData);
                     el.addEventListener('change', saveStudentData);
                 }
@@ -1353,7 +1233,6 @@
                 });
             });
 
-            // 5) مستمعات احتياطية
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
                     try {
@@ -1380,7 +1259,6 @@
                 } catch (e) {}
             });
 
-            // 6) المستمع اللحظي من Firebase
             startCurriculumRealtimeListener();
         };
 
@@ -1762,12 +1640,6 @@
             teachersLayer.clearLayers();
 
             const searchRadius = parseInt(document.getElementById('search_radius').value);
-
-            // ✅ مزامنة السهم الجديد فوق الخريطة عند فتحها
-            const mapSlider = document.getElementById('mapRadiusSlider');
-            const mapDisplay = document.getElementById('mapRadiusValDisplay');
-            if (mapSlider) mapSlider.value = searchRadius;
-            if (mapDisplay) mapDisplay.innerText = formatRadiusText(searchRadius);
             
             currentCenter = [lat, lng];
             map.setView(currentCenter, 15);
@@ -1807,19 +1679,16 @@
                 .trim();
         }
 
-        // ✅ نسخة معدلة: تسامح في المطابقة عشان تظهر المدرسين
         function isTeacherSubjectMatches(teacher, selectedSubject, selectedGrade) {
             const selSubj = normalizeArabicText(selectedSubject);
             const selGrade = normalizeArabicText(selectedGrade);
 
             if (!selSubj) return true;
 
-            // لو المدرس عنده subjectsRaw بتنسيق "الصف - المادة"
             if (Array.isArray(teacher.subjectsRaw) && teacher.subjectsRaw.length > 0) {
                 return teacher.subjectsRaw.some(raw => {
                     const parts = String(raw).split(' - ');
                     if (parts.length < 2) {
-                        // ممكن يكون التنسيق مختلف، نطابق على النص الكامل
                         const full = normalizeArabicText(raw);
                         return full.includes(selSubj) && full.includes(selGrade);
                     }
@@ -1827,7 +1696,6 @@
                     const rawGrade = normalizeArabicText(parts[0]);
                     const rawSubj = normalizeArabicText(parts[1]);
 
-                    // تسامح: المادة لازم تتطابق، الصف ممكن يكون فيه اختلاف بسيط
                     const subjMatch = (rawSubj === selSubj) || rawSubj.includes(selSubj) || selSubj.includes(rawSubj);
                     const gradeMatch = (rawGrade === selGrade) || rawGrade.includes(selGrade) || selGrade.includes(rawGrade);
 
@@ -1835,7 +1703,6 @@
                 });
             }
 
-            // Fallback: المدرس عنده حقل subject نصي مفصول بفواصل
             const teacherSubjs = String(teacher.subject || '')
                 .split(/[،,]/)
                 .map(s => normalizeArabicText(s))
@@ -1849,9 +1716,6 @@
             return teacherSubjs.includes(selSubj) && gradeMatch;
         }
 
-        // ==========================================
-        // ✅ دالة مساعدة: مطابقة نوع مكان الدرس
-        // ==========================================
         function getStudentPreferredLocLabel(prefLocValue) {
             if (!prefLocValue) return null;
             if (prefLocValue.includes('سنتر') || prefLocValue.includes('السنتر')) return 'السنتر';
@@ -1889,12 +1753,9 @@
                 return;
             }
 
-            // ✅ فلترة متعددة: مادة + مرحلة + مكان + جنس
             const matched = registeredList.filter(t => {
-                // 1) مطابقة المادة والصف
                 if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
 
-                // 2) فلترة المرحلة: بس لو المدرس عنده stageKey فعلاً وبيختلف جذريًا
                 if (selectedStageKey) {
                     const tStageKey = String(t.stageKey || '').trim();
                     if (tStageKey && tStageKey !== selectedStageKey) {
@@ -1906,12 +1767,10 @@
                     }
                 }
 
-                // 3) فلترة مكان الدرس (جديد) ✅
                 if (prefLocValue && !isTeacherLocationMatches(t, prefLocValue)) {
                     return false;
                 }
 
-                // 4) فلترة الجنس (مستر/مس)
                 if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
                 if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
 
