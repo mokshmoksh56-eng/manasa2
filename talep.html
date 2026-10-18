@@ -1335,6 +1335,24 @@
                 }
             });
 
+            // ✅ إعادة البحث فورًا عند تغيير مكان الدرس المفضل
+            document.querySelectorAll('input[name="pref_loc"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (currentCenter && map) {
+                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    }
+                });
+            });
+
+            // ✅ إعادة البحث فورًا عند تغيير جنس المعلم المفضل
+            document.querySelectorAll('input[name="pref_teacher"]').forEach(radio => {
+                radio.addEventListener('change', () => {
+                    if (currentCenter && map) {
+                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    }
+                });
+            });
+
             // 5) مستمعات احتياطية
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
@@ -1609,7 +1627,6 @@
                     else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
                     else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
 
-
                     let fullAddress = state.m_address || 'محدد على الخريطة';
                     if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
 
@@ -1832,6 +1849,29 @@
             return teacherSubjs.includes(selSubj) && gradeMatch;
         }
 
+        // ==========================================
+        // ✅ دالة مساعدة: مطابقة نوع مكان الدرس
+        // ==========================================
+        function getStudentPreferredLocLabel(prefLocValue) {
+            if (!prefLocValue) return null;
+            if (prefLocValue.includes('سنتر') || prefLocValue.includes('السنتر')) return 'السنتر';
+            if (prefLocValue.includes('عند المستر') || prefLocValue.includes('المستر')) return 'عند المستر';
+            if (prefLocValue.includes('منزلى') || prefLocValue.includes('منزلي') || prefLocValue.includes('منزل الطالب')) return 'فى منزل الطالب';
+            return null;
+        }
+
+        function isTeacherLocationMatches(teacher, prefLocValue) {
+            const studentLoc = getStudentPreferredLocLabel(prefLocValue);
+            if (!studentLoc) return true;
+
+            const teacherLoc = String(teacher.locType || '').trim();
+            if (teacherLoc === studentLoc) return true;
+
+            const normTeacher = normalizeArabicText(teacherLoc);
+            const normStudent = normalizeArabicText(studentLoc);
+            return normTeacher.includes(normStudent) || normStudent.includes(normTeacher);
+        }
+
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
 
@@ -1840,6 +1880,7 @@
             const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
             let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
             if (prefTeacher === 'أيهم') prefTeacher = 'مستر او مس';
+            const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
 
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
@@ -1848,17 +1889,15 @@
                 return;
             }
 
-            // ✅ فلترة أكثر تسامحًا
+            // ✅ فلترة متعددة: مادة + مرحلة + مكان + جنس
             const matched = registeredList.filter(t => {
-                // 1) مطابقة المادة والصف (بتسامح)
+                // 1) مطابقة المادة والصف
                 if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
 
                 // 2) فلترة المرحلة: بس لو المدرس عنده stageKey فعلاً وبيختلف جذريًا
                 if (selectedStageKey) {
                     const tStageKey = String(t.stageKey || '').trim();
-                    // لو المدرس مسجل مرحلة مختلفة تمامًا (مش فاضية ومش مطابقة) استبعده
                     if (tStageKey && tStageKey !== selectedStageKey) {
-                        // استثناء: لو اسم الصف نفسه متطابق، اقبله رغم اختلاف المرحلة
                         const tGrade = normalizeArabicText(t.grade || '');
                         const sGrade = normalizeArabicText(selectedGrade);
                         if (!(tGrade === sGrade || tGrade.includes(sGrade) || sGrade.includes(tGrade))) {
@@ -1867,17 +1906,25 @@
                     }
                 }
 
-                // 3) فلترة الجنس (مستر/مس)
+                // 3) فلترة مكان الدرس (جديد) ✅
+                if (prefLocValue && !isTeacherLocationMatches(t, prefLocValue)) {
+                    return false;
+                }
+
+                // 4) فلترة الجنس (مستر/مس)
                 if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
                 if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
 
                 return true;
             });
 
-            console.log(`🔍 [talep] إجمالي المدرسين: ${registeredList.length} | مطابقين للمادة/الصف: ${matched.length}`);
+            console.log(`🔍 [talep] إجمالي المدرسين: ${registeredList.length} | مطابقين (مادة+مرحلة+جنس+مكان): ${matched.length}`);
 
             if (matched.length === 0) {
-                showToast(`لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`, true);
+                const noMatchMsg = prefLocValue 
+                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!` 
+                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
+                showToast(noMatchMsg, true);
                 return;
             }
 
@@ -1932,7 +1979,10 @@
                     const km = (nearest.distance / 1000).toFixed(1);
                     showToast(`فيه ${outOfRange.length} مدرس مطابق لكن خارج النطاق (أقربهم على ${km} كم) — وسّع نطاق البحث!`, true);
                 } else {
-                    showToast(`لا يوجد مدرس مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`, true);
+                    const noMatchMsg = prefLocValue 
+                        ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!` 
+                        : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
+                    showToast(noMatchMsg, true);
                 }
             } else {
                 showToast(`تم العثور على (${shownCount}) مدرس مطابق لـ (${selectedSubject} - ${selectedGrade}) ✨`);
