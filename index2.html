@@ -1930,7 +1930,7 @@
         }
 
         // ==========================================
-        // ✅ Create Lesson
+        // ✅ Create Lesson (تم التعديل للتسلسل الرقمي)
         // ==========================================
         function createNewLesson(saveToStorage = true) {
             const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
@@ -1939,8 +1939,25 @@
                 return;
             }
 
+            // ✅ حساب الرقم التسلسلي التالي (البحث عن أعلى رقم موجود وإضافة 1)
+            let maxNum = 0;
+            lessons.forEach(l => {
+                // البحث عن كلمة "رقم" متبوعة بأرقام في اسم المجموعة
+                const match = String(l.title).match(/رقم\s*(\d+)/);
+                if (match) {
+                    const num = parseInt(match[1], 10);
+                    if (num > maxNum) maxNum = num;
+                }
+            });
+            const nextNumber = maxNum + 1;
+
+            // إنشاء ID فريد للسحابة (مخفي عن المستخدم)
             const newId = String(Date.now()) + '_' + Math.random().toString(36).substr(2, 6);
-            const lessonData = { id: newId, title: `مجموعة رقم ${newId}` };
+            
+            // الاسم الجديد الذي سيظهر للمستخدم
+            const newTitle = `مجموعة جديدة رقم ${nextNumber}`;
+            const lessonData = { id: newId, title: newTitle };
+            
             lessons.push(lessonData);
             if (saveToStorage) saveLessonsToStorage();
             renderLessons();
@@ -1951,7 +1968,7 @@
                         showFbSyncBadge('☁️ جاري إنشاء المجموعة...');
                         const ref = window.fsDoc(window.db, "lessons", String(newId));
                         await window.fsSetDoc(ref, {
-                            g_name: lessonData.title,
+                            g_name: newTitle, // حفظ الاسم الجديد في السحابة
                             g_phone: teacherPhone || '',
                             g_teacher: teacherName || '',
                             g_publish_map: false,
