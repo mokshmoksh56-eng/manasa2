@@ -903,7 +903,6 @@
                 <span>📚</span>
                 <span>احجزلي</span>
             </div>
-            <!-- ✅ زر المزامنة اتشال — المزامنة أوتوماتيك -->
         </div>
 
         <div class="hero-content">
@@ -1088,7 +1087,7 @@
         let autoSyncInterval = null;
 
         // ==========================================
-        // 📱 Device ID Management (Single Device Login)
+        // 📱 Device ID Management
         // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
@@ -1185,7 +1184,6 @@
                             },
                             (err) => console.warn("⚠️ device watch:", err)
                         );
-                        console.log("✅ [Device Watch] بدء المراقبة اللحظية للجهاز");
                     } catch (err) {
                         console.warn("⚠️ فشل بدء device watch:", err);
                     }
@@ -1197,7 +1195,7 @@
         }
 
         // ==========================================
-        // ✅ تسجيل الخروج
+        // ✅ Logout
         // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
@@ -1259,16 +1257,6 @@
                     const loggedObj = JSON.parse(loggedStr);
                     phone = String(loggedObj.phone || '').trim();
                     name = String(loggedObj.name || '').trim();
-                }
-                if (!phone) {
-                    phone = String(localStorage.getItem('rememberedPhone') || '').trim();
-                    if (phone) {
-                        const accStr = localStorage.getItem('teacherAccount_' + phone);
-                        if (accStr) {
-                            const accObj = JSON.parse(accStr);
-                            if (!name && accObj.name) name = String(accObj.name).trim();
-                        }
-                    }
                 }
             } catch(e) {}
             return { phone, name };
@@ -1399,7 +1387,7 @@
         }
 
         // ==========================================
-        // ✅ جلب الحصص من Firebase
+        // ✅ Sync Lessons
         // ==========================================
         async function syncLessonsFromFirebase(showLoader = false) {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
@@ -1452,9 +1440,6 @@
             }
         }
 
-        // ==========================================
-        // ✅ المزامنة اللحظية
-        // ==========================================
         function startRealtimeSync() {
             if (!window.db || !window.fsCollection || !window.fsOnSnapshot) return;
             if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
@@ -1506,12 +1491,11 @@
         }
 
         // ==========================================
-        // ✅ المزامنة الأوتوماتيك الاحتياطية
+        // ✅ Auto Sync
         // ==========================================
         function startAutoSync() {
             if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
 
-            // كل دقيقة (احتياطي لو onSnapshot وقع)
             autoSyncInterval = setInterval(async () => {
                 try {
                     await syncLessonsFromFirebase(false);
@@ -1520,34 +1504,28 @@
                 }
             }, 60000);
 
-            // عند رجوع المستر للصفحة
             window.addEventListener('focus', async () => {
                 try { await syncLessonsFromFirebase(false); } catch(e) {}
             });
 
-            // عند رجوع التاب
             document.addEventListener('visibilitychange', async () => {
                 if (!document.hidden) {
                     try { await syncLessonsFromFirebase(false); } catch(e) {}
                 }
             });
 
-            // عند رجوع الاتصال
             window.addEventListener('online', async () => {
                 showToast('🌐 رجع الاتصال - جاري المزامنة...');
                 try { await syncLessonsFromFirebase(false); } catch(e) {}
             });
 
-            // تنظيف عند الخروج
             window.addEventListener('beforeunload', () => {
                 if (autoSyncInterval) clearInterval(autoSyncInterval);
             });
-
-            console.log("✅ [Auto Sync] بدء المزامنة الأوتوماتيك");
         }
 
         // ==========================================
-        // ✅ التشغيل عند التحميل
+        // ✅ DOMContentLoaded
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             // ✅ 1) التحقق من الجهاز
@@ -1557,35 +1535,60 @@
             // ✅ 2) مراقبة الجهاز اللحظية
             startDeviceWatch();
 
-            // 3) ربط زر الخروج
+            // ✅ 3) تنظيف localStorage من بيانات معلم قديم
+            const currentInfo = getCurrentTeacherInfo();
+            const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
+            const lessonsOwnerKey = 'lessons_owner_phone';
+            const savedLessonsOwner = localStorage.getItem(lessonsOwnerKey);
+
+            if (savedLessonsOwner && currentPhoneKey && savedLessonsOwner !== currentPhoneKey) {
+                console.log(`🧹 [Clean] معلم جديد (${currentPhoneKey}) مختلف عن القديم (${savedLessonsOwner})`);
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (!k) continue;
+                    if (k.startsWith('lessonState_') || k.startsWith('publishState_')) {
+                        keysToRemove.push(k);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                localStorage.removeItem('teacher_lessons');
+                lessons = [];
+            }
+
+            if (currentPhoneKey) {
+                localStorage.setItem(lessonsOwnerKey, currentPhoneKey);
+            }
+
+            // 4) ربط زر الخروج
             document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation(); openLogoutModal();
             });
 
-            // 4) قراءة أولية
+            // 5) قراءة أولية
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
             }
             renderLessons();
 
-            // 5) Migration
+            // 6) Migration
             updateSyncStatus('📤 جاري رفع الحصص القديمة...');
             const migResult = await migrateLocalLessonsToFirebase();
             if (migResult.migrated > 0 || migResult.repaired > 0) {
                 showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
             }
 
-            // 6) Sync شامل
+            // 7) Sync شامل
             await syncLessonsFromFirebase(true);
 
-            // 7) Realtime للـ lessons
+            // 8) Realtime
             startRealtimeSync();
 
-            // 8) ✅ مزامنة أوتوماتيك احتياطية
+            // 9) Auto Sync
             startAutoSync();
 
-            // 9) إخفاء اللودر
+            // 10) إخفاء اللودر
             hideInitialLoader();
         });
 
@@ -1595,10 +1598,16 @@
         }
 
         // ==========================================
-        // ✅ إنشاء حصة جديدة
+        // ✅ Create Lesson
         // ==========================================
         function createNewLesson(saveToStorage = true) {
-            const newId = String(Date.now());
+            const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
+            if (!teacherPhone && !teacherName) {
+                showToast('⚠️ يجب تسجيل الدخول أولاً');
+                return;
+            }
+
+            const newId = String(Date.now()) + '_' + Math.random().toString(36).substr(2, 6);
             const lessonData = { id: newId, title: `مجموعة رقم ${newId}` };
             lessons.push(lessonData);
             if (saveToStorage) saveLessonsToStorage();
@@ -1607,7 +1616,6 @@
             (async () => {
                 try {
                     if (window.db && window.fsDoc && window.fsSetDoc) {
-                        const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
                         showFbSyncBadge('☁️ جاري إنشاء المجموعة...');
                         const ref = window.fsDoc(window.db, "lessons", String(newId));
                         await window.fsSetDoc(ref, {
