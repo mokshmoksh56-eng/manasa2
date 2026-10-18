@@ -676,6 +676,86 @@
             margin-top: 4px;
         }
 
+        /* ✅ نافذة طرد الجهاز */
+        .device-kicked-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 999999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+            padding: 20px;
+        }
+        .device-kicked-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .device-kicked-box {
+            background: #fff;
+            max-width: 340px;
+            width: 100%;
+            border-radius: 22px;
+            padding: 28px 22px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.4);
+            transform: translateY(20px) scale(0.95);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-bottom: 6px solid #EF4444;
+        }
+        .device-kicked-modal.active .device-kicked-box {
+            transform: translateY(0) scale(1);
+        }
+        .device-kicked-emoji {
+            font-size: 60px;
+            margin-bottom: 12px;
+            display: inline-block;
+            animation: shakeDoor 1.5s ease-in-out infinite;
+        }
+        @keyframes shakeDoor {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-8deg); }
+            75% { transform: rotate(8deg); }
+        }
+        .device-kicked-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #991B1B;
+            margin-bottom: 10px;
+        }
+        .device-kicked-desc {
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 16px;
+        }
+        .device-kicked-desc .highlight {
+            color: #DC2626;
+            font-weight: 900;
+        }
+        .device-kicked-progress {
+            height: 6px;
+            background: #FEE2E2;
+            border-radius: 99px;
+            overflow: hidden;
+            margin-bottom: 12px;
+        }
+        .device-kicked-progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #EF4444, #DC2626);
+            width: 0%;
+            border-radius: 99px;
+            transition: width 2.5s linear;
+        }
+        .device-kicked-modal.active .device-kicked-progress-bar {
+            width: 100%;
+        }
+
         @media (max-width: 360px) {
             .hero-brand { font-size: 28px; }
             .portal-card { padding: 12px 10px; gap: 8px; }
@@ -704,6 +784,24 @@
     <div id="fbSyncBadge" class="fb-sync-badge">☁️ جاري الحفظ في السحابة...</div>
 
     <div id="toastMsg">تم الإجراء بنجاح ✔</div>
+
+    <!-- ✅ نافذة طرد الجهاز -->
+    <div id="deviceKickedModal" class="device-kicked-modal">
+        <div class="device-kicked-box">
+            <div class="device-kicked-emoji">🚪</div>
+            <h3 class="device-kicked-title">تم تسجيل الخروج</h3>
+            <p class="device-kicked-desc">
+                تم <span class="highlight">تسجيل الدخول من جهاز آخر</span> بنفس الحساب.<br>
+                لأسباب أمنية، سيتم تسجيل خروجك من هذا الجهاز تلقائياً.
+            </p>
+            <div class="device-kicked-progress">
+                <div class="device-kicked-progress-bar"></div>
+            </div>
+            <p style="font-size: 11px; color: #94A3B8; font-weight: 700; margin: 0;">
+                جاري التحويل لصفحة الدخول...
+            </p>
+        </div>
+    </div>
 
     <section class="hero-banner">
 
@@ -886,9 +984,126 @@
         let itemToDelete = null;
         let itemToRename = null;
         let realtimeUnsubscribe = null;
+        let deviceWatchUnsub = null;
 
         // ==========================================
-        // ✅ تسجيل الخروج
+        // 📱 Device ID Management (Single Device Login)
+        // ==========================================
+        function getOrCreateDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        // ✅ طرد الجهاز وإظهار النافذة
+        function showDeviceKickedAndRedirect() {
+            const modal = document.getElementById('deviceKickedModal');
+            if (modal) modal.classList.add('active');
+            // مسح الجلسة
+            try {
+                localStorage.removeItem('loggedInTeacher');
+                localStorage.removeItem('rememberedPhone');
+                if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
+                if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+            } catch(e) {}
+            // تحويل بعد 2.7 ثانية
+            setTimeout(() => {
+                window.location.replace('./login.html');
+            }, 2700);
+        }
+
+        // ✅ التحقق من الجهاز عند التحميل
+        async function verifyCurrentDevice() {
+            const loggedStr = localStorage.getItem('loggedInTeacher');
+            if (!loggedStr) return true;
+            
+            try {
+                const logged = JSON.parse(loggedStr);
+                const teacherKey = String(logged.phone || '').replace(/\D/g, '');
+                if (!teacherKey) return true;
+
+                const currentDeviceId = getOrCreateDeviceId();
+
+                // انتظر Firebase يكون جاهز
+                let attempts = 0;
+                while ((!window.db || !window.fsGetDoc) && attempts < 30) {
+                    await new Promise(r => setTimeout(r, 100));
+                    attempts++;
+                }
+
+                if (!window.db || !window.fsGetDoc) {
+                    console.warn("⚠️ Firebase غير جاهز - تخطي التحقق");
+                    return true;
+                }
+
+                const snap = await window.fsGetDoc(window.fsDoc(window.db, "teacher_devices", teacherKey));
+
+                if (snap.exists()) {
+                    const registeredDeviceId = snap.data().deviceId;
+                    if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
+                        // 🚪 الجهاز ده اتطرد
+                        console.warn("🚪 جهاز مختلف — تسجيل خروج");
+                        showDeviceKickedAndRedirect();
+                        return false;
+                    }
+                }
+            } catch (err) {
+                console.warn("⚠️ device check:", err);
+            }
+            return true;
+        }
+
+        // ✅ مراقبة لحظية لتغيير الجهاز
+        function startDeviceWatch() {
+            const loggedStr = localStorage.getItem('loggedInTeacher');
+            if (!loggedStr) return;
+
+            try {
+                const logged = JSON.parse(loggedStr);
+                const teacherKey = String(logged.phone || '').replace(/\D/g, '');
+                if (!teacherKey) return;
+
+                if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+
+                // انتظر Firebase
+                const tryStart = () => {
+                    if (!window.db || !window.fsOnSnapshot) {
+                        setTimeout(tryStart, 200);
+                        return;
+                    }
+
+                    const currentDeviceId = getOrCreateDeviceId();
+                    try {
+                        deviceWatchUnsub = window.fsOnSnapshot(
+                            window.fsDoc(window.db, "teacher_devices", teacherKey),
+                            (snap) => {
+                                if (!snap.exists()) return;
+                                const registeredDeviceId = snap.data().deviceId;
+                                
+                                if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
+                                    console.warn("🔥 تم تسجيل الدخول من جهاز آخر!");
+                                    if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+                                    showDeviceKickedAndRedirect();
+                                }
+                            },
+                            (err) => console.warn("⚠️ device watch:", err)
+                        );
+                        console.log("✅ [Device Watch] بدء المراقبة اللحظية للجهاز");
+                    } catch (err) {
+                        console.warn("⚠️ فشل بدء device watch:", err);
+                    }
+                };
+                tryStart();
+            } catch(e) { 
+                console.warn("device watch outer:", e); 
+            }
+        }
+
+        // ==========================================
+        // ✅ تسجيل الخروج العادي
         // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
@@ -904,6 +1119,7 @@
                 keysToRemove.forEach(k => localStorage.removeItem(k));
                 sessionStorage.clear();
                 if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
+                if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
                 const modal = document.getElementById('logoutModal');
                 if (modal) modal.classList.remove('active');
                 showToast('👋 إلى اللقاء يا مستر!');
@@ -990,15 +1206,12 @@
             const lessonPhone = String(lessonData.g_phone || '').trim();
             const lessonTeacher = String(lessonData.g_teacher || '').trim();
 
-            // ⛔ لو ملهاش g_phone ولا g_teacher → مش بنقبلها (ما نسرقش حصص حد)
             if (!lessonPhone && !lessonTeacher) return false;
 
-            // ✅ مطابقة رقم
             if (teacherPhone && lessonPhone && phonesMatch(teacherPhone, lessonPhone)) {
                 return true;
             }
 
-            // ✅ مطابقة اسم
             if (teacherName && lessonTeacher) {
                 const cleanLesson = cleanTeacherName(lessonTeacher);
                 const cleanMine = cleanTeacherName(teacherName);
@@ -1011,7 +1224,7 @@
         }
 
         // ==========================================
-        // ✅ Migration ذكي: بتربط الحصص القديمة بالمعلم الصح
+        // ✅ Migration ذكي
         // ==========================================
         async function migrateLocalLessonsToFirebase() {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return { migrated: 0, repaired: 0 };
@@ -1042,7 +1255,6 @@
                     }
 
                     if (!snap.exists()) {
-                        // ✅ مش في Firebase → نرفعها بالكامل
                         const stateToUpload = {
                             ...lessonState,
                             g_name: lesson.title || lessonState.g_name || `مجموعة ${lessonId}`,
@@ -1056,12 +1268,10 @@
                         migratedCount++;
                         console.log(`📤 [Migration] رفع الحصة ${lessonId}`);
                     } else {
-                        // ✅ موجودة → نتأكد إنها بتاعة المعلم ده قبل ما نلمسها
                         const existingData = snap.data();
                         const existingTeacher = String(existingData.g_teacher || '').trim();
                         const existingPhone = String(existingData.g_phone || '').trim();
 
-                        // 🔒 تحقق: هل الحصة دي بتاعة معلم تاني؟
                         let belongsToOther = false;
 
                         if (existingTeacher && teacherName) {
@@ -1077,11 +1287,10 @@
                         }
 
                         if (belongsToOther) {
-                            console.warn(`⚠️ [Migration] الحصة ${lessonId} تخص معلم تاني (${existingTeacher || existingPhone}) — تخطي`);
+                            console.warn(`⚠️ [Migration] الحصة ${lessonId} تخص معلم تاني — تخطي`);
                             continue;
                         }
 
-                        // ✅ بتاعة المعلم ده → نضيف الحقول الناقصة
                         const updateObj = {};
                         if (!existingData.g_phone && teacherPhone) updateObj.g_phone = teacherPhone;
                         if (!existingData.g_teacher && teacherName) updateObj.g_teacher = teacherName;
@@ -1219,7 +1428,14 @@
         // ✅ التشغيل عند التحميل
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
-            // ربط الأزرار
+            // ✅ 1) التحقق من الجهاز أولاً (Single Device Login)
+            const isDeviceValid = await verifyCurrentDevice();
+            if (!isDeviceValid) return;
+
+            // ✅ 2) بدء المراقبة اللحظية للجهاز (طرد فوري لو المستر دخل من جهاز تاني)
+            startDeviceWatch();
+
+            // 3) ربط الأزرار
             document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation(); openLogoutModal();
             });
@@ -1232,27 +1448,27 @@
                 showToast(`✅ تمت المزامنة (رُفعت ${m.migrated}، صُلحت ${m.repaired})`);
             });
 
-            // قراءة أولية
+            // 4) قراءة أولية من localStorage
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
             }
             renderLessons();
 
-            // 1) Migration
+            // 5) Migration
             updateSyncStatus('📤 جاري رفع الحصص القديمة...');
             const migResult = await migrateLocalLessonsToFirebase();
             if (migResult.migrated > 0 || migResult.repaired > 0) {
                 showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
             }
 
-            // 2) Sync شامل
+            // 6) Sync شامل
             await syncLessonsFromFirebase(true);
 
-            // 3) Realtime
+            // 7) Realtime للـ lessons
             startRealtimeSync();
 
-            // 4) إخفاء اللودر
+            // 8) إخفاء اللودر
             hideInitialLoader();
         });
 
