@@ -104,12 +104,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
-        .top-nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         .hero-content {
             position: relative;
             z-index: 3;
@@ -192,6 +186,150 @@
             background: #F8FAFC;
             padding: 10px 12px 40px;
             flex: 1;
+        }
+
+        /* ✅ شريط الترحيب بالمستر */
+        .welcome-banner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
+            border: 2px solid #86EFAC;
+            border-bottom: 5px solid #16A34A;
+            border-radius: 18px;
+            box-shadow: 0 8px 22px -10px rgba(16, 185, 129, 0.35);
+            overflow: hidden;
+            animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes welcomeSlideIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .welcome-banner.is-miss {
+            background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
+            border-color: #F9A8D4;
+            border-bottom-color: #DB2777;
+            box-shadow: 0 8px 22px -10px rgba(236, 72, 153, 0.35);
+        }
+
+        .welcome-banner.is-miss::before {
+            background: radial-gradient(circle, rgba(236,72,153,0.15), transparent 70%);
+        }
+
+        .welcome-avatar {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            background: #FFFFFF;
+            border: 2.5px solid #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            z-index: 2;
+            animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .welcome-banner.is-miss .welcome-avatar {
+            border-color: #EC4899;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+        }
+
+        @keyframes avatarPop {
+            0% { transform: scale(0) rotate(-30deg); }
+            70% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .welcome-text {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: right;
+            z-index: 2;
+        }
+
+        .welcome-greeting {
+            font-size: 11px;
+            font-weight: 800;
+            color: #059669;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .welcome-banner.is-miss .welcome-greeting {
+            color: #DB2777;
+        }
+
+        .welcome-name {
+            font-size: 16px;
+            font-weight: 900;
+            color: #064E3B;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            margin-bottom: 3px;
+        }
+
+        .welcome-banner.is-miss .welcome-name {
+            color: #831843;
+        }
+
+        .welcome-phone {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11.5px;
+            font-weight: 900;
+            color: #047857;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 99px;
+            border: 1px solid #A7F3D0;
+            direction: ltr;
+        }
+
+        .welcome-banner.is-miss .welcome-phone {
+            color: #BE185D;
+            border-color: #FBCFE8;
+        }
+
+        .welcome-sparkle {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            font-size: 14px;
+            animation: sparkleTwinkle 2s ease-in-out infinite;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        @keyframes sparkleTwinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            50% { transform: scale(1.2) rotate(20deg); opacity: 1; }
         }
 
         /* ✅ شريط الأزرار العصري */
@@ -839,6 +977,12 @@
         }
 
         @media (max-width: 400px) {
+            .welcome-banner { padding: 12px 12px; gap: 10px; }
+            .welcome-avatar { width: 44px; height: 44px; font-size: 22px; border-width: 2px; }
+            .welcome-greeting { font-size: 10px; }
+            .welcome-name { font-size: 14px; }
+            .welcome-phone { font-size: 10.5px; }
+
             .quick-actions-bar {
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
@@ -924,6 +1068,18 @@
 
     <section class="cards-section">
         <div class="container mx-auto max-w-4xl">
+
+            <!-- ✅ شريط الترحيب بالمستر -->
+            <div id="welcomeBanner" class="welcome-banner" style="display: none;">
+                <div class="welcome-sparkle">✨</div>
+                <div class="welcome-avatar" id="welcomeAvatar">👨‍🏫</div>
+                <div class="welcome-text">
+                    <div class="welcome-greeting" id="welcomeGreeting">مرحباً بعودتك</div>
+                    <div class="welcome-name" id="welcomeName">--</div>
+                    <div class="welcome-phone" id="welcomePhone">📱 --</div>
+                </div>
+            </div>
+
             <!-- ✅ شريط الأزرار العصري -->
             <div class="quick-actions-bar">
                 <a href="./index.html" class="quick-action-btn quick-action-home">
@@ -1191,6 +1347,73 @@
                 tryStart();
             } catch(e) { 
                 console.warn("device watch outer:", e); 
+            }
+        }
+
+        // ==========================================
+        // ✅ عرض شريط الترحيب بالمستر
+        // ==========================================
+        function renderWelcomeBanner() {
+            try {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (!loggedStr) {
+                    const banner = document.getElementById('welcomeBanner');
+                    if (banner) banner.style.display = 'none';
+                    return;
+                }
+
+                const teacher = JSON.parse(loggedStr);
+                const name = String(teacher.name || '').trim();
+                const title = String(teacher.title || 'مستر').trim();
+                const phone = String(teacher.phone || '').trim();
+
+                if (!name && !phone) {
+                    const banner = document.getElementById('welcomeBanner');
+                    if (banner) banner.style.display = 'none';
+                    return;
+                }
+
+                const banner = document.getElementById('welcomeBanner');
+                const avatarEl = document.getElementById('welcomeAvatar');
+                const greetingEl = document.getElementById('welcomeGreeting');
+                const nameEl = document.getElementById('welcomeName');
+                const phoneEl = document.getElementById('welcomePhone');
+
+                const isMiss = (title === 'مس' || title === 'مس ' || title.includes('مس'));
+
+                avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
+
+                const now = new Date();
+                const hour = now.getHours();
+                let greeting = 'مرحباً بعودتك';
+                if (hour >= 5 && hour < 12) greeting = 'صباح الخير ☀️';
+                else if (hour >= 12 && hour < 17) greeting = 'مساء الخير 🌤️';
+                else if (hour >= 17 && hour < 22) greeting = 'مساء النور 🌙';
+                else greeting = 'سهرة سعيدة ✨';
+
+                const prefix = isMiss ? 'مس' : 'مستر';
+                greetingEl.textContent = `${greeting} يا ${prefix}`;
+                nameEl.textContent = name || 'بدون اسم';
+
+                if (phone && phone.length >= 10) {
+                    phoneEl.textContent = `📱 ${phone}`;
+                    phoneEl.style.display = 'inline-flex';
+                } else {
+                    phoneEl.style.display = 'none';
+                }
+
+                if (isMiss) {
+                    banner.classList.add('is-miss');
+                } else {
+                    banner.classList.remove('is-miss');
+                }
+
+                banner.style.display = 'flex';
+                console.log(`✅ [Welcome] عرض الترحيب: ${prefix} ${name} (${phone})`);
+            } catch (err) {
+                console.warn('⚠️ [Welcome] فشل عرض الترحيب:', err);
+                const banner = document.getElementById('welcomeBanner');
+                if (banner) banner.style.display = 'none';
             }
         }
 
@@ -1535,7 +1758,10 @@
             // ✅ 2) مراقبة الجهاز اللحظية
             startDeviceWatch();
 
-            // ✅ 3) تنظيف localStorage من بيانات معلم قديم
+            // ✅ 3) عرض شريط الترحيب بالمستر
+            renderWelcomeBanner();
+
+            // ✅ 4) تنظيف localStorage من بيانات معلم قديم
             const currentInfo = getCurrentTeacherInfo();
             const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
             const lessonsOwnerKey = 'lessons_owner_phone';
@@ -1560,35 +1786,35 @@
                 localStorage.setItem(lessonsOwnerKey, currentPhoneKey);
             }
 
-            // 4) ربط زر الخروج
+            // 5) ربط زر الخروج
             document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation(); openLogoutModal();
             });
 
-            // 5) قراءة أولية
+            // 6) قراءة أولية
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
             }
             renderLessons();
 
-            // 6) Migration
+            // 7) Migration
             updateSyncStatus('📤 جاري رفع الحصص القديمة...');
             const migResult = await migrateLocalLessonsToFirebase();
             if (migResult.migrated > 0 || migResult.repaired > 0) {
                 showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
             }
 
-            // 7) Sync شامل
+            // 8) Sync شامل
             await syncLessonsFromFirebase(true);
 
-            // 8) Realtime
+            // 9) Realtime
             startRealtimeSync();
 
-            // 9) Auto Sync
+            // 10) Auto Sync
             startAutoSync();
 
-            // 10) إخفاء اللودر
+            // 11) إخفاء اللودر
             hideInitialLoader();
         });
 
