@@ -134,6 +134,11 @@
             color: var(--primary-600);
         }
 
+        .btn-sync-now {
+            border-color: #A7F3D0;
+            color: #059669;
+        }
+
         .hero-content {
             position: relative;
             z-index: 3;
@@ -502,9 +507,6 @@
         .btn-confirm-delete { background: #EF4444; color: #fff; }
         .btn-confirm-save { background: var(--primary-600); color: #fff; }
 
-        /* ============================================ */
-        /* ✅ مودال تسجيل الخروج الظريف */
-        /* ============================================ */
         .logout-modal-box {
             border-bottom: 5px solid #F59E0B !important;
             position: relative;
@@ -667,6 +669,12 @@
             font-weight: 900;
             color: #0F2D5C;
         }
+        .initial-loader .sync-status {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #64748B;
+            margin-top: 4px;
+        }
 
         @media (max-width: 360px) {
             .hero-brand { font-size: 28px; }
@@ -674,12 +682,12 @@
             .card-image-box { width: 68px; height: 68px; }
             .card-text { padding-left: 28px; }
             .card-text h2 { font-size: 15px; }
+            .btn-top-action { padding: 6px 10px; font-size: 11px; }
         }
     </style>
 </head>
 <body>
 
-    <!-- ✅ كود التحقق من تسجيل الدخول -->
     <script>
         const loggedInTeacher = localStorage.getItem('loggedInTeacher');
         if (!loggedInTeacher) {
@@ -687,19 +695,16 @@
         }
     </script>
 
-    <!-- ✅ شاشة تحميل أولية -->
     <div id="initialLoader" class="initial-loader">
         <div class="spinner"></div>
         <p>⏳ جاري تحميل مجموعاتك من السحابة...</p>
+        <div class="sync-status" id="syncStatus">جاري الاتصال بـ Firebase...</div>
     </div>
 
-    <!-- ✅ شارة الحفظ اللحظي -->
     <div id="fbSyncBadge" class="fb-sync-badge">☁️ جاري الحفظ في السحابة...</div>
 
-    <!-- ✅ توست الرسائل -->
     <div id="toastMsg">تم الإجراء بنجاح ✔</div>
 
-    <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
 
         <div class="top-navbar-wrapper">
@@ -709,6 +714,13 @@
             </div>
             
             <div class="top-nav-actions">
+                <button type="button" id="syncBtn" class="btn-top-action btn-sync-now" title="مزامنة من السحابة">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    مزامنة
+                </button>
+
                 <a href="./index.html" class="btn-top-action">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -720,7 +732,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                     </svg>
-                    تسجيل الخروج
+                    خروج
                 </button>
             </div>
         </div>
@@ -742,30 +754,23 @@
         </div>
     </section>
 
-    <!-- ✅ قسم البطاقات -->
     <section class="cards-section">
         <div class="container mx-auto max-w-4xl">
-            <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
-                <!-- يتم التوليد عبر الجافاسكربت -->
-            </div>
+            <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
         </div>
     </section>
 
-    <!-- ✅ نافذة تفاصيل المجموعة -->
     <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
         <div class="custom-modal group-modal-box" style="text-align: right;" onclick="event.stopPropagation()">
             <div class="modal-header-row">
                 <h3 id="modalGroupName" style="font-size: 13.5px; font-weight: 900; color: #0F2D5C; margin: 0; line-height: 1.3;">اسم المجموعة</h3>
                 <button type="button" class="btn-close-modal" onclick="closeModal('groupModal')" title="إلغاء">✕</button>
             </div>
-            <div id="modalBodyContent" class="group-report-body">
-                <!-- يتم تعبئة البيانات تلقائياً -->
-            </div>
+            <div id="modalBodyContent" class="group-report-body"></div>
             <button type="button" class="btn-close-bottom" onclick="closeModal('groupModal')">✕ إلغاء وإغلاق</button>
         </div>
     </div>
 
-    <!-- ✅ نافذة تأكيد الحذف -->
     <div id="deleteModal" class="modal-overlay" onclick="closeModal('deleteModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #FEE2E2; color: #EF4444;">
@@ -782,7 +787,6 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تعديل الاسم -->
     <div id="renameModal" class="modal-overlay" onclick="closeModal('renameModal')">
         <div class="custom-modal" onclick="event.stopPropagation()">
             <div class="modal-icon" style="background: #E0E7FF; color: #4F46E5;">
@@ -800,7 +804,6 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تسجيل الخروج الظريفة -->
     <div id="logoutModal" class="modal-overlay" onclick="closeModal('logoutModal')">
         <div class="custom-modal logout-modal-box" onclick="event.stopPropagation()">
             <div class="logout-emoji">👋</div>
@@ -810,12 +813,8 @@
                 متأكد إنك عايز تسجّل الخروج من حسابك؟
             </p>
             <div class="modal-actions">
-                <button type="button" class="logout-btn-stay" onclick="closeModal('logoutModal')">
-                    🙌 لا، هفضل
-                </button>
-                <button type="button" class="logout-btn-leave" onclick="confirmLogout()">
-                    👋 أيوه، خروج
-                </button>
+                <button type="button" class="logout-btn-stay" onclick="closeModal('logoutModal')">🙌 لا، هفضل</button>
+                <button type="button" class="logout-btn-leave" onclick="confirmLogout()">👋 أيوه، خروج</button>
             </div>
         </div>
     </div>
@@ -834,7 +833,8 @@
           setDoc,
           deleteDoc,
           collection,
-          getDocs
+          getDocs,
+          onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -856,11 +856,11 @@
       window.fsDeleteDoc = deleteDoc;
       window.fsCollection = collection;
       window.fsGetDocs = getDocs;
+      window.fsOnSnapshot = onSnapshot;
 
-      console.log("✅ Firebase + Firestore جاهز في index2.html");
+      console.log("✅ Firebase + Firestore جاهز");
     </script>
 
-    <!-- ✅ السكريبتات الرئيسية -->
     <script>
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -885,64 +885,37 @@
         let lessons = [];
         let itemToDelete = null;
         let itemToRename = null;
+        let realtimeUnsubscribe = null;
 
         // ==========================================
-        // ✅ دوال تسجيل الخروج
+        // ✅ تسجيل الخروج
         // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
-            if (!modal) {
-                console.error('❌ مودال تسجيل الخروج غير موجود');
-                if (confirm('👋 هل تريد تسجيل الخروج من حسابك؟')) {
-                    confirmLogout();
-                }
-                return;
-            }
-            modal.classList.add('active');
-            console.log('✅ تم فتح مودال تسجيل الخروج');
+            if (modal) modal.classList.add('active');
         }
 
         function confirmLogout() {
             try {
                 const keysToRemove = [
-                    'loggedInTeacher',
-                    'rememberedPhone',
-                    'teacher_location_consent',
-                    'mokshmoksh',
-                    'mokshmoksh_logged',
-                    'loggedIn',
-                    'user'
+                    'loggedInTeacher', 'rememberedPhone', 'teacher_location_consent',
+                    'mokshmoksh', 'mokshmoksh_logged', 'loggedIn', 'user'
                 ];
                 keysToRemove.forEach(k => localStorage.removeItem(k));
-
-                try {
-                    const extraKeys = [];
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const key = localStorage.key(i);
-                        if (key && (key.toLowerCase().includes('mokshmoksh') || key.toLowerCase() === 'moksh')) {
-                            extraKeys.push(key);
-                        }
-                    }
-                    extraKeys.forEach(k => localStorage.removeItem(k));
-                } catch(e) {}
-
                 sessionStorage.clear();
-
-                console.log('✅ تم تسجيل الخروج بنجاح');
+                if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
                 const modal = document.getElementById('logoutModal');
                 if (modal) modal.classList.remove('active');
                 showToast('👋 إلى اللقاء يا مستر!');
-
-                setTimeout(() => {
-                    window.location.replace('./login.html');
-                }, 700);
+                setTimeout(() => window.location.replace('./login.html'), 700);
             } catch (err) {
-                console.error('❌ خطأ في تسجيل الخروج:', err);
                 window.location.href = './login.html';
             }
         }
 
-        // ✅ إظهار شارة الحفظ اللحظي
+        // ==========================================
+        // ✅ Helpers
+        // ==========================================
         function showFbSyncBadge(message, isError = false) {
             const badge = document.getElementById('fbSyncBadge');
             if (!badge) return;
@@ -950,12 +923,9 @@
             badge.classList.toggle('error', isError);
             badge.classList.add('show');
             clearTimeout(badge._timeout);
-            badge._timeout = setTimeout(() => {
-                badge.classList.remove('show');
-            }, 2000);
+            badge._timeout = setTimeout(() => badge.classList.remove('show'), 2000);
         }
 
-        // ✅ إخفاء شاشة التحميل الأولية
         function hideInitialLoader() {
             const loader = document.getElementById('initialLoader');
             if (loader) {
@@ -964,7 +934,11 @@
             }
         }
 
-        // ✅ جلب رقم/اسم المعلم الحالي
+        function updateSyncStatus(text) {
+            const el = document.getElementById('syncStatus');
+            if (el) el.innerText = text;
+        }
+
         function getCurrentTeacherInfo() {
             let phone = '';
             let name = '';
@@ -985,33 +959,50 @@
                         }
                     }
                 }
-            } catch(e) {
-                console.warn("⚠️ فشل قراءة بيانات المعلم:", e);
-            }
+            } catch(e) {}
             return { phone, name };
         }
 
-        // ✅ هل الحصة دي للمعلم الحالي؟
+        function cleanTeacherName(raw) {
+            if (!raw) return '';
+            return String(raw)
+                .replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '')
+                .replace(/^\/\s*/, '')
+                .trim();
+        }
+
+        function phonesMatch(p1, p2) {
+            const c1 = String(p1 || '').replace(/\D/g, '');
+            const c2 = String(p2 || '').replace(/\D/g, '');
+            if (!c1 || !c2) return false;
+            if (c1.length >= 10 && c2.length >= 10) {
+                return c1.slice(-10) === c2.slice(-10);
+            }
+            return c1 === c2;
+        }
+
+        // ==========================================
+        // ✅ هل الحصة دي للمعلم الحالي؟ (صارم)
+        // ==========================================
         function isLessonForCurrentTeacher(lessonData, teacherPhone, teacherName) {
             if (!lessonData) return false;
 
             const lessonPhone = String(lessonData.g_phone || '').trim();
             const lessonTeacher = String(lessonData.g_teacher || '').trim();
 
-            if (teacherPhone && lessonPhone) {
-                const cleanLesson = lessonPhone.replace(/\D/g, '');
-                const cleanMine = teacherPhone.replace(/\D/g, '');
-                if (cleanMine.length >= 10 && cleanLesson.length >= 10) {
-                    if (cleanLesson.slice(-10) === cleanMine.slice(-10)) return true;
-                } else if (cleanLesson === cleanMine) {
-                    return true;
-                }
+            // ⛔ لو ملهاش g_phone ولا g_teacher → مش بنقبلها (ما نسرقش حصص حد)
+            if (!lessonPhone && !lessonTeacher) return false;
+
+            // ✅ مطابقة رقم
+            if (teacherPhone && lessonPhone && phonesMatch(teacherPhone, lessonPhone)) {
+                return true;
             }
 
+            // ✅ مطابقة اسم
             if (teacherName && lessonTeacher) {
-                const cleanLessonName = lessonTeacher.replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').trim();
-                const cleanMyName = teacherName.replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').trim();
-                if (cleanLessonName && cleanMyName && cleanLessonName === cleanMyName) {
+                const cleanLesson = cleanTeacherName(lessonTeacher);
+                const cleanMine = cleanTeacherName(teacherName);
+                if (cleanLesson && cleanMine && cleanLesson === cleanMine) {
                     return true;
                 }
             }
@@ -1019,31 +1010,121 @@
             return false;
         }
 
-        // ✅ المزامنة الشاملة من Firebase
-        async function syncLessonsFromFirebase() {
+        // ==========================================
+        // ✅ Migration ذكي: بتربط الحصص القديمة بالمعلم الصح
+        // ==========================================
+        async function migrateLocalLessonsToFirebase() {
+            if (!window.db || !window.fsDoc || !window.fsSetDoc) return { migrated: 0, repaired: 0 };
+
+            const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
+            if (!teacherPhone && !teacherName) return { migrated: 0, repaired: 0 };
+
+            const localLessonsRaw = localStorage.getItem('teacher_lessons');
+            if (!localLessonsRaw) return { migrated: 0, repaired: 0 };
+
+            let localLessons = [];
+            try { localLessons = JSON.parse(localLessonsRaw); } catch(e) { return { migrated: 0, repaired: 0 }; }
+            if (!Array.isArray(localLessons) || localLessons.length === 0) return { migrated: 0, repaired: 0 };
+
+            let migratedCount = 0;
+            let repairedCount = 0;
+
+            for (const lesson of localLessons) {
+                const lessonId = String(lesson.id);
+                try {
+                    const ref = window.fsDoc(window.db, "lessons", lessonId);
+                    const snap = await window.fsGetDoc(ref);
+
+                    const lessonStateRaw = localStorage.getItem('lessonState_' + lessonId);
+                    let lessonState = {};
+                    if (lessonStateRaw) {
+                        try { lessonState = JSON.parse(lessonStateRaw); } catch(e) {}
+                    }
+
+                    if (!snap.exists()) {
+                        // ✅ مش في Firebase → نرفعها بالكامل
+                        const stateToUpload = {
+                            ...lessonState,
+                            g_name: lesson.title || lessonState.g_name || `مجموعة ${lessonId}`,
+                            g_phone: teacherPhone || lessonState.g_phone || '',
+                            g_teacher: teacherName || lessonState.g_teacher || '',
+                            g_publish_map: localStorage.getItem('publishState_' + lessonId) === 'true',
+                            createdAt: lessonState.createdAt || new Date().toISOString(),
+                            _migratedAt: Date.now()
+                        };
+                        await window.fsSetDoc(ref, stateToUpload, { merge: true });
+                        migratedCount++;
+                        console.log(`📤 [Migration] رفع الحصة ${lessonId}`);
+                    } else {
+                        // ✅ موجودة → نتأكد إنها بتاعة المعلم ده قبل ما نلمسها
+                        const existingData = snap.data();
+                        const existingTeacher = String(existingData.g_teacher || '').trim();
+                        const existingPhone = String(existingData.g_phone || '').trim();
+
+                        // 🔒 تحقق: هل الحصة دي بتاعة معلم تاني؟
+                        let belongsToOther = false;
+
+                        if (existingTeacher && teacherName) {
+                            const cleanExist = cleanTeacherName(existingTeacher);
+                            const cleanMine = cleanTeacherName(teacherName);
+                            if (cleanExist && cleanMine && cleanExist !== cleanMine) {
+                                belongsToOther = true;
+                            }
+                        }
+
+                        if (!belongsToOther && existingPhone && teacherPhone && !phonesMatch(existingPhone, teacherPhone)) {
+                            belongsToOther = true;
+                        }
+
+                        if (belongsToOther) {
+                            console.warn(`⚠️ [Migration] الحصة ${lessonId} تخص معلم تاني (${existingTeacher || existingPhone}) — تخطي`);
+                            continue;
+                        }
+
+                        // ✅ بتاعة المعلم ده → نضيف الحقول الناقصة
+                        const updateObj = {};
+                        if (!existingData.g_phone && teacherPhone) updateObj.g_phone = teacherPhone;
+                        if (!existingData.g_teacher && teacherName) updateObj.g_teacher = teacherName;
+
+                        if (Object.keys(updateObj).length > 0) {
+                            await window.fsSetDoc(ref, updateObj, { merge: true });
+                            repairedCount++;
+                            console.log(`🔧 [Migration] صلّح الحصة ${lessonId}`);
+                        }
+                    }
+                } catch (err) {
+                    console.warn(`⚠️ فشل migrate ${lessonId}:`, err);
+                }
+            }
+
+            console.log(`✅ [Migration] رُفعت ${migratedCount} | صُلحت ${repairedCount}`);
+            return { migrated: migratedCount, repaired: repairedCount };
+        }
+
+        // ==========================================
+        // ✅ جلب الحصص من Firebase
+        // ==========================================
+        async function syncLessonsFromFirebase(showLoader = false) {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
-                console.warn("⚠️ Firebase غير جاهز للمزامنة");
+                console.warn("⚠️ Firebase غير جاهز");
                 return { success: false };
             }
 
             const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
+            if (!teacherPhone && !teacherName) return { success: false };
 
-            if (!teacherPhone && !teacherName) {
-                console.warn("⚠️ لا يوجد معلم مسجل — استخدام localStorage فقط");
-                return { success: false };
-            }
+            if (showLoader) updateSyncStatus('📥 جاري جلب مجموعاتك...');
 
             try {
                 const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                 const firebaseLessons = [];
+                let totalCount = snap.size;
 
                 snap.forEach(docSnap => {
                     const data = docSnap.data();
                     const lessonId = docSnap.id;
 
-                    if (!isLessonForCurrentTeacher(data, teacherPhone, teacherName)) {
-                        return;
-                    }
+                    if (!isLessonForCurrentTeacher(data, teacherPhone, teacherName)) return;
 
                     firebaseLessons.push({
                         id: lessonId,
@@ -1068,12 +1149,69 @@
                 saveLessonsToStorage();
                 renderLessons();
 
-                console.log(`✅ [index2] تمت مزامنة ${firebaseLessons.length} مجموعة من Firebase`);
+                console.log(`✅ [Sync] Firebase: ${totalCount} | للمعلم: ${lessons.length}`);
+                if (showLoader) updateSyncStatus(`✅ تم جلب ${lessons.length} مجموعة`);
 
-                return { success: true, count: firebaseLessons.length };
+                return { success: true, count: lessons.length };
             } catch (err) {
-                console.warn("⚠️ فشل المزامنة الشاملة من Firebase:", err);
+                console.warn("⚠️ فشل المزامنة:", err);
+                if (showLoader) updateSyncStatus('❌ فشل الاتصال');
                 return { success: false, error: err };
+            }
+        }
+
+        // ==========================================
+        // ✅ المزامنة اللحظية
+        // ==========================================
+        function startRealtimeSync() {
+            if (!window.db || !window.fsCollection || !window.fsOnSnapshot) return;
+            if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
+
+            const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
+
+            try {
+                realtimeUnsubscribe = window.fsOnSnapshot(
+                    window.fsCollection(window.db, "lessons"),
+                    (snap) => {
+                        const firebaseLessons = [];
+                        snap.forEach(docSnap => {
+                            const data = docSnap.data();
+                            const lessonId = docSnap.id;
+                            if (!isLessonForCurrentTeacher(data, teacherPhone, teacherName)) return;
+
+                            firebaseLessons.push({
+                                id: lessonId,
+                                title: data.g_name || `مجموعة ${lessonId}`
+                            });
+
+                            const stateToSave = { ...data };
+                            delete stateToSave.updatedAt;
+                            localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+                            localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+                        });
+
+                        firebaseLessons.sort((a, b) => {
+                            const na = parseInt(a.id), nb = parseInt(b.id);
+                            if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                            return String(a.id).localeCompare(String(b.id));
+                        });
+
+                        const currentIds = lessons.map(l => String(l.id)).sort().join(',');
+                        const newIds = firebaseLessons.map(l => String(l.id)).sort().join(',');
+
+                        if (currentIds !== newIds) {
+                            lessons = firebaseLessons;
+                            saveLessonsToStorage();
+                            renderLessons();
+                            console.log('🔄 [Realtime] تحديث تلقائي');
+                            showFbSyncBadge('🔄 تم التحديث من السحابة');
+                        }
+                    },
+                    (err) => console.warn("⚠️ onSnapshot:", err)
+                );
+                console.log('✅ [Realtime] بدء المزامنة اللحظية');
+            } catch (err) {
+                console.warn("⚠️ فشل onSnapshot:", err);
             }
         }
 
@@ -1081,32 +1219,40 @@
         // ✅ التشغيل عند التحميل
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1) ربط زر تسجيل الخروج
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    openLogoutModal();
-                });
-                console.log('✅ زر تسجيل الخروج جاهز');
-            }
+            // ربط الأزرار
+            document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation(); openLogoutModal();
+            });
 
-            // 2) قراءة أولية من localStorage
+            document.getElementById('syncBtn')?.addEventListener('click', async function(e) {
+                e.preventDefault(); e.stopPropagation();
+                showToast('🔄 جاري المزامنة...');
+                const m = await migrateLocalLessonsToFirebase();
+                await syncLessonsFromFirebase(false);
+                showToast(`✅ تمت المزامنة (رُفعت ${m.migrated}، صُلحت ${m.repaired})`);
+            });
+
+            // قراءة أولية
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
-                try {
-                    lessons = JSON.parse(savedLessons);
-                } catch(e) {
-                    lessons = [];
-                }
+                try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
             }
             renderLessons();
 
-            // 3) مزامنة Firebase
-            await syncLessonsFromFirebase();
+            // 1) Migration
+            updateSyncStatus('📤 جاري رفع الحصص القديمة...');
+            const migResult = await migrateLocalLessonsToFirebase();
+            if (migResult.migrated > 0 || migResult.repaired > 0) {
+                showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
+            }
 
-            // 4) إخفاء شاشة التحميل
+            // 2) Sync شامل
+            await syncLessonsFromFirebase(true);
+
+            // 3) Realtime
+            startRealtimeSync();
+
+            // 4) إخفاء اللودر
             hideInitialLoader();
         });
 
@@ -1115,6 +1261,9 @@
             if (el) el.classList.remove('active');
         }
 
+        // ==========================================
+        // ✅ إنشاء حصة جديدة
+        // ==========================================
         function createNewLesson(saveToStorage = true) {
             const newId = String(Date.now());
             const lessonData = { id: newId, title: `مجموعة رقم ${newId}` };
@@ -1126,7 +1275,7 @@
                 try {
                     if (window.db && window.fsDoc && window.fsSetDoc) {
                         const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
-                        showFbSyncBadge('☁️ جاري إنشاء المجموعة في السحابة...');
+                        showFbSyncBadge('☁️ جاري إنشاء المجموعة...');
                         const ref = window.fsDoc(window.db, "lessons", String(newId));
                         await window.fsSetDoc(ref, {
                             g_name: lessonData.title,
@@ -1135,11 +1284,10 @@
                             g_publish_map: false,
                             createdAt: new Date().toISOString()
                         }, { merge: true });
-                        console.log(`☁️ [index2] تم إنشاء الحصة ${newId} في Firebase`);
+                        console.log(`☁️ [Create] الحصة ${newId}`);
                         showFbSyncBadge('✅ تم إنشاء المجموعة');
                     }
                 } catch (err) {
-                    console.warn("⚠️ فشل حفظ الحصة الجديدة في Firebase:", err);
                     showFbSyncBadge('⚠️ حفظ محلي فقط', true);
                 }
             })();
@@ -1147,15 +1295,12 @@
 
         function calculateSessionStatus(savedState) {
             if (!savedState) return `<span class="status-badge status-none">⚠️ لم يتم الإعداد</span>`;
-            
             const state = JSON.parse(savedState);
             if (!state.g_days || state.g_days.length === 0) return `<span class="status-badge status-none">⚠️ بدون مواعيد</span>`;
 
             const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
             const now = new Date();
-            const currentDayIndex = now.getDay();
-            const currentArabicDay = arabicDays[currentDayIndex];
-            
+            const currentArabicDay = arabicDays[now.getDay()];
             const isToday = state.g_days.includes(currentArabicDay);
 
             if (isToday && state.start_hour && state.end_hour) {
@@ -1163,32 +1308,24 @@
                 if (state.start_ampm === 'م' && stH !== 12) stH += 12;
                 if (state.start_ampm === 'ص' && stH === 12) stH = 0;
                 let stM = parseInt(state.start_min || 0);
-
                 let endH = parseInt(state.end_hour);
                 if (state.end_ampm === 'م' && endH !== 12) endH += 12;
                 if (state.end_ampm === 'ص' && endH === 12) endH = 0;
                 let endM = parseInt(state.end_min || 0);
-
-                let nowH = now.getHours();
-                let nowM = now.getMinutes();
-                
-                let nowTotal = (nowH * 60) + nowM;
+                let nowTotal = (now.getHours() * 60) + now.getMinutes();
                 let stTotal = (stH * 60) + stM;
                 let endTotal = (endH * 60) + endM;
 
-                if (nowTotal >= stTotal && nowTotal <= endTotal) {
-                    return `<span class="status-badge status-live">🔴 مباشر الآن</span>`;
-                } else if (nowTotal < stTotal) {
+                if (nowTotal >= stTotal && nowTotal <= endTotal) return `<span class="status-badge status-live">🔴 مباشر الآن</span>`;
+                if (nowTotal < stTotal) {
                     let diff = stTotal - nowTotal;
                     let hrs = Math.floor(diff / 60);
                     let mins = diff % 60;
                     if (hrs === 0) return `<span class="status-badge status-upcoming">⏳ اليوم بعد ${mins} د</span>`;
                     return `<span class="status-badge status-upcoming">⏳ اليوم بعد ${hrs} س و ${mins} د</span>`;
-                } else {
-                    return `<span class="status-badge status-none">✔️ انتهت اليوم</span>`;
                 }
+                return `<span class="status-badge status-none">✔️ انتهت اليوم</span>`;
             }
-
             return `<span class="status-badge status-future">📅 موعدنا ${state.g_days[0]}</span>`;
         }
 
@@ -1207,9 +1344,7 @@
                 else {
                     try {
                         const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
-                        if(curr[state.s_stage] && curr[state.s_stage].name) {
-                            stageStr = curr[state.s_stage].name;
-                        }
+                        if(curr[state.s_stage] && curr[state.s_stage].name) stageStr = curr[state.s_stage].name;
                     } catch(e) {}
                 }
                 stageStr = stageStr.replace(/^[🎒📐🎓]\s*/, '').replace('المرحلة ', '').replace('الابتدائية', 'ابتدائي').replace('الإعدادية', 'إعدادي').replace('الثانوية', 'ثانوي');
@@ -1219,7 +1354,6 @@
             if (stageStr) badges += `<span class="info-badge">🎓 ${stageStr}</span>`;
             if (grade) badges += `<span class="info-badge">👑 ${grade}</span>`;
             if (subj) badges += `<span class="info-badge">📚 ${subj}</span>`;
-            
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
@@ -1227,38 +1361,31 @@
             event.stopPropagation();
             const btn = event.currentTarget;
             const card = btn.closest('.portal-card');
-            
             let currentState = localStorage.getItem('publishState_' + id) === 'true';
             let newState = !currentState;
-            
             localStorage.setItem('publishState_' + id, newState);
             
             if (newState) {
                 btn.classList.add('published');
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
                 if (card) card.classList.remove('hidden-card');
-                showToast('👁️ أصبحت المجموعة ظاهرة للطلاب');
+                showToast('👁️ المجموعة ظاهرة للطلاب');
             } else {
                 btn.classList.remove('published');
                 btn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>`;
                 if (card) card.classList.add('hidden-card');
-                showToast('🙈 تم إخفاء المجموعة عن الطلاب');
+                showToast('🙈 المجموعة مخفية');
             }
 
             try {
                 if (window.db && window.fsDoc && window.fsSetDoc) {
-                    showFbSyncBadge('☁️ جاري الحفظ في السحابة...');
+                    showFbSyncBadge('☁️ جاري الحفظ...');
                     const ref = window.fsDoc(window.db, "lessons", String(id));
                     await window.fsSetDoc(ref, { g_publish_map: newState }, { merge: true });
-                    console.log(`☁️ [index2] تم تحديث g_publish_map = ${newState} في Firebase للحصة ${id}`);
-                    showFbSyncBadge(newState ? '✅ المجموعة ظاهرة للطلاب' : '🔒 المجموعة مخفية عن الطلاب');
-                } else {
-                    console.warn("⚠️ Firebase غير جاهز — تم الحفظ في localStorage فقط");
-                    showFbSyncBadge('⚠️ حفظ محلي فقط', true);
+                    showFbSyncBadge(newState ? '✅ ظاهرة' : '🔒 مخفية');
                 }
             } catch (err) {
-                console.error("❌ فشل تحديث Firebase:", err);
-                showFbSyncBadge('❌ فشل الحفظ في السحابة', true);
+                showFbSyncBadge('❌ فشل الحفظ', true);
             }
         }
 
@@ -1290,13 +1417,10 @@
                 const isBlue = (index + 1) % 2 !== 0;
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
-
                 const savedState = localStorage.getItem('lessonState_' + lesson.id);
                 const hasReport = savedState !== null;
                 const isPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
-                
                 const hiddenClass = isPublished ? '' : 'hidden-card';
-                
                 const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
                 const btnText = hasReport ? 'التقرير ➔' : 'إعداد ➔';
                 const descText = hasReport ? 'تم الإعداد بنجاح، يمكنك إدارة التفاصيل.' : 'اضغط لإعداد المواعيد والمكان.';
@@ -1324,19 +1448,15 @@
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
                         </button>
                     </div>
-
-                    <div class="card-image-box" onclick="openGroupModal('${lesson.id}')" title="اضغط لعرض تفاصيل المواعيد والمكان">
+                    <div class="card-image-box" onclick="openGroupModal('${lesson.id}')">
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
-
                     <div class="card-text">
                         ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
                         <p>${descText}</p>
-                        <a href="${targetUrl}" class="btn-go">
-                            ${btnText}
-                        </a>
+                        <a href="${targetUrl}" class="btn-go">${btnText}</a>
                     </div>
                 `;
                 
@@ -1355,20 +1475,16 @@
                 const idToDelete = itemToDelete;
                 lessons = lessons.filter(l => l.id !== idToDelete);
                 saveLessonsToStorage();
-                
                 localStorage.removeItem('lessonState_' + idToDelete);
                 localStorage.removeItem('publishState_' + idToDelete);
                 
                 try {
                     if (window.db && window.fsDoc && window.fsDeleteDoc) {
-                        showFbSyncBadge('🗑️ جاري الحذف من السحابة...');
+                        showFbSyncBadge('🗑️ جاري الحذف...');
                         await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", String(idToDelete)));
-                        console.log(`🗑️ [index2] تم حذف الحصة ${idToDelete} من Firebase`);
-                        showFbSyncBadge('✅ تم الحذف من السحابة');
+                        showFbSyncBadge('✅ تم الحذف');
                     }
-                } catch (err) {
-                    console.warn("⚠️ فشل حذف Firebase:", err);
-                }
+                } catch (err) {}
                 
                 renderLessons();
                 closeModal('deleteModal');
@@ -1380,7 +1496,6 @@
             if (event) event.stopPropagation();
             itemToRename = id;
             const lesson = lessons.find(l => l.id === id);
-            
             if (lesson) {
                 const inputField = document.getElementById('newGroupNameInput');
                 inputField.value = lesson.title;
@@ -1391,13 +1506,11 @@
 
         document.getElementById('confirmRenameBtn').addEventListener('click', async function() {
             const newName = document.getElementById('newGroupNameInput').value;
-            
             if(itemToRename !== null && newName.trim() !== '') {
                 const lesson = lessons.find(l => l.id === itemToRename);
                 if (lesson) {
                     lesson.title = newName.trim();
                     saveLessonsToStorage();
-                    
                     const stateKey = 'lessonState_' + itemToRename;
                     const savedState = localStorage.getItem(stateKey);
                     if (savedState) {
@@ -1405,19 +1518,13 @@
                         stateObj.g_name = lesson.title;
                         localStorage.setItem(stateKey, JSON.stringify(stateObj));
                     }
-
                     try {
                         if (window.db && window.fsDoc && window.fsSetDoc) {
-                            showFbSyncBadge('☁️ جاري تحديث الاسم...');
-                            const ref = window.fsDoc(window.db, "lessons", String(itemToRename));
-                            await window.fsSetDoc(ref, { g_name: lesson.title }, { merge: true });
-                            console.log(`☁️ [index2] تم تحديث اسم الحصة ${itemToRename} في Firebase`);
-                            showFbSyncBadge('✅ تم تحديث الاسم');
+                            showFbSyncBadge('☁️ تحديث الاسم...');
+                            await window.fsSetDoc(window.fsDoc(window.db, "lessons", String(itemToRename)), { g_name: lesson.title }, { merge: true });
+                            showFbSyncBadge('✅ تم التحديث');
                         }
-                    } catch (err) {
-                        console.warn("⚠️ فشل تحديث Firebase:", err);
-                    }
-                    
+                    } catch (err) {}
                     renderLessons();
                 }
             }
@@ -1426,9 +1533,7 @@
         });
 
         document.getElementById('newGroupNameInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('confirmRenameBtn').click();
-            }
+            if (e.key === 'Enter') document.getElementById('confirmRenameBtn').click();
         });
 
         function openGroupModal(lessonId) {
@@ -1449,23 +1554,14 @@
                 const groupName = data.g_name || `مجموعة رقم ${lessonId}`;
                 
                 let statusBadge = isPublished ? 
-                    `<span style="font-size: 9.5px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 99px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;">
-                        <span style="width: 5px; height: 5px; background: #10B981; border-radius: 50%; display: inline-block;"></span>
-                        ظاهر
-                    </span>` 
+                    `<span style="font-size: 9.5px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 99px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #10B981; border-radius: 50%; display: inline-block;"></span>ظاهر</span>` 
                     : 
-                    `<span style="font-size: 9.5px; background: #FEE2E2; color: #991B1B; padding: 2px 6px; border-radius: 99px; border: 1px solid #FECACA; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;">
-                        <span style="width: 5px; height: 5px; background: #EF4444; border-radius: 50%; display: inline-block;"></span>
-                        مخفي
-                    </span>`;
+                    `<span style="font-size: 9.5px; background: #FEE2E2; color: #991B1B; padding: 2px 6px; border-radius: 99px; border: 1px solid #FECACA; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #EF4444; border-radius: 50%; display: inline-block;"></span>مخفي</span>`;
 
                 nameEl.innerHTML = `<span>${groupName}</span> ${statusBadge}`;
                 
-                const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? 
-                                    `${data.start_hour}:${data.start_min} ${data.start_ampm}` : '--:--';
-                const endTime12 = (data.end_hour && data.end_min && data.end_ampm) ? 
-                                  `${data.end_hour}:${data.end_min} ${data.end_ampm}` : '--:--';
-
+                const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? `${data.start_hour}:${data.start_min} ${data.start_ampm}` : '--:--';
+                const endTime12 = (data.end_hour && data.end_min && data.end_ampm) ? `${data.end_hour}:${data.end_min} ${data.end_ampm}` : '--:--';
                 const daysStr = data.g_days && data.g_days.length > 0 ? data.g_days.join('، ') : 'غير محدد';
                 const monthsStr = data.g_months && data.g_months.length > 0 ? data.g_months.join('، ') : 'غير محدد';
                 const repeatStr = data.g_repeat_weekly ? '✅ أسبوعياً' : '❌ مرة واحدة';
@@ -1487,9 +1583,7 @@
                     else {
                         try {
                             const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
-                            if(curr[data.s_stage] && curr[data.s_stage].name) {
-                                stageStr = curr[data.s_stage].name;
-                            }
+                            if(curr[data.s_stage] && curr[data.s_stage].name) stageStr = curr[data.s_stage].name;
                         } catch(e) {}
                     }
                     stageStr = stageStr.replace(/^[🎒📐🎓]\s*/, '');
@@ -1513,27 +1607,21 @@
                 `;
             } else {
                 nameEl.innerHTML = `<span>مجموعة رقم ${lessonId}</span>`;
-                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 10px 6px;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد" للبدء في إدخال المواعيد والمكان.</p>`;
+                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 10px 6px;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد" للبدء.</p>`;
             }
 
             modal.classList.add('active');
         }
 
         function saveLessonsToStorage() {
-            try {
-                localStorage.setItem('teacher_lessons', JSON.stringify(lessons));
-            } catch(e) {
-                console.warn('فشل الحفظ في الذاكرة المحلية', e);
-            }
+            try { localStorage.setItem('teacher_lessons', JSON.stringify(lessons)); } catch(e) {}
         }
     </script>
 
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./sw.js')
-                    .then(() => console.log('SW registered'))
-                    .catch((e) => console.log('SW failed:', e));
+                navigator.serviceWorker.register('./sw.js').catch(e => console.log('SW failed:', e));
             });
         }
     </script>
