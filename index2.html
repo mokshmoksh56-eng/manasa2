@@ -1385,7 +1385,8 @@
                 const nameEl = document.getElementById('welcomeName');
                 const phoneEl = document.getElementById('welcomePhone');
 
-                const isMiss = (title === 'مس' || title === 'مس ' || title.includes('مس'));
+                // ✅ الفيكس: مقارنة مباشرة بدل includes
+                const isMiss = title === 'مس';
 
                 avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
 
