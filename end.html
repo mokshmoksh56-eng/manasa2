@@ -234,6 +234,10 @@
                     <span class="data-label">🎓 الفئة</span>
                     <span class="data-value" id="val-gender">--</span>
                 </div>
+                <div class="data-row">
+                    <span class="data-label">📍 مكان الدرس الأساسي</span>
+                    <span class="data-value" id="val-loc-basic">--</span>
+                </div>
             </div>
 
             <!-- 2. المواعيد والمادة -->
@@ -529,14 +533,35 @@
                     let genderText = 'مختلط';
                     if(state.g_gender === 'g_boys') genderText = 'أولاد فقط';
                     if(state.g_gender === 'g_girls') genderText = 'بنات فقط';
+                    if(state.g_gender === 'ولاد وبنات') genderText = 'ولاد وبنات';
+                    if(state.g_gender === 'اولاد فقط') genderText = 'اولاد فقط';
+                    if(state.g_gender === 'بنات فقط') genderText = 'بنات فقط';
                     document.getElementById('val-gender').innerText = genderText;
                 }
 
                 if(state.g_loc) {
                     let locLabel = '🏢 المكان:';
-                    if(state.g_loc === 'l_teach') locLabel = '🏠 منزل المعلم:';
-                    if(state.g_loc === 'l_stud') locLabel = '🚗 منزل الطالب:';
+                    let basicLoc = 'غير محدد';
+                    if(state.g_loc === 'l_center') {
+                         basicLoc = 'فى السنتر';
+                    } else if(state.g_loc === 'l_teach') {
+                         locLabel = '🏠 منزل المعلم:';
+                         basicLoc = 'عند المستر';
+                    } else if(state.g_loc === 'l_stud') {
+                         locLabel = '🚗 منزل الطالب:';
+                         basicLoc = 'فى منزل الطالب';
+                    } else if(state.g_loc === 'فى السنتر') {
+                         basicLoc = 'فى السنتر';
+                    } else if(state.g_loc === 'عند المستر') {
+                         locLabel = '🏠 منزل المعلم:';
+                         basicLoc = 'عند المستر';
+                    } else if(state.g_loc === 'فى منزل الطالب') {
+                         locLabel = '🚗 منزل الطالب:';
+                         basicLoc = 'فى منزل الطالب';
+                    }
+                    
                     document.getElementById('val-loc-type').innerText = locLabel;
+                    document.getElementById('val-loc-basic').innerText = basicLoc;
                 }
 
                 if(state.selectedSubjects && state.selectedSubjects.length > 0) {
