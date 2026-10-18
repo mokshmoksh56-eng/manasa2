@@ -1067,6 +1067,7 @@
                 align-items: stretch;
                 gap: 8px;
                 padding: 10px;
+                margin-top: 25px; /* مساحة عشان متتداخلش مع أزرار التعديل */
             }
             .hidden-notice-text {
                 text-align: center;
@@ -1078,9 +1079,9 @@
                 font-size: 12px;
             }
             .card-text {
-                padding-left: 50px; /* مسافة عشان أزرار التعديل اللي فوق */
+                padding-left: 0;
+                padding-top: 35px;
             }
-            
             .welcome-banner { padding: 12px 12px; gap: 10px; }
             .welcome-avatar { width: 44px; height: 44px; font-size: 22px; border-width: 2px; }
             .welcome-greeting { font-size: 10px; }
@@ -1103,7 +1104,7 @@
             .hero-brand { font-size: 28px; }
             .portal-card { padding: 12px 10px; gap: 8px; }
             .card-image-box { width: 68px; height: 68px; }
-            .card-text { padding-left: 45px; }
+            .card-text { padding-left: 0; }
             .card-text h2 { font-size: 15px; }
         }
     </style>
@@ -1346,6 +1347,9 @@
         let deviceWatchUnsub = null;
         let autoSyncInterval = null;
 
+        // ==========================================
+        // 📱 Device ID Management
+        // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
@@ -1451,6 +1455,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ عرض شريط الترحيب بالمستر
+        // ==========================================
         function renderWelcomeBanner() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -1477,6 +1484,7 @@
                 const nameEl = document.getElementById('welcomeName');
                 const phoneEl = document.getElementById('welcomePhone');
 
+                // ✅ الفيكس: مقارنة مباشرة بدل includes
                 const isMiss = title === 'مس';
 
                 avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
@@ -1515,6 +1523,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ Logout
+        // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
             if (modal) modal.classList.add('active');
@@ -1540,6 +1551,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ Helpers
+        // ==========================================
         function showFbSyncBadge(message, isError = false) {
             const badge = document.getElementById('fbSyncBadge');
             if (!badge) return;
@@ -1618,6 +1632,9 @@
             return false;
         }
 
+        // ==========================================
+        // ✅ Migration
+        // ==========================================
         async function migrateLocalLessonsToFirebase() {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return { migrated: 0, repaired: 0 };
 
@@ -1698,6 +1715,9 @@
             return { migrated: migratedCount, repaired: repairedCount };
         }
 
+        // ==========================================
+        // ✅ Sync Lessons
+        // ==========================================
         async function syncLessonsFromFirebase(showLoader = false) {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
                 return { success: false };
@@ -1799,6 +1819,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ Auto Sync
+        // ==========================================
         function startAutoSync() {
             if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
 
@@ -1830,14 +1853,21 @@
             });
         }
 
+        // ==========================================
+        // ✅ DOMContentLoaded
+        // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
+            // ✅ 1) التحقق من الجهاز
             const isDeviceValid = await verifyCurrentDevice();
             if (!isDeviceValid) return;
 
+            // ✅ 2) مراقبة الجهاز اللحظية
             startDeviceWatch();
 
+            // ✅ 3) عرض شريط الترحيب بالمستر
             renderWelcomeBanner();
 
+            // ✅ 4) تنظيف localStorage من بيانات معلم قديم
             const currentInfo = getCurrentTeacherInfo();
             const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
             const lessonsOwnerKey = 'lessons_owner_phone';
@@ -1862,28 +1892,35 @@
                 localStorage.setItem(lessonsOwnerKey, currentPhoneKey);
             }
 
+            // 5) ربط زر الخروج
             document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation(); openLogoutModal();
             });
 
+            // 6) قراءة أولية
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
             }
             renderLessons();
 
+            // 7) Migration
             updateSyncStatus('📤 جاري رفع الحصص القديمة...');
             const migResult = await migrateLocalLessonsToFirebase();
             if (migResult.migrated > 0 || migResult.repaired > 0) {
                 showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
             }
 
+            // 8) Sync شامل
             await syncLessonsFromFirebase(true);
 
+            // 9) Realtime
             startRealtimeSync();
 
+            // 10) Auto Sync
             startAutoSync();
 
+            // 11) إخفاء اللودر
             hideInitialLoader();
         });
 
@@ -1892,6 +1929,9 @@
             if (el) el.classList.remove('active');
         }
 
+        // ==========================================
+        // ✅ Create Lesson
+        // ==========================================
         function createNewLesson(saveToStorage = true) {
             const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
             if (!teacherPhone && !teacherName) {
@@ -1989,6 +2029,9 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
+        // ==========================================
+        // ✅ Toggle Visibility — نسخة جديدة مع إعادة الرسم
+        // ==========================================
         async function toggleVisibility(id, event) {
             if (event) event.stopPropagation();
 
@@ -1996,6 +2039,7 @@
             const newState = !currentState;
             localStorage.setItem('publishState_' + id, newState);
 
+            // ✅ إعادة رسم فورية لتحديث البانر والأيقونة
             renderLessons();
 
             if (newState) {
@@ -2055,6 +2099,7 @@
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
+                // ✅ بانر "المجموعة مخفية" + زر فتح
                 const hiddenNoticeHTML = !isPublished ? `
                     <div class="hidden-notice-banner">
                         <span class="hidden-notice-icon">🔒</span>
@@ -2260,15 +2305,18 @@
         }
     </script>
 
+    <!-- ✅ التحديث التلقائي للـ Service Worker -->
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then((reg) => {
+                    // تحقق من وجود تحديث كل دقيقة
                     setInterval(() => { reg.update(); }, 60000);
 
                     reg.onupdatefound = () => {
                         const installingWorker = reg.installing;
                         installingWorker.onstatechange = () => {
+                            // لو في نسخة جديدة اتنزلت
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                 console.log('🔄 تم اكتشاف تحديث جديد، جاري التحديث...');
                                 installingWorker.postMessage({ type: 'SKIP_WAITING' });
@@ -2279,6 +2327,7 @@
                 }).catch(e => console.log('SW failed:', e));
             });
 
+            // لما السيرفيس وركر الجديد يسيطر، اعمل ريفريش مرة واحدة
             let refreshing = false;
             navigator.serviceWorker.addEventListener('controllerchange', () => {
                 if (!refreshing) {
