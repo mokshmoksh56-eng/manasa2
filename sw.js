@@ -1,5 +1,5 @@
-// ✅ رقم الكاش التلقائي بيتغير كل ثانية (مش هتحتاج تغيره يدوياً تاني)
-const CACHE_NAME = 'ehgezly-cache-' + Date.now();
+// ✅ اسم ثابت للكاش (بدل Date.now اللي كان بيلخبط المتصفح)
+const CACHE_NAME = 'ehgezly-cache-v1';
 
 const urlsToCache = [
   './',
@@ -41,22 +41,27 @@ self.addEventListener('activate', event => {
           }
         })
       );
-    }).then(() => self.clients.claim()) // 🔥 السيطرة على كل الصفحات المفتوحة
+    }).then(() => self.clients.claim()) // 🔥 السيطرة على كل الصفحات المفتوحة فوراً
   );
 });
 
-// ✅ الجلب: Network First (النت أولاً، ثم الكاش لو النت قطع)
+// ✅ الجلب: Network First + تخطي كاش المتصفح لملفات الـ HTML و JS
 self.addEventListener('fetch', event => {
-  // تجاهل الطلبات اللي مش من نفس الموقع (زي Firebase, Tailwind CDN)
   const url = new URL(event.request.url);
-  if (url.origin !== location.origin) {
-    return;
-  }
-
+  
+  // تجاهل الطلبات اللي مش من نفس الموقع
+  if (url.origin !== location.origin) return;
   if (event.request.method !== 'GET') return;
 
+  // 🔥 السر هنا: إجبار المتصفح على جلب ملفات HTML و JS و CSS من السيرفر مباشرة
+  // عشان أي تعديل يظهر فوراً بدون ما المتصفح يستخدم الكاش القديم
+  let fetchOptions = {};
+  if (url.pathname.endsWith('.html') || url.pathname.endsWith('.js') || url.pathname.endsWith('.css')) {
+      fetchOptions = { cache: 'no-store' }; 
+  }
+
   event.respondWith(
-    fetch(event.request)
+    fetch(event.request, fetchOptions)
       .then(response => {
         if (response && response.status === 200) {
           const responseClone = response.clone();
