@@ -399,7 +399,7 @@
             <div class="form-group">
                 <label>تفضل الدرس مع؟</label>
                 <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div><input type="radio" name="pref_teacher" id="t_any" value="أي منهما" checked><label for="t_any"><i>🤷‍♂️</i> أيهم</label></div>
+                    <div><input type="radio" name="pref_teacher" id="t_any" value="مستر او مس" checked><label for="t_any"><i>🤷‍♂️</i> مستر او مس</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_ms" value="مس"><label for="t_ms"><i>👩‍🏫</i> مس</label></div>
                 </div>
@@ -407,9 +407,9 @@
             <div class="form-group">
                 <label>أين تفضل أخذ الدرس؟</label>
                 <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div><input type="radio" name="pref_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> سنتر</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_teacher" value="بيت المستر"><label for="l_teacher"><i>🏠</i> المستر</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_home" value="في منزلي"><label for="l_home"><i>🚗</i> منزلي</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_center" value="فى السنتر" checked><label for="l_center"><i>🏫</i> فى السنتر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_teacher" value="عند المستر"><label for="l_teacher"><i>🏠</i> عند المستر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_home" value="فى منزلى"><label for="l_home"><i>🚗</i> فى منزلى</label></div>
                 </div>
             </div>
 
@@ -1446,8 +1446,10 @@
                     }
 
                     let locLabel = 'السنتر';
-                    if (state.g_loc === 'l_teach') locLabel = 'بيت المستر';
-                    else if (state.g_loc === 'l_stud') locLabel = 'في منزلي';
+                    if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
+                    else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
+                    else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+
 
                     let fullAddress = state.m_address || 'محدد على الخريطة';
                     if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
@@ -1651,7 +1653,8 @@
             const selectedSubject = (document.getElementById('s_subject').value || '').trim();
             const selectedGrade = (document.getElementById('s_grade').value || '').trim();
             const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
-            const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'أي منهما';
+            let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
+            if (prefTeacher === 'أيهم') prefTeacher = 'مستر او مس';
 
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
