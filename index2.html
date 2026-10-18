@@ -124,6 +124,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             border: 1.5px solid #E2E8F0;
             transition: all 0.2s ease;
+            cursor: pointer;
         }
 
         .btn-top-action:active {
@@ -519,7 +520,6 @@
         }
         #toastMsg.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* ✅ شارة الحفظ اللحظي في Firebase */
         .fb-sync-badge {
             position: fixed;
             top: 15px;
@@ -571,7 +571,7 @@
     <!-- ✅ توست الرسائل -->
     <div id="toastMsg">تم الإجراء بنجاح ✔</div>
 
-    <!-- ✅ الهيدر العلوي بنمط تطبيق الهاتف -->
+    <!-- ✅ الهيدر العلوي -->
     <section class="hero-banner">
 
         <div class="top-navbar-wrapper">
@@ -588,12 +588,13 @@
                     الرئيسية
                 </a>
 
-                <a href="./login.html" class="btn-top-action">
+                <!-- ✅ زر تسجيل الخروج (بدل تسجيل الدخول) -->
+                <button onclick="logoutTeacher()" class="btn-top-action" style="border-color: #FECACA; color: #DC2626;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                     </svg>
-                    تسجيل الدخول
-                </a>
+                    تسجيل الخروج
+                </button>
             </div>
         </div>
 
@@ -614,7 +615,7 @@
         </div>
     </section>
 
-    <!-- ✅ قسم البطاقات (جداول الحصص) -->
+    <!-- ✅ قسم البطاقات -->
     <section class="cards-section">
         <div class="container mx-auto max-w-4xl">
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full">
@@ -623,7 +624,7 @@
         </div>
     </section>
 
-    <!-- ✅ نافذة تفاصيل المجموعة المنبثقة -->
+    <!-- ✅ نافذة تفاصيل المجموعة -->
     <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
         <div class="custom-modal group-modal-box" style="text-align: right;" onclick="event.stopPropagation()">
             <div class="modal-header-row">
@@ -676,7 +677,7 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
+    <!-- 🌟 Firebase Module -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
@@ -736,7 +737,26 @@
         let itemToDelete = null;
         let itemToRename = null;
 
-        // ✅ إظهار شارة الحفظ اللحظي
+        // ==========================================
+        // ✅ دالة تسجيل الخروج
+        // ==========================================
+        function logoutTeacher() {
+            if (!confirm('هل تريد تسجيل الخروج من حسابك؟')) {
+                return;
+            }
+            try {
+                localStorage.removeItem('loggedInTeacher');
+                localStorage.removeItem('rememberedPhone');
+                localStorage.removeItem('teacher_location_consent');
+                sessionStorage.clear();
+                console.log('✅ تم تسجيل الخروج بنجاح');
+                window.location.replace('./login.html');
+            } catch (err) {
+                console.error('❌ خطأ في تسجيل الخروج:', err);
+                window.location.href = './login.html';
+            }
+        }
+
         function showFbSyncBadge(message, isError = false) {
             const badge = document.getElementById('fbSyncBadge');
             badge.innerText = message;
@@ -748,7 +768,6 @@
             }, 2000);
         }
 
-        // ✅ قراءة حالات النشر من Firebase لجميع الحصص
         async function syncPublishStatesFromFirebase() {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
                 console.warn("⚠️ Firebase غير جاهز للمزامنة");
@@ -760,7 +779,6 @@
                 snap.forEach(docSnap => {
                     const data = docSnap.data();
                     const lessonId = docSnap.id;
-                    // لو g_publish_map === true يبقى ظاهر، غير كده مخفي (default false)
                     const isPublished = data.g_publish_map === true;
                     const localState = localStorage.getItem('publishState_' + lessonId) === 'true';
                     if (isPublished !== localState) {
@@ -789,8 +807,6 @@
                 }
             }
             renderLessons();
-
-            // ✅ مزامنة حالات النشر من Firebase بعد الريندر الأولي
             await syncPublishStatesFromFirebase();
         });
 
@@ -884,9 +900,6 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
-        // ==========================================
-        // ✅ toggleVisibility محدّثة: بتقرأ وتحفظ في Firebase
-        // ==========================================
         async function toggleVisibility(id, event) {
             event.stopPropagation();
             const btn = event.currentTarget;
@@ -895,7 +908,6 @@
             let currentState = localStorage.getItem('publishState_' + id) === 'true';
             let newState = !currentState;
             
-            // ✅ تحديث localStorage فورًا (للاستجابة السريعة)
             localStorage.setItem('publishState_' + id, newState);
             
             if (newState) {
@@ -910,7 +922,6 @@
                 showToast('🙈 تم إخفاء المجموعة عن الطلاب');
             }
 
-            // ✅ حفظ في Firebase (المصدر الحقيقي)
             try {
                 if (window.db && window.fsDoc && window.fsSetDoc) {
                     showFbSyncBadge('☁️ جاري الحفظ في السحابة...');
@@ -1024,7 +1035,6 @@
                 localStorage.removeItem('lessonState_' + idToDelete);
                 localStorage.removeItem('publishState_' + idToDelete);
                 
-                // ✅ حذف من Firebase كمان
                 try {
                     if (window.db && window.fsDoc && window.fsDeleteDoc) {
                         showFbSyncBadge('🗑️ جاري الحذف من السحابة...');
@@ -1072,7 +1082,6 @@
                         localStorage.setItem(stateKey, JSON.stringify(stateObj));
                     }
 
-                    // ✅ تحديث الاسم في Firebase كمان
                     try {
                         if (window.db && window.fsDoc && window.fsSetDoc) {
                             showFbSyncBadge('☁️ جاري تحديث الاسم...');
