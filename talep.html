@@ -262,47 +262,21 @@
         .location-disclosure-box { text-align: right; line-height: 1.6; }
         .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
 
-        /* ============================================ */
-        /* ✅ كارت نطاق البحث الجديد (تحت زر البحث) */
-        /* ============================================ */
         .radius-card-below-search {
-            margin-top: 12px;
-            padding: 10px;
-            background: #FFFFFF;
-            border-radius: 10px;
-            border: 1.5px solid #CBD5E1;
-            border-bottom: 3px solid #334155;
+            margin-top: 12px; padding: 10px; background: #FFFFFF;
+            border-radius: 10px; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #334155;
         }
-
         .radius-card-below-search .radius-label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 6px;
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
         }
-
-        .radius-card-below-search .radius-label-row span:first-child {
-            font-size: 13px;
-            font-weight: 900;
-            color: #1E293B;
-        }
-
+        .radius-card-below-search .radius-label-row span:first-child { font-size: 13px; font-weight: 900; color: #1E293B; }
         .radius-card-below-search .radius-value-badge-display {
-            color: #10B981;
-            font-weight: 900;
-            font-size: 13px;
-            background: #D1FAE5;
-            padding: 2px 10px;
-            border-radius: 20px;
+            color: #10B981; font-weight: 900; font-size: 13px; background: #D1FAE5;
+            padding: 2px 10px; border-radius: 20px;
         }
-
         .radius-card-below-search .radius-limits-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 10px;
-            color: #64748B;
-            margin-top: 4px;
-            font-weight: 800;
+            display: flex; justify-content: space-between; font-size: 10px; color: #64748B;
+            margin-top: 4px; font-weight: 800;
         }
 
         @media (max-width: 380px) {
@@ -480,7 +454,6 @@
                 تحديد الموقع والبحث بالـ GPS
             </button>
 
-            <!-- ✅ نطاق البحث الجديد تحت زر GPS مباشرة -->
             <div class="radius-card-below-search">
                 <div class="radius-label-row">
                     <span>🎯 نطاق البحث:</span>
@@ -542,7 +515,6 @@
         </div>
     </div>
 
-    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
@@ -590,7 +562,25 @@
         let curriculumCache = null;
         let curriculumUnsubscribe = null;
         let isFirstCurriculumSnapshot = true;
-        let curriculumSyncStarted = false;
+
+        // ==========================================
+        // ✅ معرّف المعلم الحالي (لعزل البيانات في Firestore)
+        // ==========================================
+        function getCurrentTeacherKey() {
+            try {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (loggedStr) {
+                    const obj = JSON.parse(loggedStr);
+                    const phone = String(obj.phone || '').replace(/\D/g, '');
+                    if (phone) return phone;
+                    const name = String(obj.name || '').trim();
+                    if (name) return 'name_' + name.replace(/\s+/g, '_');
+                }
+                const remembered = String(localStorage.getItem('rememberedPhone') || '').replace(/\D/g, '');
+                if (remembered) return remembered;
+            } catch(e) {}
+            return 'guest';
+        }
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -652,6 +642,196 @@
         };
 
         // ==========================================
+        // ✅ Firebase Module Loader (للاستخدام في كل الدوال)
+        // ==========================================
+        let firebaseSyncModule = null;
+
+        async function loadFirebaseModule() {
+            if (firebaseSyncModule) return firebaseSyncModule;
+            try {
+                const { initializeApp, getApps } = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"
+                );
+                const fs = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"
+                );
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+                    authDomain: "ehgezly-ea5dd.firebaseapp.com",
+                    projectId: "ehgezly-ea5dd",
+                    storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+                    messagingSenderId: "472216348338",
+                    appId: "1:472216348338:web:db726630ef6781301e0bab"
+                };
+
+                const existingApps = getApps();
+                const app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig);
+                const db = fs.getFirestore(app);
+
+                firebaseSyncModule = {
+                    db,
+                    getDoc: fs.getDoc,
+                    setDoc: fs.setDoc,
+                    onSnapshot: fs.onSnapshot,
+                    doc: fs.doc,
+                    collection: fs.collection,
+                    getDocs: fs.getDocs
+                };
+                return firebaseSyncModule;
+            } catch (err) {
+                console.error("❌ فشل استيراد Firebase:", err);
+                return null;
+            }
+        }
+
+        // ==========================================
+        // ✅ Talep Firestore: حفظ / تحميل
+        // ==========================================
+        let _talepSaveTimer = null;
+        let _talepSavePending = false;
+
+        async function saveTalepToFirebase(immediate = false) {
+            if (_talepSaveTimer) clearTimeout(_talepSaveTimer);
+
+            const doSave = async () => {
+                if (_talepSavePending) return;
+                _talepSavePending = true;
+                try {
+                    const mod = await loadFirebaseModule();
+                    if (!mod) return;
+
+                    const key = getCurrentTeacherKey();
+                    const ref = mod.doc(mod.db, "talep_data", key);
+
+                    const raw = JSON.parse(localStorage.getItem('talep_data') || '{}');
+                    const consent = localStorage.getItem('location_consent_given') === 'true';
+
+                    const payload = {
+                        owner_phone: key,
+                        owner_name: (() => {
+                            try {
+                                const t = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}');
+                                return String(t.name || '').trim();
+                            } catch(e) { return ''; }
+                        })(),
+                        st_gender: raw.st_gender || '',
+                        st_name: raw.st_name || '',
+                        st_age: raw.st_age || '',
+                        st_phone: raw.st_phone || '',
+                        s_stage: raw.s_stage || '',
+                        s_grade: raw.s_grade || '',
+                        s_subject: raw.s_subject || '',
+                        pref_teacher: raw.pref_teacher || '',
+                        pref_loc: raw.pref_loc || '',
+                        search_radius: raw.search_radius || '3000',
+                        location_consent: consent,
+                        saved_locations: Array.isArray(raw.saved_locations) ? raw.saved_locations : [],
+                        saved_teachers: Array.isArray(raw.saved_teachers) ? raw.saved_teachers : [],
+                        updatedAt: Date.now()
+                    };
+
+                    await mod.setDoc(ref, payload, { merge: true });
+                    console.log("☁️ [talep] تم الحفظ في Firestore:", key);
+                } catch (e) {
+                    console.warn("⚠️ [talep] فشل الحفظ في Firestore:", e);
+                } finally {
+                    _talepSavePending = false;
+                }
+            };
+
+            if (immediate) {
+                await doSave();
+            } else {
+                _talepSaveTimer = setTimeout(doSave, 600);
+            }
+        }
+
+        async function loadTalepFromFirebase() {
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) return false;
+
+                const key = getCurrentTeacherKey();
+                const ref = mod.doc(mod.db, "talep_data", key);
+                const snap = await mod.getDoc(ref);
+
+                if (!snap.exists()) {
+                    console.log("📭 [talep] لا توجد بيانات محفوظة لهذا المعلم");
+                    localStorage.removeItem('talep_data');
+                    localStorage.removeItem('location_consent_given');
+                    return false;
+                }
+
+                const d = snap.data() || {};
+                const localObj = {
+                    st_gender: d.st_gender || '',
+                    st_name: d.st_name || '',
+                    st_age: d.st_age || '',
+                    st_phone: d.st_phone || '',
+                    s_stage: d.s_stage || '',
+                    s_grade: d.s_grade || '',
+                    s_subject: d.s_subject || '',
+                    pref_teacher: d.pref_teacher || '',
+                    pref_loc: d.pref_loc || '',
+                    search_radius: d.search_radius || '3000',
+                    saved_locations: Array.isArray(d.saved_locations) ? d.saved_locations : [],
+                    saved_teachers: Array.isArray(d.saved_teachers) ? d.saved_teachers : []
+                };
+
+                localStorage.setItem('talep_data', JSON.stringify(localObj));
+                if (d.location_consent === true) {
+                    localStorage.setItem('location_consent_given', 'true');
+                } else {
+                    localStorage.removeItem('location_consent_given');
+                }
+
+                console.log("☁️ [talep] تم تحميل البيانات من Firestore");
+                return true;
+            } catch (e) {
+                console.warn("⚠️ [talep] فشل تحميل Firestore:", e);
+                return false;
+            }
+        }
+
+        function startTalepRealtimeListener() {
+            loadFirebaseModule().then(mod => {
+                if (!mod) return;
+                const key = getCurrentTeacherKey();
+                const ref = mod.doc(mod.db, "talep_data", key);
+                mod.onSnapshot(ref, (snap) => {
+                    if (!snap.exists()) return;
+                    const d = snap.data() || {};
+                    const localRaw = localStorage.getItem('talep_data');
+                    const localObj = localRaw ? JSON.parse(localRaw) : {};
+                    const newObj = {
+                        st_gender: d.st_gender || '',
+                        st_name: d.st_name || '',
+                        st_age: d.st_age || '',
+                        st_phone: d.st_phone || '',
+                        s_stage: d.s_stage || '',
+                        s_grade: d.s_grade || '',
+                        s_subject: d.s_subject || '',
+                        pref_teacher: d.pref_teacher || '',
+                        pref_loc: d.pref_loc || '',
+                        search_radius: d.search_radius || '3000',
+                        saved_locations: Array.isArray(d.saved_locations) ? d.saved_locations : [],
+                        saved_teachers: Array.isArray(d.saved_teachers) ? d.saved_teachers : []
+                    };
+                    if (JSON.stringify(newObj) !== JSON.stringify(localObj)) {
+                        localStorage.setItem('talep_data', JSON.stringify(newObj));
+                        if (d.location_consent === true) localStorage.setItem('location_consent_given', 'true');
+                        else localStorage.removeItem('location_consent_given');
+                        const activeTag = document.activeElement?.tagName;
+                        if (activeTag !== 'INPUT' && activeTag !== 'SELECT' && activeTag !== 'TEXTAREA') {
+                            loadStudentData();
+                        }
+                    }
+                }, (err) => console.warn("⚠️ talep onSnapshot:", err));
+            });
+        }
+
+        // ==========================================
         // 1. Fullscreen Map
         // ==========================================
         function toggleMapFullscreen() {
@@ -693,9 +873,7 @@
         }
 
         window.addEventListener('popstate', function() {
-            if (isMapFullscreen) {
-                closeMapFullscreen();
-            }
+            if (isMapFullscreen) closeMapFullscreen();
         });
 
         function toggleDropdown(containerId, iconId, forceOpen = false) {
@@ -729,7 +907,7 @@
         }
 
         // ==========================================
-        // 🌟 المنهج الافتراضي الكامل (مطابق لـ school/group)
+        // 🌟 المنهج الافتراضي
         // ==========================================
         const defaultCurriculum = {
             primary: {
@@ -767,9 +945,6 @@
             }
         };
 
-        // ==========================================
-        // ✅ normalizeCurriculum محصّنة: تكمل الصفوف + المواد الناقصة
-        // ==========================================
         function normalizeCurriculum(currObj) {
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
                 return JSON.parse(JSON.stringify(defaultCurriculum));
@@ -974,47 +1149,8 @@
         }
 
         // ==========================================
-        // 🌟 Firebase Sync — استيراد مستقل مضمون
+        // Curriculum Sync
         // ==========================================
-        let firebaseSyncModule = null;
-
-        async function loadFirebaseModule() {
-            if (firebaseSyncModule) return firebaseSyncModule;
-            try {
-                const { initializeApp, getApps } = await import(
-                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"
-                );
-                const fs = await import(
-                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"
-                );
-
-                const firebaseConfig = {
-                    apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
-                    authDomain: "ehgezly-ea5dd.firebaseapp.com",
-                    projectId: "ehgezly-ea5dd",
-                    storageBucket: "ehgezly-ea5dd.firebasestorage.app",
-                    messagingSenderId: "472216348338",
-                    appId: "1:472216348338:web:db726630ef6781301e0bab"
-                };
-
-                const existingApps = getApps();
-                const app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig);
-                const db = fs.getFirestore(app);
-
-                firebaseSyncModule = {
-                    db,
-                    getDoc: fs.getDoc,
-                    setDoc: fs.setDoc,
-                    onSnapshot: fs.onSnapshot,
-                    doc: fs.doc
-                };
-                return firebaseSyncModule;
-            } catch (err) {
-                console.error("❌ فشل استيراد Firebase:", err);
-                return null;
-            }
-        }
-
         async function fetchCurriculumOnceFromFirebase() {
             const mod = await loadFirebaseModule();
             if (!mod) return false;
@@ -1029,16 +1165,14 @@
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
-                    console.log("⚡ [talep] تم جلب المنهج من Firebase (getDoc) بنجاح");
+                    console.log("⚡ [talep] تم جلب المنهج من Firebase");
                     return true;
                 } else {
-                    console.log("📤 [talep] مستند curriculum/main غير موجود — رفع الافتراضي");
                     try {
                         await mod.setDoc(ref, {
                             ...JSON.parse(JSON.stringify(defaultCurriculum)),
                             updatedAt: Date.now()
                         });
-                        console.log("✅ [talep] تم رفع المنهج الافتراضي إلى Firebase");
                         curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
                         localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                         return true;
@@ -1081,9 +1215,6 @@
             });
         }
 
-        // ==========================================
-        // BroadcastChannel — مزامنة التبويبات
-        // ==========================================
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
             curriculumChannel.onmessage = function(ev) {
@@ -1158,6 +1289,8 @@
             };
             localStorage.setItem('talep_data', JSON.stringify(studentData));
             updateStudentSummary();
+            // ✅ حفظ في Firebase (debounced)
+            saveTalepToFirebase(false);
         }
 
         function loadStudentData() {
@@ -1181,21 +1314,27 @@
         }
 
         // ==========================================
-        // ✅ onload: Firebase أولاً (getDoc) ثم بناء الواجهة
+        // ✅ onload: Firebase أولاً + عزل المعلم
         // ==========================================
         window.onload = async () => {
-            try {
-                await fetchCurriculumOnceFromFirebase();
-            } catch (e) {
-                console.warn("⚠️ فشل الجلب الأولي:", e);
+            // 1) عزل بيانات talep حسب المعلم الحالي (تنظيف محلي)
+            const ownerKey = 'talep_data_owner';
+            const currentKey = getCurrentTeacherKey();
+            const savedOwner = localStorage.getItem(ownerKey);
+            if (savedOwner && savedOwner !== currentKey) {
+                localStorage.removeItem('talep_data');
+                localStorage.removeItem('location_consent_given');
             }
+            localStorage.setItem(ownerKey, currentKey);
+
+            // 2) جلب المنهج
+            try { await fetchCurriculumOnceFromFirebase(); } catch (e) {}
 
             if (!curriculumCache) {
                 try {
                     const saved = localStorage.getItem('app_curriculum');
-                    if (saved) {
-                        curriculumCache = normalizeCurriculum(JSON.parse(saved));
-                    } else {
+                    if (saved) curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                    else {
                         curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
                         localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     }
@@ -1205,6 +1344,10 @@
                 }
             }
 
+            // 3) تحميل بيانات talep من Firestore (قبل بناء الواجهة)
+            await loadTalepFromFirebase();
+
+            // 4) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
@@ -1215,7 +1358,6 @@
                 }
             });
 
-            // ✅ إعادة البحث فورًا عند تغيير مكان الدرس المفضل
             document.querySelectorAll('input[name="pref_loc"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (currentCenter && map) {
@@ -1224,7 +1366,6 @@
                 });
             });
 
-            // ✅ إعادة البحث فورًا عند تغيير جنس المعلم المفضل
             document.querySelectorAll('input[name="pref_teacher"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (currentCenter && map) {
@@ -1260,6 +1401,7 @@
             });
 
             startCurriculumRealtimeListener();
+            startTalepRealtimeListener();
         };
 
         // ==========================================
@@ -1290,6 +1432,8 @@
         function acceptLocation() {
             document.getElementById('locationDisclosureModal').classList.remove('active');
             localStorage.setItem('location_consent_given', 'true');
+            // ✅ حفظ فوري في Firestore
+            saveTalepToFirebase(true);
             startSmartSearch();
         }
 
@@ -1341,6 +1485,8 @@
                 closeSaveLocModal();
                 showToast("تمت إضافة الموقع للمفضلة! 📌");
             }
+            // ✅ حفظ فوري في Firestore
+            saveTalepToFirebase(true);
         }
 
         const svgTrash = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 18px; height: 18px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>`;
@@ -1399,11 +1545,13 @@
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
                 renderSavedTeachersList(true);
                 showToast("تم تحديث بيانات المعلم المحفوظ ⭐");
+                saveTalepToFirebase(true);
                 return;
             }
             existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender, groupName });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
             renderSavedTeachersList(true); showToast("تم حفظ المعلم ⭐");
+            saveTalepToFirebase(true);
         };
 
         function renderSavedTeachersList(autoOpen = false) {
@@ -1463,12 +1611,13 @@
                     renderSavedTeachersList();
                     showToast("تم إزالة المعلم 🗑️");
                 }
+                saveTalepToFirebase(true);
             }
             closeDeleteModal();
         }
 
         // ==========================================
-        // 4. جلب الحصص من فايربيس
+        // 4. جلب الحصص من Firebase
         // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
@@ -1481,7 +1630,6 @@
 
             try {
                 const querySnapshot = await window.getDocs(window.collection(window.db, "lessons"));
-                console.log(`📥 [talep] تم جلب ${querySnapshot.size} حصة من Firebase`);
                 
                 querySnapshot.forEach((doc) => {
                     const state = doc.data();
@@ -1572,23 +1720,14 @@
         }
 
         function fetchLiveCoordinates(onSuccess, onError) {
-            if (!navigator.geolocation) {
-                onError("الجهاز لا يدعم GPS");
-                return;
-            }
+            if (!navigator.geolocation) { onError("الجهاز لا يدعم GPS"); return; }
 
             navigator.geolocation.getCurrentPosition(
-                (pos) => {
-                    onSuccess(pos.coords.latitude, pos.coords.longitude);
-                },
+                (pos) => { onSuccess(pos.coords.latitude, pos.coords.longitude); },
                 () => {
                     navigator.geolocation.getCurrentPosition(
-                        (pos2) => {
-                            onSuccess(pos2.coords.latitude, pos2.coords.longitude);
-                        },
-                        (err2) => {
-                            onError(err2);
-                        },
+                        (pos2) => { onSuccess(pos2.coords.latitude, pos2.coords.longitude); },
+                        (err2) => { onError(err2); },
                         { enableHighAccuracy: false, timeout: 8000, maximumAge: 0 }
                     );
                 },
@@ -1626,9 +1765,7 @@
                     buildRadarMap(lat, lng);
                     showToast("تم تحديث موقعك الحالي بنجاح 🎯");
                 },
-                () => {
-                    showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح!", true);
-                }
+                () => { showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح!", true); }
             );
         }
 
@@ -1776,8 +1913,6 @@
 
                 return true;
             });
-
-            console.log(`🔍 [talep] إجمالي المدرسين: ${registeredList.length} | مطابقين (مادة+مرحلة+جنس+مكان): ${matched.length}`);
 
             if (matched.length === 0) {
                 const noMatchMsg = prefLocValue 
