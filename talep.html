@@ -344,6 +344,18 @@
         </div>
     </div>
 
+    <!-- ✅ نافذة طرد الجهاز -->
+    <div id="deviceKickedModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
+            <div style="font-size: 36px; margin-bottom: 8px;">🚪</div>
+            <div class="custom-modal-title" style="color:#991B1B;">تم تسجيل الخروج</div>
+            <p style="font-size: 12px; color: #475569; margin-bottom: 12px; font-weight: 800; line-height: 1.6;">
+                تم تسجيل الدخول من جهاز آخر بنفس الحساب.<br>
+                جاري توجيهك لصفحة الدخول...
+            </p>
+        </div>
+    </div>
+
     <section class="hero-banner">
         <div class="hero-content">
             <div class="hero-brand">مرحباً بك <span class="accent">يا بطل! 🎓</span></div>
@@ -562,6 +574,7 @@
         let curriculumCache = null;
         let curriculumUnsubscribe = null;
         let isFirstCurriculumSnapshot = true;
+        let deviceWatchUnsub = null;
 
         // ==========================================
         // ✅ معرّف المعلم الحالي (لعزل البيانات في Firestore)
@@ -580,6 +593,98 @@
                 if (remembered) return remembered;
             } catch(e) {}
             return 'guest';
+        }
+
+        // ==========================================
+        // 📱 Device ID Management
+        // ==========================================
+        function getOrCreateDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        // ==========================================
+        // ✅ التحقق من الجهاز عند التحميل
+        // ==========================================
+        async function verifyDeviceOnLoad() {
+            try {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (!loggedStr) return true;
+                
+                const logged = JSON.parse(loggedStr);
+                const teacherKey = String(logged.phone || '').replace(/\D/g, '');
+                if (!teacherKey) return true;
+
+                const currentDeviceId = getOrCreateDeviceId();
+                const mod = await loadFirebaseModule();
+                if (!mod) return true;
+
+                const ref = mod.doc(mod.db, "teacher_devices", teacherKey);
+                const snap = await mod.getDoc(ref);
+
+                if (snap.exists()) {
+                    const registeredDeviceId = snap.data().deviceId;
+                    if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
+                        // ⚠️ الجهاز ده اتطرد من جهاز تاني
+                        console.warn("🚪 جهاز مختلف — سيتم الخروج");
+                        showDeviceKickedAndRedirect();
+                        return false;
+                    }
+                }
+            } catch (err) {
+                console.warn("⚠️ device check:", err);
+            }
+            return true;
+        }
+
+        // ✅ نافذة الطرد + redirect
+        function showDeviceKickedAndRedirect() {
+            const modal = document.getElementById('deviceKickedModal');
+            if (modal) modal.classList.add('active');
+            setTimeout(() => {
+                localStorage.removeItem('loggedInTeacher');
+                localStorage.removeItem('rememberedPhone');
+                window.location.replace('./login.html');
+            }, 2500);
+        }
+
+        // ==========================================
+        // ✅ Watch listener للطرد اللحظي
+        // ==========================================
+        function startDeviceWatch() {
+            const loggedStr = localStorage.getItem('loggedInTeacher');
+            if (!loggedStr) return;
+
+            try {
+                const logged = JSON.parse(loggedStr);
+                const teacherKey = String(logged.phone || '').replace(/\D/g, '');
+                if (!teacherKey) return;
+
+                loadFirebaseModule().then(mod => {
+                    if (!mod) return;
+                    const ref = mod.doc(mod.db, "teacher_devices", teacherKey);
+                    const currentDeviceId = getOrCreateDeviceId();
+
+                    if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+
+                    deviceWatchUnsub = mod.onSnapshot(ref, (snap) => {
+                        if (!snap.exists()) return;
+                        const registeredDeviceId = snap.data().deviceId;
+                        
+                        if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
+                            console.warn("🔥 تم تسجيل الدخول من جهاز آخر!");
+                            if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+                            showDeviceKickedAndRedirect();
+                        }
+                    }, (err) => console.warn("⚠️ device watch:", err));
+                });
+            } catch(e) { 
+                console.warn("device watch:", e); 
+            }
         }
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1314,10 +1419,17 @@
         }
 
         // ==========================================
-        // ✅ onload: Firebase أولاً + عزل المعلم
+        // ✅ onload: Device Check + Firebase + عزل المعلم
         // ==========================================
         window.onload = async () => {
-            // 1) عزل بيانات talep حسب المعلم الحالي (تنظيف محلي)
+            // ✅ 1) التحقق من الجهاز أولاً (Single Device Login)
+            const isDeviceValid = await verifyDeviceOnLoad();
+            if (!isDeviceValid) return;
+
+            // ✅ 2) بدء المراقبة اللحظية للجهاز
+            startDeviceWatch();
+
+            // ✅ 3) عزل بيانات talep حسب المعلم الحالي
             const ownerKey = 'talep_data_owner';
             const currentKey = getCurrentTeacherKey();
             const savedOwner = localStorage.getItem(ownerKey);
@@ -1327,7 +1439,7 @@
             }
             localStorage.setItem(ownerKey, currentKey);
 
-            // 2) جلب المنهج
+            // 4) جلب المنهج
             try { await fetchCurriculumOnceFromFirebase(); } catch (e) {}
 
             if (!curriculumCache) {
@@ -1344,10 +1456,10 @@
                 }
             }
 
-            // 3) تحميل بيانات talep من Firestore (قبل بناء الواجهة)
+            // 5) تحميل بيانات talep من Firestore (قبل بناء الواجهة)
             await loadTalepFromFirebase();
 
-            // 4) بناء الواجهة
+            // 6) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
