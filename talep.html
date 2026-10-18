@@ -262,6 +262,104 @@
         .location-disclosure-box { text-align: right; line-height: 1.6; }
         .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
 
+        /* ============================================ */
+        /* ✅ سهم التحكم في نطاق البحث فوق الخريطة */
+        /* ============================================ */
+        .map-radius-control {
+            position: absolute;
+            top: 56px;
+            right: 10px;
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.97);
+            backdrop-filter: blur(6px);
+            border: 1.5px solid #10B981;
+            border-bottom: 3px solid #059669;
+            border-radius: 10px;
+            padding: 8px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            min-width: 200px;
+            max-width: calc(100% - 20px);
+            transition: all 0.2s;
+        }
+
+        .map-radius-control .radius-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            color: #065F46;
+        }
+
+        .map-radius-control .radius-value-badge {
+            background: #D1FAE5;
+            color: #065F46;
+            padding: 2px 8px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 900;
+            white-space: nowrap;
+        }
+
+        .map-radius-control .map-radius-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 5px;
+            border-radius: 4px;
+            background: #CBD5E1;
+            outline: none;
+            cursor: pointer;
+            display: block;
+        }
+
+        .map-radius-control .map-radius-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #10B981;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+            border: 2px solid #fff;
+        }
+
+        .map-radius-control .map-radius-slider::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #10B981;
+            cursor: pointer;
+            box-shadow: 0 0 6px rgba(16, 185, 129, 0.5);
+            border: 2px solid #fff;
+        }
+
+        .map-radius-control .radius-limits {
+            display: flex;
+            justify-content: space-between;
+            font-size: 9px;
+            color: #64748B;
+            font-weight: 800;
+            margin-top: 3px;
+        }
+
+        /* في وضع ملء الشاشة، نكبّر الحجم شوية */
+        .map-container.is-fullscreen .map-radius-control {
+            top: 60px;
+            padding: 10px 14px;
+            min-width: 240px;
+        }
+        .map-container.is-fullscreen .map-radius-control .map-radius-slider {
+            height: 7px;
+        }
+        .map-container.is-fullscreen .map-radius-control .map-radius-slider::-webkit-slider-thumb {
+            width: 22px;
+            height: 22px;
+        }
+
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
             .hero-brand { font-size: 20px; }
@@ -273,6 +371,7 @@
             .radio-grid label i { font-size: 18px; margin-bottom: 2px;}
             .btn-search { padding: 10px; font-size: 13px; }
             #map { height: 260px; }
+            .map-radius-control { min-width: 170px; padding: 6px 10px; }
         }
     </style>
 </head>
@@ -461,6 +560,22 @@
                     <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
                         🎯 موقعي الحالي
                     </button>
+
+                    <!-- ✅ سهم نطاق البحث فوق الخريطة -->
+                    <div class="map-radius-control" id="mapRadiusControl" onclick="event.stopPropagation()">
+                        <div class="radius-header">
+                            <span>🎯 نطاق البحث</span>
+                            <span class="radius-value-badge" id="mapRadiusValDisplay">3 كيلومتر</span>
+                        </div>
+                        <input type="range" id="mapRadiusSlider" class="map-radius-slider clickable-element"
+                               min="500" max="5000" step="100" value="3000"
+                               oninput="onMapRadiusSliderInput(this.value)"
+                               onchange="onMapRadiusSliderChange()">
+                        <div class="radius-limits">
+                            <span>500 م</span>
+                            <span>5 كم</span>
+                        </div>
+                    </div>
 
                     <div id="map"></div>
                 </div>
@@ -1074,11 +1189,51 @@
             }
             updateStudentSummary(); saveStudentData();
             if (searchCircle) { searchCircle.setRadius(val); }
+
+            // ✅ مزامنة السهم الجديد فوق الخريطة
+            const mapSlider = document.getElementById('mapRadiusSlider');
+            const mapDisplay = document.getElementById('mapRadiusValDisplay');
+            if (mapSlider) mapSlider.value = val;
+            if (mapDisplay) mapDisplay.innerText = formatRadiusText(val);
         }
 
         function onRadiusChangeEnd() {
             if (currentCenter && searchCircle) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
+            }
+        }
+
+        // ==========================================
+        // ✅ دوال السهم الجديد فوق الخريطة
+        // ==========================================
+        function formatRadiusText(val) {
+            val = parseInt(val);
+            if (val < 1000) return val + " متر";
+            let kmVal = (val / 1000).toFixed(1);
+            if (kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
+            return kmVal + " كم";
+        }
+
+        function onMapRadiusSliderInput(val) {
+            // تحديث العرض في البطاقة الصغيرة فوق الخريطة
+            document.getElementById('mapRadiusValDisplay').innerText = formatRadiusText(val);
+            // تحديث السلايدر الأصلي في تفضيلات الدرس
+            const originalSlider = document.getElementById('search_radius');
+            if (originalSlider) originalSlider.value = val;
+            // تحديث البادج في تفضيلات الدرس
+            const display = document.getElementById('radius_val_display');
+            if (display) display.innerText = formatRadiusText(val);
+            // تحديث الدائرة على الخريطة فورًا
+            if (searchCircle) searchCircle.setRadius(parseInt(val));
+            // حفظ
+            saveStudentData();
+        }
+
+        function onMapRadiusSliderChange() {
+            const val = parseInt(document.getElementById('mapRadiusSlider').value);
+            if (currentCenter && searchCircle && map) {
+                renderRegisteredTeachersFromEnd(currentCenter, val);
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
             }
         }
@@ -1133,7 +1288,10 @@
             }
             if (data.pref_teacher && document.getElementById(data.pref_teacher)) document.getElementById(data.pref_teacher).checked = true;
             if (data.pref_loc && document.getElementById(data.pref_loc)) document.getElementById(data.pref_loc).checked = true;
-            if (data.search_radius) { document.getElementById('search_radius').value = data.search_radius; updateRadiusDisplay(); }
+            if (data.search_radius) {
+                document.getElementById('search_radius').value = data.search_radius;
+                updateRadiusDisplay();
+            }
             
             updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
         }
@@ -1171,7 +1329,7 @@
 
             // 4) ربط المستمعات
             document.querySelectorAll('input, select').forEach(el => {
-                if (el.id !== 'search_radius') {
+                if (el.id !== 'search_radius' && el.id !== 'mapRadiusSlider') {
                     el.addEventListener('input', saveStudentData);
                     el.addEventListener('change', saveStudentData);
                 }
@@ -1587,6 +1745,12 @@
             teachersLayer.clearLayers();
 
             const searchRadius = parseInt(document.getElementById('search_radius').value);
+
+            // ✅ مزامنة السهم الجديد فوق الخريطة عند فتحها
+            const mapSlider = document.getElementById('mapRadiusSlider');
+            const mapDisplay = document.getElementById('mapRadiusValDisplay');
+            if (mapSlider) mapSlider.value = searchRadius;
+            if (mapDisplay) mapDisplay.innerText = formatRadiusText(searchRadius);
             
             currentCenter = [lat, lng];
             map.setView(currentCenter, 15);
