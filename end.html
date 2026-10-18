@@ -195,9 +195,39 @@
             font-weight: 800;
             display: none;
         }
+
+        /* ✅ شارة الحفظ اللحظي في Firebase */
+        .fb-sync-badge {
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            background: #10B981;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 900;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 9999;
+            border-bottom: 2px solid #059669;
+        }
+        .fb-sync-badge.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .fb-sync-badge.error {
+            background: #EF4444;
+            border-bottom-color: #B91C1C;
+        }
     </style>
 </head>
 <body>
+
+    <!-- ✅ شارة الحفظ اللحظي -->
+    <div id="fbSyncBadge" class="fb-sync-badge">☁️ جاري الحفظ في السحابة...</div>
 
     <!-- ✅ الهيدر (مع شارة بيانات المعلم مستر/مس ورقم التليفون) -->
     <section class="hero-banner">
@@ -329,6 +359,38 @@
         </button>
     </div>
 
+    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+          getFirestore,
+          doc,
+          getDoc,
+          setDoc,
+          onSnapshot
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.fsDoc = doc;
+      window.fsGetDoc = getDoc;
+      window.fsSetDoc = setDoc;
+      window.fsOnSnapshot = onSnapshot;
+
+      console.log("✅ Firebase + Firestore جاهز في end.html");
+    </script>
+
     <!-- ✅ السكريبتات -->
     <script>
         // ==========================================
@@ -373,19 +435,31 @@
         let teacherNameGlob = "المعلم"; 
         let currentLat = 30.0444;
         let currentLng = 31.2357;
-        let isTeacherBlocked = false; // متغير لتخزين حالة الحظر
+        let isTeacherBlocked = false;
+        let publishStateListener = null; // مرجع مستمع onSnapshot
         
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, location.href);
         });
 
+        // ✅ إظهار شارة الحفظ اللحظي
+        function showFbSyncBadge(message, isError = false) {
+            const badge = document.getElementById('fbSyncBadge');
+            badge.innerText = message;
+            badge.classList.toggle('error', isError);
+            badge.classList.add('show');
+            clearTimeout(badge._timeout);
+            badge._timeout = setTimeout(() => {
+                badge.classList.remove('show');
+            }, 2000);
+        }
+
         // الاستماع لتحديثات حالة الحظر من لوحة الإدارة
         const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
         if (authStatusChannel) {
             authStatusChannel.onmessage = (event) => {
                 if (event.data.type === 'AUTH_STATUS_CHANGED') {
-                    // إذا تطابق رقم التليفون أو اسم المعلم، نقوم بتحديث الحالة فوراً
                     const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
                     const nameParts = document.getElementById('headerTeacherTitleAndName').innerText.split(' / ');
                     const currentName = nameParts.length > 1 ? nameParts[1] : '';
@@ -398,22 +472,93 @@
             };
         }
         
-        window.onload = () => {
+        window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
             document.getElementById('reportTitle').innerText = `بيانات مجموعة ${currentLessonId}`;
 
+            // 1) تحميل البيانات من localStorage أولاً (سريع)
             loadActualData();
-            checkBlockStatus(); // فحص حالة الحظر عند التحميل
-            
-            // إذا كان محظوراً، يتم فرض إخفاء الخريطة، وإلا نعتمد على الحالة المحفوظة
+            checkBlockStatus();
+
+            // 2) ✅ قراءة حالة النشر من Firebase (المصدر الحقيقي)
             let initialPublishState = false;
-            if(!isTeacherBlocked) {
-                 initialPublishState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
+            if (!isTeacherBlocked) {
+                initialPublishState = await readPublishStateFromFirebase(currentLessonId);
             }
-            togglePublish(initialPublishState); 
+            togglePublish(initialPublishState, true); // true = لا تكتب في Firebase (دي قراءة أولية)
+
+            // 3) ✅ مستمع لحظي لحالة النشر من Firebase
+            startPublishStateRealtimeListener();
         };
+
+        // ==========================================
+        // ✅ قراءة حالة النشر من Firebase
+        // ==========================================
+        async function readPublishStateFromFirebase(lessonId) {
+            try {
+                if (!window.db || !window.fsDoc || !window.fsGetDoc) {
+                    console.warn("⚠️ Firebase غير جاهز — استخدام localStorage");
+                    return localStorage.getItem('publishState_' + lessonId) === 'true';
+                }
+                const ref = window.fsDoc(window.db, "lessons", String(lessonId));
+                const snap = await window.fsGetDoc(ref);
+                if (snap.exists()) {
+                    const data = snap.data();
+                    // g_publish_map لو مش موجود يبقى default false (مخفي)
+                    const isPublished = data.g_publish_map === true;
+                    localStorage.setItem('publishState_' + lessonId, isPublished);
+                    console.log(`☁️ [end] حالة النشر من Firebase: ${isPublished ? 'ظاهر' : 'مخفي'}`);
+                    return isPublished;
+                }
+                console.log("📭 [end] الحصة غير موجودة في Firebase — استخدام localStorage");
+                return localStorage.getItem('publishState_' + lessonId) === 'true';
+            } catch (err) {
+                console.warn("⚠️ فشل قراءة حالة النشر من Firebase:", err);
+                return localStorage.getItem('publishState_' + lessonId) === 'true';
+            }
+        }
+
+        // ==========================================
+        // ✅ مستمع لحظي لحالة النشر
+        // ==========================================
+        function startPublishStateRealtimeListener() {
+            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) {
+                console.warn("⚠️ Firebase غير جاهز للمستمع اللحظي");
+                return;
+            }
+
+            // إلغاء مستمع قديم لو موجود
+            if (publishStateListener) {
+                try { publishStateListener(); } catch (e) {}
+            }
+
+            const ref = window.fsDoc(window.db, "lessons", String(currentLessonId));
+            publishStateListener = window.fsOnSnapshot(ref, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data();
+                    const fbState = data.g_publish_map === true;
+                    const localState = localStorage.getItem('publishState_' + currentLessonId) === 'true';
+
+                    if (fbState !== localState) {
+                        console.log(`🔄 [end] تغيرت حالة النشر في Firebase إلى: ${fbState ? 'ظاهر' : 'مخفي'}`);
+                        localStorage.setItem('publishState_' + currentLessonId, fbState);
+
+                        const mapWrap = document.getElementById('mapWrapper');
+                        if (fbState && !isTeacherBlocked) {
+                            mapWrap.classList.remove('is-hidden');
+                        } else {
+                            mapWrap.classList.add('is-hidden');
+                        }
+                        updateMapMarker(fbState && !isTeacherBlocked);
+                        showFbSyncBadge(fbState ? '✅ الموقع ظاهر للطلاب' : '🔒 الموقع مخفي عن الطلاب');
+                    }
+                }
+            }, (err) => {
+                console.warn("⚠️ [end] onSnapshot فشل:", err);
+            });
+        }
 
         function checkBlockStatus() {
             const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
@@ -439,18 +584,15 @@
             const overlayActionText = document.getElementById('overlayActionText');
 
             if (isTeacherBlocked) {
-                // تفعيل واجهة الحظر
                 alertEl.style.display = 'block';
                 mapWrap.classList.add('is-blocked');
                 overlayTitle.innerText = "الخريطة معطلة (حساب محظور)";
                 overlayActionText.innerHTML = "<b>يرجى التواصل مع الإدارة</b>";
                 
-                // إجبار الخريطة على الاختفاء
                 if (!mapWrap.classList.contains('is-hidden')) {
                      togglePublish(false);
                 }
             } else {
-                // إزالة واجهة الحظر
                 alertEl.style.display = 'none';
                 mapWrap.classList.remove('is-blocked');
                 overlayTitle.innerText = "الموقع محجوب عن الطلاب";
@@ -473,7 +615,6 @@
             let teacherPhone = '';
             let teacherName = 'غير محدد';
 
-            // 1. محاولة القراءة من بيانات الحصة / الدرس الحالية
             if (savedData) {
                 const state = JSON.parse(savedData);
 
@@ -490,14 +631,12 @@
                 
                 if(state.g_count) document.getElementById('val-count').innerText = `${state.g_count} طالب`;
                 
-                // جلب وعرض المرحلة الدراسية
                 if(state.s_stage) {
                     let stageName = state.s_stage;
                     if(stageName === 'primary') stageName = 'المرحلة الابتدائية';
                     else if(stageName === 'prep') stageName = 'المرحلة الإعدادية';
                     else if(stageName === 'secondary') stageName = 'المرحلة الثانوية';
                     else {
-                        // محاولة جلب الاسم الحقيقي للمرحلة المخصصة من قائمة المناهج
                         try {
                             const curr = JSON.parse(localStorage.getItem('app_curriculum') || '{}');
                             if(curr[state.s_stage] && curr[state.s_stage].name) {
@@ -505,7 +644,6 @@
                             }
                         } catch(e) {}
                     }
-                    // إزالة الإيموجي الافتراضي من الاسم لتجنب تكراره
                     document.getElementById('val-stage').innerText = stageName.replace(/^[🎒📐🎓]\s*/, '');
                 }
 
@@ -588,7 +726,6 @@
                 }
             }
 
-            // 2. إذا لم يكن رقم التليفون أو اللقب موجوداً في الـ state، نقوم باسترجاعه من حساب المعلم المسجل (`login.html` / `teacherAccount_` أو `loggedInTeacher`)
             if (!teacherPhone || teacherName === 'غير محدد') {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
                 if (loggedStr) {
@@ -616,7 +753,6 @@
                 }
             }
 
-            // 3. عرض البيانات في الهيدر العلوي
             const badgeEl = document.getElementById('teacherHeaderBadge');
             const titleAndNameEl = document.getElementById('headerTeacherTitleAndName');
             const phoneEl = document.getElementById('headerTeacherPhone');
@@ -652,6 +788,7 @@
         function updateMapMarker(isPublished) {
             if (staticMarker) {
                 staticMap.removeLayer(staticMarker);
+                staticMarker = null;
             }
 
             if (isPublished) {
@@ -680,7 +817,10 @@
             }
         }
 
-        function togglePublish(forceState = null) {
+        // ==========================================
+        // ✅ togglePublish محدّث: بيقرأ ويحفظ في Firebase
+        // ==========================================
+        async function togglePublish(forceState = null, skipFirebaseWrite = false) {
             let isPublished;
             if (forceState !== null) {
                 isPublished = forceState;
@@ -704,6 +844,25 @@
 
             updateMapMarker(isPublished);
             localStorage.setItem('publishState_' + currentLessonId, isPublished);
+
+            // ✅ حفظ في Firebase (إلا لو skipFirebaseWrite=true)
+            if (!skipFirebaseWrite) {
+                try {
+                    if (window.db && window.fsDoc && window.fsSetDoc) {
+                        showFbSyncBadge('☁️ جاري الحفظ في السحابة...');
+                        const ref = window.fsDoc(window.db, "lessons", String(currentLessonId));
+                        await window.fsSetDoc(ref, { g_publish_map: isPublished }, { merge: true });
+                        console.log(`☁️ [end] تم تحديث g_publish_map = ${isPublished} في Firebase`);
+                        showFbSyncBadge(isPublished ? '✅ الموقع ظاهر للطلاب' : '🔒 الموقع مخفي عن الطلاب');
+                    } else {
+                        console.warn("⚠️ Firebase غير جاهز — تم الحفظ في localStorage فقط");
+                        showFbSyncBadge('⚠️ حفظ محلي فقط', true);
+                    }
+                } catch (err) {
+                    console.error("❌ فشل تحديث Firebase:", err);
+                    showFbSyncBadge('❌ فشل الحفظ في السحابة', true);
+                }
+            }
         }
 
         function editLesson() {
