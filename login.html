@@ -478,7 +478,7 @@
 
     <script>
         // ==========================================
-        // 🎵 Audio (اختياري)
+        // 🎵 Audio
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -498,6 +498,36 @@
         });
 
         // ==========================================
+        // 🧹 مسح بيانات المعلم القديم
+        // ==========================================
+        function clearPreviousTeacherData() {
+            try {
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (!k) continue;
+                    if (
+                        k === 'teacher_lessons' ||
+                        k === 'talep_data' ||
+                        k === 'talep_data_owner' ||
+                        k === 'lessons_owner_phone' ||
+                        k === 'location_consent_given' ||
+                        k.startsWith('lessonState_') ||
+                        k.startsWith('publishState_')
+                    ) {
+                        keysToRemove.push(k);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                console.log(`🧹 [Clear] تم مسح ${keysToRemove.length} مفتاح من معلم قديم`);
+                return keysToRemove.length;
+            } catch (e) {
+                console.warn("⚠️ فشل مسح بيانات المعلم القديم:", e);
+                return 0;
+            }
+        }
+
+        // ==========================================
         // 📱 Device ID Management
         // ==========================================
         function getOrCreateDeviceId() {
@@ -510,7 +540,7 @@
         }
 
         // ==========================================
-        // ☁️ Firebase Module Loader (dynamic)
+        // ☁️ Firebase Module Loader
         // ==========================================
         let _fbModule = null;
         async function getFbModule() {
@@ -556,7 +586,6 @@
             try {
                 const fb = await getFbModule();
                 if (!fb) {
-                    // فشل تحميل Firebase → نسمح بالدخول (offline fallback)
                     return { allowed: true, kickedOld: false, error: 'no-firebase' };
                 }
 
@@ -573,7 +602,6 @@
                     }
                 }
 
-                // نسجل الجهاز الحالي
                 await fb.setDoc(ref, {
                     deviceId: currentDeviceId,
                     phone: teacherKey,
@@ -594,9 +622,7 @@
         // 🚀 OnLoad
         // ==========================================
         window.onload = function() {
-            // مسح جلسة الدخول السابقة لكن الاحتفاظ بـ device_id
             localStorage.removeItem('loggedInTeacher');
-            // ⚠️ لا تمسح device_id!
 
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
@@ -605,7 +631,6 @@
                 document.getElementById('loginPassword').value = '';
             }
 
-            // إظهار شارة معلومات الجهاز
             if (localStorage.getItem('device_id')) {
                 document.getElementById('deviceInfoBadge').classList.add('show');
             }
@@ -662,6 +687,9 @@
             btn.innerText = '⏳ جاري إنشاء الحساب...';
             btn.disabled = true;
 
+            // ✅ امسح بيانات المعلم القديم قبل الحفظ
+            clearPreviousTeacherData();
+
             const accountData = { 
                 title, name, age, phone, pass: pass1, 
                 createdAt: new Date().toISOString().split('T')[0] 
@@ -670,7 +698,6 @@
             localStorage.setItem('rememberedPhone', phone);
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
 
-            // سجّل الجهاز ده كأول جهاز
             try { 
                 await verifyAndRegisterDevice(phone, accountData); 
             } catch(e) {
@@ -705,7 +732,6 @@
                 return;
             }
 
-            // ✅ التحقق من الجهاز
             const btn = document.getElementById('loginBtn');
             const originalText = btn.innerText;
             btn.innerText = '⏳ جاري التحقق من الجهاز...';
@@ -728,10 +754,22 @@
                     showAlert('تنبيه: تعذر الاتصال بالسحابة، الدخول محلي فقط.', true);
                 }
 
+                // ✅ امسح بيانات المعلم القديم لو مختلف
+                const oldLogged = localStorage.getItem('loggedInTeacher');
+                let oldPhone = '';
+                try { 
+                    oldPhone = String(JSON.parse(oldLogged || '{}').phone || '').replace(/\D/g, ''); 
+                } catch(e) {}
+                const newPhone = String(phone).replace(/\D/g, '');
+                
+                if (oldPhone && oldPhone !== newPhone) {
+                    console.log(`🧹 معلم مختلف (${oldPhone} → ${newPhone})`);
+                    clearPreviousTeacherData();
+                }
+
                 localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
                 localStorage.setItem('rememberedPhone', phone);
 
-                // توجيه بعد تأخير بسيط
                 setTimeout(() => {
                     window.location.href = './index2.html';
                 }, 300);
@@ -790,7 +828,6 @@
                 } catch(e) {}
             }
 
-            // مسح بيانات الحساب من localStorage
             localStorage.removeItem('teacherAccount_' + phone);
             localStorage.removeItem('teacherVerification_' + phone);
             localStorage.removeItem('teacherBlocked_' + phone);
@@ -799,7 +836,6 @@
                 localStorage.removeItem('teacherBlocked_name_' + cleanName);
             }
             
-            // مسح الحصص المرتبطة
             const keysToRemove = [];
             for (let i = 0; i < localStorage.length; i++) {
                 const k = localStorage.key(i);
@@ -823,7 +859,6 @@
 
             localStorage.removeItem('loggedInTeacher'); 
 
-            // ✅ مسح teacher_devices من Firebase
             try {
                 const fb = await getFbModule();
                 if (fb) {
@@ -834,15 +869,6 @@
             } catch (e) {
                 console.warn("⚠️ فشل حذف سجل الجهاز:", e);
             }
-
-            // ✅ حذف مستندات Firestore المرتبطة (اختياري - uncomment لو تحب)
-            // try {
-            //     const fb = await getFbModule();
-            //     if (fb) {
-            //         const teacherKey = String(phone).replace(/\D/g, '');
-            //         await fb.deleteDoc(fb.doc(fb.db, "talep_data", teacherKey));
-            //     }
-            // } catch(e) {}
 
             document.getElementById('deletedSuccessModal').classList.add('active');
             setTimeout(() => { window.location.href = './index.html'; }, 1600);
