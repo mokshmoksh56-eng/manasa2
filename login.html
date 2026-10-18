@@ -665,7 +665,7 @@
         }
 
         // ==========================================
-        // 📝 Register
+        // 📝 Register — يحفظ محلياً + في السحابة (teachers)
         // ==========================================
         async function handleRegister(event) {
             const title = document.querySelector('input[name="title"]:checked').value;
@@ -680,27 +680,83 @@
             if (pass1.length !== 4) return showAlert('الرقم السري يجب أن يكون 4 أرقام.');
             if (pass1 !== pass2) return showAlert('الرقمان السريان غير متطابقين.');
 
-            if (localStorage.getItem('teacherAccount_' + phone)) return showAlert('هذا الرقم مسجل مسبقاً!');
-
             const btn = document.getElementById('registerBtn');
             const originalText = btn.innerText;
-            btn.innerText = '⏳ جاري إنشاء الحساب...';
+            btn.innerText = '⏳ جاري التحقق من السحابة...';
             btn.disabled = true;
 
-            // ✅ امسح بيانات المعلم القديم قبل الحفظ
+            const fb = await getFbModule();
+
+            // ✅ 1) فحص وجود الحساب في السحابة
+            if (fb) {
+                try {
+                    const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                    if (snap.exists()) {
+                        const d = snap.data() || {};
+                        if (d.pass && String(d.pass).length === 4) {
+                            btn.innerText = originalText;
+                            btn.disabled = false;
+                            return showAlert('هذا الرقم مسجل مسبقاً على السحابة! استخدم "تسجيل الدخول" بدلاً من حساب جديد.');
+                        }
+                        // لو المستند أنشأته الإدارة بدون كلمة سر → نكمّل ونضيف الباسورد
+                    }
+                } catch (e) {
+                    console.warn("⚠️ فحص السحابة فشل:", e);
+                }
+            }
+
+            // ✅ 2) فحص محلي احتياطي
+            const localExisting = localStorage.getItem('teacherAccount_' + phone);
+            if (localExisting) {
+                try {
+                    const ex = JSON.parse(localExisting);
+                    if (ex && ex.pass) {
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        return showAlert('هذا الرقم مسجل مسبقاً على هذا الجهاز! سجّل الدخول بدلاً من ذلك.');
+                    }
+                } catch (e) {}
+            }
+
             clearPreviousTeacherData();
 
-            const accountData = { 
-                title, name, age, phone, pass: pass1, 
-                createdAt: new Date().toISOString().split('T')[0] 
+            const accountData = {
+                title, name, age, phone, pass: pass1,
+                createdAt: new Date().toISOString().split('T')[0]
             };
+
+            // ✅ 3) حفظ محلي
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
             localStorage.setItem('rememberedPhone', phone);
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
 
-            try { 
-                await verifyAndRegisterDevice(phone, accountData); 
-            } catch(e) {
+            // ✅ 4) حفظ في Firestore
+            if (fb) {
+                try {
+                    btn.innerText = '☁️ جاري حفظ الحساب في السحابة...';
+                    await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
+                        phone: phone,
+                        teacherName: name,
+                        name: name,
+                        title: title,
+                        age: age,
+                        pass: pass1,
+                        verification: '30 يوم تجريبي',
+                        isBlocked: false,
+                        waClicks: 0,
+                        phoneType: '',
+                        createdAt: accountData.createdAt,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+                    console.log("☁️ تم حفظ الحساب في السحابة بنجاح");
+                } catch (e) {
+                    console.warn("⚠️ فشل حفظ الحساب في السحابة:", e);
+                }
+            }
+
+            try {
+                await verifyAndRegisterDevice(phone, accountData);
+            } catch (e) {
                 console.warn("device register on signup:", e);
             }
 
@@ -708,34 +764,100 @@
         }
 
         // ==========================================
-        // 🔐 Login
+        // 🔐 Login — يقرأ من المحلي + من السحابة
         // ==========================================
         async function handleLogin(event) {
             const phone = document.getElementById('loginPhone').value.trim();
-            const pass = document.getElementById('loginPassword').value;
+            const pass  = document.getElementById('loginPassword').value;
 
             if (phone.length !== 11 || pass.length !== 4) {
                 return showAlert('يرجى إدخال بيانات صحيحة.');
             }
 
-            const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
-            if (!savedDataStr) return showAlert('هذا الرقم غير مسجل.');
+            const btn = document.getElementById('loginBtn');
+            const originalText = btn.innerText;
+            btn.innerText = '⏳ جاري التحقق...';
+            btn.disabled = true;
 
-            const savedData = JSON.parse(savedDataStr);
-            if (savedData.pass !== pass) return showAlert('الرقم السري غير صحيح.');
+            const fb = await getFbModule();
+            let savedData = null;
 
-            const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true' 
-                           || localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
-            
+            // ✅ 1) حاول من التخزين المحلي أولاً
+            const localStr = localStorage.getItem('teacherAccount_' + phone);
+            if (localStr) {
+                try { savedData = JSON.parse(localStr); } catch (e) {}
+            }
+
+            // ✅ 2) لو مش موجود محلياً → جيبه من السحابة (يعني داخل من جهاز جديد)
+            let fromCloud = false;
+            if (!savedData && fb) {
+                try {
+                    const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                    if (snap.exists()) {
+                        const d = snap.data() || {};
+                        if (d.pass && String(d.pass).length === 4) {
+                            savedData = {
+                                title: d.title || 'مستر',
+                                name: d.teacherName || d.name || '',
+                                age: d.age || '',
+                                phone: phone,
+                                pass: d.pass,
+                                createdAt: d.createdAt || new Date().toISOString().split('T')[0]
+                            };
+                            fromCloud = true;
+                            localStorage.setItem('teacherAccount_' + phone, JSON.stringify(savedData));
+                            console.log("☁️ تم استرجاع الحساب من السحابة");
+                        }
+                    }
+                } catch (e) {
+                    console.warn("⚠️ جلب الحساب من السحابة فشل:", e);
+                }
+            }
+
+            if (!savedData) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return showAlert('هذا الرقم غير مسجل. تأكد من الرقم أو أنشئ حساباً جديداً من تبويب "حساب جديد".');
+            }
+
+            if (String(savedData.pass) !== String(pass)) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                return showAlert('الرقم السري غير صحيح.');
+            }
+
+            // ✅ 3) فحص الحظر من السحابة (لو الأدمن حظر الحساب من school.html)
+            let isBlocked =
+                localStorage.getItem('teacherBlocked_' + phone) === 'true' ||
+                localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
+
+            if (fb) {
+                try {
+                    const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                    if (snap.exists()) {
+                        const d = snap.data() || {};
+                        if (d.isBlocked === true || d.verification === 'حظر') {
+                            isBlocked = true;
+                            localStorage.setItem('teacherBlocked_' + phone, 'true');
+                            if (savedData.name) localStorage.setItem('teacherBlocked_name_' + savedData.name, 'true');
+                        } else if (d.isBlocked === false) {
+                            localStorage.removeItem('teacherBlocked_' + phone);
+                            if (savedData.name) localStorage.removeItem('teacherBlocked_name_' + savedData.name);
+                        }
+                    }
+                } catch (e) {
+                    console.warn("⚠️ فحص الحظر من السحابة فشل:", e);
+                }
+            }
+
             if (isBlocked) {
+                btn.innerText = originalText;
+                btn.disabled = false;
                 document.getElementById('blockedAccountModal').classList.add('active');
                 return;
             }
 
-            const btn = document.getElementById('loginBtn');
-            const originalText = btn.innerText;
             btn.innerText = '⏳ جاري التحقق من الجهاز...';
-            btn.disabled = true;
 
             try {
                 const deviceCheck = await verifyAndRegisterDevice(phone, savedData);
@@ -754,14 +876,12 @@
                     showAlert('تنبيه: تعذر الاتصال بالسحابة، الدخول محلي فقط.', true);
                 }
 
-                // ✅ امسح بيانات المعلم القديم لو مختلف
+                // ✅ تنظيف بيانات معلم قديم لو مختلف
                 const oldLogged = localStorage.getItem('loggedInTeacher');
                 let oldPhone = '';
-                try { 
-                    oldPhone = String(JSON.parse(oldLogged || '{}').phone || '').replace(/\D/g, ''); 
-                } catch(e) {}
+                try { oldPhone = String(JSON.parse(oldLogged || '{}').phone || '').replace(/\D/g, ''); } catch (e) {}
                 const newPhone = String(phone).replace(/\D/g, '');
-                
+
                 if (oldPhone && oldPhone !== newPhone) {
                     console.log(`🧹 معلم مختلف (${oldPhone} → ${newPhone})`);
                     clearPreviousTeacherData();
@@ -770,9 +890,13 @@
                 localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
                 localStorage.setItem('rememberedPhone', phone);
 
+                if (fromCloud) {
+                    showAlert('✅ تم استرجاع حسابك من السحابة بنجاح!', false);
+                }
+
                 setTimeout(() => {
                     window.location.href = './index2.html';
-                }, 300);
+                }, fromCloud ? 800 : 300);
 
             } catch (err) {
                 btn.innerText = originalText;
@@ -864,7 +988,8 @@
                 if (fb) {
                     const teacherKey = String(phone).replace(/\D/g, '');
                     await fb.deleteDoc(fb.doc(fb.db, "teacher_devices", teacherKey));
-                    console.log("✅ تم حذف سجل الجهاز من Firebase");
+                    await fb.deleteDoc(fb.doc(fb.db, "teachers", teacherKey)).catch(() => {});
+                    console.log("✅ تم حذف سجل الجهاز والحساب من Firebase");
                 }
             } catch (e) {
                 console.warn("⚠️ فشل حذف سجل الجهاز:", e);
