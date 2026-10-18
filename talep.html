@@ -577,7 +577,7 @@
         let deviceWatchUnsub = null;
 
         // ==========================================
-        // ✅ معرّف المعلم الحالي (لعزل البيانات في Firestore)
+        // ✅ معرّف المعلم الحالي
         // ==========================================
         function getCurrentTeacherKey() {
             try {
@@ -608,7 +608,7 @@
         }
 
         // ==========================================
-        // ✅ التحقق من الجهاز عند التحميل
+        // ✅ التحقق من الجهاز
         // ==========================================
         async function verifyDeviceOnLoad() {
             try {
@@ -629,7 +629,6 @@
                 if (snap.exists()) {
                     const registeredDeviceId = snap.data().deviceId;
                     if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
-                        // ⚠️ الجهاز ده اتطرد من جهاز تاني
                         console.warn("🚪 جهاز مختلف — سيتم الخروج");
                         showDeviceKickedAndRedirect();
                         return false;
@@ -641,7 +640,6 @@
             return true;
         }
 
-        // ✅ نافذة الطرد + redirect
         function showDeviceKickedAndRedirect() {
             const modal = document.getElementById('deviceKickedModal');
             if (modal) modal.classList.add('active');
@@ -653,7 +651,7 @@
         }
 
         // ==========================================
-        // ✅ Watch listener للطرد اللحظي
+        // ✅ Watch listener
         // ==========================================
         function startDeviceWatch() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -747,7 +745,7 @@
         };
 
         // ==========================================
-        // ✅ Firebase Module Loader (للاستخدام في كل الدوال)
+        // ✅ Firebase Module Loader
         // ==========================================
         let firebaseSyncModule = null;
 
@@ -1394,7 +1392,6 @@
             };
             localStorage.setItem('talep_data', JSON.stringify(studentData));
             updateStudentSummary();
-            // ✅ حفظ في Firebase (debounced)
             saveTalepToFirebase(false);
         }
 
@@ -1419,17 +1416,40 @@
         }
 
         // ==========================================
-        // ✅ onload: Device Check + Firebase + عزل المعلم
+        // ✅ onload: Device Check + Cleanup + Firebase
         // ==========================================
         window.onload = async () => {
-            // ✅ 1) التحقق من الجهاز أولاً (Single Device Login)
+            // ✅ 1) التحقق من الجهاز
             const isDeviceValid = await verifyDeviceOnLoad();
             if (!isDeviceValid) return;
 
-            // ✅ 2) بدء المراقبة اللحظية للجهاز
+            // ✅ 2) بدء المراقبة اللحظية
             startDeviceWatch();
 
-            // ✅ 3) عزل بيانات talep حسب المعلم الحالي
+            // ✅ 3) تنظيف حصص المعلم القديم (احتياطي)
+            const currentKey_talep = getCurrentTeacherKey();
+            const lessonsOwnerKey_talep = 'lessons_owner_phone';
+            const savedLessonsOwner_talep = localStorage.getItem(lessonsOwnerKey_talep);
+
+            if (savedLessonsOwner_talep && currentKey_talep && savedLessonsOwner_talep !== currentKey_talep) {
+                console.log(`🧹 [talep] معلم مختلف — تنظيف حصص قديمة`);
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (!k) continue;
+                    if (k.startsWith('lessonState_') || k.startsWith('publishState_')) {
+                        keysToRemove.push(k);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                localStorage.removeItem('teacher_lessons');
+            }
+
+            if (currentKey_talep && currentKey_talep !== 'guest') {
+                localStorage.setItem(lessonsOwnerKey_talep, currentKey_talep);
+            }
+
+            // ✅ 4) عزل بيانات talep حسب المعلم
             const ownerKey = 'talep_data_owner';
             const currentKey = getCurrentTeacherKey();
             const savedOwner = localStorage.getItem(ownerKey);
@@ -1439,7 +1459,7 @@
             }
             localStorage.setItem(ownerKey, currentKey);
 
-            // 4) جلب المنهج
+            // 5) جلب المنهج
             try { await fetchCurriculumOnceFromFirebase(); } catch (e) {}
 
             if (!curriculumCache) {
@@ -1456,10 +1476,10 @@
                 }
             }
 
-            // 5) تحميل بيانات talep من Firestore (قبل بناء الواجهة)
+            // 6) تحميل بيانات talep
             await loadTalepFromFirebase();
 
-            // 6) بناء الواجهة
+            // 7) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
@@ -1544,7 +1564,6 @@
         function acceptLocation() {
             document.getElementById('locationDisclosureModal').classList.remove('active');
             localStorage.setItem('location_consent_given', 'true');
-            // ✅ حفظ فوري في Firestore
             saveTalepToFirebase(true);
             startSmartSearch();
         }
@@ -1597,7 +1616,6 @@
                 closeSaveLocModal();
                 showToast("تمت إضافة الموقع للمفضلة! 📌");
             }
-            // ✅ حفظ فوري في Firestore
             saveTalepToFirebase(true);
         }
 
