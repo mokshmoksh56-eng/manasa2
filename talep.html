@@ -8,7 +8,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
@@ -17,9 +16,6 @@
         html, body { overscroll-behavior-x: none; touch-action: pan-y; }
         body { background: #F8FAFC; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
-        /* ============================================ */
-        /* ✅ الهيدر */
-        /* ============================================ */
         .hero-banner {
             position: relative; width: 100%; min-height: 120px;
             background-image: url('./teacher2.png'); background-size: cover; background-position: center 20%;
@@ -34,16 +30,12 @@
         .hero-brand .accent { color: #10B981; }
         .hero-headline { font-size: 13px; font-weight: 900; color: #1E293B; margin-top: 2px; }
 
-        /* ============================================ */
-        /* ✅ الحاوية والبطاقات (مضغوطة) */
-        /* ============================================ */
         .main-container { max-width: 800px; margin: -10px auto 0; width: 100%; padding: 0 10px 50px; position: relative; z-index: 10; }
         
         .smart-card {
             background: #fff; border-radius: 12px; padding: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 12px;
         }
 
-        /* 🟢 البطاقة الخضراء (البيانات) 🟢 */
         .bg-green-solid {
             background: #10B981 !important; border: 1.5px solid #059669 !important;
             border-top: 4px solid #047857 !important; border-bottom: 4px solid #064E3B !important;
@@ -54,7 +46,6 @@
         .bg-green-solid .form-control { border: 1.5px solid #059669 !important; border-bottom: 3px solid #064E3B !important; }
         .bg-green-solid .form-control:focus { border-color: #047857 !important; box-shadow: 0 0 0 3px rgba(255,255,255,0.3) !important; }
         
-        /* 🟡 البطاقة الصفراء (المرحلة والمادة) 🟡 */
         .bg-yellow-solid {
             background-color: #FEF08A !important; border: 1.5px solid #FDE047 !important;
             border-top: 4px solid #FACC15 !important; border-bottom: 4px solid #CA8A04 !important;
@@ -65,7 +56,6 @@
         .bg-yellow-solid .form-control:focus { border-color: #A16207 !important; box-shadow: 0 0 0 3px rgba(250,204,21,0.4) !important; }
         .bg-yellow-solid .form-control:disabled { background-color: #FEF9C3 !important; color: #A16207 !important; border-color: #FDE047 !important; border-bottom-color: #EAB308 !important; }
 
-        /* شريط أزرار مواد الصف السريعة داخل البطاقة الصفراء */
         .student-grade-subjects-box {
             margin-top: 10px;
             padding: 8px 10px;
@@ -97,7 +87,6 @@
             border-bottom-color: #064E3B;
         }
 
-        /* ⚪ البطاقة الأبيض الغامق (تفضيلات) ⚪ */
         .bg-offwhite-card {
             background-color: #F1F5F9 !important; border: 1.5px solid #E2E8F0 !important;
             border-top: 4px solid #94A3B8 !important; border-bottom: 4px solid #475569 !important;
@@ -147,7 +136,6 @@
         #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background-color: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899 !important; }
 
-        /* ✅ ملخص بيانات الطالب */
         .student-summary-card {
             background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 1.5px solid #86EFAC; border-bottom: 3px solid #16A34A;
             border-radius: 10px; padding: 10px 12px; margin-top: 15px; margin-bottom: 10px; display: none; 
@@ -161,11 +149,9 @@
         }
         .summary-badge span { color: #15803D; font-weight: 900; font-size: 9px; }
 
-        /* ✅ شريط تمرير النطاق */
         .styled-slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 4px; background: #CBD5E1; outline: none; margin-top: 4px; margin-bottom: 4px; }
         .styled-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #10B981; cursor: pointer; box-shadow: 0 0 8px rgba(16, 185, 129, 0.4); border: 2.5px solid #fff; }
         
-        /* ✅ أزرار البحث والتحكم */
         .btn-search {
             width: 100%; padding: 12px; border-radius: 10px; font-size: 14px; font-weight: 900;
             display: flex; justify-content: center; align-items: center; gap: 6px; cursor: pointer; transition: all 0.2s;
@@ -180,9 +166,6 @@
 
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
 
-        /* ============================================ */
-        /* ✅ الخريطة والنافذة المنبثقة */
-        /* ============================================ */
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; } 
@@ -217,7 +200,6 @@
         .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
         .teacher-popup-detail { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #475569; font-size: 10.5px; margin-bottom: 4px; background: #F8FAFC; padding: 4px 6px; border-radius: 5px; gap: 6px;}
         
-        /* علامة المستر المسجل */
         .registered-teacher-marker {
             background-color: #10B981; color: white; border-radius: 50%;
             width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
@@ -233,9 +215,6 @@
         path.leaflet-interactive { animation: breathe 3s ease-in-out infinite; }
         @keyframes breathe { 0%, 100% { fill-opacity: 0.1; } 50% { fill-opacity: 0.25; } }
 
-        /* ============================================ */
-        /* ✅ تصميم القوائم المحفوظة (Dropdown) المضغوطة */
-        /* ============================================ */
         .saved-sections-wrapper { display: flex; flex-direction: column; gap: 8px; margin-bottom: 15px; }
         
         .dropdown-btn {
@@ -263,9 +242,6 @@
         .btn-del-loc { background: #FEE2E2; color: #EF4444; border: 1px solid #FCA5A5; border-bottom: 2.5px solid #F87171; }
         .btn-del-loc:active { transform: translateY(1px); border-bottom-width: 1.5px; }
 
-        /* ============================================ */
-        /* ✅ النوافذ المنبثقة (Modals) والإشعارات */
-        /* ============================================ */
         .custom-modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; z-index: 9999999; opacity: 0; visibility: hidden; transition: all 0.2s; }
         .custom-modal-overlay.active { opacity: 1; visibility: visible; }
         .custom-modal-box { background: #fff; border-radius: 16px; padding: 20px; width: 90%; max-width: 320px; text-align: center; box-shadow: 0 15px 30px rgba(0,0,0,0.2); transform: translateY(15px) scale(0.95); transition: all 0.2s; border-bottom: 5px solid #10B981; }
@@ -283,7 +259,6 @@
         .custom-toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(100px); background: #10B981; color: white; padding: 10px 20px; border-radius: 99px; font-weight: 900; font-size: 13px; display: flex; align-items: center; gap: 6px; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); z-index: 9999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); opacity: 0; border-bottom: 2.5px solid #059669; white-space: nowrap; }
         .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
-        /* تعديلات نافذة الموقع الجغرافي */
         .location-disclosure-box { text-align: right; line-height: 1.6; }
         .location-disclosure-box ul { padding-right: 15px; margin-bottom: 15px; font-size: 13px; color: #475569; font-weight: 700; list-style-type: disc; }
 
@@ -307,7 +282,6 @@
         <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- 🟢 1. نافذة الإفصاح عن الموقع (Prominent Disclosure) 🟢 -->
     <div id="locationDisclosureModal" class="custom-modal-overlay">
         <div class="custom-modal-box location-disclosure-box">
             <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">📍</div>
@@ -329,7 +303,6 @@
         </div>
     </div>
 
-    <!-- نافذة إدخال اسم الموقع -->
     <div id="saveLocModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div id="locModalEmoji" style="font-size: 36px; margin-bottom: 8px;">🏡</div>
@@ -342,7 +315,6 @@
         </div>
     </div>
 
-    <!-- نافذة تأكيد الحذف -->
     <div id="deleteModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 36px; margin-bottom: 8px;">🗑️</div>
@@ -363,7 +335,6 @@
     </section>
 
     <div class="main-container">
-        <!-- 1. بيانات الطالب (الخلفية الخضراء) -->
         <div class="smart-card bg-green-solid">
             <h3 class="section-title"><span>👤</span> بياناتك الشخصية</h3>
             <div class="form-group">
@@ -392,7 +363,6 @@
             </p>
         </div>
 
-        <!-- 2. المرحلة الدراسية والمادة (الخلفية الصفراء - مرتبطة لحظياً مع school.html) -->
         <div class="smart-card bg-yellow-solid">
             <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="grid-2-always">
@@ -416,7 +386,6 @@
                 </select>
             </div>
 
-            <!-- شريط المواد الخاص بالصف المختار يظهر تحت الصف مباشرة -->
             <div id="studentGradeSubjectsBox" class="student-grade-subjects-box">
                 <div id="studentGradeSubjectsTitle" style="font-size: 11px; font-weight: 900; color: #854D0E; margin-bottom: 6px;">
                     📖 مواد الصف المتاحة (اضغط لاختيار المادة):
@@ -425,13 +394,12 @@
             </div>
         </div>
 
-        <!-- 3. تفضيلات الدرس والبحث (الأبيض الغامق) -->
         <div class="smart-card bg-offwhite-card">
             <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
                 <label>تفضل الدرس مع؟</label>
                 <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div><input type="radio" name="pref_teacher" id="t_any" value="أي منهما" checked><label for="t_any"><i>🤷‍♂️</i> أيهم</label></div>
+                    <div><input type="radio" name="pref_teacher" id="t_any" value="مستر او مس" checked><label for="t_any"><i>🤷‍♂️</i> مستر او مس</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_ms" value="مس"><label for="t_ms"><i>👩‍🏫</i> مس</label></div>
                 </div>
@@ -439,9 +407,9 @@
             <div class="form-group">
                 <label>أين تفضل أخذ الدرس؟</label>
                 <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div><input type="radio" name="pref_loc" id="l_center" value="السنتر" checked><label for="l_center"><i>🏫</i> سنتر</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_teacher" value="بيت المستر"><label for="l_teacher"><i>🏠</i> المستر</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_home" value="في منزلي"><label for="l_home"><i>🚗</i> منزلي</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_center" value="فى السنتر" checked><label for="l_center"><i>🏫</i> فى السنتر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_teacher" value="عند المستر"><label for="l_teacher"><i>🏠</i> عند المستر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_home" value="فى منزلى"><label for="l_home"><i>🚗</i> فى منزلى</label></div>
                 </div>
             </div>
 
@@ -457,7 +425,6 @@
                 </div>
             </div>
 
-            <!-- ✅ ملخص بيانات الطالب -->
             <div id="studentSummaryCard" class="student-summary-card">
                 <div class="summary-header">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
@@ -474,7 +441,6 @@
                 </div>
             </div>
 
-            <!-- ✅ زر البحث الرئيسي -->
             <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="triggerLocationFlow()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -483,7 +449,6 @@
                 تحديد الموقع والبحث بالـ GPS
             </button>
             
-            <!-- ✅ حاوية الخريطة -->
             <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
@@ -493,7 +458,6 @@
                         <svg id="iconCompress" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" /></svg>
                     </button>
 
-                    <!-- زر تحديث الموقع اللحظي من داخل الخريطة -->
                     <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
                         🎯 موقعي الحالي
                     </button>
@@ -501,10 +465,8 @@
                     <div id="map"></div>
                 </div>
                 
-                <!-- منطقة أزرار الخريطة -->
                 <div class="map-actions-wrapper" style="padding: 10px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-top: none; border-bottom: 4px solid #334155; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                     
-                    <!-- ✅ الجداول (القوائم المنسدلة أولاً تحت الخريطة) -->
                     <div class="saved-sections-wrapper" style="margin-top: 0; margin-bottom: 10px;">
                         <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
                             <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
@@ -527,7 +489,6 @@
                         </div>
                     </div>
 
-                    <!-- ✅ زر حفظ المكان (تحت الجداول مباشرة) -->
                     <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
                         📌 إضافة هذا الموقع للمفضلة
                     </button>
@@ -537,14 +498,55 @@
         </div>
     </div>
 
+    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+          getFirestore,
+          collection,
+          getDocs,
+          doc,
+          onSnapshot,
+          getDoc,
+          setDoc
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+
+      window.db = db;
+      window.collection = collection;
+      window.getDocs = getDocs;
+      window.fsDoc = doc;
+      window.fsOnSnapshot = onSnapshot;
+      window.fsGetDoc = getDoc;
+      window.fsSetDoc = setDoc;
+
+      console.log("✅ Firebase + Firestore جاهز في talep.html");
+    </script>
+
     <script>
         // ==========================================
-        // 0. المتغيرات والتأثيرات والمشاركة والواتساب
+        // 0. المتغيرات الأساسية
         // ==========================================
-        let map = null; let teachersLayer = null; let studentMarker = null; 
-        let searchCircle = null; let currentCenter = null; let isMapFullscreen = false; 
+        let map = null; let teachersLayer = null; let studentMarker = null;
+        let searchCircle = null; let currentCenter = null; let isMapFullscreen = false;
         let deleteType = ''; let deleteIndexToConfirm = -1;
         let editingLocationIndex = -1;
+
+        let curriculumCache = null;
+        let curriculumUnsubscribe = null;
+        let isFirstCurriculumSnapshot = true;
+        let curriculumSyncStarted = false;
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
@@ -552,8 +554,8 @@
             const osc = audioCtx.createOscillator(); const gain = audioCtx.createGain();
             osc.connect(gain); gain.connect(audioCtx.destination);
             osc.type = 'sine'; osc.frequency.setValueAtTime(2500, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime); 
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05); 
+            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
 
@@ -568,7 +570,7 @@
             toast.style.background = isError ? '#EF4444' : '#10B981';
             toast.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
             toast.classList.add('show');
-            setTimeout(() => { toast.classList.remove('show'); }, 3500);
+            setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
         window.openTeacherWhatsApp = function(rawPhone, teacherName = '', subject = '', grade = '', groupName = '') {
@@ -606,7 +608,7 @@
         };
 
         // ==========================================
-        // 1. منطق التكبير والتصغير مع دعم سحبة الرجوع بالهاتف
+        // 1. Fullscreen Map
         // ==========================================
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
@@ -627,9 +629,9 @@
             const iconCompress = document.getElementById('iconCompress');
             isMapFullscreen = true;
             mapWrap.classList.add('is-fullscreen');
-            iconExpand.style.display = 'none'; 
+            iconExpand.style.display = 'none';
             iconCompress.style.display = 'block';
-            document.body.style.overflow = 'hidden'; 
+            document.body.style.overflow = 'hidden';
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
 
@@ -639,9 +641,9 @@
             const iconCompress = document.getElementById('iconCompress');
             isMapFullscreen = false;
             mapWrap.classList.remove('is-fullscreen');
-            iconExpand.style.display = 'block'; 
+            iconExpand.style.display = 'block';
             iconCompress.style.display = 'none';
-            document.body.style.overflow = ''; 
+            document.body.style.overflow = '';
             document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' });
             setTimeout(() => { if (map) map.invalidateSize(); }, 300);
         }
@@ -663,7 +665,7 @@
         }
 
         // ==========================================
-        // 2. منطق العمر والربط اللحظي للمراحل والصفوف ومواد كل صف مع school.html
+        // 2. Age check
         // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
@@ -682,6 +684,9 @@
             }
         }
 
+        // ==========================================
+        // 🌟 المنهج الافتراضي الكامل (مطابق لـ school/group)
+        // ==========================================
         const defaultCurriculum = {
             primary: {
                 name: '🎒 المرحلة الابتدائية',
@@ -718,40 +723,77 @@
             }
         };
 
+        // ==========================================
+        // ✅ normalizeCurriculum محصّنة: تكمل الصفوف + المواد الناقصة
+        // ==========================================
         function normalizeCurriculum(currObj) {
-            Object.keys(currObj).forEach(stageKey => {
+            if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
+                return JSON.parse(JSON.stringify(defaultCurriculum));
+            }
+
+            Object.keys(defaultCurriculum).forEach(stageKey => {
+                if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
+                    currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    return;
+                }
+
                 const st = currObj[stageKey];
+                const defStage = defaultCurriculum[stageKey];
+
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
-                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object') {
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
                     st.gradeSubjects = {};
                 }
+
+                // ✅ دمج الصفوف (نضيف الناقص فقط، لا نحذف الموجود)
+                const mergedGrades = [...st.grades];
+                (defStage.grades || []).forEach(defGrade => {
+                    if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
+                });
+                st.grades = mergedGrades;
+
+                // ✅ لكل صف: تكملة المواد الناقصة
                 st.grades.forEach(g => {
-                    if (!Array.isArray(st.gradeSubjects[g])) {
-                        const defStage = defaultCurriculum[stageKey];
-                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
+                    if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
+                        if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
                             st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
                         } else {
                             st.gradeSubjects[g] = [...st.subjs];
                         }
+                    } else {
+                        const existing = st.gradeSubjects[g];
+                        const defSubjs = (defStage.gradeSubjects && defStage.gradeSubjects[g]) || [];
+                        defSubjs.forEach(ds => {
+                            if (!existing.includes(ds)) existing.push(ds);
+                        });
+                        st.gradeSubjects[g] = existing;
                     }
                 });
             });
+
             return currObj;
         }
 
+        // ==========================================
+        // ✅ getCurriculum: كاش → localStorage → افتراضي
+        // ==========================================
         function getCurriculum() {
+            if (curriculumCache) return curriculumCache;
             try {
                 const saved = localStorage.getItem('app_curriculum');
                 if (saved) {
                     const parsed = JSON.parse(saved);
                     if (parsed && Object.keys(parsed).length > 0) {
-                        return normalizeCurriculum(parsed);
+                        curriculumCache = normalizeCurriculum(parsed);
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                        return curriculumCache;
                     }
                 }
             } catch (e) {}
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             localStorage.setItem('app_curriculum', JSON.stringify(copy));
+            curriculumCache = copy;
             return copy;
         }
 
@@ -840,9 +882,12 @@
         function onSubjectSelectChange() {
             renderStudentGradeSubjectsBar();
             saveStudentData();
+            updateStudentSummary();
+            if (currentCenter && map) {
+                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+            }
         }
 
-        // إظهار أزرار المواد الخاصة بالصف المختار تحته مباشرة
         function renderStudentGradeSubjectsBar() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
@@ -883,16 +928,131 @@
             sSelect.value = subjName;
             renderStudentGradeSubjectsBar();
             saveStudentData();
+            updateStudentSummary();
             if (currentCenter && map) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             }
         }
 
-        // قناة التزامن اللحظي مع school.html
+        // ==========================================
+        // 🌟 Firebase Sync — استيراد مستقل مضمون
+        // ==========================================
+        let firebaseSyncModule = null;
+
+        async function loadFirebaseModule() {
+            if (firebaseSyncModule) return firebaseSyncModule;
+            try {
+                const { initializeApp, getApps } = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"
+                );
+                const fs = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"
+                );
+
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+                    authDomain: "ehgezly-ea5dd.firebaseapp.com",
+                    projectId: "ehgezly-ea5dd",
+                    storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+                    messagingSenderId: "472216348338",
+                    appId: "1:472216348338:web:db726630ef6781301e0bab"
+                };
+
+                const existingApps = getApps();
+                const app = existingApps.length > 0 ? existingApps[0] : initializeApp(firebaseConfig);
+                const db = fs.getFirestore(app);
+
+                firebaseSyncModule = {
+                    db,
+                    getDoc: fs.getDoc,
+                    setDoc: fs.setDoc,
+                    onSnapshot: fs.onSnapshot,
+                    doc: fs.doc
+                };
+                return firebaseSyncModule;
+            } catch (err) {
+                console.error("❌ فشل استيراد Firebase:", err);
+                return null;
+            }
+        }
+
+        async function fetchCurriculumOnceFromFirebase() {
+            const mod = await loadFirebaseModule();
+            if (!mod) return false;
+
+            try {
+                const ref = mod.doc(mod.db, "curriculum", "main");
+                const snap = await mod.getDoc(ref);
+
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    delete data.updatedAt;
+                    curriculumCache = normalizeCurriculum(data);
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+                    console.log("⚡ [talep] تم جلب المنهج من Firebase (getDoc) بنجاح");
+                    return true;
+                } else {
+                    console.log("📤 [talep] مستند curriculum/main غير موجود — رفع الافتراضي");
+                    try {
+                        await mod.setDoc(ref, {
+                            ...JSON.parse(JSON.stringify(defaultCurriculum)),
+                            updatedAt: Date.now()
+                        });
+                        console.log("✅ [talep] تم رفع المنهج الافتراضي إلى Firebase");
+                        curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                        return true;
+                    } catch (e) {
+                        console.warn("⚠️ فشل رفع الافتراضي:", e);
+                        return false;
+                    }
+                }
+            } catch (err) {
+                console.warn("⚠️ [talep] getDoc فشلت:", err);
+                return false;
+            }
+        }
+
+        async function startCurriculumRealtimeListener() {
+            const mod = await loadFirebaseModule();
+            if (!mod) return;
+
+            if (curriculumUnsubscribe) curriculumUnsubscribe();
+
+            const ref = mod.doc(mod.db, "curriculum", "main");
+            curriculumUnsubscribe = mod.onSnapshot(ref, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    delete data.updatedAt;
+                    curriculumCache = normalizeCurriculum(data);
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+
+                    populateStagesDropdown(true);
+                    updateStudentSummary();
+
+                    if (!isFirstCurriculumSnapshot) {
+                        showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة");
+                    }
+                    isFirstCurriculumSnapshot = false;
+                }
+            }, (err) => {
+                console.warn("⚠️ [talep] onSnapshot فشل:", err);
+            });
+        }
+
+        // ==========================================
+        // BroadcastChannel — مزامنة التبويبات
+        // ==========================================
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
             curriculumChannel.onmessage = function(ev) {
                 if (ev.data && ev.data.type === 'CURRICULUM_UPDATED') {
+                    if (ev.data.curriculum) {
+                        curriculumCache = normalizeCurriculum(ev.data.curriculum);
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    }
                     populateStagesDropdown(true);
                     updateStudentSummary();
                     showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة");
@@ -900,13 +1060,16 @@
             };
         }
 
+        // ==========================================
+        // Radius + Summary
+        // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
             const display = document.getElementById('radius_val_display');
-            if (val < 1000) { display.innerText = val + " متر"; } 
+            if (val < 1000) { display.innerText = val + " متر"; }
             else {
                 let kmVal = (val / 1000).toFixed(1);
-                if(kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
+                if (kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
                 display.innerText = kmVal + " كم";
             }
             updateStudentSummary(); saveStudentData();
@@ -928,7 +1091,7 @@
             const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value;
             const prefLoc = document.querySelector('input[name="pref_loc"]:checked')?.value;
 
-            if(grade && subject) {
+            if (grade && subject) {
                 document.getElementById('studentSummaryCard').style.display = 'block';
                 document.getElementById('sum_name').innerText = name || 'بدون اسم';
                 document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : '--';
@@ -975,46 +1138,93 @@
             updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
         }
 
-        window.onload = () => {
+        // ==========================================
+        // ✅ onload: Firebase أولاً (getDoc) ثم بناء الواجهة
+        // ==========================================
+        window.onload = async () => {
+            // 1) محاولة جلب مضمونة من Firebase
+            try {
+                await fetchCurriculumOnceFromFirebase();
+            } catch (e) {
+                console.warn("⚠️ فشل الجلب الأولي:", e);
+            }
+
+            // 2) إصلاح تلقائي لو curriculumCache فارغ
+            if (!curriculumCache) {
+                try {
+                    const saved = localStorage.getItem('app_curriculum');
+                    if (saved) {
+                        curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                    } else {
+                        curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
+                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    }
+                } catch (e) {
+                    curriculumCache = JSON.parse(JSON.stringify(defaultCurriculum));
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                }
+            }
+
+            // 3) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
+
+            // 4) ربط المستمعات
             document.querySelectorAll('input, select').forEach(el => {
-                if(el.id !== 'search_radius') { el.addEventListener('input', saveStudentData); el.addEventListener('change', saveStudentData); }
+                if (el.id !== 'search_radius') {
+                    el.addEventListener('input', saveStudentData);
+                    el.addEventListener('change', saveStudentData);
+                }
             });
 
-            // الاستماع اللحظي لأي تعديل يتم في school.html (سواء في المنهج أو في المعلمين والدروس)
+            // 5) مستمعات احتياطية
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
+                    try {
+                        const saved = localStorage.getItem('app_curriculum');
+                        if (saved) curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                    } catch (err) {}
                     populateStagesDropdown(true);
                     updateStudentSummary();
                     showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً");
                 }
-                if (currentCenter && map) {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-                }
             });
 
             window.addEventListener('focus', () => {
-                populateStagesDropdown(true);
-                if (currentCenter && map) {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-                }
+                try {
+                    const saved = localStorage.getItem('app_curriculum');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (parsed && JSON.stringify(parsed) !== JSON.stringify(curriculumCache)) {
+                            curriculumCache = normalizeCurriculum(parsed);
+                            populateStagesDropdown(true);
+                            updateStudentSummary();
+                        }
+                    }
+                } catch (e) {}
             });
+
+            // 6) المستمع اللحظي من Firebase
+            startCurriculumRealtimeListener();
         };
 
         // ==========================================
-        // 2.5 منطق الإفصاح عن الموقع (Prominent Disclosure)
+        // Location flow
         // ==========================================
         function triggerLocationFlow() {
             const subject = document.getElementById('s_subject').value;
-            if(!subject) { showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true); return; }
+            const grade = document.getElementById('s_grade').value;
+            
+            if (!subject || !grade) {
+                showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true);
+                return;
+            }
 
-            // التحقق من أن المستخدم قد وافق على استخدام الموقع مسبقاً
             const hasConsented = localStorage.getItem('location_consent_given');
             if (hasConsented === 'true') {
-                startSmartSearch(); // المتابعة مباشرة
+                startSmartSearch();
             } else {
-                document.getElementById('locationDisclosureModal').classList.add('active'); // إظهار نافذة الإفصاح
+                document.getElementById('locationDisclosureModal').classList.add('active');
             }
         }
 
@@ -1025,12 +1235,12 @@
 
         function acceptLocation() {
             document.getElementById('locationDisclosureModal').classList.remove('active');
-            localStorage.setItem('location_consent_given', 'true'); // تسجيل الموافقة
-            startSmartSearch(); // البدء في طلب الإذن الفعلي من الجهاز
+            localStorage.setItem('location_consent_given', 'true');
+            startSmartSearch();
         }
 
         // ==========================================
-        // 3. النوافذ والقوائم المحفوظة (مع إظهار رقم المستر وفتح الواتساب)
+        // Saved locations & teachers
         // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
@@ -1054,8 +1264,8 @@
             }
         }
 
-        function closeSaveLocModal() { 
-            document.getElementById('saveLocModal').classList.remove('active'); 
+        function closeSaveLocModal() {
+            document.getElementById('saveLocModal').classList.remove('active');
             editingLocationIndex = -1;
         }
 
@@ -1073,8 +1283,8 @@
             } else {
                 existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
-                renderSavedLocationsList(true); 
-                closeSaveLocModal(); 
+                renderSavedLocationsList(true);
+                closeSaveLocModal();
                 showToast("تمت إضافة الموقع للمفضلة! 📌");
             }
         }
@@ -1113,13 +1323,13 @@
                     `;
                 });
                 list.innerHTML = html;
-                if(autoOpen) toggleDropdown('locationsListContainer', 'locationsIcon', true);
+                if (autoOpen) toggleDropdown('locationsListContainer', 'locationsIcon', true);
             } else { btn.style.display = 'none'; document.getElementById('locationsListContainer').style.display = 'none'; }
         }
 
         function loadSpecificLocation(index) {
             const subject = document.getElementById('s_subject').value;
-            if(!subject) { showToast("أكمل بيانات المادة أولاً!", true); return; }
+            if (!subject) { showToast("أكمل بيانات المادة أولاً!", true); return; }
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
                 buildRadarMap(data.saved_locations[index].lat, data.saved_locations[index].lng);
@@ -1130,12 +1340,12 @@
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_teachers) existingData.saved_teachers = [];
             const existingIdx = existingData.saved_teachers.findIndex(t => t.name === name && t.groupName === groupName);
-            if(existingIdx > -1) { 
+            if (existingIdx > -1) {
                 existingData.saved_teachers[existingIdx].phone = phone;
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
                 renderSavedTeachersList(true);
-                showToast("تم تحديث بيانات المعلم المحفوظ ⭐"); 
-                return; 
+                showToast("تم تحديث بيانات المعلم المحفوظ ⭐");
+                return;
             }
             existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender, groupName });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
@@ -1177,7 +1387,7 @@
                     `;
                 });
                 list.innerHTML = html;
-                if(autoOpen) toggleDropdown('teachersListContainer', 'teachersIcon', true);
+                if (autoOpen) toggleDropdown('teachersListContainer', 'teachersIcon', true);
             } else { btn.style.display = 'none'; document.getElementById('teachersListContainer').style.display = 'none'; }
         }
 
@@ -1187,120 +1397,120 @@
         function confirmDelete() {
             if (deleteIndexToConfirm > -1) {
                 const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
-                if (deleteType === 'location') { 
-                    existingData.saved_locations.splice(deleteIndexToConfirm, 1); 
+                if (deleteType === 'location') {
+                    existingData.saved_locations.splice(deleteIndexToConfirm, 1);
                     localStorage.setItem('talep_data', JSON.stringify(existingData));
-                    renderSavedLocationsList(); 
-                    showToast("تم إزالة الموقع 🗑️"); 
-                } 
-                else if (deleteType === 'teacher') { 
-                    existingData.saved_teachers.splice(deleteIndexToConfirm, 1); 
+                    renderSavedLocationsList();
+                    showToast("تم إزالة الموقع 🗑️");
+                }
+                else if (deleteType === 'teacher') {
+                    existingData.saved_teachers.splice(deleteIndexToConfirm, 1);
                     localStorage.setItem('talep_data', JSON.stringify(existingData));
-                    renderSavedTeachersList(); 
-                    showToast("تم إزالة المعلم 🗑️"); 
+                    renderSavedTeachersList();
+                    showToast("تم إزالة المعلم 🗑️");
                 }
             }
             closeDeleteModal();
         }
 
         // ==========================================
-        // 4. جلب بيانات المستر المسجل ورقم التليفون من school.html / group.html
+        // 4. جلب الحصص من فايربيس
         // ==========================================
-        function extractTeacherPhone(state) {
-            const directKeys = ['g_phone', 't_phone', 'm_phone', 'phone', 'whatsapp', 'teacher_phone', 'teacherPhone', 'mobile', 'tel'];
-            for (const k of directKeys) {
-                if (state[k] && String(state[k]).trim() !== '') {
-                    return String(state[k]).trim();
-                }
-            }
-            const phoneRegex = /(?:01[0125]\d{8})/;
-            for (const key in state) {
-                if (typeof state[key] === 'string' && phoneRegex.test(state[key])) {
-                    return state[key].match(phoneRegex)[0];
-                }
-            }
-            for (let i = 0; i < localStorage.length; i++) {
-                const storageKey = localStorage.key(i);
-                if (storageKey && storageKey !== 'talep_data' && !storageKey.startsWith('publishState_')) {
-                    const rawVal = localStorage.getItem(storageKey) || '';
-                    if (phoneRegex.test(rawVal)) {
-                        return rawVal.match(phoneRegex)[0];
-                    }
-                }
-            }
-            return '';
-        }
-
-        function getRegisteredTeachersFromStorage() {
+        async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
 
-            for (let i = 0; i < localStorage.length; i++) {
-                const key = localStorage.key(i);
-                if (key && key.startsWith('lessonState_')) {
-                    const lessonId = key.replace('lessonState_', '');
-                    const publishState = localStorage.getItem('publishState_' + lessonId);
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
+                return { registeredList, hiddenCount };
+            }
 
-                    if (publishState === 'false') {
+            try {
+                const querySnapshot = await window.getDocs(window.collection(window.db, "lessons"));
+                
+                querySnapshot.forEach((doc) => {
+                    const state = doc.data();
+                    const lessonId = doc.id;
+
+                    if (state.g_publish_map === false) {
                         hiddenCount++;
-                        continue;
+                        return;
                     }
 
-                    if (publishState === 'true' || publishState === null) {
-                        try {
-                            const state = JSON.parse(localStorage.getItem(key) || '{}');
-                            
-                            let subjectsText = '';
-                            if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
-                                subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1] : sub).join('، ');
-                            }
-
-                            let locLabel = 'السنتر';
-                            if (state.g_loc === 'l_teach') locLabel = 'بيت المستر';
-                            else if (state.g_loc === 'l_stud') locLabel = 'في منزلي';
-
-                            let fullAddress = state.m_address || 'محدد على الخريطة';
-                            if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
-
-                            const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
-                            const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
-
-                            const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
-
-                            const lat = state.lat ? parseFloat(state.lat) : 30.0444;
-                            const lng = state.lng ? parseFloat(state.lng) : 31.2357;
-
-                            const extractedPhone = extractTeacherPhone(state);
-
-                            registeredList.push({
-                                lessonId: lessonId,
-                                groupName: state.g_name || `مجموعة ${lessonId}`,
-                                teacherName: state.g_teacher || 'المعلم',
-                                count: state.g_count || '--',
-                                grade: state.s_grade || '',
-                                subject: subjectsText || '',
-                                days: daysText,
-                                startTime: startTime,
-                                endTime: endTime,
-                                locType: locLabel,
-                                address: fullAddress,
-                                phone: extractedPhone,
-                                gender: state.t_gender || 'مستر',
-                                lat: lat,
-                                lng: lng
-                            });
-                        } catch (e) {
-                            console.error("خطأ في قراءة بيانات المجموعة:", e);
-                        }
+                    let subjectsText = '';
+                    if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
+                        subjectsText = state.selectedSubjects.map(sub => {
+                            const parts = String(sub).split(' - ');
+                            return parts[1] ? parts[1].trim() : String(sub).trim();
+                        }).join('، ');
                     }
-                }
+
+                    let locLabel = 'السنتر';
+                    if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
+                    else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
+                    else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+
+                    // تحديد فئة المجموعة للتطابق لاحقاً
+                    let groupGenderText = 'مختلط';
+                    if (state.g_gender === 'g_boys' || state.g_gender === 'اولاد فقط') groupGenderText = 'اولاد فقط';
+                    else if (state.g_gender === 'g_girls' || state.g_gender === 'بنات فقط') groupGenderText = 'بنات فقط';
+
+                    let fullAddress = state.m_address || 'محدد على الخريطة';
+                    if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
+
+                    const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
+                    const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
+
+                    const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+
+                    const lat = state.lat ? parseFloat(state.lat) : 30.0444;
+                    const lng = state.lng ? parseFloat(state.lng) : 31.2357;
+
+                    registeredList.push({
+                        lessonId: lessonId,
+                        groupName: state.g_name || `مجموعة ${lessonId}`,
+                        teacherName: state.g_teacher || 'المعلم',
+                        count: state.g_count || '--',
+                        grade: (state.s_grade || '').trim(),
+                        stageKey: (state.s_stage || '').trim(),
+                        stageName: getStageNameByKey(state.s_stage),
+                        subject: subjectsText || '',
+                        subjectsRaw: state.selectedSubjects || [],
+                        days: daysText,
+                        startTime: startTime,
+                        endTime: endTime,
+                        locType: locLabel,
+                        groupGender: groupGenderText,
+                        address: fullAddress,
+                        phone: state.g_phone || '',
+                        gender: state.t_gender || 'مستر',
+                        lat: lat,
+                        lng: lng
+                    });
+                });
+            } catch (error) {
+                console.error("❌ خطأ في جلب البيانات من السحابة:", error);
             }
 
             return { registeredList, hiddenCount };
         }
 
+        function getStageNameByKey(stageKey) {
+            if (!stageKey) return '';
+            if (stageKey === 'primary') return 'المرحلة الابتدائية';
+            if (stageKey === 'prep') return 'المرحلة الإعدادية';
+            if (stageKey === 'secondary') return 'المرحلة الثانوية';
+            try {
+                const curr = getCurriculum();
+                if (curr[stageKey] && curr[stageKey].name) {
+                    return curr[stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                }
+            } catch (e) {}
+            return stageKey;
+        }
+
         // ==========================================
-        // 5. منطق الخريطة والرادار (إظهار التليفون وتفعيل الواتساب)
+        // 5. Map + Radar
         // ==========================================
         function initMap() {
             if (!map) {
@@ -1340,7 +1550,7 @@
         function startSmartSearch() {
             const btn = document.getElementById('searchBtn');
             const originalBtnHTML = btn.innerHTML;
-            btn.innerHTML = "⏳ جاري تحديد موقعك الحالي..."; 
+            btn.innerHTML = "⏳ جاري تحديد موقعك الحالي...";
             btn.classList.add('loading');
 
             fetchLiveCoordinates(
@@ -1361,123 +1571,6 @@
         }
 
         function refreshMyLiveGPS() {
-            showToast("⏳ جاري تحديث موقعك الحالي بالـ GPS...");
-            fetchLiveCoordinates(
-                (lat, lng) => {
-                    buildRadarMap(lat, lng);
-                    showToast("تم تحديث موقعك الحالي بنجاح 🎯");
-                },
-                () => {
-                    showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح!", true);
-                }
-            );
-        }
-
-        function buildRadarMap(lat, lng) {
-            document.getElementById('mapOuterWrapper').style.display = 'block';
-            initMap();
-            if (studentMarker) map.removeLayer(studentMarker);
-            if (searchCircle) map.removeLayer(searchCircle);
-            teachersLayer.clearLayers();
-
-            const searchRadius = parseInt(document.getElementById('search_radius').value);
-            
-            currentCenter = [lat, lng];
-            map.setView(currentCenter, 15);
-
-            searchCircle = L.circle(currentCenter, { color: '#10B981', weight: 2, dashArray: '8, 8', fillColor: '#34D399', fillOpacity: 0.15 }).addTo(map);
-            searchCircle.setRadius(searchRadius);
-
-            const studentIcon = L.divIcon({ className: 'custom-student-marker', html: '<div class="student-radar"></div>', iconSize: [18, 18], iconAnchor: [9, 9] });
-            studentMarker = L.marker(currentCenter, { icon: studentIcon, draggable: true, zIndexOffset: 10000 }).addTo(map);
-
-            studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
-            studentMarker.on('dragend', function(e) {
-                currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
-                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-            });
-
-            renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
-            setTimeout(() => { 
-                map.invalidateSize();
-                map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 }); 
-                document.getElementById('mapOuterWrapper').scrollIntoView({ behavior: 'smooth', block: 'center' }); 
-            }, 300);
-        }
-
-        // ✅ إظهار أيقونة المستر/المس مع عرض رقم التليفون وتفعيل زر الواتساب
-        function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
-            teachersLayer.clearLayers();
-            
-            const selectedSubject = document.getElementById('s_subject').value;
-            const selectedGrade = document.getElementById('s_grade').value;
-            const { registeredList, hiddenCount } = getRegisteredTeachersFromStorage();
-
-            if (registeredList.length === 0) {
-                if (hiddenCount > 0) {
-                    showToast("موقع المستر غير مفعل حالياً 🔒", true);
-                } else {
-                    showToast("لا يوجد معلم مسجل حالياً في النظام!", true);
-                }
-                return;
-            }
-
-            let shownCount = 0;
-
-            registeredList.forEach(t => {
-                const distanceInMeters = map.distance(centerPos, [t.lat, t.lng]);
-
-                if (distanceInMeters <= radiusInMeters) {
-                    shownCount++;
-                    const displaySubject = t.subject || selectedSubject;
-                    const displayGrade = t.grade || selectedGrade;
-                    const displayPhone = t.phone ? t.phone : 'غير مسجل';
-                    const isMs = (t.gender === 'مس');
-                    const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
-                    const titlePrefix = isMs ? 'مس' : 'مستر';
-
-                    const iconHtml = `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
-                    const customIcon = L.divIcon({
-                        className: 'custom-leaflet-marker',
-                        html: iconHtml,
-                        iconSize: [36, 36],
-                        iconAnchor: [18, 18],
-                        popupAnchor: [0, -16]
-                    });
-
-                    const popupContent = `
-                        <div class="teacher-popup-title">${emoji} ${titlePrefix}/ ${t.teacherName}</div>
-                        <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
-                        <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${displaySubject} (${displayGrade})</span></div>
-                        <div class="teacher-popup-detail"><span>📅 الأيام:</span> <span style="color:#2563EB;">${t.days}</span></div>
-                        <div class="teacher-popup-detail"><span>⏰ الموعد:</span> <span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
-                        <div class="teacher-popup-detail"><span>📍 المكان:</span> <span style="color:#059669;">${t.locType} (${t.address})</span></div>
-                        <div class="teacher-popup-detail" style="background:#ECFDF5; border:1px solid #A7F3D0;">
-                            <span>📱 التليفون:</span> 
-                            ${t.phone ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:12px; text-decoration:none;" dir="ltr">📞 ${displayPhone}</a>` : `<span style="color:#EF4444;">غير مسجل</span>`}
-                        </div>
-                        
-                        <div style="display: flex; gap: 6px; margin-top: 8px;">
-                            <button type="button" class="clickable-element" onclick="saveTeacher('${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')" style="flex: 1; background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border: none; border-bottom: 2px solid #92400E; border-radius: 6px; font-weight: 900; font-size: 12px; cursor: pointer; padding: 6px 4px;">⭐ حفظ</button>
-                            <button type="button" class="clickable-element" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${displaySubject}', '${displayGrade}', '${t.groupName}')" style="flex: 1.5; background: #22C55E; border: none; border-bottom: 2px solid #15803D; color: white; font-weight: 900; font-size: 12px; display: flex; align-items: center; justify-content: center; border-radius: 6px; padding: 6px 4px; cursor: pointer;">💬 واتساب</button>
-                        </div>
-                    `;
-
-                    const marker = L.marker([t.lat, t.lng], { icon: customIcon });
-                    marker.bindPopup(popupContent);
-                    teachersLayer.addLayer(marker);
-                }
-            });
-
-            if (shownCount === 0) {
-                showToast("المستر المسجل خارج نطاق الدائرة الحالية، وسّع النطاق أو حرّك النقطة الزرقاء!", true);
-            } else {
-                showToast(`تم العثور على (${shownCount}) معلم، اضغط على أيقونة المعلم لعرض بياناته ✨`);
-            }
-        }
-    </script>
-</body>
-</html>efreshMyLiveGPS() {
             showToast("⏳ جاري تحديث موقعك الحالي بالـ GPS...");
             fetchLiveCoordinates(
                 (lat, lng) => {
