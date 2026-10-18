@@ -240,6 +240,11 @@
             gap: 8px;
         }
 
+        .btn-submit:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
         .action-buttons-container {
             display: flex;
             flex-wrap: wrap;
@@ -327,6 +332,22 @@
         .modal-btn { flex: 1; padding: 11px; border-radius: 12px; font-size: 14px; font-weight: 900; cursor: pointer; border: none; }
         .modal-btn-cancel { background: #E2E8F0; color: #475569; }
         .modal-btn-danger { background: #EF4444; color: #FFFFFF; }
+
+        .device-info-badge {
+            display: none;
+            margin-top: 10px;
+            padding: 8px 12px;
+            background: #EFF6FF;
+            border: 1.5px solid #BFDBFE;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 800;
+            color: #1E40AF;
+            text-align: center;
+            line-height: 1.5;
+        }
+        .device-info-badge.show { display: block; }
+        .device-info-badge .icon { font-size: 14px; margin-left: 4px; }
     </style>
 </head>
 <body>
@@ -353,7 +374,7 @@
         </div>
     </div>
 
-    <!-- نافذة الحساب المحظور (التعديل الجديد) -->
+    <!-- نافذة الحساب المحظور -->
     <div id="blockedAccountModal" class="custom-modal-overlay" onclick="closeCustomModal('blockedAccountModal')">
         <div class="custom-modal-box" style="border-bottom-color: #D97706;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEF3C7; color: #D97706;">🔒</div>
@@ -368,6 +389,15 @@
             <div class="modal-btn-row">
                 <button type="button" class="modal-btn modal-btn-cancel" style="width: 100%;" onclick="closeCustomModal('blockedAccountModal')">العودة للخلف</button>
             </div>
+        </div>
+    </div>
+
+    <!-- نافذة طرد الجهاز القديم -->
+    <div id="kickedDeviceModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
+            <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">🚪</div>
+            <h3 class="modal-title-text" style="color: #991B1B;">تم تسجيل الخروج</h3>
+            <p class="modal-desc-text">تم تسجيل الدخول من جهاز آخر بنفس الحساب.<br>سيتم توجيهك لصفحة الدخول...</p>
         </div>
     </div>
 
@@ -395,7 +425,12 @@
                 <label class="input-label">الرقم السري (4 أرقام)</label>
                 <input type="password" id="loginPassword" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
-            <button class="btn-submit" onclick="handleLogin()">دخول</button>
+            <button class="btn-submit" id="loginBtn" onclick="handleLogin(event)">دخول</button>
+            
+            <div id="deviceInfoBadge" class="device-info-badge">
+                <span class="icon">📱</span>
+                أنت مسجل على هذا الجهاز فقط. إذا سجلت الدخول من جهاز آخر، سيتم تسجيل الخروج تلقائياً من هنا.
+            </div>
         </div>
 
         <div id="registerForm" style="display: none;">
@@ -432,7 +467,7 @@
                 <label class="input-label">تأكيد الرقم السري</label>
                 <input type="password" id="regPassword2" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
-            <button class="btn-submit" onclick="handleRegister()">إنشاء حساب</button>
+            <button class="btn-submit" id="registerBtn" onclick="handleRegister(event)">إنشاء حساب</button>
         </div>
     </div>
 
@@ -442,35 +477,144 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🎵 Audio (اختياري)
+        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
-            if (audioCtx.state === 'suspended') audioCtx.resume();
-            const osc = audioCtx.createOscillator();
-            const gain = audioCtx.createGain();
-            osc.connect(gain); gain.connect(audioCtx.destination);
-            osc.type = 'sine'; osc.frequency.setValueAtTime(2800, audioCtx.currentTime);
-            gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
-            gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
-            osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain); gain.connect(audioCtx.destination);
+                osc.type = 'sine'; osc.frequency.setValueAtTime(2800, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
         }
         document.addEventListener('click', e => {
             if (e.target.closest('button, .auth-tab, .radio-label, .modal-btn')) playHighPitchSound();
         });
 
-        window.onload = function() {
-            // مسح جلسة الدخول السابقة لإجبار المعلم على إدخال الرقم السري في كل مرة يفتح فيها الصفحة
-            localStorage.removeItem('loggedInTeacher');
+        // ==========================================
+        // 📱 Device ID Management
+        // ==========================================
+        function getOrCreateDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
 
-            // الاحتفاظ برقم التليفون فقط في الحقول إذا كان محفوظاً مسبقاً
+        // ==========================================
+        // ☁️ Firebase Module Loader (dynamic)
+        // ==========================================
+        let _fbModule = null;
+        async function getFbModule() {
+            if (_fbModule) return _fbModule;
+            try {
+                const { initializeApp, getApps } = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js"
+                );
+                const fs = await import(
+                    "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js"
+                );
+                const firebaseConfig = {
+                    apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+                    authDomain: "ehgezly-ea5dd.firebaseapp.com",
+                    projectId: "ehgezly-ea5dd",
+                    storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+                    messagingSenderId: "472216348338",
+                    appId: "1:472216348338:web:db726630ef6781301e0bab"
+                };
+                const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
+                const db = fs.getFirestore(app);
+                _fbModule = {
+                    db,
+                    doc: fs.doc,
+                    getDoc: fs.getDoc,
+                    setDoc: fs.setDoc,
+                    deleteDoc: fs.deleteDoc
+                };
+                return _fbModule;
+            } catch (err) {
+                console.warn("⚠️ فشل تحميل Firebase:", err);
+                return null;
+            }
+        }
+
+        // ==========================================
+        // ✅ التحقق من الجهاز وتسجيله
+        // ==========================================
+        async function verifyAndRegisterDevice(phone, accountData) {
+            const currentDeviceId = getOrCreateDeviceId();
+            const teacherKey = String(phone).replace(/\D/g, '');
+
+            try {
+                const fb = await getFbModule();
+                if (!fb) {
+                    // فشل تحميل Firebase → نسمح بالدخول (offline fallback)
+                    return { allowed: true, kickedOld: false, error: 'no-firebase' };
+                }
+
+                const ref = fb.doc(fb.db, "teacher_devices", teacherKey);
+                const snap = await fb.getDoc(ref);
+
+                let kickedOld = false;
+
+                if (snap.exists()) {
+                    const oldDeviceId = snap.data().deviceId;
+                    if (oldDeviceId && oldDeviceId !== currentDeviceId) {
+                        kickedOld = true;
+                        console.log("🔄 جهاز جديد — سيتم طرد الجهاز القديم");
+                    }
+                }
+
+                // نسجل الجهاز الحالي
+                await fb.setDoc(ref, {
+                    deviceId: currentDeviceId,
+                    phone: teacherKey,
+                    teacherName: accountData.name || '',
+                    teacherTitle: accountData.title || '',
+                    lastLogin: Date.now(),
+                    deviceInfo: navigator.userAgent.substring(0, 120)
+                }, { merge: true });
+
+                return { allowed: true, kickedOld };
+            } catch (err) {
+                console.warn("⚠️ فشل التحقق من الجهاز:", err);
+                return { allowed: true, kickedOld: false, error: err };
+            }
+        }
+
+        // ==========================================
+        // 🚀 OnLoad
+        // ==========================================
+        window.onload = function() {
+            // مسح جلسة الدخول السابقة لكن الاحتفاظ بـ device_id
+            localStorage.removeItem('loggedInTeacher');
+            // ⚠️ لا تمسح device_id!
+
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
-                document.getElementById('loginPassword').value = ''; // تفريغ حقل الرقم السري
+                document.getElementById('loginPassword').value = '';
+            }
+
+            // إظهار شارة معلومات الجهاز
+            if (localStorage.getItem('device_id')) {
+                document.getElementById('deviceInfoBadge').classList.add('show');
             }
         };
 
-        function closeCustomModal(id) { document.getElementById(id).classList.remove('active'); }
+        function closeCustomModal(id) { 
+            const el = document.getElementById(id);
+            if (el) el.classList.remove('active');
+        }
 
         function switchTab(tab) {
             document.getElementById('alertMsg').style.display = 'none';
@@ -492,10 +636,13 @@
             el.innerHTML = msg; 
             el.className = 'alert-msg ' + (isError ? 'alert-error' : 'alert-success');
             el.style.display = 'block';
-            setTimeout(() => { el.style.display = 'none'; }, 4000);
+            setTimeout(() => { el.style.display = 'none'; }, 5000);
         }
 
-        function handleRegister() {
+        // ==========================================
+        // 📝 Register
+        // ==========================================
+        async function handleRegister(event) {
             const title = document.querySelector('input[name="title"]:checked').value;
             const name = document.getElementById('regName').value.trim();
             const age = document.getElementById('regAge').value.trim();
@@ -510,103 +657,195 @@
 
             if (localStorage.getItem('teacherAccount_' + phone)) return showAlert('هذا الرقم مسجل مسبقاً!');
 
-            const accountData = { title, name, age, phone, pass: pass1, createdAt: new Date().toISOString().split('T')[0] };
+            const btn = document.getElementById('registerBtn');
+            const originalText = btn.innerText;
+            btn.innerText = '⏳ جاري إنشاء الحساب...';
+            btn.disabled = true;
+
+            const accountData = { 
+                title, name, age, phone, pass: pass1, 
+                createdAt: new Date().toISOString().split('T')[0] 
+            };
             localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
             localStorage.setItem('rememberedPhone', phone);
             localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
 
-            // التوجه المباشر بدون رسالة ترحيب منبثقة
+            // سجّل الجهاز ده كأول جهاز
+            try { 
+                await verifyAndRegisterDevice(phone, accountData); 
+            } catch(e) {
+                console.warn("device register on signup:", e);
+            }
+
             window.location.href = './index2.html';
         }
 
-        function handleLogin() {
+        // ==========================================
+        // 🔐 Login
+        // ==========================================
+        async function handleLogin(event) {
             const phone = document.getElementById('loginPhone').value.trim();
             const pass = document.getElementById('loginPassword').value;
 
-            if (phone.length !== 11 || pass.length !== 4) return showAlert('يرجى إدخال بيانات صحيحة.');
+            if (phone.length !== 11 || pass.length !== 4) {
+                return showAlert('يرجى إدخال بيانات صحيحة.');
+            }
+
             const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
             if (!savedDataStr) return showAlert('هذا الرقم غير مسجل.');
 
             const savedData = JSON.parse(savedDataStr);
             if (savedData.pass !== pass) return showAlert('الرقم السري غير صحيح.');
 
-            const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true' || localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
+            const isBlocked = localStorage.getItem('teacherBlocked_' + phone) === 'true' 
+                           || localStorage.getItem('teacherBlocked_name_' + savedData.name) === 'true';
             
-            // إظهار نافذة الحظر والتواصل مع الإدارة
             if (isBlocked) {
                 document.getElementById('blockedAccountModal').classList.add('active');
                 return;
             }
 
-            localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
-            localStorage.setItem('rememberedPhone', phone);
+            // ✅ التحقق من الجهاز
+            const btn = document.getElementById('loginBtn');
+            const originalText = btn.innerText;
+            btn.innerText = '⏳ جاري التحقق من الجهاز...';
+            btn.disabled = true;
 
-            // التوجه المباشر بدون رسالة ترحيب منبثقة
-            window.location.href = './index2.html';
+            try {
+                const deviceCheck = await verifyAndRegisterDevice(phone, savedData);
+
+                if (!deviceCheck.allowed) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('تعذر تسجيل الدخول. حاول مرة أخرى.');
+                }
+
+                if (deviceCheck.kickedOld) {
+                    console.log("✅ تم طرد الجهاز القديم — دخول من جهاز جديد");
+                }
+
+                if (deviceCheck.error === 'no-firebase') {
+                    showAlert('تنبيه: تعذر الاتصال بالسحابة، الدخول محلي فقط.', true);
+                }
+
+                localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
+                localStorage.setItem('rememberedPhone', phone);
+
+                // توجيه بعد تأخير بسيط
+                setTimeout(() => {
+                    window.location.href = './index2.html';
+                }, 300);
+
+            } catch (err) {
+                btn.innerText = originalText;
+                btn.disabled = false;
+                showAlert('حدث خطأ في الاتصال، حاول مرة أخرى.');
+            }
         }
 
+        // ==========================================
+        // 🚪 Logout
+        // ==========================================
         function handleLogout() { 
             localStorage.removeItem('loggedInTeacher');
             window.location.href = './index.html'; 
         }
 
+        // ==========================================
+        // 🗑️ Delete Account
+        // ==========================================
         function confirmDeleteAccount() {
             const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
             const pass = document.getElementById('loginPassword').value || document.getElementById('regPassword1').value;
 
-            if (!phone || !localStorage.getItem('teacherAccount_' + phone)) return showAlert('لا يوجد حساب مسجل لهذا الرقم.');
-            if (!pass) return showAlert('يرجى كتابة الرقم السري الخاص بك لتأكيد الحذف.');
+            if (!phone || !localStorage.getItem('teacherAccount_' + phone)) {
+                return showAlert('لا يوجد حساب مسجل لهذا الرقم.');
+            }
+            if (!pass) {
+                return showAlert('يرجى كتابة الرقم السري الخاص بك لتأكيد الحذف.');
+            }
 
             const savedData = JSON.parse(localStorage.getItem('teacherAccount_' + phone));
-            if (savedData.pass !== pass) return showAlert('الرقم السري غير صحيح، لا يمكنك حذف الحساب.');
+            if (savedData.pass !== pass) {
+                return showAlert('الرقم السري غير صحيح، لا يمكنك حذف الحساب.');
+            }
 
             document.getElementById('confirmDeleteModal').classList.add('active');
         }
 
-        function executeDeleteAccount() {
+        async function executeDeleteAccount() {
             closeCustomModal('confirmDeleteModal');
             const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
-            if (phone) {
-                const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
-                let cleanName = '';
-                if (savedDataStr) {
-                    try {
-                        const savedData = JSON.parse(savedDataStr);
-                        cleanName = (savedData.name || '').replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
-                    } catch(e) {}
-                }
+            if (!phone) return;
 
-                localStorage.removeItem('teacherAccount_' + phone);
-                localStorage.removeItem('teacherVerification_' + phone);
-                localStorage.removeItem('teacherBlocked_' + phone);
-                if (cleanName) {
-                    localStorage.removeItem('teacherVerification_name_' + cleanName);
-                    localStorage.removeItem('teacherBlocked_name_' + cleanName);
-                }
-                
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (k && k.startsWith('lessonState_')) {
-                        try {
-                            const st = JSON.parse(localStorage.getItem(k) || '{}');
-                            const stCleanName = (st.g_teacher || '').replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
-                            
-                            if (st.g_phone === phone || (cleanName && stCleanName === cleanName)) {
-                                const id = k.replace('lessonState_', '');
-                                keysToRemove.push('lessonState_' + id); 
-                                keysToRemove.push('publishState_' + id);
-                            }
-                        } catch (e) {}
-                    }
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-
-                localStorage.removeItem('loggedInTeacher'); 
-                
-                document.getElementById('deletedSuccessModal').classList.add('active');
-                setTimeout(() => { window.location.href = './index.html'; }, 1400);
+            const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
+            let cleanName = '';
+            if (savedDataStr) {
+                try {
+                    const savedData = JSON.parse(savedDataStr);
+                    cleanName = (savedData.name || '')
+                        .replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '')
+                        .replace(/^\/\s*/, '')
+                        .trim();
+                } catch(e) {}
             }
+
+            // مسح بيانات الحساب من localStorage
+            localStorage.removeItem('teacherAccount_' + phone);
+            localStorage.removeItem('teacherVerification_' + phone);
+            localStorage.removeItem('teacherBlocked_' + phone);
+            if (cleanName) {
+                localStorage.removeItem('teacherVerification_name_' + cleanName);
+                localStorage.removeItem('teacherBlocked_name_' + cleanName);
+            }
+            
+            // مسح الحصص المرتبطة
+            const keysToRemove = [];
+            for (let i = 0; i < localStorage.length; i++) {
+                const k = localStorage.key(i);
+                if (k && k.startsWith('lessonState_')) {
+                    try {
+                        const st = JSON.parse(localStorage.getItem(k) || '{}');
+                        const stCleanName = (st.g_teacher || '')
+                            .replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '')
+                            .replace(/^\/\s*/, '')
+                            .trim();
+                        
+                        if (st.g_phone === phone || (cleanName && stCleanName === cleanName)) {
+                            const id = k.replace('lessonState_', '');
+                            keysToRemove.push('lessonState_' + id); 
+                            keysToRemove.push('publishState_' + id);
+                        }
+                    } catch (e) {}
+                }
+            }
+            keysToRemove.forEach(k => localStorage.removeItem(k));
+
+            localStorage.removeItem('loggedInTeacher'); 
+
+            // ✅ مسح teacher_devices من Firebase
+            try {
+                const fb = await getFbModule();
+                if (fb) {
+                    const teacherKey = String(phone).replace(/\D/g, '');
+                    await fb.deleteDoc(fb.doc(fb.db, "teacher_devices", teacherKey));
+                    console.log("✅ تم حذف سجل الجهاز من Firebase");
+                }
+            } catch (e) {
+                console.warn("⚠️ فشل حذف سجل الجهاز:", e);
+            }
+
+            // ✅ حذف مستندات Firestore المرتبطة (اختياري - uncomment لو تحب)
+            // try {
+            //     const fb = await getFbModule();
+            //     if (fb) {
+            //         const teacherKey = String(phone).replace(/\D/g, '');
+            //         await fb.deleteDoc(fb.doc(fb.db, "talep_data", teacherKey));
+            //     }
+            // } catch(e) {}
+
+            document.getElementById('deletedSuccessModal').classList.add('active');
+            setTimeout(() => { window.location.href = './index.html'; }, 1600);
         }
     </script>
 </body>
