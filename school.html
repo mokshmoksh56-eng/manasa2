@@ -29,295 +29,425 @@
         }
 
         #pullToRefreshIndicator {
-            position: fixed; top: -60px; left: 0; right: 0; height: 60px;
-            background: linear-gradient(135deg, #0F2D5C, #2563EB); color: white;
-            display: flex; align-items: center; justify-content: center;
-            font-weight: 900; font-size: 13px; z-index: 999999;
+            position: fixed;
+            top: -60px;
+            left: 0;
+            right: 0;
+            height: 60px;
+            background: linear-gradient(135deg, #0F2D5C, #2563EB);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 13px;
+            z-index: 999999;
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .hero-banner {
-            position: relative; width: 100%;
+            position: relative;
+            width: 100%;
             background: linear-gradient(135deg, #0A1E3F 0%, #0F2D5C 50%, #1E40AF 100%);
-            color: white; padding: 28px 20px 65px;
-            border-bottom-left-radius: 36px; border-bottom-right-radius: 36px;
+            color: white;
+            padding: 28px 20px 65px;
+            border-bottom-left-radius: 36px;
+            border-bottom-right-radius: 36px;
             box-shadow: 0 12px 30px rgba(15, 45, 92, 0.2);
         }
 
         .top-nav {
-            max-width: 1200px; margin: 0 auto 20px;
-            display: flex; flex-wrap: wrap; justify-content: space-between;
-            align-items: center; gap: 10px;
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
         }
 
-        .nav-links { display: flex; flex-wrap: wrap; gap: 8px; }
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
 
         .btn-nav {
-            background: rgba(255, 255, 255, 0.12); backdrop-filter: blur(6px);
-            color: #FFFFFF; padding: 8px 16px; border-radius: 999px;
-            font-weight: 800; font-size: 13px; display: inline-flex;
-            align-items: center; gap: 6px; text-decoration: none;
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(6px);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
             border: 1.5px solid rgba(255, 255, 255, 0.25);
-            transition: all 0.25s ease; cursor: pointer;
+            transition: all 0.25s ease;
+            cursor: pointer;
         }
         .btn-nav:hover {
-            background: #FFFFFF; color: var(--primary-900); transform: translateY(-2px);
+            background: #FFFFFF;
+            color: var(--primary-900);
+            transform: translateY(-2px);
         }
         .btn-nav.highlight-btn {
             background: linear-gradient(135deg, #F59E0B, #D97706);
-            border-color: #FCD34D; color: #fff;
+            border-color: #FCD34D;
+            color: #fff;
             box-shadow: 0 6px 15px rgba(245, 158, 11, 0.35);
         }
         .btn-nav.highlight-btn:hover {
-            background: linear-gradient(135deg, #D97706, #B45309); color: #fff;
-        }
-        .btn-nav.success-btn {
-            background: linear-gradient(135deg, #10B981, #059669);
-            border-color: #6EE7B7; color: #fff;
-        }
-        .btn-nav.success-btn:hover {
-            background: linear-gradient(135deg, #059669, #047857); color: #fff;
-        }
-        .btn-nav.danger-btn {
-            background: linear-gradient(135deg, #EF4444, #DC2626);
-            border-color: #FCA5A5; color: #fff;
+            background: linear-gradient(135deg, #D97706, #B45309);
+            color: #fff;
         }
 
         .stats-container {
-            max-width: 1200px; margin: -45px auto 20px;
-            padding: 0 15px; position: relative; z-index: 10; width: 100%;
+            max-width: 1200px;
+            margin: -45px auto 20px;
+            padding: 0 15px;
+            position: relative;
+            z-index: 10;
+            width: 100%;
         }
 
         .stat-card {
-            background: #FFFFFF; border-radius: 20px; padding: 16px;
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 16px;
             box-shadow: 0 10px 25px -10px rgba(0,0,0,0.08);
-            border: 2px solid #E2E8F0; border-bottom: 5px solid var(--primary-600);
-            display: flex; align-items: center; gap: 14px;
-            transition: transform 0.25s ease, border-color 0.2s; cursor: pointer;
+            border: 2px solid #E2E8F0;
+            border-bottom: 5px solid var(--primary-600);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: transform 0.25s ease, border-color 0.2s;
+            cursor: pointer;
         }
         .stat-card:hover { transform: translateY(-4px); border-color: var(--primary-600); }
 
         .stat-icon {
-            width: 52px; height: 52px; border-radius: 16px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 26px; flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
         }
 
         .filter-bar {
-            background: #FFFFFF; border-radius: 20px; padding: 16px;
-            border: 2px solid #E2E8F0; border-bottom: 4px solid #CBD5E1;
-            margin-bottom: 20px; box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 16px;
+            border: 2px solid #E2E8F0;
+            border-bottom: 4px solid #CBD5E1;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
         }
 
         .form-input {
-            width: 100%; padding: 10px 14px; border: 2px solid #E2E8F0;
-            border-bottom: 3px solid #94A3B8; border-radius: 12px;
-            font-size: 13.5px; font-weight: 800; color: #1E293B;
-            background: #F8FAFC; outline: none; transition: all 0.2s;
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #E2E8F0;
+            border-bottom: 3px solid #94A3B8;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #1E293B;
+            background: #F8FAFC;
+            outline: none;
+            transition: all 0.2s;
         }
         .form-input:focus {
-            border-color: var(--primary-600); background: #FFFFFF;
+            border-color: var(--primary-600);
+            background: #FFFFFF;
             box-shadow: 0 0 0 3px #DBEAFE;
         }
 
-        .badge-mr { background: #DBEAFE; color: #1E40AF; border: 1.5px solid #93C5FD; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 900; display: inline-flex; align-items: center; gap: 4px; }
-        .badge-ms { background: #FCE7F3; color: #9D174D; border: 1.5px solid #F9A8D4; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 900; display: inline-flex; align-items: center; gap: 4px; }
-        .badge-device { background: #F1F5F9; color: #475569; border: 1px solid #CBD5E1; padding: 2px 8px; border-radius: 999px; font-size: 10px; font-weight: 900; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .badge-mr {
+            background: #DBEAFE;
+            color: #1E40AF;
+            border: 1.5px solid #93C5FD;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .badge-ms {
+            background: #FCE7F3;
+            color: #9D174D;
+            border: 1.5px solid #F9A8D4;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .badge-device {
+            background: #F1F5F9;
+            color: #475569;
+            border: 1px solid #CBD5E1;
+            padding: 2px 8px;
+            border-radius: 999px;
+            font-size: 10px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
 
         .record-card {
-            background: #FFFFFF; border-radius: 22px;
-            border: 2px solid #E2E8F0; border-bottom: 6px solid #334155;
-            padding: 18px; box-shadow: 0 10px 25px -12px rgba(0,0,0,0.08);
-            transition: all 0.25s ease; position: relative; overflow: hidden;
+            background: #FFFFFF;
+            border-radius: 22px;
+            border: 2px solid #E2E8F0;
+            border-bottom: 6px solid #334155;
+            padding: 18px;
+            box-shadow: 0 10px 25px -12px rgba(0,0,0,0.08);
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
         }
         .record-card.is-mr { border-top: 5px solid #2563EB; }
         .record-card.is-ms { border-top: 5px solid #EC4899; }
         .record-card.is-blocked { opacity: 0.72; border-top-color: #EF4444; border-bottom-color: #991B1B; background: #FFFBFB; }
-        .record-card:hover { transform: translateY(-4px); box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12); }
-        .record-card.is-selected {
-            border-color: #10B981 !important;
-            border-bottom-color: #059669 !important;
-            background: #F0FDF4;
-            box-shadow: 0 0 0 4px #A7F3D0, 0 18px 35px -12px rgba(16, 185, 129, 0.3);
+        .record-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
         }
-
-        .bulk-checkbox {
-            width: 28px; height: 28px; border-radius: 8px;
-            border: 2.5px solid #94A3B8; background: #FFFFFF;
-            cursor: pointer; display: flex; align-items: center; justify-content: center;
-            font-size: 14px; font-weight: 900; color: transparent;
-            transition: all 0.2s; flex-shrink: 0;
-        }
-        .bulk-checkbox:hover { border-color: #10B981; transform: scale(1.05); }
-        .bulk-checkbox.checked {
-            background: #10B981; border-color: #059669; color: white;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.35);
-        }
-        .bulk-checkbox.checked::after { content: '✓'; color: white; }
-
-        .record-card.bulk-hidden-checkbox .bulk-checkbox { display: none; }
-
-        /* ✅ شريط العمليات الجماعية العائم */
-        .bulk-actions-bar {
-            position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%) translateY(120px);
-            background: linear-gradient(135deg, #0F2D5C, #1E40AF);
-            color: white; padding: 12px 20px; border-radius: 20px;
-            display: flex; align-items: center; gap: 12px;
-            box-shadow: 0 15px 40px rgba(15, 45, 92, 0.4);
-            z-index: 99999; border-bottom: 4px solid #F59E0B;
-            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            max-width: 95vw; flex-wrap: wrap; justify-content: center;
-        }
-        .bulk-actions-bar.show { transform: translateX(-50%) translateY(0); }
-
-        .bulk-count-badge {
-            background: #F59E0B; color: #0F2D5C; padding: 6px 14px;
-            border-radius: 99px; font-size: 13px; font-weight: 900;
-            border: 2px solid #FCD34D; white-space: nowrap;
-        }
-
-        .bulk-btn {
-            padding: 8px 14px; border-radius: 10px; font-size: 12px;
-            font-weight: 900; cursor: pointer; border: none;
-            display: inline-flex; align-items: center; gap: 5px;
-            transition: all 0.2s;
-        }
-        .bulk-btn:active { transform: translateY(1px); }
-        .bulk-btn-verify { background: #10B981; color: white; border-bottom: 2px solid #059669; }
-        .bulk-btn-block { background: #EF4444; color: white; border-bottom: 2px solid #B91C1C; }
-        .bulk-btn-delete { background: #DC2626; color: white; border-bottom: 2px solid #7F1D1D; }
-        .bulk-btn-cancel { background: rgba(255,255,255,0.2); color: white; border: 1.5px solid rgba(255,255,255,0.4); }
-
-        /* ✅ لوحة التنبيهات الذكية */
-        .smart-alerts-panel {
-            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-            border: 2px solid #FCD34D;
-            border-bottom: 5px solid #D97706;
-            border-radius: 18px; padding: 14px 16px;
-            margin-bottom: 15px;
-            animation: slideDownFade 0.3s ease-out;
-        }
-        .smart-alert-item {
-            background: #FFFFFF; border-radius: 12px;
-            padding: 10px 12px; margin-bottom: 6px;
-            border: 1px solid #FCD34D;
-            display: flex; align-items: center; justify-content: space-between;
-            gap: 8px; font-size: 12.5px; font-weight: 800;
-        }
-        .smart-alert-item:last-child { margin-bottom: 0; }
-        .smart-alert-item.warn { background: #FFF7ED; border-color: #FB923C; }
-        .smart-alert-item.info { background: #EFF6FF; border-color: #93C5FD; }
-
-        /* ✅ Modal تصدير/استيراد */
-        .export-options-grid {
-            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 15px 0;
-        }
-        .export-option {
-            background: #F8FAFC; border: 2px solid #E2E8F0;
-            border-bottom: 4px solid #CBD5E1; border-radius: 14px;
-            padding: 16px 12px; text-align: center; cursor: pointer;
-            transition: all 0.2s;
-        }
-        .export-option:hover {
-            background: #EFF6FF; border-color: #93C5FD;
-            border-bottom-color: #2563EB; transform: translateY(-2px);
-        }
-        .export-option .icon { font-size: 32px; margin-bottom: 6px; display: block; }
-        .export-option .label { font-size: 13px; font-weight: 900; color: #1E293B; display: block; }
-        .export-option .desc { font-size: 10.5px; font-weight: 700; color: #64748B; display: block; margin-top: 3px; }
-
-        .drop-zone {
-            border: 3px dashed #CBD5E1; border-radius: 16px;
-            padding: 30px 15px; text-align: center; cursor: pointer;
-            background: #F8FAFC; transition: all 0.25s;
-        }
-        .drop-zone:hover, .drop-zone.dragover {
-            border-color: #2563EB; background: #EFF6FF;
-            transform: scale(1.01);
-        }
-        .drop-zone-icon { font-size: 44px; margin-bottom: 8px; display: block; }
 
         .info-pill {
-            background: #F8FAFC; border: 1px solid #E2E8F0;
-            border-radius: 12px; padding: 8px 12px; font-size: 12.5px;
-            font-weight: 800; color: #334155; display: flex;
-            align-items: flex-start; gap: 8px; line-height: 1.5;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #334155;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            line-height: 1.5;
         }
-        .info-pill .label { color: #64748B; font-weight: 900; white-space: nowrap; }
+        .info-pill .label {
+            color: #64748B;
+            font-weight: 900;
+            white-space: nowrap;
+        }
 
-        .unified-schedule-box { border: 1.5px solid #E2E8F0; border-radius: 14px; overflow-x: auto; background: #FFFFFF; margin-top: 8px; }
-        .unified-schedule-table { width: 100%; border-collapse: collapse; text-align: right; font-size: 12px; font-weight: 800; }
-        .unified-schedule-table th { background: #F1F5F9; color: #0F2D5C; padding: 9px 10px; font-weight: 900; border-bottom: 2px solid #E2E8F0; white-space: nowrap; }
-        .unified-schedule-table td { padding: 9px 10px; border-bottom: 1px solid #F1F5F9; color: #334155; vertical-align: middle; }
-        .unified-schedule-table tr:last-child td { border-bottom: none; }
-        .unified-schedule-table tr:hover td { background: #F8FAFC; }
+        .unified-schedule-box {
+            border: 1.5px solid #E2E8F0;
+            border-radius: 14px;
+            overflow-x: auto;
+            background: #FFFFFF;
+            margin-top: 8px;
+        }
+        .unified-schedule-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-size: 12px;
+            font-weight: 800;
+        }
+        .unified-schedule-table th {
+            background: #F1F5F9;
+            color: #0F2D5C;
+            padding: 9px 10px;
+            font-weight: 900;
+            border-bottom: 2px solid #E2E8F0;
+            white-space: nowrap;
+        }
+        .unified-schedule-table td {
+            padding: 9px 10px;
+            border-bottom: 1px solid #F1F5F9;
+            color: #334155;
+            vertical-align: middle;
+        }
+        .unified-schedule-table tr:last-child td {
+            border-bottom: none;
+        }
+        .unified-schedule-table tr:hover td {
+            background: #F8FAFC;
+        }
 
-        .action-chip { padding: 7px 12px; border-radius: 10px; font-size: 12px; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; gap: 5px; cursor: pointer; border: none; transition: all 0.2s; text-decoration: none; }
+        .action-chip {
+            padding: 7px 12px;
+            border-radius: 10px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
         .action-chip:active { transform: translateY(1px); }
 
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(15, 23, 42, 0.65);
-            backdrop-filter: blur(4px); display: flex; align-items: center;
-            justify-content: center; z-index: 99999; opacity: 0; visibility: hidden;
-            transition: all 0.25s ease; padding: 15px;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            padding: 15px;
         }
-        .modal-overlay.active { opacity: 1; visibility: visible; }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
         .modal-box {
-            background: #FFFFFF; width: 100%; max-width: 500px;
-            border-radius: 24px; padding: 22px;
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px;
+            padding: 22px;
             box-shadow: 0 25px 50px rgba(0,0,0,0.25);
             border-bottom: 6px solid var(--primary-600);
-            max-height: 92vh; overflow-y: auto;
+            max-height: 92vh;
+            overflow-y: auto;
         }
-        .modal-box.wide-modal { max-width: 820px; border-bottom-color: #F59E0B; }
+        .modal-box.wide-modal {
+            max-width: 820px;
+            border-bottom-color: #F59E0B;
+        }
 
-        .stage-tab { padding: 9px 15px; border-radius: 14px; font-size: 13px; font-weight: 900; border: 2px solid #E2E8F0; border-bottom: 4px solid #CBD5E1; background: #FFFFFF; color: #334155; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
-        .stage-tab.active { background: #EFF6FF; border-color: #2563EB; border-bottom-color: #1D4ED8; color: #1E3A8A; transform: translateY(-1px); }
+        .stage-tab {
+            padding: 9px 15px;
+            border-radius: 14px;
+            font-size: 13px;
+            font-weight: 900;
+            border: 2px solid #E2E8F0;
+            border-bottom: 4px solid #CBD5E1;
+            background: #FFFFFF;
+            color: #334155;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        .stage-tab.active {
+            background: #EFF6FF;
+            border-color: #2563EB;
+            border-bottom-color: #1D4ED8;
+            color: #1E3A8A;
+            transform: translateY(-1px);
+        }
 
-        .grade-selectable-card { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #FFFFFF; border: 2px solid #E2E8F0; border-bottom: 4px solid #CBD5E1; border-radius: 14px; padding: 10px 14px; font-size: 13.5px; font-weight: 900; color: #1E293B; cursor: pointer; transition: all 0.2s ease; }
-        .grade-selectable-card:hover { border-color: #93C5FD; background: #F8FAFC; }
-        .grade-selectable-card.active { background: #ECFDF5; border-color: #10B981; border-bottom-color: #059669; color: #065F46; box-shadow: 0 6px 15px rgba(16, 185, 129, 0.15); }
+        .grade-selectable-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: #FFFFFF;
+            border: 2px solid #E2E8F0;
+            border-bottom: 4px solid #CBD5E1;
+            border-radius: 14px;
+            padding: 10px 14px;
+            font-size: 13.5px;
+            font-weight: 900;
+            color: #1E293B;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .grade-selectable-card:hover {
+            border-color: #93C5FD;
+            background: #F8FAFC;
+        }
+        .grade-selectable-card.active {
+            background: #ECFDF5;
+            border-color: #10B981;
+            border-bottom-color: #059669;
+            color: #065F46;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.15);
+        }
 
-        .grade-subjects-panel { background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%); border: 2px solid #86EFAC; border-bottom: 5px solid #10B981; border-radius: 20px; padding: 16px; margin-top: 14px; animation: slideDownFade 0.25s ease-out; }
-        @keyframes slideDownFade { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+        .grade-subjects-panel {
+            background: linear-gradient(180deg, #F0FDF4 0%, #FFFFFF 100%);
+            border: 2px solid #86EFAC;
+            border-bottom: 5px solid #10B981;
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 14px;
+            animation: slideDownFade 0.25s ease-out;
+        }
+        @keyframes slideDownFade {
+            from { opacity: 0; transform: translateY(-8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-        .subject-item-badge { display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #FFFFFF; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #64748B; border-radius: 12px; padding: 8px 12px; font-size: 13px; font-weight: 900; color: #1E293B; }
+        .subject-item-badge {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            background: #FFFFFF;
+            border: 1.5px solid #CBD5E1;
+            border-bottom: 3px solid #64748B;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 13px;
+            font-weight: 900;
+            color: #1E293B;
+        }
 
         .custom-toast {
-            position: fixed; bottom: 20px; left: 50%;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #10B981; color: white; padding: 10px 22px;
-            border-radius: 99px; font-weight: 900; font-size: 13px;
-            z-index: 999999; transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            opacity: 0; border-bottom: 3px solid #059669;
+            background: #10B981;
+            color: white;
+            padding: 10px 22px;
+            border-radius: 99px;
+            font-weight: 900;
+            font-size: 13px;
+            z-index: 999999;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            border-bottom: 3px solid #059669;
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
         }
-        .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        .custom-toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 1;
+        }
 
-        .cloud-status-badge { display: inline-flex; align-items: center; gap: 5px; padding: 4px 10px; border-radius: 999px; font-size: 11px; font-weight: 900; border: 1.5px solid; transition: all 0.3s; }
+        /* مؤشر حالة المزامنة مع السحابة */
+        .cloud-status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 900;
+            border: 1.5px solid;
+            transition: all 0.3s;
+        }
         .cloud-status-badge.syncing { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
         .cloud-status-badge.synced { background: #D1FAE5; color: #065F46; border-color: #6EE7B7; }
         .cloud-status-badge.offline { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
-
-        /* ✅ عرض JSON الخام للمعلم */
-        .raw-json-viewer {
-            background: #0F172A; color: #A7F3D0;
-            font-family: 'Courier New', monospace; font-size: 11.5px;
-            padding: 15px; border-radius: 12px;
-            max-height: 400px; overflow: auto;
-            white-space: pre-wrap; word-break: break-all;
-            direction: ltr; text-align: left;
-            line-height: 1.6;
-        }
-
-        @media (max-width: 640px) {
-            .bulk-actions-bar { flex-direction: column; padding: 10px 15px; }
-            .bulk-count-badge { font-size: 12px; padding: 5px 12px; }
-            .bulk-btn { font-size: 11px; padding: 6px 10px; }
-            .export-options-grid { grid-template-columns: 1fr; }
-        }
     </style>
 </head>
 <body>
@@ -331,7 +461,7 @@
                 <div class="w-11 h-11 rounded-2xl bg-amber-500 flex items-center justify-center text-2xl shadow-lg">🛡️</div>
                 <div>
                     <h1 class="text-xl md:text-2xl font-black tracking-tight">لوحة تحكم <span class="text-amber-400">احجزلى</span></h1>
-                    <p class="text-xs text-slate-300 font-bold">إدارة المعلمين + التحكم الذكي في الملفات والبيانات</p>
+                    <p class="text-xs text-slate-300 font-bold">إدارة المعلمين (مستر / مس)، المراحل والصفوف ومواد كل صف، والمواعيد</p>
                 </div>
             </div>
 
@@ -340,7 +470,7 @@
                     ⏳ جاري الاتصال بالسحابة...
                 </span>
                 <button onclick="openCurriculumModal()" class="btn-nav highlight-btn">
-                    📚 المراحل والصفوف
+                    📚 التحكم في المراحل والصفوف والمواد
                 </button>
             </div>
         </div>
@@ -382,35 +512,13 @@
         </div>
     </section>
 
-    <!-- ✅ شريط أدوات التحكم الذكي بالملفات -->
-    <div class="max-w-7xl mx-auto w-full px-4 mb-3 flex flex-wrap justify-between items-center gap-2 relative z-10" style="margin-top: -10px;">
-        <div class="flex flex-wrap gap-2">
-            <button onclick="toggleBulkMode()" id="bulkModeBtn" class="btn-nav bg-indigo-700 text-white border-none shadow-md">
-                ☑️ تحديد متعدد
-            </button>
-            <button onclick="openExportModal()" class="btn-nav success-btn">
-                📤 تصدير البيانات
-            </button>
-            <button onclick="openImportModal()" class="btn-nav highlight-btn">
-                📥 استيراد ملف
-            </button>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <button onclick="showSmartAlertsModal()" id="smartAlertsBtn" class="btn-nav bg-orange-600 text-white border-none shadow-md relative">
-                🔔 التنبيهات الذكية
-                <span id="smartAlertsCount" class="absolute -top-2 -right-2 bg-rose-500 text-white text-[10px] font-black rounded-full w-5 h-5 flex items-center justify-center shadow-lg" style="display:none;">0</span>
-            </button>
-            <button onclick="toggleArchiveView()" id="btnToggleArchive" class="btn-nav bg-slate-800 text-white border-none shadow-md">
-                📁 أرشيف المحظورين (<span id="archiveCountBadge">0</span>)
-            </button>
-        </div>
+    <div class="max-w-7xl mx-auto w-full px-4 mb-4 flex justify-end relative z-10" style="margin-top: -10px;">
+        <button onclick="toggleArchiveView()" id="btnToggleArchive" class="btn-nav bg-slate-800 text-white border-none shadow-md">
+            📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)
+        </button>
     </div>
 
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
-        
-        <!-- ✅ لوحة التنبيهات الذكية (تظهر تلقائياً عند وجود تنبيهات) -->
-        <div id="smartAlertsPanel" class="smart-alerts-panel" style="display: none;"></div>
-
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
                 <div class="md:col-span-2">
@@ -439,126 +547,13 @@
                 <div class="text-xs font-extrabold text-slate-500">
                     📊 النتائج المعروضة: <span id="resultsCounter" class="text-blue-600 font-black">0</span> سجل
                 </div>
-                <div class="flex gap-2">
-                    <button onclick="saveCurrentFilter()" class="action-chip bg-slate-100 text-slate-700 border border-slate-300 text-[11px]">
-                        💾 حفظ الفلتر
-                    </button>
-                    <button onclick="loadSavedFiltersMenu()" class="action-chip bg-slate-100 text-slate-700 border border-slate-300 text-[11px]">
-                        📂 فلاتر محفوظة
-                    </button>
-                </div>
             </div>
         </div>
 
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </main>
 
-    <!-- ✅ شريط العمليات الجماعية العائم -->
-    <div id="bulkActionsBar" class="bulk-actions-bar">
-        <span class="bulk-count-badge">☑️ <span id="bulkCount">0</span> محدد</span>
-        <button class="bulk-btn bulk-btn-verify" onclick="bulkAction('verify')">✅ توثيق</button>
-        <button class="bulk-btn bulk-btn-block" onclick="bulkAction('block')">🚫 حظر</button>
-        <button class="bulk-btn bulk-btn-delete" onclick="bulkAction('delete')">🗑️ حذف</button>
-        <button class="bulk-btn bulk-btn-cancel" onclick="clearSelection()">✖️ إلغاء</button>
-    </div>
-
-    <!-- ✅ Modal التصدير -->
-    <div id="exportModal" class="modal-overlay" onclick="closeModal('exportModal')">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
-                <h3 class="text-lg font-black text-slate-800">📤 تصدير البيانات</h3>
-                <button onclick="closeModal('exportModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
-            </div>
-            <p class="text-xs font-bold text-slate-500 mb-3">
-                اختر صيغة التصدير. يمكن استخدام الملف المُصدَّر كنسخة احتياطية واستعادته لاحقاً.
-            </p>
-
-            <div class="export-options-grid">
-                <div class="export-option" onclick="exportData('json', 'all')">
-                    <span class="icon">📦</span>
-                    <span class="label">JSON كامل</span>
-                    <span class="desc">نسخة احتياطية شاملة</span>
-                </div>
-                <div class="export-option" onclick="exportData('csv', 'all')">
-                    <span class="icon">📊</span>
-                    <span class="label">CSV (إكسل)</span>
-                    <span class="desc">لفتح في Excel</span>
-                </div>
-                <div class="export-option" onclick="exportData('json', 'filtered')">
-                    <span class="icon">🎯</span>
-                    <span class="label">JSON للنتائج الحالية</span>
-                    <span class="desc">المعلمين المعروضين فقط</span>
-                </div>
-                <div class="export-option" onclick="exportData('json', 'selected')">
-                    <span class="icon">☑️</span>
-                    <span class="label">JSON للمحددين</span>
-                    <span class="desc">المعلمين المختارين فقط</span>
-                </div>
-            </div>
-
-            <div class="bg-blue-50 border border-blue-200 rounded-xl p-3 text-[11px] font-bold text-blue-800 leading-relaxed">
-                💡 <b>ملاحظة:</b> ملف التصدير يحتوي على كامل بيانات المعلمين والدروس والمجموعات، يمكن استخدامه للاستيراد لاحقاً عبر زر "استيراد ملف".
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ Modal الاستيراد -->
-    <div id="importModal" class="modal-overlay" onclick="closeModal('importModal')">
-        <div class="modal-box" onclick="event.stopPropagation()">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
-                <h3 class="text-lg font-black text-slate-800">📥 استيراد ملف بيانات</h3>
-                <button onclick="closeModal('importModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
-            </div>
-            <p class="text-xs font-bold text-slate-500 mb-3">
-                ارفع ملف JSON تم تصديره من هذه اللوحة لاستعادة البيانات.
-            </p>
-
-            <div class="drop-zone" id="dropZone" onclick="document.getElementById('importFileInput').click()">
-                <span class="drop-zone-icon">📁</span>
-                <div class="text-sm font-black text-slate-800">اسحب الملف هنا أو اضغط للاختيار</div>
-                <div class="text-[11px] font-bold text-slate-500 mt-1">يدعم ملفات .json المُصدَّرة من هذه اللوحة</div>
-            </div>
-            <input type="file" id="importFileInput" accept=".json" style="display: none;" onchange="handleFileImport(event)">
-
-            <div id="importPreview" class="mt-3" style="display: none;"></div>
-
-            <div class="bg-amber-50 border border-amber-200 rounded-xl p-3 text-[11px] font-bold text-amber-800 leading-relaxed mt-3">
-                ⚠️ <b>تحذير:</b> الاستيراد سيقوم بإنشاء/تحديث السجلات في قاعدة البيانات السحابية. البيانات الحالية بنفس الـ ID سيتم استبدالها.
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ Modal التنبيهات الذكية -->
-    <div id="smartAlertsModal" class="modal-overlay" onclick="closeModal('smartAlertsModal')">
-        <div class="modal-box wide-modal" onclick="event.stopPropagation()">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
-                <h3 class="text-lg font-black text-slate-800">🔔 مركز التنبيهات الذكية</h3>
-                <button onclick="closeModal('smartAlertsModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
-            </div>
-            <div id="smartAlertsFullContent" class="space-y-2"></div>
-            <div class="flex justify-end mt-4 pt-3 border-t border-slate-200">
-                <button onclick="closeModal('smartAlertsModal')" class="action-chip bg-slate-800 text-white px-6 py-2.5 text-sm">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- ✅ Modal عرض Raw JSON لمعلم -->
-    <div id="rawDataModal" class="modal-overlay" onclick="closeModal('rawDataModal')">
-        <div class="modal-box wide-modal" onclick="event.stopPropagation()" style="border-bottom-color: #10B981;">
-            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
-                <h3 class="text-lg font-black text-slate-800" id="rawDataTitle">📄 ملف المعلم (Raw Data)</h3>
-                <button onclick="closeModal('rawDataModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
-            </div>
-            <div id="rawDataContent" class="raw-json-viewer"></div>
-            <div class="flex justify-between gap-2 mt-3">
-                <button onclick="copyRawDataToClipboard()" class="action-chip bg-blue-600 text-white px-4 py-2 text-xs">📋 نسخ</button>
-                <button onclick="exportSingleTeacher()" class="action-chip bg-emerald-600 text-white px-4 py-2 text-xs">📥 تحميل الملف</button>
-                <button onclick="closeModal('rawDataModal')" class="action-chip bg-slate-800 text-white px-6 py-2 text-xs">إغلاق</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modals الموجودة مسبقاً -->
+    <!-- Modals -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -635,7 +630,7 @@
     <div id="customConfirmModal" class="modal-overlay" onclick="closeModal('customConfirmModal')" style="z-index: 999999;">
         <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 380px; border-bottom-color: #EF4444; text-align: center;">
             <div class="text-5xl mb-3">⚠️</div>
-            <h3 class="text-lg font-black text-slate-800 mb-2">تأكيد العملية</h3>
+            <h3 class="text-lg font-black text-slate-800 mb-2">تأكيد الحذف</h3>
             <p id="customConfirmMessage" class="text-sm font-bold text-slate-600 mb-6">هل أنت متأكد؟</p>
             <div class="flex gap-3 justify-center">
                 <button id="btnConfirmYes" class="action-chip bg-rose-600 text-white px-6 py-2.5 flex-1 text-sm shadow-md">نعم، متأكد 🗑️</button>
@@ -649,8 +644,15 @@
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
           getFirestore,
-          doc, setDoc, getDoc, collection, getDocs,
-          onSnapshot, deleteDoc, updateDoc, increment
+          doc,
+          setDoc,
+          getDoc,
+          collection,
+          getDocs,
+          onSnapshot,
+          deleteDoc,
+          updateDoc,
+          increment
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -676,7 +678,7 @@
       window.fsUpdateDoc = updateDoc;
       window.fsIncrement = increment;
 
-      console.log("✅ Firebase + Firestore جاهز");
+      console.log("✅ Firebase + Firestore جاهز ويعمل كليةً على السحابة");
     </script>
 
     <script>
@@ -726,7 +728,7 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
         document.addEventListener('click', e => {
-            if (e.target.closest('button, a, select, .grade-selectable-card, .bulk-checkbox, .record-card')) playClickSound();
+            if (e.target.closest('button, a, select, .grade-selectable-card')) playClickSound();
         });
 
         function showToast(msg, isError = false) {
@@ -821,6 +823,13 @@
                         } else {
                             st.gradeSubjects[g] = [...st.subjs];
                         }
+                    } else {
+                        const existing = st.gradeSubjects[g];
+                        const defSubjs = (defStage.gradeSubjects && defStage.gradeSubjects[g]) || [];
+                        defSubjs.forEach(ds => {
+                            if (!existing.includes(ds)) existing.push(ds);
+                        });
+                        st.gradeSubjects[g] = existing;
                     }
                 });
             });
@@ -832,7 +841,6 @@
         let curriculumUnsubscribe = null;
         let isFirstSnapshot = true;
         let firebaseReady = false;
-        let lastRecordsCache = []; // ✅ كاش للسجلات لاستخدامها في التصدير والتنبيهات
 
         function setCloudStatus(status, text) {
             const b = document.getElementById('cloudStatusBadge');
@@ -860,7 +868,8 @@
                     );
                     setCloudStatus('synced', '☁️ متزامن مع السحابة');
                 } catch (err) {
-                    setCloudStatus('offline', '⚠️ فشل الرفع');
+                    console.error("❌ فشل حفظ المنهج في Firebase:", err);
+                    setCloudStatus('offline', '⚠️ فشل الرفع للسحابة');
                     showToast("⚠️ فشل الاتصال بقاعدة البيانات", true);
                 }
             }
@@ -912,583 +921,6 @@
         }
 
         // ==========================================
-        // 🌟 إدارة التحكم الذكي بالملفات - Bulk Mode
-        // ==========================================
-        let bulkModeActive = false;
-        let selectedRecordKeys = new Set();
-        let currentFilteredRecords = []; // السجلات المعروضة حالياً
-
-        function toggleBulkMode() {
-            bulkModeActive = !bulkModeActive;
-            const btn = document.getElementById('bulkModeBtn');
-
-            if (bulkModeActive) {
-                btn.innerHTML = '✖️ إنهاء التحديد';
-                btn.classList.add('bg-emerald-700');
-                btn.classList.remove('bg-indigo-700');
-                showToast('✅ وضع التحديد المتعدد مُفعَّل — اضغط على البطاقات لاختيارها');
-            } else {
-                btn.innerHTML = '☑️ تحديد متعدد';
-                btn.classList.remove('bg-emerald-700');
-                btn.classList.add('bg-indigo-700');
-                clearSelection();
-            }
-            renderAllRecords();
-        }
-
-        function toggleCardSelection(key, event) {
-            if (event) event.stopPropagation();
-            if (!bulkModeActive) return;
-
-            if (selectedRecordKeys.has(key)) {
-                selectedRecordKeys.delete(key);
-            } else {
-                selectedRecordKeys.add(key);
-            }
-            updateBulkBar();
-            renderAllRecords();
-        }
-
-        function clearSelection() {
-            selectedRecordKeys.clear();
-            updateBulkBar();
-            renderAllRecords();
-        }
-
-        function updateBulkBar() {
-            const bar = document.getElementById('bulkActionsBar');
-            const count = document.getElementById('bulkCount');
-            count.textContent = selectedRecordKeys.size;
-
-            if (selectedRecordKeys.size > 0 && bulkModeActive) {
-                bar.classList.add('show');
-            } else {
-                bar.classList.remove('show');
-            }
-        }
-
-        async function bulkAction(action) {
-            if (selectedRecordKeys.size === 0) {
-                showToast('لم تختر أي معلم', true);
-                return;
-            }
-
-            const count = selectedRecordKeys.size;
-            const actionLabels = {
-                verify: 'توثيق',
-                block: 'حظر',
-                delete: 'حذف نهائي'
-            };
-
-            const confirmMsgs = {
-                verify: `هل أنت متأكد من توثيق (${count}) معلم لمدة سنة كاملة؟ سيتم تفعيل حساباتهم فوراً.`,
-                block: `هل أنت متأكد من حظر (${count}) معلم؟ لن يتمكنوا من الدخول للمنصة.`,
-                delete: `⚠️ تحذير خطير: سيتم حذف (${count}) معلم وجميع دروسهم نهائياً من قاعدة البيانات. لا يمكن التراجع!`
-            };
-
-            showCustomConfirm(confirmMsgs[action], async () => {
-                setCloudStatus('syncing', `⏳ جاري ${actionLabels[action]}...`);
-                let successCount = 0, failCount = 0;
-
-                const recordsToProcess = lastRecordsCache.filter(r => selectedRecordKeys.has(r._key));
-
-                for (const rec of recordsToProcess) {
-                    try {
-                        const safeDocId = rec.docId || ((rec.phone && rec.phone !== 'غير مسجل') ? rec.phone : cleanTeacherName(rec.teacherName));
-
-                        if (action === 'verify' || action === 'block') {
-                            const newVerif = action === 'verify' ? 'سنة واحدة' : 'حظر';
-                            const isBlocked = action === 'block';
-                            await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
-                                phone: rec.phone,
-                                teacherName: cleanTeacherName(rec.teacherName),
-                                verification: newVerif,
-                                isBlocked: isBlocked,
-                                updatedAt: Date.now()
-                            }, { merge: true });
-                            successCount++;
-                        } else if (action === 'delete') {
-                            // حذف حساب المعلم
-                            if (safeDocId) {
-                                await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", safeDocId)).catch(() => {});
-                            }
-                            // حذف دروسه
-                            if (rec.lessonIds && rec.lessonIds.length > 0) {
-                                for (const lId of rec.lessonIds) {
-                                    await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", String(lId))).catch(() => {});
-                                }
-                            }
-                            successCount++;
-                        }
-                    } catch (err) {
-                        console.error('فشل معالجة', rec.teacherName, err);
-                        failCount++;
-                    }
-                }
-
-                selectedRecordKeys.clear();
-                updateBulkBar();
-                setCloudStatus('synced', '☁️ متزامن مع السحابة');
-
-                if (failCount > 0) {
-                    showToast(`تم ${actionLabels[action]} ${successCount} معلم، فشل ${failCount}`, true);
-                } else {
-                    showToast(`✅ تم ${actionLabels[action]} ${successCount} معلم بنجاح`);
-                }
-
-                if (bulkModeActive) {
-                    bulkModeActive = false;
-                    const btn = document.getElementById('bulkModeBtn');
-                    btn.innerHTML = '☑️ تحديد متعدد';
-                    btn.classList.remove('bg-emerald-700');
-                    btn.classList.add('bg-indigo-700');
-                }
-
-                await renderAllRecords();
-                updateSmartAlerts();
-            });
-        }
-
-        // ==========================================
-        // 🌟 تصدير / استيراد البيانات
-        // ==========================================
-        function openExportModal() {
-            document.getElementById('exportModal').classList.add('active');
-        }
-
-        function openImportModal() {
-            document.getElementById('importModal').classList.add('active');
-            document.getElementById('importPreview').style.display = 'none';
-            document.getElementById('importFileInput').value = '';
-        }
-
-        function exportData(format, scope) {
-            let records = [];
-            if (scope === 'all') {
-                records = lastRecordsCache;
-            } else if (scope === 'filtered') {
-                records = currentFilteredRecords;
-            } else if (scope === 'selected') {
-                records = lastRecordsCache.filter(r => selectedRecordKeys.has(r._key));
-                if (records.length === 0) {
-                    showToast('لم تختر أي معلم للتصدير', true);
-                    return;
-                }
-            }
-
-            if (records.length === 0) {
-                showToast('لا توجد بيانات للتصدير', true);
-                return;
-            }
-
-            const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-
-            if (format === 'json') {
-                const exportObj = {
-                    _meta: {
-                        platform: 'احجزلى - لوحة التحكم',
-                        exportedAt: new Date().toISOString(),
-                        scope: scope,
-                        recordsCount: records.length,
-                        version: '1.0'
-                    },
-                    curriculum: curriculumCache,
-                    records: records.map(r => {
-                        const copy = { ...r };
-                        delete copy._key;
-                        delete copy.expiryInfo;
-                        return copy;
-                    })
-                };
-                const blob = new Blob([JSON.stringify(exportObj, null, 2)], { type: 'application/json;charset=utf-8' });
-                downloadBlob(blob, `ehgezly_backup_${scope}_${timestamp}.json`);
-                showToast(`✅ تم تصدير ${records.length} سجل بنجاح`);
-
-            } else if (format === 'csv') {
-                const headers = ['الاسم', 'اللقب', 'التليفون', 'تاريخ التسجيل', 'الباقة', 'الصف', 'المواد', 'المجموعات', 'العنوان', 'الحالة'];
-                const rows = records.map(r => [
-                    r.teacherName || '',
-                    r.title || '',
-                    r.phone || '',
-                    r.regDate || '',
-                    r.verification || '',
-                    r.grade || '',
-                    r.subjects || '',
-                    r.groupName || '',
-                    r.address || '',
-                    r.isBlocked ? 'محظور' : 'نشط'
-                ]);
-                const csvContent = '\uFEFF' + [headers, ...rows].map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
-                const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8' });
-                downloadBlob(blob, `ehgezly_backup_${scope}_${timestamp}.csv`);
-                showToast(`✅ تم تصدير ${records.length} سجل بصيغة CSV`);
-            }
-
-            closeModal('exportModal');
-        }
-
-        function downloadBlob(blob, filename) {
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            setTimeout(() => URL.revokeObjectURL(url), 1000);
-        }
-
-        // ✅ Drop Zone
-        document.addEventListener('DOMContentLoaded', () => {
-            const dz = document.getElementById('dropZone');
-            if (dz) {
-                ['dragenter', 'dragover'].forEach(evt => dz.addEventListener(evt, (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    dz.classList.add('dragover');
-                }));
-                ['dragleave', 'drop'].forEach(evt => dz.addEventListener(evt, (e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    dz.classList.remove('dragover');
-                }));
-                dz.addEventListener('drop', (e) => {
-                    const files = e.dataTransfer.files;
-                    if (files.length > 0) handleImportFile(files[0]);
-                });
-            }
-        });
-
-        function handleFileImport(event) {
-            const file = event.target.files[0];
-            if (file) handleImportFile(file);
-        }
-
-        let pendingImportData = null;
-
-        async function handleImportFile(file) {
-            if (!file.name.endsWith('.json')) {
-                showToast('يرجى اختيار ملف JSON فقط', true);
-                return;
-            }
-
-            try {
-                const text = await file.text();
-                const data = JSON.parse(text);
-
-                if (!data.records || !Array.isArray(data.records)) {
-                    showToast('ملف غير صالح: لا يحتوي على قائمة سجلات', true);
-                    return;
-                }
-
-                pendingImportData = data;
-                const preview = document.getElementById('importPreview');
-                preview.style.display = 'block';
-                preview.innerHTML = `
-                    <div class="bg-emerald-50 border-2 border-emerald-300 rounded-xl p-3">
-                        <div class="text-sm font-black text-emerald-800 mb-2">✅ الملف جاهز للاستيراد</div>
-                        <div class="text-xs font-bold text-emerald-700 space-y-1">
-                            <div>📊 عدد السجلات: <b>${data.records.length}</b></div>
-                            <div>📅 تاريخ التصدير: <b>${data._meta?.exportedAt ? new Date(data._meta.exportedAt).toLocaleString('ar-EG') : 'غير معروف'}</b></div>
-                            <div>📚 يحتوي منهج: <b>${data.curriculum ? 'نعم' : 'لا'}</b></div>
-                        </div>
-                        <div class="flex gap-2 mt-3">
-                            <button onclick="executeImport()" class="action-chip bg-emerald-600 text-white px-4 py-2 text-xs flex-1">✔️ بدء الاستيراد</button>
-                            <button onclick="cancelImport()" class="action-chip bg-slate-200 text-slate-700 px-4 py-2 text-xs">إلغاء</button>
-                        </div>
-                    </div>
-                `;
-            } catch (err) {
-                console.error(err);
-                showToast('فشل قراءة الملف: ' + err.message, true);
-            }
-        }
-
-        function cancelImport() {
-            pendingImportData = null;
-            document.getElementById('importPreview').style.display = 'none';
-            document.getElementById('importFileInput').value = '';
-        }
-
-        async function executeImport() {
-            if (!pendingImportData) return;
-
-            const { records, curriculum } = pendingImportData;
-            const total = records.length;
-            let successCount = 0, failCount = 0;
-
-            setCloudStatus('syncing', `⏳ جاري استيراد ${total} سجل...`);
-
-            // استيراد المنهج أولاً إن وُجد
-            if (curriculum) {
-                try {
-                    await window.fsSetDoc(
-                        window.fsDoc(window.db, 'curriculum', 'main'),
-                        { ...curriculum, updatedAt: Date.now() }
-                    );
-                } catch (e) {
-                    console.warn('فشل استيراد المنهج', e);
-                }
-            }
-
-            for (const rec of records) {
-                try {
-                    const docId = rec.docId || ((rec.phone && rec.phone !== 'غير مسجل') ? rec.phone : cleanTeacherName(rec.teacherName));
-                    if (!docId) { failCount++; continue; }
-
-                    const teacherPayload = {
-                        phone: rec.phone || '',
-                        teacherName: cleanTeacherName(rec.teacherName) || 'بدون اسم',
-                        title: rec.title || 'مستر',
-                        verification: rec.verification || '30 يوم تجريبي',
-                        isBlocked: rec.isBlocked || false,
-                        waClicks: rec.waClicks || 0,
-                        phoneType: rec.phoneType || '',
-                        createdAt: rec.regDate || new Date().toISOString().split('T')[0],
-                        updatedAt: Date.now()
-                    };
-
-                    await window.fsSetDoc(window.fsDoc(window.db, "teachers", docId), teacherPayload, { merge: true });
-                    successCount++;
-                } catch (err) {
-                    console.error('فشل استيراد', rec.teacherName, err);
-                    failCount++;
-                }
-            }
-
-            setCloudStatus('synced', '☁️ متزامن مع السحابة');
-            showToast(`✅ تم استيراد ${successCount} سجل، فشل ${failCount}`, failCount > 0);
-            
-            pendingImportData = null;
-            closeModal('importModal');
-            await renderAllRecords();
-            updateSmartAlerts();
-        }
-
-        // ==========================================
-        // 🌟 التنبيهات الذكية
-        // ==========================================
-        function computeSmartAlerts(records) {
-            const alerts = [];
-            const now = new Date();
-
-            // 1. حسابات على وشك الانتهاء (خلال 7 أيام)
-            const expiringSoon = records.filter(r => {
-                if (r.isBlocked || !r.regDate || r.verification === 'حظر') return false;
-                const info = calculateExpiration(r.regDate, r.verification);
-                if (info.expired) return false;
-                const match = info.text.match(/متبقي (\d+) يوم/);
-                if (match) {
-                    const days = parseInt(match[1]);
-                    return days > 0 && days <= 7;
-                }
-                return false;
-            });
-            if (expiringSoon.length > 0) {
-                alerts.push({
-                    type: 'warn',
-                    icon: '⏰',
-                    title: `حسابات على وشك الانتهاء (${expiringSoon.length})`,
-                    items: expiringSoon.map(r => `• ${r.teacherName} — ${r.expiryInfo.text}`)
-                });
-            }
-
-            // 2. حسابات بدون دروس (Orphaned)
-            const orphaned = records.filter(r => r.type === 'account_only');
-            if (orphaned.length > 0) {
-                alerts.push({
-                    type: 'info',
-                    icon: '📭',
-                    title: `حسابات بدون دروس (${orphaned.length})`,
-                    items: orphaned.slice(0, 5).map(r => `• ${r.teacherName} (${r.phone})`)
-                });
-            }
-
-            // 3. دروس بدون حساب
-            const lessonOnly = records.filter(r => r.type === 'lesson' && !r.docId?.match(/^01/));
-            if (lessonOnly.length > 0) {
-                alerts.push({
-                    type: 'warn',
-                    icon: '⚠️',
-                    title: `دروس بدون حساب معلم (${lessonOnly.length})`,
-                    items: lessonOnly.slice(0, 5).map(r => `• ${r.teacherName} — ${r.groupName}`)
-                });
-            }
-
-            // 4. بيانات ناقصة (بدون رقم تليفون صحيح)
-            const invalidPhone = records.filter(r => !r.phone || r.phone === 'غير مسجل' || r.phone.length !== 11);
-            if (invalidPhone.length > 0) {
-                alerts.push({
-                    type: 'warn',
-                    icon: '📵',
-                    title: `أرقام تليفون غير صحيحة (${invalidPhone.length})`,
-                    items: invalidPhone.slice(0, 5).map(r => `• ${r.teacherName} — ${r.phone || 'غير مسجل'}`)
-                });
-            }
-
-            return alerts;
-        }
-
-        function updateSmartAlerts() {
-            const alerts = computeSmartAlerts(lastRecordsCache);
-            const btn = document.getElementById('smartAlertsBtn');
-            const badge = document.getElementById('smartAlertsCount');
-            const panel = document.getElementById('smartAlertsPanel');
-
-            if (alerts.length === 0) {
-                badge.style.display = 'none';
-                panel.style.display = 'none';
-                return;
-            }
-
-            const totalItems = alerts.reduce((sum, a) => sum + a.items.length, 0);
-            badge.textContent = alerts.length;
-            badge.style.display = 'flex';
-
-            // لوحة مدمجة في الصفحة
-            panel.style.display = 'block';
-            panel.innerHTML = `
-                <div class="flex items-center justify-between mb-2">
-                    <div class="text-sm font-black text-amber-900 flex items-center gap-2">
-                        🔔 <span>تنبيهات ذكية (${alerts.length})</span>
-                    </div>
-                    <button onclick="showSmartAlertsModal()" class="action-chip bg-amber-600 text-white px-3 py-1 text-[11px]">عرض التفاصيل</button>
-                </div>
-                ${alerts.slice(0, 2).map(a => `
-                    <div class="smart-alert-item ${a.type}">
-                        <div class="flex items-center gap-2">
-                            <span>${a.icon}</span>
-                            <span>${a.title}</span>
-                        </div>
-                    </div>
-                `).join('')}
-                ${alerts.length > 2 ? `<div class="text-[11px] font-black text-amber-800 text-center mt-2">+ ${alerts.length - 2} تنبيهات أخرى</div>` : ''}
-            `;
-        }
-
-        function showSmartAlertsModal() {
-            const alerts = computeSmartAlerts(lastRecordsCache);
-            const container = document.getElementById('smartAlertsFullContent');
-
-            if (alerts.length === 0) {
-                container.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">🎉 لا توجد تنبيهات — كل شيء سليم!</div>`;
-            } else {
-                container.innerHTML = alerts.map(a => `
-                    <div class="smart-alert-item ${a.type}" style="flex-direction: column; align-items: stretch;">
-                        <div class="flex items-center gap-2 mb-2 font-black" style="font-size: 13px;">
-                            <span style="font-size: 20px;">${a.icon}</span>
-                            <span>${a.title}</span>
-                        </div>
-                        <div class="text-[11.5px] text-slate-600 font-bold space-y-1 pr-3">
-                            ${a.items.map(item => `<div>${item}</div>`).join('')}
-                        </div>
-                    </div>
-                `).join('');
-            }
-            document.getElementById('smartAlertsModal').classList.add('active');
-        }
-
-        // ==========================================
-        // 🌟 ملف المعلم (Raw JSON)
-        // ==========================================
-        let currentRawRecord = null;
-
-        function openRawDataModal(recordKey, event) {
-            if (event) event.stopPropagation();
-            const rec = lastRecordsCache.find(r => r._key === recordKey);
-            if (!rec) return;
-            currentRawRecord = rec;
-
-            const copy = { ...rec };
-            delete copy._key;
-
-            document.getElementById('rawDataTitle').textContent = `📄 ملف المعلم: ${rec.teacherName}`;
-            document.getElementById('rawDataContent').textContent = JSON.stringify(copy, null, 2);
-            document.getElementById('rawDataModal').classList.add('active');
-        }
-
-        function copyRawDataToClipboard() {
-            if (!currentRawRecord) return;
-            const copy = { ...currentRawRecord };
-            delete copy._key;
-            navigator.clipboard.writeText(JSON.stringify(copy, null, 2))
-                .then(() => showToast('✅ تم نسخ البيانات'))
-                .catch(() => showToast('فشل النسخ', true));
-        }
-
-        function exportSingleTeacher() {
-            if (!currentRawRecord) return;
-            const copy = { ...currentRawRecord };
-            delete copy._key;
-            delete copy.expiryInfo;
-            const blob = new Blob([JSON.stringify(copy, null, 2)], { type: 'application/json;charset=utf-8' });
-            downloadBlob(blob, `teacher_${cleanTeacherName(currentRawRecord.teacherName)}_${Date.now()}.json`);
-            showToast('✅ تم تحميل ملف المعلم');
-        }
-
-        // ==========================================
-        // 🌟 الفلاتر المحفوظة
-        // ==========================================
-        const SAVED_FILTERS_KEY = 'ehgezly_admin_saved_filters';
-
-        function saveCurrentFilter() {
-            const name = prompt('اسم الفلتر:');
-            if (!name) return;
-            const filter = {
-                name: name.trim(),
-                search: document.getElementById('searchInput').value,
-                title: document.getElementById('filterTitle').value,
-                grade: document.getElementById('filterGrade').value,
-                savedAt: Date.now()
-            };
-            const filters = JSON.parse(localStorage.getItem(SAVED_FILTERS_KEY) || '[]');
-            filters.push(filter);
-            localStorage.setItem(SAVED_FILTERS_KEY, JSON.stringify(filters));
-            showToast('✅ تم حفظ الفلتر');
-        }
-
-        function loadSavedFiltersMenu() {
-            const filters = JSON.parse(localStorage.getItem(SAVED_FILTERS_KEY) || '[]');
-            if (filters.length === 0) {
-                showToast('لا توجد فلاتر محفوظة', true);
-                return;
-            }
-            const listHtml = filters.map((f, i) => 
-                `<div class="flex items-center justify-between bg-slate-100 p-2 rounded-lg mb-1">
-                    <span class="font-bold text-sm">${f.name}</span>
-                    <div class="flex gap-1">
-                        <button onclick="applySavedFilter(${i})" class="action-chip bg-blue-600 text-white px-2 py-1 text-[10px]">تطبيق</button>
-                        <button onclick="deleteSavedFilter(${i})" class="action-chip bg-rose-600 text-white px-2 py-1 text-[10px]">حذف</button>
-                    </div>
-                </div>`
-            ).join('');
-            showCustomConfirm('اختر فلتراً:', () => {});
-            document.getElementById('customConfirmMessage').innerHTML = `<div class="space-y-1 text-right">${listHtml}</div>`;
-            document.getElementById('btnConfirmYes').style.display = 'none';
-            document.getElementById('customConfirmModal').classList.add('active');
-        }
-
-        function applySavedFilter(index) {
-            const filters = JSON.parse(localStorage.getItem(SAVED_FILTERS_KEY) || '[]');
-            const f = filters[index];
-            if (!f) return;
-            document.getElementById('searchInput').value = f.search;
-            document.getElementById('filterTitle').value = f.title;
-            document.getElementById('filterGrade').value = f.grade;
-            renderAllRecords();
-            closeModal('customConfirmModal');
-            document.getElementById('btnConfirmYes').style.display = '';
-            showToast(`✅ تم تطبيق الفلتر: ${f.name}`);
-        }
-
-        function deleteSavedFilter(index) {
-            const filters = JSON.parse(localStorage.getItem(SAVED_FILTERS_KEY) || '[]');
-            filters.splice(index, 1);
-            localStorage.setItem(SAVED_FILTERS_KEY, JSON.stringify(filters));
-            closeModal('customConfirmModal');
-            document.getElementById('btnConfirmYes').style.display = '';
-            showToast('🗑️ تم حذف الفلتر');
-        }
-
-        // ==========================================
         // Curriculum Manager UI
         // ==========================================
         let activeStageKey = null;
@@ -1504,7 +936,7 @@
                 btn.classList.remove('bg-slate-800');
                 document.getElementById('searchInput').placeholder = 'البحث في الأرشيف...';
             } else {
-                btn.innerHTML = '📁 أرشيف المحظورين (<span id="archiveCountBadge">0</span>)';
+                btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
                 btn.classList.remove('bg-rose-700');
                 btn.classList.add('bg-slate-800');
                 document.getElementById('searchInput').placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
@@ -1659,7 +1091,7 @@
         }
 
         function resetCurriculumToDefault() {
-            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟', () => {
+            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟ سيتم رفع النسخة الافتراضية إلى السحابة ومسح التعديلات.', () => {
                 const copy = JSON.parse(JSON.stringify(defaultCurriculum));
                 saveCurriculumAndBroadcast(copy, '✨ تم استعادة المنهج الافتراضي الكامل');
                 activeStageKey = Object.keys(copy)[0];
@@ -1670,7 +1102,7 @@
         }
 
         // ==========================================
-        // Teacher Records & Firebase Sync
+        // Teacher Records & Firebase Pure Sync
         // ==========================================
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
@@ -1697,39 +1129,49 @@
             return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
         }
 
+        // جلب الدروس من السحابة فقط
         async function fetchLessonsFromFirebase() {
             try {
                 if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
                 const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                 const lessons = [];
-                querySnapshot.forEach((doc) => lessons.push({ id: doc.id, ...doc.data() }));
+                querySnapshot.forEach((doc) => {
+                    lessons.push({ id: doc.id, ...doc.data() });
+                });
                 return lessons;
             } catch (e) {
-                console.warn("خطأ في جلب الدروس:", e);
+                console.warn("خطأ في جلب الدروس من السحابة:", e);
                 return [];
             }
         }
 
+        // جلب المعلمين من السحابة فقط
         async function fetchTeachersFromFirebase() {
             try {
                 if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
                 const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "teachers"));
                 const teachers = [];
-                querySnapshot.forEach((doc) => teachers.push({ id: doc.id, ...doc.data() }));
+                querySnapshot.forEach((doc) => {
+                    teachers.push({ id: doc.id, ...doc.data() });
+                });
                 return teachers;
             } catch (e) {
-                console.warn("خطأ في جلب المعلمين:", e);
+                console.warn("خطأ في جلب بيانات المعلمين من السحابة:", e);
                 return [];
             }
         }
 
+        // تجميع كل البيانات والاعتماد كلياً على السحابة Firebase
         async function collectAllAppData() {
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة'];
+
+            // 1. جلب الدروس والمعلمين من السحابة
             const firebaseLessons = await fetchLessonsFromFirebase();
             const firebaseTeachers = await fetchTeachersFromFirebase();
 
             const unifiedMap = new Map();
 
+            // 2. إدراج حسابات المعلمين القادمة من السحابة
             firebaseTeachers.forEach(t => {
                 const phone = t.phone || 'غير مسجل';
                 const cleanName = cleanTeacherName(t.teacherName || t.name || t.fullName) || 'بدون اسم';
@@ -1766,6 +1208,7 @@
                 });
             });
 
+            // 3. ربط الدروس بالحسابات السحابية
             firebaseLessons.forEach(lesson => {
                 const state = lesson;
                 const phone = state.g_phone || 'غير مسجل';
@@ -1831,8 +1274,8 @@
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
-            const unifiedRecords = Array.from(unifiedMap.entries()).map(([key, entry]) => {
-                entry._key = key; // ✅ مفتاح فريد للاختيار
+            // 4. تقييم التواريخ وصلاحية الحسابات
+            const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
                 entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification);
                 if (entry.verification === 'حظر' || entry.expiryInfo.expired) {
                     entry.isBlocked = true;
@@ -1872,7 +1315,7 @@
                 showingArchive = false;
                 const btn = document.getElementById('btnToggleArchive');
                 if (btn) {
-                    btn.innerHTML = '📁 أرشيف المحظورين (<span id="archiveCountBadge">0</span>)';
+                    btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
                     btn.classList.remove('bg-rose-700');
                     btn.classList.add('bg-slate-800');
                 }
@@ -1880,24 +1323,26 @@
                 if (searchInput) searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
             }
             
-            await renderAllRecords();
-            updateSmartAlerts();
+            renderAllRecords();
             
             if (isBlocked && val !== 'حظر') {
                 showToast(`⚠️ تم تغيير الباقة إلى (${val}) ولكنها منتهية الصلاحية فتم حظر الحساب.`, true);
             } else {
-                showToast(`✨ تم تحديث الباقة إلى: ${val}`);
+                showToast(`✨ تم تحديث الباقة وتوثيق الحساب في السحابة إلى: ${val}`);
             }
         }
 
+        // زيادة النقرات مباشرة في قاعدة البيانات Firebase
         async function recordWaClick(docId, phone, teacherName) {
             const targetId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
             if (!targetId || !window.db || !window.fsUpdateDoc || !window.fsIncrement) return;
             try {
                 const ref = window.fsDoc(window.db, "teachers", targetId);
-                await window.fsUpdateDoc(ref, { waClicks: window.fsIncrement(1) });
+                await window.fsUpdateDoc(ref, {
+                    waClicks: window.fsIncrement(1)
+                });
             } catch (e) {
-                console.warn("Could not record WA click:", e);
+                console.warn("Could not record WA click in Firebase:", e);
             }
         }
 
@@ -1911,12 +1356,12 @@
             if (filtered.length === 0) {
                 modalContent.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">لا توجد سجلات مسجلة.</div>`;
             } else {
-                let html = `<table class="w-full text-right border-collapse text-xs font-bold text-slate-700"><thead><tr class="bg-slate-100 border-b-2 border-slate-300"><th class="p-2.5">الاسم</th><th class="p-2.5">التليفون</th><th class="p-2.5">المجموعات</th><th class="p-2.5 text-center">واتساب</th></tr></thead><tbody>`;
+                let html = `<table class="w-full text-right border-collapse text-xs font-bold text-slate-700"><thead><tr class="bg-slate-100 border-b-2 border-slate-300"><th class="p-2.5">الاسم</th><th class="p-2.5">التليفون / الواتس</th><th class="p-2.5">المجموعات والصفوف</th><th class="p-2.5 text-center">واتساب</th></tr></thead><tbody>`;
                 filtered.forEach(r => {
                     const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                     const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                     const docIdSafe = r.docId || '';
-                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr">${r.phone}</td><td class="p-2.5">${r.groupName}</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
+                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr">${r.phone}</td><td class="p-2.5">${r.groupName} (${r.grade} - ${r.subjects})</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
                 });
                 html += `</tbody></table>`;
                 modalContent.innerHTML = html;
@@ -1935,8 +1380,6 @@
 
         async function renderAllRecords() {
             const { records, totalLessonsCount } = await collectAllAppData();
-            lastRecordsCache = records; // ✅ تحديث الكاش
-
             const uniqueMrSet = new Set(), uniqueMsSet = new Set();
             records.forEach(r => r.title === 'مس' ? uniqueMsSet.add(r.phone !== 'غير مسجل' ? r.phone : r.teacherName) : uniqueMrSet.add(r.phone !== 'غير مسجل' ? r.phone : r.teacherName));
 
@@ -1962,14 +1405,11 @@
                 return true;
             });
 
-            currentFilteredRecords = filtered; // ✅ كاش النتائج المفلترة
-
             document.getElementById('resultsCounter').textContent = filtered.length;
             const container = document.getElementById('recordsGrid');
 
             if (filtered.length === 0) {
                 container.innerHTML = `<div class="col-span-full bg-white rounded-3xl p-10 text-center font-bold text-slate-500">لا توجد سجلات مطابقة حالياً</div>`;
-                updateSmartAlerts();
                 return;
             }
 
@@ -1983,7 +1423,7 @@
                 if (r.phoneType) {
                     const emojiMatch = r.phoneType.match(/[\p{Emoji}\u200d]+/gu);
                     const iconChar = emojiMatch ? emojiMatch[0] : '📱';
-                    iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
+                    iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
 
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
@@ -1992,11 +1432,6 @@
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
-
-                // ✅ Checkbox for bulk mode
-                const isSelected = selectedRecordKeys.has(r._key);
-                const selectedClass = isSelected ? 'is-selected' : '';
-                const checkboxHtml = `<div class="bulk-checkbox ${isSelected ? 'checked' : ''}" onclick="toggleCardSelection('${r._key}', event)"></div>`;
 
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
@@ -2009,7 +1444,7 @@
 
                         let mapBtn = '';
                         if (g.lat && g.lng) {
-                            mapBtn = `<br><button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="mt-1.5 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5">📍 عرض على الخريطة</button>`;
+                            mapBtn = `<br><button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="mt-1.5 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
                         }
                         return `
                         <tr>
@@ -2029,12 +1464,13 @@
 
                     let mapBtn = '';
                     if (r.lat && r.lng) {
-                        mapBtn = `<button onclick="openMapModal('${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="mt-1 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5">📍 عرض على الخريطة</button>`;
+                        mapBtn = `<button onclick="openMapModal('${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="mt-1 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
                     }
                     unifiedScheduleHTML = `
                         <div class="info-pill"><span class="label">🎓 المرحلة:</span><span class="text-slate-900 font-black">${stageName}</span></div>
                         <div class="info-pill"><span class="label">👑 الصف والمادة:</span><span class="text-slate-900 font-black">${r.grade} — <span class="text-emerald-700">${r.subjects}</span></span></div>
-                        <div class="info-pill"><span class="label">📍 العنوان:</span><div><span>[${r.locType}] ${r.address}</span><br>${mapBtn}</div></div>`;
+                        <div class="info-pill"><span class="label">📍 العنوان:</span><div><span>[${r.locType}] ${r.address}</span><br>${mapBtn}</div></div>
+                        <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>`;
                 }
 
                 const statusBadgeHTML = r.isBlocked
@@ -2042,9 +1478,9 @@
                     : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ نشط</span>`;
 
                 return `
-                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass} ${selectedClass}" data-key="${r._key}">
+                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass}">
                         <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
-                            <div class="flex items-center gap-2">${checkboxHtml}${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-400">(${r.groupName})</span></div>
+                            <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-400">(${r.groupName})</span></div>
                             <div class="flex items-center gap-1.5">${iconOnlyPhoneBadge}${statusBadgeHTML}<span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span></div>
                         </div>
                         <div class="space-y-2">
@@ -2053,7 +1489,7 @@
                                 <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                             </div>
                             <div class="info-pill flex flex-col gap-2" style="background:#FEF3C7; border-color:#FCD34D;">
-                                <div class="flex items-center justify-between w-full"><span class="label text-amber-900">🛡️ خطة وتوثيق:</span><span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span></div>
+                                <div class="flex items-center justify-between w-full"><span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span><span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span></div>
                                 <select onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1.5 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer w-full">
                                     <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
                                     <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
@@ -2065,35 +1501,28 @@
                             ${unifiedScheduleHTML}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
-                            <div class="flex flex-wrap gap-1.5">
-                                ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}
-                                <button onclick="openRawDataModal('${r._key}', event)" class="action-chip bg-indigo-600 text-white shadow-md">📄 ملف البيانات</button>
-                            </div>
-                            <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف</button>
+                            <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
+                            <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
                         </div>
                     </div>
                 `;
             }).join('');
-
-            // ✅ إخفاء checkbox عند عدم التفعيل
-            if (!bulkModeActive) {
-                document.querySelectorAll('.bulk-checkbox').forEach(cb => cb.style.display = 'none');
-            }
-
-            updateBulkBar();
-            updateSmartAlerts();
         }
 
+        // الحذف الفعلي من السحابة Firebase
         function deleteRecord(lessonsStr, phone, teacherName, docId) {
-            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً؟`, async () => {
+            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً من قاعدة البيانات السحابية؟`, async () => {
                 if (!window.db || !window.fsDeleteDoc) return;
                 
                 setCloudStatus('syncing', '⏳ جاري الحذف من السحابة...');
                 try {
+                    // حذف حساب المعلم
                     const targetDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
                     if (targetDocId) {
                         await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", targetDocId));
                     }
+                    
+                    // حذف كل دروس المعلم المرتبطة به
                     if (lessonsStr) {
                         const lessonIds = lessonsStr.split(',');
                         for (const lId of lessonIds) {
@@ -2102,14 +1531,14 @@
                             }
                         }
                     }
+
                     setCloudStatus('synced', '☁️ تم الحذف بنجاح');
                     showToast('🗑️ تم الحذف من السحابة بنجاح');
-                    await renderAllRecords();
-                    updateSmartAlerts();
+                    renderAllRecords();
                 } catch (error) {
                     console.error("خطأ في الحذف:", error);
                     setCloudStatus('offline', '⚠️ فشل الحذف');
-                    showToast('⚠️ حدث خطأ أثناء الحذف', true);
+                    showToast('⚠️ حدث خطأ أثناء الحذف من قاعدة البيانات', true);
                 }
             });
         }
@@ -2148,7 +1577,7 @@
                 if (firebaseReady && !curriculumUnsubscribe) {
                     loadCurriculumFromFirebase();
                 }
-                renderAllRecords();
+                renderAllRecords(); // تحديث فوري عند العودة للصفحة لضمان المزامنة
             });
         });
     </script>
