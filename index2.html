@@ -502,6 +502,94 @@
         .btn-confirm-delete { background: #EF4444; color: #fff; }
         .btn-confirm-save { background: var(--primary-600); color: #fff; }
 
+        /* ============================================ */
+        /* ✅ مودال تسجيل الخروج الظريف */
+        /* ============================================ */
+        .logout-modal-box {
+            border-bottom: 5px solid #F59E0B !important;
+            position: relative;
+            overflow: hidden;
+        }
+        .logout-modal-box::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 120px;
+            height: 120px;
+            background: radial-gradient(circle, rgba(245,158,11,0.15), transparent);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+        .logout-emoji {
+            font-size: 56px;
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: waveHand 2s ease-in-out infinite;
+            transform-origin: 70% 70%;
+        }
+        @keyframes waveHand {
+            0%, 100% { transform: rotate(0deg); }
+            10% { transform: rotate(14deg); }
+            20% { transform: rotate(-8deg); }
+            30% { transform: rotate(14deg); }
+            40% { transform: rotate(-4deg); }
+            50% { transform: rotate(10deg); }
+            60% { transform: rotate(0deg); }
+        }
+        .logout-title {
+            font-size: 20px;
+            font-weight: 900;
+            color: #92400E;
+            margin-bottom: 8px;
+        }
+        .logout-desc {
+            font-size: 13px;
+            font-weight: 800;
+            color: #475569;
+            line-height: 1.6;
+            margin-bottom: 18px;
+            padding: 0 4px;
+        }
+        .logout-desc .highlight {
+            color: #D97706;
+            font-weight: 900;
+        }
+        .logout-btn-stay {
+            flex: 1.2;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 900;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #fff;
+            border-bottom: 3px solid #064E3B;
+            transition: all 0.2s;
+        }
+        .logout-btn-stay:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+        .logout-btn-leave {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 900;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #F87171, #DC2626);
+            color: #fff;
+            border-bottom: 3px solid #991B1B;
+            transition: all 0.2s;
+        }
+        .logout-btn-leave:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+
         .custom-input { 
             width: 100%; padding: 10px 12px; border: 2px solid #E2E8F0; 
             border-radius: 10px; font-size: 14px; font-weight: 800; color: #1E293B; 
@@ -546,7 +634,6 @@
             border-bottom-color: #B91C1C;
         }
 
-        /* ✅ شاشة تحميل أولية */
         .initial-loader {
             position: fixed;
             inset: 0;
@@ -629,7 +716,7 @@
                     الرئيسية
                 </a>
 
-                <button onclick="logoutTeacher()" class="btn-top-action" style="border-color: #FECACA; color: #DC2626;">
+                <button onclick="openLogoutModal()" class="btn-top-action" style="border-color: #FECACA; color: #DC2626;">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 15px; height: 15px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
                     </svg>
@@ -713,6 +800,26 @@
         </div>
     </div>
 
+    <!-- ✅ نافذة تسجيل الخروج الظريفة -->
+    <div id="logoutModal" class="modal-overlay" onclick="closeModal('logoutModal')">
+        <div class="custom-modal logout-modal-box" onclick="event.stopPropagation()">
+            <div class="logout-emoji">👋</div>
+            <h3 class="logout-title">هتروح فين؟ 😢</h3>
+            <p class="logout-desc">
+                لسه فيه <span class="highlight">حصص محتاجة تنظيم</span> يا مستر!<br>
+                متأكد إنك عايز تسجّل الخروج من حسابك؟
+            </p>
+            <div class="modal-actions">
+                <button class="logout-btn-stay" onclick="closeModal('logoutModal')">
+                    🙌 لا، هفضل
+                </button>
+                <button class="logout-btn-leave" onclick="confirmLogout()">
+                    👋 أيوه، خروج
+                </button>
+            </div>
+        </div>
+    </div>
+
     <footer class="py-5 text-center text-slate-400 font-bold text-xs">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
@@ -769,7 +876,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-top-action, .btn-close-modal, .btn-close-bottom');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .btn-top-action, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave');
             if (clickableElement) { playHighPitchSound(); }
         });
 
@@ -778,19 +885,46 @@
         let itemToRename = null;
 
         // ==========================================
-        // ✅ دالة تسجيل الخروج
+        // ✅ فتح مودال تسجيل الخروج الظريف
         // ==========================================
-        function logoutTeacher() {
-            if (!confirm('هل تريد تسجيل الخروج من حسابك؟')) {
-                return;
-            }
+        function openLogoutModal() {
+            document.getElementById('logoutModal').classList.add('active');
+        }
+
+        // ==========================================
+        // ✅ تنفيذ تسجيل الخروج بعد التأكيد
+        // ==========================================
+        function confirmLogout() {
             try {
+                // ✅ مسح كل بيانات المعلم (بما فيها mokshmoksh)
                 localStorage.removeItem('loggedInTeacher');
                 localStorage.removeItem('rememberedPhone');
                 localStorage.removeItem('teacher_location_consent');
+                localStorage.removeItem('mokshmoksh');
+                localStorage.removeItem('mokshmoksh_logged');
+                localStorage.removeItem('loggedIn');
+                localStorage.removeItem('user');
                 sessionStorage.clear();
+
+                // ✅ مسح أي مفاتيح تحتوي على mokshmoksh أو مشابهة
+                try {
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const key = localStorage.key(i);
+                        if (key && (key.toLowerCase().includes('mokshmoksh') || key.toLowerCase() === 'moksh')) {
+                            keysToRemove.push(key);
+                        }
+                    }
+                    keysToRemove.forEach(k => localStorage.removeItem(k));
+                } catch(e) {}
+
                 console.log('✅ تم تسجيل الخروج بنجاح');
-                window.location.replace('./login.html');
+                document.getElementById('logoutModal').classList.remove('active');
+                showToast('👋 إلى اللقاء يا مستر!');
+
+                setTimeout(() => {
+                    window.location.replace('./login.html');
+                }, 700);
             } catch (err) {
                 console.error('❌ خطأ في تسجيل الخروج:', err);
                 window.location.href = './login.html';
@@ -818,9 +952,7 @@
             }
         }
 
-        // ==========================================
         // ✅ جلب رقم/اسم المعلم الحالي
-        // ==========================================
         function getCurrentTeacherInfo() {
             let phone = '';
             let name = '';
@@ -854,7 +986,6 @@
             const lessonPhone = String(lessonData.g_phone || '').trim();
             const lessonTeacher = String(lessonData.g_teacher || '').trim();
 
-            // مطابقة رقم التليفون (آخر 10 أرقام - مرن)
             if (teacherPhone && lessonPhone) {
                 const cleanLesson = lessonPhone.replace(/\D/g, '');
                 const cleanMine = teacherPhone.replace(/\D/g, '');
@@ -865,7 +996,6 @@
                 }
             }
 
-            // مطابقة اسم المعلم
             if (teacherName && lessonTeacher) {
                 const cleanLessonName = lessonTeacher.replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').trim();
                 const cleanMyName = teacherName.replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').trim();
@@ -877,9 +1007,7 @@
             return false;
         }
 
-        // ==========================================
         // ✅ المزامنة الشاملة من Firebase
-        // ==========================================
         async function syncLessonsFromFirebase() {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
                 console.warn("⚠️ Firebase غير جاهز للمزامنة");
@@ -902,46 +1030,36 @@
                     const data = docSnap.data();
                     const lessonId = docSnap.id;
 
-                    // ✅ فلترة الحصص اللي تخص المعلم الحالي
                     if (!isLessonForCurrentTeacher(data, teacherPhone, teacherName)) {
                         return;
                     }
 
-                    // ✅ إضافة الحصة للقائمة
                     firebaseLessons.push({
                         id: lessonId,
                         title: data.g_name || `مجموعة ${lessonId}`
                     });
 
-                    // ✅ حفظ lessonState الكامل في localStorage (عشان الواجهة تشتغل)
                     const stateToSave = { ...data };
                     delete stateToSave.updatedAt;
                     localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
 
-                    // ✅ مزامنة g_publish_map
                     const isPublished = data.g_publish_map === true;
                     localStorage.setItem('publishState_' + lessonId, isPublished);
 
                     syncedIds.add(String(lessonId));
                 });
 
-                // ✅ ترتيب حسب الـ ID رقميًا لو أمكن
                 firebaseLessons.sort((a, b) => {
                     const na = parseInt(a.id), nb = parseInt(b.id);
                     if (!isNaN(na) && !isNaN(nb)) return na - nb;
                     return String(a.id).localeCompare(String(b.id));
                 });
 
-                // ✅ تحديث قائمة المجموعات
                 lessons = firebaseLessons;
                 saveLessonsToStorage();
                 renderLessons();
 
                 console.log(`✅ [index2] تمت مزامنة ${firebaseLessons.length} مجموعة من Firebase`);
-
-                if (firebaseLessons.length === 0) {
-                    console.log("ℹ️ [index2] لا توجد مجموعات في Firebase لهذا المعلم — ابدأ بإنشاء مجموعة جديدة");
-                }
 
                 return { success: true, count: firebaseLessons.length };
             } catch (err) {
@@ -950,11 +1068,8 @@
             }
         }
 
-        // ==========================================
         // ✅ التشغيل عند التحميل
-        // ==========================================
         window.addEventListener('DOMContentLoaded', async () => {
-            // 1) قراءة أولية من localStorage (للعرض السريع)
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try {
@@ -965,10 +1080,7 @@
             }
             renderLessons();
 
-            // 2) مزامنة شاملة من Firebase
             await syncLessonsFromFirebase();
-
-            // 3) إخفاء شاشة التحميل
             hideInitialLoader();
         });
 
@@ -977,14 +1089,12 @@
         }
 
         function createNewLesson(saveToStorage = true) {
-            // ✅ نستخدم timestamp + random عشان نضمن ID فريد على مستوى المنصة
             const newId = String(Date.now());
             const lessonData = { id: newId, title: `مجموعة رقم ${newId}` };
             lessons.push(lessonData);
             if (saveToStorage) saveLessonsToStorage();
             renderLessons();
 
-            // ✅ حفظ في Firebase مباشرة (سجل مبدئي) — عشان يظهر على الأجهزة التانية
             (async () => {
                 try {
                     if (window.db && window.fsDoc && window.fsSetDoc) {
