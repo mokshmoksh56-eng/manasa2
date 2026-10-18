@@ -231,7 +231,7 @@
 
     <!-- ✅ الهيدر (مع شارة بيانات المعلم مستر/مس ورقم التليفون) -->
     <section class="hero-banner">
-        <div class="lesson-title" id="reportTitle">بيانات مجموعة --</div>
+        <div class="lesson-title" id="reportTitle">بيانات المجموعة</div>
         <div id="teacherHeaderBadge" class="teacher-header-badge" style="display: none;">
             <span id="headerTeacherTitleAndName">--</span> | <span id="headerTeacherPhone" dir="ltr">--</span>
         </div>
@@ -476,7 +476,7 @@
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
-            document.getElementById('reportTitle').innerText = `بيانات مجموعة ${currentLessonId}`;
+            // ✅ لم نعد نضع currentLessonId هنا، سيتم تحديث العنوان داخل loadActualData()
 
             // 1) تحميل البيانات من localStorage أولاً (سريع)
             loadActualData();
@@ -614,11 +614,17 @@
             let teacherTitle = 'مستر';
             let teacherPhone = '';
             let teacherName = 'غير محدد';
+            let groupNameForTitle = '';
 
             if (savedData) {
                 const state = JSON.parse(savedData);
 
-                if(state.g_name) document.getElementById('val-groupName').innerText = state.g_name;
+                // ✅ هنا بقى نحدّث اسم المجموعة في الهيدر
+                if(state.g_name) {
+                    groupNameForTitle = state.g_name;
+                    document.getElementById('val-groupName').innerText = state.g_name;
+                    document.getElementById('reportTitle').innerText = `بيانات ${state.g_name}`;
+                }
                 
                 if(state.g_teacher) {
                     teacherName = state.g_teacher;
@@ -761,6 +767,12 @@
                 titleAndNameEl.innerText = `${teacherTitle} / ${teacherName}`;
                 phoneEl.innerText = teacherPhone ? `📱 ${teacherPhone}` : '📱 غير مسجل';
                 badgeEl.style.display = 'inline-flex';
+            }
+
+            // ✅ Fallback: لو مفيش اسم مجموعة (حالة نادرة) — نعرض عنوان افتراضي بدون ID
+            const titleEl = document.getElementById('reportTitle');
+            if (!groupNameForTitle) {
+                titleEl.innerText = 'بيانات المجموعة';
             }
 
             initStaticMap();
