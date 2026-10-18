@@ -419,11 +419,15 @@
         <div id="loginForm">
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="loginPhone" class="custom-input" placeholder="01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="tel" id="loginPhone" class="custom-input" placeholder="01012345678" maxlength="11"
+                       inputmode="numeric" pattern="[0-9]*" autocomplete="tel"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="loginPassword" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" id="loginPassword" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4"
+                       inputmode="numeric" pattern="[0-9]*" autocomplete="new-password"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <button class="btn-submit" id="loginBtn" onclick="handleLogin(event)">دخول</button>
             
@@ -457,15 +461,21 @@
             </div>
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11"
+                       inputmode="numeric" pattern="[0-9]*" autocomplete="tel"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
                 <label class="input-label">الرقم السري (4 أرقام)</label>
-                <input type="password" id="regPassword1" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" id="regPassword1" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4"
+                       inputmode="numeric" pattern="[0-9]*" autocomplete="new-password"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <div class="input-group">
                 <label class="input-label">تأكيد الرقم السري</label>
-                <input type="password" id="regPassword2" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
+                <input type="password" id="regPassword2" class="custom-input" placeholder="أدخل 4 أرقام" maxlength="4"
+                       inputmode="numeric" pattern="[0-9]*" autocomplete="new-password"
+                       oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
             <button class="btn-submit" id="registerBtn" onclick="handleRegister(event)">إنشاء حساب</button>
         </div>
@@ -477,6 +487,41 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🔢 حماية حقول الأرقام (كيبورد أرقام فقط + منع اللصق)
+        // ==========================================
+        (function enforceNumericInputs() {
+            const bind = () => {
+                document.querySelectorAll('input[inputmode="numeric"]').forEach(el => {
+                    // منع أي حرف مش رقم على الكيبورد
+                    el.addEventListener('keydown', e => {
+                        const allowedKeys = ['Backspace','Delete','ArrowLeft','ArrowRight','Tab','Enter','Home','End'];
+                        if (allowedKeys.includes(e.key)) return;
+                        if (e.ctrlKey || e.metaKey) return; // اسمح بـ Ctrl+C/V/A
+                        if (!/^[0-9]$/.test(e.key)) e.preventDefault();
+                    });
+
+                    // فلترة اللصق
+                    el.addEventListener('paste', e => {
+                        e.preventDefault();
+                        const txt = (e.clipboardData || window.clipboardData).getData('text') || '';
+                        const clean = txt.replace(/[^0-9]/g, '');
+                        const max = el.maxLength > 0 ? el.maxLength : clean.length;
+                        const start = el.selectionStart ?? el.value.length;
+                        const end = el.selectionEnd ?? el.value.length;
+                        const newVal = (el.value.slice(0, start) + clean + el.value.slice(end)).slice(0, max);
+                        el.value = newVal;
+                        el.dispatchEvent(new Event('input', { bubbles: true }));
+                    });
+                });
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', bind);
+            } else {
+                bind();
+            }
+        })();
+
         // ==========================================
         // 🎵 Audio
         // ==========================================
