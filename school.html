@@ -222,12 +222,10 @@
         }
 
         .record-card:hover {
-            transform: translateY(-4px);
             box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
         }
 
         .record-card.is-blocked {
-            opacity: 1 !important;
             background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 50%, #FECACA 100%) !important;
             border: 3px solid var(--pure-red) !important;
             border-top: 6px solid var(--pure-red) !important;
@@ -240,7 +238,6 @@
         }
 
         .record-card.is-allowed {
-            opacity: 1 !important;
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%) !important;
             border: 3px solid var(--pure-green) !important;
             border-top: 6px solid #22C55E !important;
@@ -269,6 +266,47 @@
             background: #DCFCE7;
             color: #065F46;
             border-bottom: 2px solid #86EFAC;
+        }
+
+        /* ====== Card header (clickable) ====== */
+        .card-header {
+            cursor: pointer;
+            user-select: none;
+            transition: background 0.15s ease;
+            border-radius: 12px;
+            padding: 4px 6px;
+            margin: -4px -6px;
+        }
+        .card-header:hover {
+            background: rgba(0,0,0,0.03);
+        }
+        .expand-arrow {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 999px;
+            background: rgba(15, 45, 92, 0.08);
+            color: #0F2D5C;
+            font-size: 13px;
+            font-weight: 900;
+            transition: transform 0.25s ease, background 0.2s;
+        }
+        .record-card.is-blocked .expand-arrow {
+            background: rgba(220, 38, 38, 0.12);
+            color: #991B1B;
+        }
+        .record-card.is-allowed .expand-arrow {
+            background: rgba(22, 163, 74, 0.12);
+            color: #065F46;
+        }
+        .card-header:hover .expand-arrow {
+            transform: scale(1.08);
+        }
+
+        .card-details {
+            animation: slideDownFade 0.22s ease-out;
         }
 
         .info-pill {
@@ -518,6 +556,30 @@
             gap: 4px;
             box-shadow: 0 3px 8px rgba(22, 163, 74, 0.4);
         }
+
+        .card-count-badge {
+            background: linear-gradient(135deg, #0F2D5C, #2563EB);
+            color: #FFFFFF;
+            padding: 8px 18px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
+            border: 2px solid #60A5FA;
+        }
+        .card-count-badge .count-num {
+            background: #FFFFFF;
+            color: #0F2D5C;
+            padding: 1px 10px;
+            border-radius: 999px;
+            font-size: 14px;
+            font-weight: 900;
+            min-width: 32px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -582,12 +644,6 @@
         </div>
     </section>
 
-    <div class="max-w-7xl mx-auto w-full px-4 mb-4 flex justify-end relative z-10" style="margin-top: -10px;">
-        <button onclick="toggleArchiveView()" id="btnToggleArchive" class="btn-nav bg-slate-800 text-white border-none shadow-md">
-            📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)
-        </button>
-    </div>
-
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -613,9 +669,14 @@
                 </div>
             </div>
 
-            <div class="flex flex-wrap items-center justify-between gap-2 mt-3 pt-3 border-t border-slate-100">
-                <div class="text-xs font-extrabold text-slate-500">
-                    📊 النتائج المعروضة: <span id="resultsCounter" class="text-blue-600 font-black">0</span> سجل
+            <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
+                <div class="card-count-badge">
+                    📋 عدد الكروت المعروضة:
+                    <span id="resultsCounter" class="count-num">0</span>
+                </div>
+                <div class="flex gap-2">
+                    <button onclick="expandAllCards()" class="action-chip bg-blue-600 text-white px-4 py-2 text-xs shadow-md">📖 فتح الكل</button>
+                    <button onclick="collapseAllCards()" class="action-chip bg-slate-700 text-white px-4 py-2 text-xs shadow-md">📕 إغلاق الكل</button>
                 </div>
             </div>
         </div>
@@ -798,7 +859,7 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
         document.addEventListener('click', e => {
-            if (e.target.closest('button, a, select, .grade-selectable-card')) playClickSound();
+            if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
         function showToast(msg, isError = false) {
@@ -825,6 +886,56 @@
                 confirmActionCallback = null;
             }
         });
+
+        // ==========================================
+        // 🎯 إدارة حالة طي/فتح الكروت
+        // ==========================================
+        const expandedCards = new Set();
+
+        function getCardKey(r) {
+            return String(r.docId || r.phone || r.teacherName || 'unknown')
+                .replace(/\\/g, '_').replace(/'/g, "\\'");
+        }
+
+        function toggleCardExpand(cardKey, headerEl) {
+            const card = headerEl.closest('.record-card');
+            if (!card) return;
+            const body = card.querySelector('.card-details');
+            const arrow = card.querySelector('.expand-arrow');
+            if (expandedCards.has(cardKey)) {
+                expandedCards.delete(cardKey);
+                if (body) body.style.display = 'none';
+                if (arrow) arrow.textContent = '▼';
+            } else {
+                expandedCards.add(cardKey);
+                if (body) body.style.display = 'block';
+                if (arrow) arrow.textContent = '▲';
+            }
+        }
+
+        function expandAllCards() {
+            document.querySelectorAll('.record-card').forEach(card => {
+                const key = card.getAttribute('data-card-key');
+                if (key) expandedCards.add(key);
+                const body = card.querySelector('.card-details');
+                const arrow = card.querySelector('.expand-arrow');
+                if (body) body.style.display = 'block';
+                if (arrow) arrow.textContent = '▲';
+            });
+            showToast('📖 تم فتح جميع الكروت');
+        }
+
+        function collapseAllCards() {
+            document.querySelectorAll('.record-card').forEach(card => {
+                const key = card.getAttribute('data-card-key');
+                if (key) expandedCards.delete(key);
+                const body = card.querySelector('.card-details');
+                const arrow = card.querySelector('.expand-arrow');
+                if (body) body.style.display = 'none';
+                if (arrow) arrow.textContent = '▼';
+            });
+            showToast('📕 تم إغلاق جميع الكروت');
+        }
 
         // ==========================================
         // 🌟 المنهج
@@ -995,24 +1106,6 @@
         // ==========================================
         let activeStageKey = null;
         let activeGradeName = null;
-        let showingArchive = false;
-
-        function toggleArchiveView() {
-            showingArchive = !showingArchive;
-            const btn = document.getElementById('btnToggleArchive');
-            if (showingArchive) {
-                btn.innerHTML = '🔙 الرجوع للمعلمين النشطين';
-                btn.classList.add('bg-rose-700');
-                btn.classList.remove('bg-slate-800');
-                document.getElementById('searchInput').placeholder = 'البحث في الأرشيف...';
-            } else {
-                btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
-                btn.classList.remove('bg-rose-700');
-                btn.classList.add('bg-slate-800');
-                document.getElementById('searchInput').placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
-            }
-            renderAllRecords();
-        }
 
         function openCurriculumModal(targetStageKey = null, targetGradeName = null) {
             const curr = getCurriculum();
@@ -1179,7 +1272,6 @@
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
         }
 
-        // ✅ دالة حساب تاريخ الانتهاء — تشمل "5 سنوات"
         function calculateExpiration(regDateStr, plan, isFree = false) {
             if (isFree) return { expired: false, text: '♾️ مجاني - غير محدود' };
             if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
@@ -1233,7 +1325,6 @@
         }
 
         async function collectAllAppData() {
-            // ✅ إضافة "5 سنوات" للقائمة المسموحة
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة', '5 سنوات'];
 
             const firebaseLessons = await fetchLessonsFromFirebase();
@@ -1421,18 +1512,6 @@
                         localStorage.removeItem('teacherBlocked_' + teacherKey);
                     }
                 }
-                
-                if (showingArchive && !shouldBlock) {
-                    showingArchive = false;
-                    const btn = document.getElementById('btnToggleArchive');
-                    if (btn) {
-                        btn.innerHTML = '📁 عرض أرشيف المعلمين المحظورين (<span id="archiveCountBadge">0</span>)';
-                        btn.classList.remove('bg-rose-700');
-                        btn.classList.add('bg-slate-800');
-                    }
-                    const searchInput = document.getElementById('searchInput');
-                    if (searchInput) searchInput.placeholder = 'ابحث باسم المستر/المس أو رقم التليفون أو الشارع...';
-                }
 
                 await renderAllRecords();
 
@@ -1445,80 +1524,6 @@
                 }
             } catch (error) {
                 console.error("❌ خطأ في التحديث:", error);
-                setCloudStatus('offline', '⚠️ فشل التحديث');
-                showToast("⚠️ فشل الاتصال بالسحابة", true);
-            }
-        }
-
-        // ==========================================
-        // 🎁 تفعيل/إلغاء الحساب المجاني
-        // ==========================================
-        async function toggleFreeStatus(docId, phone, teacherName, currentFreeStatus) {
-            const newFreeStatus = !currentFreeStatus;
-            const cleanName = cleanTeacherName(teacherName);
-            
-            if (!window.db || !window.fsDoc || !window.fsSetDoc) {
-                showToast("⚠️ Firebase غير جاهز", true);
-                return;
-            }
-            
-            try {
-                setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
-                const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
-                const teacherKey = String(phone || '').replace(/\D/g, '');
-                
-                const updateData = {
-                    phone: phone,
-                    teacherName: cleanName,
-                    isFree: newFreeStatus,
-                    updatedAt: Date.now()
-                };
-                
-                if (newFreeStatus) {
-                    updateData.isBlocked = false;
-                }
-                
-                await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), updateData, { merge: true });
-                
-                if (teacherKey && window.fsGetDocs && window.fsCollection) {
-                    const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                    const updates = [];
-                    lessonsSnap.forEach((lessonDoc) => {
-                        const data = lessonDoc.data() || {};
-                        const lessonPhone = String(data.g_phone || '').replace(/\D/g, '');
-                        const lessonTeacher = cleanTeacherName(data.g_teacher || '');
-                        
-                        const matchesPhone = teacherKey && lessonPhone && lessonPhone === teacherKey;
-                        const matchesName  = cleanName && lessonTeacher && lessonTeacher === cleanName;
-                        
-                        if (matchesPhone || matchesName) {
-                            updates.push(
-                                window.fsSetDoc(
-                                    window.fsDoc(window.db, "lessons", lessonDoc.id),
-                                    { g_publish_map: newFreeStatus ? true : false, blockedByAdmin: false },
-                                    { merge: true }
-                                )
-                            );
-                        }
-                    });
-                    await Promise.all(updates);
-                }
-                
-                setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                
-                if (teacherKey && newFreeStatus) {
-                    localStorage.removeItem('teacherBlocked_' + teacherKey);
-                }
-                
-                if (newFreeStatus) {
-                    showToast('🎁 تم تفعيل الحساب المجاني - غير محدود');
-                } else {
-                    showToast('✅ تم إلغاء الوضع المجاني - يرجى اختيار باقة');
-                }
-                
-                await renderAllRecords();
-            } catch (error) {
-                console.error("❌ خطأ في تحديث الحالة المجانية:", error);
                 setCloudStatus('offline', '⚠️ فشل التحديث');
                 showToast("⚠️ فشل الاتصال بالسحابة", true);
             }
@@ -1570,7 +1575,7 @@
         }
 
         // ==========================================
-        // 🎨 الدالة الرئيسية لرسم الكروت
+        // 🎨 الدالة الرئيسية لرسم الكروت (قائمة منسدلة)
         // ==========================================
         async function renderAllRecords() {
             const { records, totalLessonsCount } = await collectAllAppData();
@@ -1586,13 +1591,7 @@
             const titleFilter = document.getElementById('filterTitle').value;
             const gradeFilter = document.getElementById('filterGrade').value;
 
-            const archivedCount = records.filter(r => r.isBlocked).length;
-            const badge = document.getElementById('archiveCountBadge');
-            if (badge && !showingArchive) badge.textContent = archivedCount;
-
             const filtered = records.filter(r => {
-                if (showingArchive && !r.isBlocked) return false;
-                if (!showingArchive && r.isBlocked) return false;
                 if (titleFilter !== 'all' && r.title !== titleFilter) return false;
                 if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
                 if (q && !`${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects} ${r.address}`.toLowerCase().includes(q)) return false;
@@ -1612,6 +1611,8 @@
             container.innerHTML = filtered.map(r => {
                 const isMs = r.title === 'مس';
                 const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
+                const cardKey = getCardKey(r);
+                const isExpanded = expandedCards.has(cardKey);
 
                 let iconOnlyPhoneBadge = '';
                 if (r.phoneType) {
@@ -1683,57 +1684,55 @@
                 }
 
                 return `
-                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}">
-                        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-300">
-                            <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-500">(${r.groupName})</span></div>
-                            <div class="flex items-center gap-1.5 flex-wrap">${iconOnlyPhoneBadge}${statusBadgeHTML}<span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span></div>
+                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
+                        <!-- Header (clickable - expand/collapse) -->
+                        <div class="card-header flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                ${badgeHTML}
+                                <h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3>
+                                <span class="text-xs font-bold text-slate-500">(${r.groupName})</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 flex-wrap">
+                                ${iconOnlyPhoneBadge}
+                                ${statusBadgeHTML}
+                                <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
+                                <span class="expand-arrow" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
+                            </div>
                         </div>
-                        <div class="space-y-2">
-                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
-                                <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
-                            </div>
-                            
-                            <div class="info-pill flex flex-col gap-2" style="background:${r.isFree ? '#F1F5F9' : '#FEF3C7'}; border-color:${r.isFree ? '#CBD5E1' : '#FCD34D'};">
-                                <div class="flex items-center justify-between w-full">
-                                    <span class="label ${r.isFree ? 'text-slate-500' : 'text-amber-900'}">🛡️ خطة وتوثيق الحساب:</span>
-                                    <span class="text-[11px] font-black ${r.isFree ? 'text-emerald-700' : (r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700')}">${r.expiryInfo.text}</span>
-                                </div>
-                                <select 
-                                    ${r.isFree ? 'disabled' : ''} 
-                                    onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" 
-                                    class="form-input py-1.5 text-xs font-black w-full ${r.isFree ? 'text-slate-400 bg-slate-100 border-slate-300 cursor-not-allowed' : 'text-amber-950 bg-white border-amber-300 cursor-pointer'}"
-                                    style="${r.isFree ? 'opacity:0.6;' : ''}">
-                                    <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
-                                    <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
-                                    <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
-                                    <option value="سنة واحدة" ${r.verification === 'سنة واحدة' ? 'selected' : ''}>سنة واحدة</option>
-                                    <option value="5 سنوات" ${r.verification === '5 سنوات' ? 'selected' : ''}>5 سنوات</option>
-                                    <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
-                                </select>
-                            </div>
 
-                            <div class="info-pill" style="background:${r.isFree ? '#ECFDF5' : '#F0F9FF'}; border-color:${r.isFree ? '#86EFAC' : '#BAE6FD'};">
-                                <div class="flex items-center justify-between w-full gap-2 flex-wrap">
-                                    <div class="flex flex-col items-start">
-                                        <span class="label ${r.isFree ? 'text-emerald-900' : 'text-sky-900'}">🎁 حساب مجاني (غير محدود):</span>
-                                        <span class="text-[10px] font-bold ${r.isFree ? 'text-emerald-700' : 'text-slate-500'} mt-0.5">
-                                            ${r.isFree ? '✅ مُفعّل — الباقات معطلة' : 'اضغط للتفعيل وتعطيل الباقات'}
-                                        </span>
+                        <!-- Details (collapsible) -->
+                        <div class="card-details mt-3" style="display:${isExpanded ? 'block' : 'none'};">
+                            <div class="space-y-2">
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
+                                    <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
+                                </div>
+                                
+                                <div class="info-pill flex flex-col gap-2" style="background:${r.isFree ? '#F1F5F9' : '#FEF3C7'}; border-color:${r.isFree ? '#CBD5E1' : '#FCD34D'};">
+                                    <div class="flex items-center justify-between w-full">
+                                        <span class="label ${r.isFree ? 'text-slate-500' : 'text-amber-900'}">🛡️ خطة وتوثيق الحساب:</span>
+                                        <span class="text-[11px] font-black ${r.isFree ? 'text-emerald-700' : (r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700')}">${r.expiryInfo.text}</span>
                                     </div>
-                                    <button 
-                                        onclick="toggleFreeStatus('${docIdSafe}', '${r.phone}', '${safeTeacherName}', ${r.isFree})" 
-                                        class="action-chip ${r.isFree ? 'bg-emerald-600 text-white border-2 border-emerald-800' : 'bg-sky-600 text-white border-2 border-sky-800'} px-4 py-2 text-xs font-black whitespace-nowrap shadow-md">
-                                        ${r.isFree ? '♾️ إلغاء المجاني' : '🎁 تفعيل مجاني'}
-                                    </button>
+                                    <select 
+                                        ${r.isFree ? 'disabled' : ''} 
+                                        onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" 
+                                        class="form-input py-1.5 text-xs font-black w-full ${r.isFree ? 'text-slate-400 bg-slate-100 border-slate-300 cursor-not-allowed' : 'text-amber-950 bg-white border-amber-300 cursor-pointer'}"
+                                        style="${r.isFree ? 'opacity:0.6;' : ''}">
+                                        <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
+                                        <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
+                                        <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
+                                        <option value="سنة واحدة" ${r.verification === 'سنة واحدة' ? 'selected' : ''}>سنة واحدة</option>
+                                        <option value="5 سنوات" ${r.verification === '5 سنوات' ? 'selected' : ''}>5 سنوات</option>
+                                        <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
+                                    </select>
                                 </div>
-                            </div>
 
-                            ${unifiedScheduleHTML}
-                        </div>
-                        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
-                            <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
-                            <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
+                                ${unifiedScheduleHTML}
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
+                                <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
+                                <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
+                            </div>
                         </div>
                     </div>
                 `;
@@ -1749,6 +1748,7 @@
                     const targetDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
                     if (targetDocId) {
                         await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", targetDocId));
+                        expandedCards.delete(targetDocId);
                     }
                     
                     if (lessonsStr) {
