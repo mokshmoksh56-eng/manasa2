@@ -209,7 +209,6 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* ✅ الكارت الأساسي */
         .record-card {
             background: #FFFFFF;
             border-radius: 22px;
@@ -227,7 +226,6 @@
             box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
         }
 
-        /* ✅ الحظر: أحمر صريح - أعلى الأولوية */
         .record-card.is-blocked {
             opacity: 1 !important;
             background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 50%, #FECACA 100%) !important;
@@ -241,7 +239,6 @@
             color: #7F1D1D !important;
         }
 
-        /* ✅ المسموح: أخضر صريح - أعلى الأولوية */
         .record-card.is-allowed {
             opacity: 1 !important;
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%) !important;
@@ -255,7 +252,6 @@
             color: #064E3B !important;
         }
 
-        /* ✅ خلفية الجدول داخل الكارت الملون */
         .record-card.is-blocked .unified-schedule-box {
             border: 2px solid #FCA5A5;
             background: #FFFFFF;
@@ -496,7 +492,6 @@
         .cloud-status-badge.synced { background: #D1FAE5; color: #065F46; border-color: #6EE7B7; }
         .cloud-status-badge.offline { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
 
-        /* ✅ ستاتس شارات صريحة */
         .status-pure-red {
             background: #DC2626 !important;
             color: #FFFFFF !important;
@@ -1184,6 +1179,7 @@
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
         }
 
+        // ✅ دالة حساب تاريخ الانتهاء — تشمل "5 سنوات"
         function calculateExpiration(regDateStr, plan, isFree = false) {
             if (isFree) return { expired: false, text: '♾️ مجاني - غير محدود' };
             if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
@@ -1193,6 +1189,7 @@
             else if (plan === '3 شهور') days = 90;
             else if (plan === '6 شهور') days = 180;
             else if (plan === 'سنة واحدة') days = 365;
+            else if (plan === '5 سنوات') days = 1825;
             const regDate = new Date(regDateStr);
             if (isNaN(regDate)) return { expired: false, text: 'تاريخ غير صالح' };
             const expiryDate = new Date(regDate.getTime() + days * 24 * 60 * 60 * 1000);
@@ -1236,7 +1233,8 @@
         }
 
         async function collectAllAppData() {
-            const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة'];
+            // ✅ إضافة "5 سنوات" للقائمة المسموحة
+            const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة', '5 سنوات'];
 
             const firebaseLessons = await fetchLessonsFromFirebase();
             const firebaseTeachers = await fetchTeachersFromFirebase();
@@ -1624,13 +1622,11 @@
 
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                // ✅ class الحالة: أحمر صريح للمحظور، أخضر صريح للمسموح
                 const stateClass = r.isBlocked ? 'is-blocked' : 'is-allowed';
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
 
-                // ✅ الجدول يظهر دائماً لجميع المعلمين
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
                     const rowsHTML = r.groups.map(g => {
@@ -1654,7 +1650,6 @@
                     }).join('');
                     unifiedScheduleHTML = `<div class="unified-schedule-box"><table class="unified-schedule-table"><thead><tr><th>👥 المجموعة</th><th>🎓 المرحلة والصف</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead><tbody>${rowsHTML}</tbody></table></div>`;
                 } else {
-                    // ✅ جدول فارغ لجميع المعلمين اللي ماعندهمش مجموعات — يظهر دايماً
                     unifiedScheduleHTML = `
                         <div class="unified-schedule-box">
                             <table class="unified-schedule-table">
@@ -1678,7 +1673,6 @@
                     `;
                 }
 
-                // ✅ شارة الحالة الصريحة: أحمر/أخضر
                 let statusBadgeHTML = '';
                 if (r.isBlocked) {
                     statusBadgeHTML = `<span class="status-pure-red">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
@@ -1700,7 +1694,6 @@
                                 <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                             </div>
                             
-                            <!-- 🛡️ باقة التوثيق (تتعطل لو مجاني) -->
                             <div class="info-pill flex flex-col gap-2" style="background:${r.isFree ? '#F1F5F9' : '#FEF3C7'}; border-color:${r.isFree ? '#CBD5E1' : '#FCD34D'};">
                                 <div class="flex items-center justify-between w-full">
                                     <span class="label ${r.isFree ? 'text-slate-500' : 'text-amber-900'}">🛡️ خطة وتوثيق الحساب:</span>
@@ -1715,11 +1708,11 @@
                                     <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
                                     <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
                                     <option value="سنة واحدة" ${r.verification === 'سنة واحدة' ? 'selected' : ''}>سنة واحدة</option>
+                                    <option value="5 سنوات" ${r.verification === '5 سنوات' ? 'selected' : ''}>5 سنوات</option>
                                     <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
                                 </select>
                             </div>
 
-                            <!-- 🎁 خانة المجاني المستقلة -->
                             <div class="info-pill" style="background:${r.isFree ? '#ECFDF5' : '#F0F9FF'}; border-color:${r.isFree ? '#86EFAC' : '#BAE6FD'};">
                                 <div class="flex items-center justify-between w-full gap-2 flex-wrap">
                                     <div class="flex flex-col items-start">
@@ -1736,7 +1729,6 @@
                                 </div>
                             </div>
 
-                            <!-- ✅ الجدول ظاهر دايماً -->
                             ${unifiedScheduleHTML}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
