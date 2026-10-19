@@ -1316,10 +1316,8 @@
     <section class="cards-section">
         <div class="container mx-auto max-w-4xl">
 
-            <!-- ✅ بانر الحظر (يظهر تلقائياً عند الحظر) -->
             <div id="blockedBannerContainer"></div>
 
-            <!-- ✅ شريط الترحيب بالمستر -->
             <div id="welcomeBanner" class="welcome-banner" style="display: none;">
                 <div class="welcome-sparkle">✨</div>
                 <div class="welcome-avatar" id="welcomeAvatar">👨‍🏫</div>
@@ -1330,7 +1328,6 @@
                 </div>
             </div>
 
-            <!-- ✅ شريط الأزرار -->
             <div class="quick-actions-bar">
                 <a href="./index.html" class="quick-action-btn quick-action-home">
                     <div class="quick-action-icon">
@@ -1491,7 +1488,7 @@
         let realtimeUnsubscribe = null;
         let deviceWatchUnsub = null;
         let autoSyncInterval = null;
-        let teacherIsBlocked = false;  // حالة الحظر الحالية
+        let teacherIsBlocked = false;
 
         // ==========================================
         // 📱 Device ID Management
@@ -1684,7 +1681,6 @@
                 
                 let isBlocked = data.isBlocked === true || data.verification === 'حظر';
                 
-                // فحص انتهاء الصلاحية (للباقة التجريبية 30 يوم أو أي باقة منتهية)
                 if (!isBlocked && data.verification && data.createdAt) {
                     const created = new Date(data.createdAt);
                     const days = data.verification === '30 يوم تجريبي' ? 30
@@ -1695,13 +1691,11 @@
                     const expiry = new Date(created.getTime() + days * 24 * 60 * 60 * 1000);
                     if (expiry < new Date()) {
                         isBlocked = true;
-                        // حدّث السحابة بالحظر تلقائياً + إخفاء كل الدروس
                         try {
                             await window.fsSetDoc(window.fsDoc(window.db, "teachers", teacherKey),
                                 { isBlocked: true, verification: 'حظر', blockedAt: Date.now(), blockReason: 'expired' },
                                 { merge: true });
                             
-                            // إخفاء كل دروس المعلم في السحابة
                             if (window.fsGetDocs && window.fsCollection) {
                                 const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                                 const updates = [];
@@ -1736,7 +1730,6 @@
             const container = document.getElementById('blockedBannerContainer');
             if (!container) return;
             
-            // لو موجود بالفعل، متكررش
             if (document.getElementById('blockedBanner')) return;
             
             const phone = getCurrentTeacherInfo().phone || '';
@@ -1886,34 +1879,33 @@
         }
 
         // ==========================================
-        // ✅ عدد المجموعات المتسلسل (لا يعيد استخدام الأرقام المحذوفة)
+        // ✅ ترقيم المجموعات
+        // - لو مفيش مجموعات خالص → يبدأ من 1
+        // - لو فيه مجموعات → ياخد أول رقم فاضي من 1 لأعلى
+        //   (يعني 1,2,3 ومسحت 3 → الجديدة تبقى 3)
+        //   (يعني 1,2,3 ومسحت 2 → الجديدة تبقى 2)
         // ==========================================
         function getNextGroupNumber() {
-            // نستخدم عداد محفوظ في localStorage لكل معلم
-            const { phone: teacherPhone } = getCurrentTeacherInfo();
-            const teacherKey = String(teacherPhone || '').replace(/\D/g, '') || 'anonymous';
-            const counterKey = 'group_counter_' + teacherKey;
+            // ✅ لو مفيش أي مجموعات → نبدأ من 1
+            if (!lessons || lessons.length === 0) {
+                return 1;
+            }
 
-            // أولاً: نجيب أعلى رقم موجود حالياً في المجموعات
-            let maxInCurrent = 0;
+            // ✅ نجمع كل الأرقام المستخدمة حالياً
+            const usedNumbers = new Set();
             lessons.forEach(l => {
                 const match = String(l.title || '').match(/مجموعة\s*رقم\s*(\d+)/);
                 if (match) {
                     const num = parseInt(match[1]);
-                    if (!isNaN(num) && num > maxInCurrent) maxInCurrent = num;
+                    if (!isNaN(num) && num > 0) usedNumbers.add(num);
                 }
             });
 
-            // ثانياً: نجيب العداد المحفوظ (آخر رقم تم استخدامه)
-            let savedCounter = parseInt(localStorage.getItem(counterKey) || '0');
-            if (isNaN(savedCounter)) savedCounter = 0;
-
-            // نأخذ الأكبر بينهم ونضيف 1
-            // ده يضمن إننا مش هنعيد استخدام رقم محذوف
-            const nextNumber = Math.max(maxInCurrent, savedCounter) + 1;
-
-            // نحفظ العداد الجديد
-            localStorage.setItem(counterKey, String(nextNumber));
+            // ✅ ندوّر على أول رقم فاضي بدءًا من 1
+            let nextNumber = 1;
+            while (usedNumbers.has(nextNumber)) {
+                nextNumber++;
+            }
 
             return nextNumber;
         }
@@ -2143,23 +2135,18 @@
         // ✅ DOMContentLoaded
         // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
-            // 1) التحقق من الجهاز
             const isDeviceValid = await verifyCurrentDevice();
             if (!isDeviceValid) return;
 
-            // 2) مراقبة الجهاز اللحظية
             startDeviceWatch();
 
-            // 3) عرض شريط الترحيب
             renderWelcomeBanner();
 
-            // 4) فحص الحظر من السحابة
             teacherIsBlocked = await checkTeacherBlockStatus();
             if (teacherIsBlocked) {
                 showBlockedBanner();
             }
 
-            // 5) تنظيف localStorage من بيانات معلم قديم
             const currentInfo = getCurrentTeacherInfo();
             const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
             const lessonsOwnerKey = 'lessons_owner_phone';
@@ -2184,38 +2171,30 @@
                 localStorage.setItem(lessonsOwnerKey, currentPhoneKey);
             }
 
-            // 6) ربط زر الخروج
             document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
                 e.preventDefault(); e.stopPropagation(); openLogoutModal();
             });
 
-            // 7) قراءة أولية
             const savedLessons = localStorage.getItem('teacher_lessons');
             if (savedLessons) {
                 try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
             }
             renderLessons();
 
-            // 8) Migration
             updateSyncStatus('📤 جاري رفع الحصص القديمة...');
             const migResult = await migrateLocalLessonsToFirebase();
             if (migResult.migrated > 0 || migResult.repaired > 0) {
                 showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
             }
 
-            // 9) Sync شامل
             await syncLessonsFromFirebase(true);
 
-            // 10) Realtime
             startRealtimeSync();
 
-            // 11) Auto Sync
             startAutoSync();
 
-            // 12) مراقبة حالة الحظر لحظياً
             startBlockStatusWatch();
 
-            // 13) إخفاء اللودر
             hideInitialLoader();
         });
 
@@ -2287,15 +2266,13 @@
                 return;
             }
 
-            // ✅ حساب الرقم التسلسلي التالي (لا يعيد استخدام الأرقام المحذوفة)
             const nextNumber = getNextGroupNumber();
 
-            // ID فريد داخلياً (مش بيظهر للمستخدم)
             const newId = String(Date.now()) + '_' + Math.random().toString(36).substr(2, 6);
             
             const lessonData = { 
                 id: newId, 
-                title: `مجموعة رقم ${nextNumber}`  // ✅ الاسم اللي هيظهر
+                title: `مجموعة رقم ${nextNumber}`
             };
             lessons.push(lessonData);
             if (saveToStorage) saveLessonsToStorage();
@@ -2469,7 +2446,6 @@
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
-                // بانر "المجموعة مخفية" + زر فتح
                 const hiddenNoticeHTML = (!isPublished && !teacherIsBlocked) ? `
                     <div class="hidden-notice-banner">
                         <span class="hidden-notice-icon">🔒</span>
@@ -2484,7 +2460,6 @@
                     </div>
                 ` : '';
 
-                // overlay القفل لو الحساب محظور
                 const lockedOverlayHTML = teacherIsBlocked ? `
                     <div class="locked-overlay">
                         <div class="locked-overlay-icon">🔒</div>
