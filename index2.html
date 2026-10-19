@@ -547,6 +547,17 @@
             box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
         }
 
+        /* ✅ كارت غير مكتمل الإعداد */
+        .portal-card.incomplete-card {
+            border-color: #FCD34D;
+            border-bottom-color: #D97706;
+            background: linear-gradient(135deg, #FFFBEB 0%, #FFFFFF 100%);
+        }
+        .portal-card.incomplete-card .btn-go {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
+        }
+
         .portal-card.locked-card {
             opacity: 0.85;
             border-color: #FCA5A5;
@@ -605,9 +616,20 @@
             animation: hiddenPulse 2.5s ease-in-out infinite;
         }
 
+        /* ✅ بانر "أكمل الإعداد" */
+        .hidden-notice-banner.incomplete-banner {
+            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            border-color: #FCD34D;
+            animation: incompletePulse 2.5s ease-in-out infinite;
+        }
+
         @keyframes hiddenPulse {
             0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.2); }
             50%      { box-shadow: 0 0 0 4px rgba(220, 38, 38, 0); }
+        }
+        @keyframes incompletePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.25); }
+            50%      { box-shadow: 0 0 0 4px rgba(217, 119, 6, 0); }
         }
 
         .hidden-notice-icon {
@@ -632,6 +654,10 @@
             text-align: right;
         }
 
+        .hidden-notice-banner.incomplete-banner .hidden-notice-text {
+            color: #92400E;
+        }
+
         .hidden-open-btn {
             flex-shrink: 0;
             display: inline-flex;
@@ -650,6 +676,13 @@
             font-family: 'Cairo', sans-serif;
             box-shadow: 0 2px 6px rgba(220, 38, 38, 0.35);
             white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .hidden-notice-banner.incomplete-banner .hidden-open-btn {
+            background: #D97706;
+            border-color: #92400E;
+            box-shadow: 0 2px 6px rgba(217, 119, 6, 0.35);
         }
 
         .hidden-open-btn:active {
@@ -679,6 +712,7 @@
         .status-upcoming { background: #FEF3C7; color: #D97706; border: 1px solid #FDE68A; }
         .status-future { background: #E0E7FF; color: #4F46E5; border: 1px solid #C7D2FE; }
         .status-none { background: #F1F5F9; color: #64748B; border: 1px solid #E2E8F0; }
+        .status-incomplete { background: #FEF3C7; color: #B45309; border: 1px solid #FCD34D; }
         
         @keyframes pulseRed {
             0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
@@ -735,6 +769,7 @@
         .btn-edit { background: #E0E7FF; color: #4F46E5; }
         .btn-visibility { background: #F1F5F9; color: #64748B; }
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
+        .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
         /* ✅ كارت إضافة مجموعة جديدة — أخضر */
         .card-add-new {
@@ -1056,6 +1091,9 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.2);
             border-bottom: 3px solid #10B981;
             white-space: nowrap;
+            max-width: 92vw;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
         #toastMsg.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
@@ -1490,6 +1528,9 @@
         let autoSyncInterval = null;
         let teacherIsBlocked = false;
 
+        // منع تكرار محاولات الـ force-unpublish على نفس المجموعة
+        const forceUnpublishingIds = new Set();
+
         // ==========================================
         // 📱 Device ID Management
         // ==========================================
@@ -1879,33 +1920,49 @@
         }
 
         // ==========================================
-        // ✅ هل الحصة اتعملها إعداد حقيقي؟
-        // (مش بس الـ auto-generated fields من Firebase)
+        // ✅ هل الإعداد مكتمل؟ (فحص صارم)
+        // لازم: المرحلة + الصف + المواد + الأيام + وقت البداية + وقت النهاية
         // ==========================================
-        function hasRealSetupData(data) {
+        function isSetupComplete(data) {
             if (!data || typeof data !== 'object') return false;
-            return !!(
-                data.s_grade ||
-                data.s_stage ||
-                (Array.isArray(data.g_days) && data.g_days.length > 0) ||
-                (Array.isArray(data.selectedSubjects) && data.selectedSubjects.length > 0)
-            );
+
+            const hasStage = !!(data.s_stage && String(data.s_stage).trim());
+            const hasGrade = !!(data.s_grade && String(data.s_grade).trim());
+            const hasSubjects = Array.isArray(data.selectedSubjects) &&
+                                data.selectedSubjects.some(s => s && String(s).trim());
+            const hasDays = Array.isArray(data.g_days) &&
+                            data.g_days.some(d => d && String(d).trim());
+            const hasStart = !!(data.start_hour && data.start_ampm);
+            const hasEnd = !!(data.end_hour && data.end_ampm);
+
+            return hasStage && hasGrade && hasSubjects && hasDays && hasStart && hasEnd;
+        }
+
+        // ==========================================
+        // ✅ محاولة إلغاء نشر قسري (محمية ضد التكرار)
+        // ==========================================
+        function tryForceUnpublish(lessonId) {
+            if (!window.db || !window.fsDoc || !window.fsSetDoc) return;
+            if (forceUnpublishingIds.has(lessonId)) return;
+
+            forceUnpublishingIds.add(lessonId);
+            window.fsSetDoc(
+                window.fsDoc(window.db, "lessons", String(lessonId)),
+                { g_publish_map: false },
+                { merge: true }
+            ).catch(e => {
+                console.warn(`⚠️ force unpublish فشل لـ ${lessonId}:`, e);
+            }).finally(() => {
+                forceUnpublishingIds.delete(lessonId);
+            });
         }
 
         // ==========================================
         // ✅ ترقيم المجموعات
-        // - لو مفيش مجموعات خالص → يبدأ من 1
-        // - لو فيه مجموعات → ياخد أول رقم فاضي من 1 لأعلى
-        //   (يعني 1,2,3 ومسحت 3 → الجديدة تبقى 3)
-        //   (يعني 1,2,3 ومسحت 2 → الجديدة تبقى 2)
         // ==========================================
         function getNextGroupNumber() {
-            // ✅ لو مفيش أي مجموعات → نبدأ من 1
-            if (!lessons || lessons.length === 0) {
-                return 1;
-            }
+            if (!lessons || lessons.length === 0) return 1;
 
-            // ✅ نجمع كل الأرقام المستخدمة حالياً
             const usedNumbers = new Set();
             lessons.forEach(l => {
                 const match = String(l.title || '').match(/مجموعة\s*رقم\s*(\d+)/);
@@ -1915,7 +1972,6 @@
                 }
             });
 
-            // ✅ ندوّر على أول رقم فاضي بدءًا من 1
             let nextNumber = 1;
             while (usedNumbers.has(nextNumber)) {
                 nextNumber++;
@@ -1956,12 +2012,13 @@
                     }
 
                     if (!snap.exists()) {
+                        const setupComplete = isSetupComplete(lessonState);
                         const stateToUpload = {
                             ...lessonState,
                             g_name: lesson.title || lessonState.g_name || `مجموعة ${lessonId}`,
                             g_phone: teacherPhone || lessonState.g_phone || '',
                             g_teacher: teacherName || lessonState.g_teacher || '',
-                            g_publish_map: localStorage.getItem('publishState_' + lessonId) === 'true',
+                            g_publish_map: setupComplete ? (localStorage.getItem('publishState_' + lessonId) === 'true') : false,
                             createdAt: lessonState.createdAt || new Date().toISOString(),
                             _migratedAt: Date.now()
                         };
@@ -1993,6 +2050,11 @@
                         const updateObj = {};
                         if (!existingData.g_phone && teacherPhone) updateObj.g_phone = teacherPhone;
                         if (!existingData.g_teacher && teacherName) updateObj.g_teacher = teacherName;
+
+                        // لو الإعداد ناقص بس منشور → نفرض إخفاء
+                        if (!isSetupComplete(existingData) && existingData.g_publish_map === true) {
+                            updateObj.g_publish_map = false;
+                        }
 
                         if (Object.keys(updateObj).length > 0) {
                             await window.fsSetDoc(ref, updateObj, { merge: true });
@@ -2038,13 +2100,22 @@
                     const stateToSave = { ...data };
                     delete stateToSave.updatedAt;
 
-                    // ✅ نحمّل lessonState فقط لو فيه إعداد حقيقي
-                    if (hasRealSetupData(stateToSave)) {
+                    const setupComplete = isSetupComplete(stateToSave);
+
+                    // ✅ نحفظ lessonState فقط لو الإعداد مكتمل
+                    if (setupComplete) {
                         localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
                     } else {
                         localStorage.removeItem('lessonState_' + lessonId);
                     }
-                    localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+
+                    // ✅ لو الإعداد ناقص بس منشور في Firebase → force unpublish
+                    if (!setupComplete && data.g_publish_map === true) {
+                        localStorage.setItem('publishState_' + lessonId, 'false');
+                        tryForceUnpublish(lessonId);
+                    } else if (!forceUnpublishingIds.has(lessonId)) {
+                        localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+                    }
                 });
 
                 firebaseLessons.sort((a, b) => {
@@ -2091,13 +2162,20 @@
                             const stateToSave = { ...data };
                             delete stateToSave.updatedAt;
 
-                            // ✅ نحمّل lessonState فقط لو فيه إعداد حقيقي
-                            if (hasRealSetupData(stateToSave)) {
+                            const setupComplete = isSetupComplete(stateToSave);
+
+                            if (setupComplete) {
                                 localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
                             } else {
                                 localStorage.removeItem('lessonState_' + lessonId);
                             }
-                            localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+
+                            if (!setupComplete && data.g_publish_map === true) {
+                                localStorage.setItem('publishState_' + lessonId, 'false');
+                                tryForceUnpublish(lessonId);
+                            } else if (!forceUnpublishingIds.has(lessonId)) {
+                                localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+                            }
                         });
 
                         firebaseLessons.sort((a, b) => {
@@ -2106,18 +2184,10 @@
                             return String(a.id).localeCompare(String(b.id));
                         });
 
-                        const currentIds = lessons.map(l => String(l.id)).sort().join(',');
-                        const newIds = firebaseLessons.map(l => String(l.id)).sort().join(',');
-
-                        if (currentIds !== newIds) {
-                            lessons = firebaseLessons;
-                            saveLessonsToStorage();
-                            renderLessons();
-                            showFbSyncBadge('🔄 تم التحديث من السحابة');
-                        } else {
-                            // حتى لو الأسماء متطابقة، لازم نحدّث الكروت عشان تعكس حالة lessonState الحقيقية
-                            renderLessons();
-                        }
+                        // نحدّث الكروت دايماً عشان تعكس أحدث حالة
+                        lessons = firebaseLessons;
+                        saveLessonsToStorage();
+                        renderLessons();
                     },
                     (err) => console.warn("⚠️ onSnapshot:", err)
                 );
@@ -2329,9 +2399,10 @@
         }
 
         function calculateSessionStatus(savedState) {
-            if (!savedState) return `<span class="status-badge status-none">⚠️ لم يتم الإعداد</span>`;
-            const state = JSON.parse(savedState);
-            if (!state.g_days || state.g_days.length === 0) return `<span class="status-badge status-none">⚠️ بدون مواعيد</span>`;
+            if (!savedState) return `<span class="status-badge status-incomplete">⚠️ الإعداد غير مكتمل</span>`;
+            let state;
+            try { state = JSON.parse(savedState); } catch(e) { return `<span class="status-badge status-incomplete">⚠️ الإعداد غير مكتمل</span>`; }
+            if (!state.g_days || state.g_days.length === 0) return `<span class="status-badge status-incomplete">⚠️ الإعداد غير مكتمل</span>`;
 
             const arabicDays = ['الأحد', 'الإثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
             const now = new Date();
@@ -2366,7 +2437,8 @@
 
         function getQuickInfoBadges(savedState) {
             if (!savedState) return '';
-            const state = JSON.parse(savedState);
+            let state;
+            try { state = JSON.parse(savedState); } catch(e) { return ''; }
             const grade = state.s_grade || '';
             const subj = (state.selectedSubjects && state.selectedSubjects.length > 0) ? state.selectedSubjects[0].split(' - ')[1] || state.selectedSubjects[0] : '';
             
@@ -2393,13 +2465,23 @@
         }
 
         // ==========================================
-        // ✅ Toggle Visibility
+        // ✅ Toggle Visibility (مع منع النشر لو الإعداد ناقص)
         // ==========================================
         async function toggleVisibility(id, event) {
             if (event) event.stopPropagation();
 
             if (teacherIsBlocked) {
                 showToast('🔒 الحساب محظور — تواصل مع الإدارة للتوثيق', true);
+                return;
+            }
+
+            // ✅ فحص صارم: ما ينفعش تنشر قبل ما الإعداد يكتمل
+            const raw = localStorage.getItem('lessonState_' + id);
+            let data = null;
+            try { data = raw ? JSON.parse(raw) : null; } catch(e) {}
+
+            if (!isSetupComplete(data)) {
+                showToast('⚠️ لازم تكمل إعدادات المجموعة الأول قبل ما تنشرها', true);
                 return;
             }
 
@@ -2464,40 +2546,63 @@
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
 
-                // ✅ فحص حقيقي: هل يوجد إعداد فعلي أم مجرد auto-generated fields؟
+                // ✅ فحص: هل الإعداد مكتمل فعلاً؟
                 const savedStateRaw = localStorage.getItem('lessonState_' + lesson.id);
                 let savedStateObj = null;
-                try {
-                    savedStateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null;
-                } catch (e) { savedStateObj = null; }
+                try { savedStateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
 
-                const hasReport = hasRealSetupData(savedStateObj);
-                // ✅ نمرر null لدوال الحالة/الشارات لو مفيش إعداد حقيقي
+                const hasReport = isSetupComplete(savedStateObj);
                 const savedState = hasReport ? JSON.stringify(savedStateObj) : null;
 
-                const isPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
-                const hiddenClass = isPublished ? '' : 'hidden-card';
+                // ✅ لو الإعداد ناقص، ما ينفعش تكون منشورة
+                const rawPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
+                const isPublished = rawPublished && hasReport;
+
+                const hiddenClass = (hasReport && !isPublished) ? 'hidden-card' : '';
+                const incompleteClass = !hasReport ? 'incomplete-card' : '';
                 const lockedClass = teacherIsBlocked ? 'locked-card' : '';
+
                 const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
                 const btnText = hasReport ? 'التقرير ➔' : 'إعداد ➔';
-                const descText = hasReport ? 'تم الإعداد بنجاح، يمكنك إدارة التفاصيل.' : 'اضغط لإعداد المواعيد والمكان.';
+                const descText = hasReport 
+                    ? (isPublished ? 'ظاهرة للطلاب — يمكنك إدارتها.' : 'مخفية عن الطلاب — اضغط "فتح" لنشرها.')
+                    : '⚠️ أكمل الإعداد أولاً — النشر متوقف حتى تكتمل البيانات.';
 
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
-                const hiddenNoticeHTML = (!isPublished && !teacherIsBlocked) ? `
-                    <div class="hidden-notice-banner">
-                        <span class="hidden-notice-icon">🔒</span>
-                        <span class="hidden-notice-text">هذه المجموعة مخفية عن الطلاب</span>
-                        <button type="button" class="hidden-open-btn" onclick="toggleVisibility('${lesson.id}', event)" title="إظهار المجموعة للطلاب">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                            </svg>
-                            فتح
-                        </button>
-                    </div>
-                ` : '';
+                // ✅ بانر الحالة:
+                // - لو الإعداد ناقص → "أكمل الإعداد" (لينك لـ group.html)
+                // - لو الإعداد مكتمل + مخفي → "مخفية عن الطلاب" + زرار فتح
+                // - لو منشور → لا بانر
+                let noticeBannerHTML = '';
+                if (!teacherIsBlocked) {
+                    if (!hasReport) {
+                        noticeBannerHTML = `
+                            <div class="hidden-notice-banner incomplete-banner">
+                                <span class="hidden-notice-icon">⚠️</span>
+                                <span class="hidden-notice-text">المجموعة غير مكتملة — أكمل الإعداد أولاً</span>
+                                <a href="./group.html?lessonId=${lesson.id}" class="hidden-open-btn">
+                                    أكمل الإعداد ←
+                                </a>
+                            </div>
+                        `;
+                    } else if (!isPublished) {
+                        noticeBannerHTML = `
+                            <div class="hidden-notice-banner">
+                                <span class="hidden-notice-icon">🔒</span>
+                                <span class="hidden-notice-text">هذه المجموعة مخفية عن الطلاب</span>
+                                <button type="button" class="hidden-open-btn" onclick="toggleVisibility('${lesson.id}', event)" title="إظهار المجموعة للطلاب">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" />
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    </svg>
+                                    فتح
+                                </button>
+                            </div>
+                        `;
+                    }
+                }
 
                 const lockedOverlayHTML = teacherIsBlocked ? `
                     <div class="locked-overlay">
@@ -2506,13 +2611,28 @@
                     </div>
                 ` : '';
 
-                const eyeIcon = isPublished ? 
-                    `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>` 
-                    : 
-                    `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>`;
+                // ✅ أيقونة العين: لو الإعداد ناقص → قفل
+                let visibilityIcon;
+                let visibilityClass = '';
+                let visibilityTitle;
+                let visibilityDisabled = false;
+                
+                if (!hasReport) {
+                    visibilityIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>`;
+                    visibilityClass = 'blocked';
+                    visibilityTitle = 'أكمل الإعداد أولاً لتفعيل النشر';
+                    visibilityDisabled = true;
+                } else if (isPublished) {
+                    visibilityIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>`;
+                    visibilityClass = 'published';
+                    visibilityTitle = 'إخفاء عن الطلاب';
+                } else {
+                    visibilityIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>`;
+                    visibilityTitle = 'إظهار للطلاب';
+                }
 
                 const newCard = document.createElement('div');
-                newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${lockedClass}`;
+                newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
                 
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
@@ -2520,8 +2640,8 @@
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
                         </button>
-                        <button class="btn-action btn-visibility ${isPublished ? 'published' : ''}" title="إخفاء/إظهار للطلاب" onclick="toggleVisibility('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
-                            ${eyeIcon}
+                        <button class="btn-action btn-visibility ${visibilityClass}" title="${visibilityTitle}" onclick="toggleVisibility('${lesson.id}', event)" ${teacherIsBlocked || visibilityDisabled ? 'disabled' : ''}>
+                            ${visibilityIcon}
                         </button>
                         <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal('${lesson.id}', event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
@@ -2531,7 +2651,7 @@
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
                     <div class="card-text">
-                        ${hiddenNoticeHTML}
+                        ${noticeBannerHTML}
                         ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
@@ -2626,15 +2746,14 @@
                 return;
             }
 
-            // ✅ فحص حقيقي: هل فيه إعداد فعلي؟
+            // ✅ فحص: هل الإعداد مكتمل؟
             const savedStateRaw = localStorage.getItem('lessonState_' + lessonId);
             let stateObj = null;
-            try {
-                stateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null;
-            } catch (e) { stateObj = null; }
+            try { stateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
 
-            const hasRealData = hasRealSetupData(stateObj);
-            const isPublished = localStorage.getItem('publishState_' + lessonId) === 'true';
+            const hasRealData = isSetupComplete(stateObj);
+            const rawPublished = localStorage.getItem('publishState_' + lessonId) === 'true';
+            const isPublished = rawPublished && hasRealData;
 
             const lesson = lessons.find(l => l.id === lessonId);
             const lessonTitle = lesson ? lesson.title : `مجموعة`;
@@ -2705,8 +2824,16 @@
                     <p>📍 <b>العنوان:</b> ${data.m_address || 'لم يتم تحديد الموقع'}</p>
                 `;
             } else {
-                nameEl.innerHTML = `<span>${lessonTitle}</span>`;
-                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 10px 6px;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد" للبدء.</p>`;
+                // ✅ إعداد ناقص — شارة "غير مكتمل" + رسالة توجيهية
+                const incompleteBadge = `<span style="font-size: 9.5px; background: #FEF3C7; color: #92400E; padding: 2px 6px; border-radius: 99px; border: 1px solid #FCD34D; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #D97706; border-radius: 50%; display: inline-block;"></span>غير مكتمل</span>`;
+                nameEl.innerHTML = `<span>${lessonTitle}</span> ${incompleteBadge}`;
+                contentEl.innerHTML = `
+                    <p style="text-align: center; color: #92400E; background: #FFFBEB; border-color: #FCD34D; padding: 10px 6px; line-height: 1.6;">
+                        ⚠️ <b>الإعداد غير مكتمل</b><br>
+                        المجموعة <b>لا تظهر للطلاب</b> حتى تكمل جميع البيانات المطلوبة.<br>
+                        <a href="./group.html?lessonId=${lessonId}" style="display: inline-block; margin-top: 8px; padding: 6px 14px; background: #D97706; color: white; border-radius: 8px; text-decoration: none; font-weight: 900;">أكمل الإعداد ←</a>
+                    </p>
+                `;
             }
 
             modal.classList.add('active');
