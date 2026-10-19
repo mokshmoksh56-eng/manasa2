@@ -1010,12 +1010,14 @@
         }
 
         // ==========================================
-        // 🌟 المنهج الافتراضي
+        // 🌟 المنهج الافتراضي (مع الترتيب الجديد)
         // ==========================================
         const defaultCurriculum = {
+            main_order: ['primary', 'prep', 'secondary'],
             primary: {
                 name: '🎒 المرحلة الابتدائية',
                 grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                gradeOrder: { 'الأول': 1, 'الثاني': 2, 'الثالث': 3, 'الرابع': 4, 'الخامس': 5, 'السادس': 6 },
                 gradeSubjects: {
                     'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
                     'الثاني': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
@@ -1024,25 +1026,45 @@
                     'الخامس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
                     'السادس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات']
                 },
+                subjectOrder: {
+                    'الأول': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الثاني': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الثالث': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الرابع': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 },
+                    'الخامس': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 },
+                    'السادس': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 }
+                },
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             prep: {
                 name: '📐 المرحلة الإعدادية',
                 grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                gradeOrder: { 'الأول الإعدادي': 1, 'الثاني الإعدادي': 2, 'الثالث الإعدادي': 3 },
                 gradeSubjects: {
                     'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
                     'الثاني الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
                     'الثالث الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي']
+                },
+                subjectOrder: {
+                    'الأول الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 },
+                    'الثاني الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 },
+                    'الثالث الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 }
                 },
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             secondary: {
                 name: '🎓 المرحلة الثانوية',
                 grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                gradeOrder: { 'الأول الثانوي': 1, 'الثاني الثانوي': 2, 'الثالث الثانوي': 3 },
                 gradeSubjects: {
                     'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
                     'الثاني الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا', 'علم نفس', 'فلسفة'],
                     'الثالث الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+                },
+                subjectOrder: {
+                    'الأول الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'رياضيات': 4, 'علوم متكاملة': 5, 'تاريخ': 6, 'فلسفة ومنطق': 7 },
+                    'الثاني الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'رياضيات': 4, 'فيزياء': 5, 'كيمياء': 6, 'أحياء': 7, 'تاريخ': 8, 'جغرافيا': 9, 'علم نفس': 10, 'فلسفة': 11 },
+                    'الثالث الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'فيزياء': 4, 'كيمياء': 5, 'أحياء': 6, 'جيولوجيا': 7, 'رياضيات': 8, 'تاريخ': 9, 'جغرافيا': 10, 'فلسفة ومنطق': 11, 'علم نفس واجتماع': 12 }
                 },
                 subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات']
             }
@@ -1052,27 +1074,42 @@
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
                 return JSON.parse(JSON.stringify(defaultCurriculum));
             }
+            
+            // التأكد من وجود main_order
+            if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
+                currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order' && k !== 'updatedAt');
+            }
 
-            Object.keys(defaultCurriculum).forEach(stageKey => {
+            Object.keys(currObj).forEach(stageKey => {
+                if (stageKey === 'main_order' || stageKey === 'updatedAt' || stageKey === 'id') return;
+                
                 if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
-                    currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    if (defaultCurriculum[stageKey]) {
+                        currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    }
                     return;
                 }
-
                 const st = currObj[stageKey];
-                const defStage = defaultCurriculum[stageKey];
-
+                const defStage = defaultCurriculum[stageKey] || {};
+                
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
-                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
-                    st.gradeSubjects = {};
-                }
-
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) st.gradeSubjects = {};
+                if (!st.gradeOrder || typeof st.gradeOrder !== 'object' || Array.isArray(st.gradeOrder)) st.gradeOrder = {};
+                if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) st.subjectOrder = {};
+                
                 const mergedGrades = [...st.grades];
                 (defStage.grades || []).forEach(defGrade => {
                     if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
                 });
                 st.grades = mergedGrades;
+
+                // ✅ تأكد أن كل صف له ترتيب
+                st.grades.forEach((g, i) => {
+                    if (typeof st.gradeOrder[g] !== 'number') {
+                        st.gradeOrder[g] = i + 1;
+                    }
+                });
 
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
@@ -1089,8 +1126,40 @@
                         });
                         st.gradeSubjects[g] = existing;
                     }
+
+                    // ✅ تأكد أن كل مادة لها ترتيب
+                    if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
+                        st.subjectOrder[g] = {};
+                    }
+                    st.gradeSubjects[g].forEach((s, i) => {
+                        if (typeof st.subjectOrder[g][s] !== 'number') {
+                            st.subjectOrder[g][s] = i + 1;
+                        }
+                    });
+
+                    // ✅ احذف أي ترتيب لمادة لم تعد موجودة
+                    Object.keys(st.subjectOrder[g]).forEach(s => {
+                        if (!st.gradeSubjects[g].includes(s)) {
+                            delete st.subjectOrder[g][s];
+                        }
+                    });
                 });
+
+                // ✅ احذف أي ترتيب لصف لم يعد موجوداً
+                Object.keys(st.gradeOrder).forEach(g => {
+                    if (!st.grades.includes(g)) {
+                        delete st.gradeOrder[g];
+                    }
+                });
+                
+                // التأكد من وجود المرحلة في main_order
+                if (!currObj.main_order.includes(stageKey)) {
+                    currObj.main_order.push(stageKey);
+                }
             });
+            
+            // إزالة المراحل المحذوفة من main_order
+            currObj.main_order = currObj.main_order.filter(k => currObj[k]);
 
             return currObj;
         }
@@ -1114,14 +1183,40 @@
             return copy;
         }
 
-        function getSubjectsForGrade(stageKey, gradeName) {
+        // ✅ ترتيب المراحل
+        function getSortedStages() {
             const curr = getCurriculum();
-            if (!stageKey || !curr[stageKey]) return [];
+            return curr.main_order || Object.keys(curr).filter(k => k !== 'main_order' && k !== 'updatedAt' && k !== 'id' && typeof curr[k] === 'object' && !Array.isArray(curr[k]));
+        }
+
+        // ✅ ترتيب الصفوف حسب gradeOrder
+        function getSortedGrades(stageKey) {
+            const curr = getCurriculum();
             const st = curr[stageKey];
-            if (gradeName && st.gradeSubjects && Array.isArray(st.gradeSubjects[gradeName])) {
-                return st.gradeSubjects[gradeName];
-            }
-            return st.subjs || [];
+            if (!st) return [];
+            return [...(st.grades || [])].sort((a, b) => {
+                const oa = st.gradeOrder?.[a] ?? 999;
+                const ob = st.gradeOrder?.[b] ?? 999;
+                return oa - ob;
+            });
+        }
+
+        // ✅ ترتيب المواد حسب subjectOrder
+        function getSortedSubjects(stageKey, gradeName) {
+            const curr = getCurriculum();
+            const st = curr[stageKey];
+            if (!st) return [];
+            const subjs = st.gradeSubjects?.[gradeName] || [];
+            const order = st.subjectOrder?.[gradeName] || {};
+            return [...subjs].sort((a, b) => {
+                const oa = order[a] ?? 999;
+                const ob = order[b] ?? 999;
+                return oa - ob;
+            });
+        }
+
+        function getSubjectsForGrade(stageKey, gradeName) {
+            return getSortedSubjects(stageKey, gradeName);
         }
 
         function populateStagesDropdown(preserveSelection = true) {
@@ -1133,13 +1228,13 @@
 
             stageSelect.innerHTML = '<option value="">-- اختر --</option>';
             
-            Object.keys(curr).forEach(stageKey => {
-                // ✅ تخطي الحقول الإضافية التي ليست مراحل دراسية مثل main_order
-                if (stageKey === 'main_order' || stageKey === 'updatedAt' || stageKey === 'id') return;
-                if (typeof curr[stageKey] !== 'object' || curr[stageKey] === null || Array.isArray(curr[stageKey])) return;
-
-                const stageName = curr[stageKey].name || stageKey;
-                stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
+            // ✅ استخدام الدالة الجديدة لجلب المراحل الصحيحة والمرتبة
+            const sortedStages = getSortedStages();
+            sortedStages.forEach(stageKey => {
+                if (curr[stageKey]) {
+                    const stageName = curr[stageKey].name || stageKey;
+                    stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
+                }
             });
 
             if (prevStage && curr[prevStage]) {
@@ -1162,12 +1257,15 @@
             sSelect.disabled = true;
 
             if (stage && curr[stage]) {
-                (curr[stage].grades || []).forEach(g => {
+                // ✅ ترتيب الصفوف حسب gradeOrder
+                const sortedGrades = getSortedGrades(stage);
+                
+                sortedGrades.forEach(g => {
                     gSelect.innerHTML += `<option value="${g}">${g}</option>`;
                 });
                 gSelect.disabled = false;
 
-                if (currentGrade && (curr[stage].grades || []).includes(currentGrade)) {
+                if (currentGrade && sortedGrades.includes(currentGrade)) {
                     gSelect.value = currentGrade;
                 }
                 updateSubjects(preferredSubj);
@@ -1185,6 +1283,7 @@
 
             sSelect.innerHTML = '<option value="">-- المادة --</option>';
             if (stage && grade) {
+                // ✅ getSubjectsForGrade تستخدم الترتيب الجديد
                 const subjs = getSubjectsForGrade(stage, grade);
                 subjs.forEach(s => {
                     sSelect.innerHTML += `<option value="${s}">${s}</option>`;
@@ -1224,6 +1323,7 @@
                 return;
             }
 
+            // ✅ المواد مرتبة حسب الترتيب المحدد في لوحة التحكم
             const subjs = getSubjectsForGrade(stage, grade);
             box.classList.add('show');
             title.textContent = `📖 المواد المقررة لـ (${grade}) — اضغط لاختيار المادة:`;
@@ -1270,7 +1370,6 @@
                 if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
-                    delete data.main_order;
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
@@ -1307,7 +1406,6 @@
                 if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
-                    delete data.main_order;
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
