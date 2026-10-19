@@ -382,55 +382,42 @@
             border-bottom-color: #F59E0B;
         }
 
-        .stage-tab {
-            padding: 9px 15px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 900;
-            border: 2px solid #E2E8F0;
-            border-bottom: 4px solid #CBD5E1;
-            background: #FFFFFF;
-            color: #334155;
-            cursor: pointer;
-            display: inline-flex;
+        /* ✅ تنسيق المرحلة الجديد كقائمة منسدلة (Select) */
+        .stage-select-container {
+            display: flex;
+            gap: 10px;
             align-items: center;
-            gap: 8px;
-            transition: all 0.2s;
-        }
-        .stage-tab.active {
-            background: #EFF6FF;
-            border-color: #2563EB;
-            border-bottom-color: #1D4ED8;
-            color: #1E3A8A;
-            transform: translateY(-1px);
+            width: 100%;
         }
 
-        .grade-selectable-card {
+        /* ✅ تنسيق أزرار التحكم للمرحلة */
+        .stage-controls {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            background: #FFFFFF;
-            border: 2px solid #E2E8F0;
-            border-bottom: 4px solid #CBD5E1;
-            border-radius: 14px;
-            padding: 10px 14px;
-            font-size: 13.5px;
-            font-weight: 900;
-            color: #1E293B;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .grade-selectable-card:hover {
-            border-color: #93C5FD;
+            gap: 6px;
             background: #F8FAFC;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1.5px solid #E2E8F0;
         }
-        .grade-selectable-card.active {
-            background: #ECFDF5;
-            border-color: #10B981;
-            border-bottom-color: #059669;
-            color: #065F46;
-            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.15);
+
+        /* ✅ تنسيق الصف والمادة ليكونان قوائم منسدلة (Select) للتحكم في الترتيب مثل الصورة */
+        .grade-select-container, .subject-select-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 12px;
+        }
+
+        .grade-controls, .subject-controls {
+             display: flex;
+            align-items: center;
+            gap: 6px;
+            background: #F8FAFC;
+            padding: 6px;
+            border-radius: 12px;
+            border: 1.5px solid #E2E8F0;
         }
 
         .grade-subjects-panel {
@@ -445,21 +432,6 @@
         @keyframes slideDownFade {
             from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
-        }
-
-        .subject-item-badge {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 8px;
-            background: #FFFFFF;
-            border: 1.5px solid #CBD5E1;
-            border-bottom: 3px solid #64748B;
-            border-radius: 12px;
-            padding: 8px 12px;
-            font-size: 13px;
-            font-weight: 900;
-            color: #1E293B;
         }
 
         /* ✅ أزرار الترتيب ⬆️⬇️ */
@@ -734,33 +706,69 @@
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
                 <h3 class="text-lg font-black text-slate-800 flex items-center gap-2">
-                    <span>📚</span> التحكم في المراحل والصفوف ومواد كل صف
+                    <span>📚</span> ما هي المادة التي تدرسها؟ (التحكم)
                 </h3>
                 <button onclick="closeModal('curriculumModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
 
+            <!-- ✅ المرحلة كقائمة منسدلة مثل group.html مع أزرار التحكم بجانبها -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4">
-                <div class="flex gap-2 mb-2">
-                    <input type="text" id="newStageNameInput" class="form-input py-1.5 text-xs" placeholder="اسم مرحلة جديدة...">
-                    <button onclick="addNewStage()" class="action-chip bg-blue-600 text-white px-4">➕ إضافة مرحلة</button>
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">🎓 المرحلة الدراسية</label>
+                        <div class="stage-select-container">
+                            <select id="stageSelect" class="form-input cursor-pointer" onchange="selectStageFromDropdown()"></select>
+                            <div class="stage-controls" id="stageControlsContainer"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">➕ إضافة مرحلة جديدة</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="newStageNameInput" class="form-input py-1.5 text-xs" placeholder="اسم المرحلة...">
+                            <button onclick="addNewStage()" class="action-chip bg-blue-600 text-white px-4 shrink-0">إضافة</button>
+                        </div>
+                    </div>
                 </div>
-                <div id="stagesTabsContainer" class="flex flex-wrap gap-2 mt-2"></div>
             </div>
 
-            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200">
-                <div class="flex gap-2 mb-3">
-                    <input type="text" id="newGradeInput" class="form-input py-1.5 text-xs" placeholder="أضف صفاً جديداً...">
-                    <button onclick="addNewGrade()" class="action-chip bg-emerald-600 text-white px-3.5">➕ إضافة صف</button>
+            <!-- ✅ الصف كقائمة منسدلة مثل group.html مع أزرار التحكم بجانبها -->
+            <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4" id="gradesSection">
+                <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">👑 الصف الدراسي</label>
+                        <div class="grade-select-container">
+                            <select id="gradeSelect" class="form-input cursor-pointer" onchange="selectGradeFromDropdown()"></select>
+                            <div class="grade-controls" id="gradeControlsContainer"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">➕ إضافة صف جديد</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="newGradeInput" class="form-input py-1.5 text-xs" placeholder="أضف صفاً جديداً للمرحلة المحددة...">
+                            <button onclick="addNewGrade()" class="action-chip bg-emerald-600 text-white px-3.5 shrink-0">إضافة</button>
+                        </div>
+                    </div>
                 </div>
-                <div id="gradesListContainer" class="grid grid-cols-1 sm:grid-cols-3 gap-2.5"></div>
             </div>
 
+            <!-- ✅ المادة كقائمة منسدلة مثل group.html مع أزرار التحكم بجانبها -->
             <div id="gradeSubjectsPanel" class="grade-subjects-panel hidden">
-                <div class="flex gap-2 mb-3">
-                    <input type="text" id="newSubjectInput" class="form-input py-1.5 text-xs bg-white" placeholder="أضف مادة جديدة...">
-                    <button onclick="addNewSubjectToGrade()" class="action-chip bg-emerald-600 text-white px-4">➕ إضافة مادة</button>
+                 <div class="flex flex-col md:flex-row gap-3">
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">📖 المادة (تظهر حسب الصف المختار)</label>
+                        <div class="subject-select-container">
+                            <select id="subjectSelect" class="form-input cursor-pointer" onchange="selectSubjectFromDropdown()"></select>
+                            <div class="subject-controls" id="subjectControlsContainer"></div>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">➕ إضافة مادة جديدة</label>
+                        <div class="flex gap-2">
+                            <input type="text" id="newSubjectInput" class="form-input py-1.5 text-xs bg-white" placeholder="أضف مادة جديدة...">
+                            <button onclick="addNewSubjectToGrade()" class="action-chip bg-emerald-600 text-white px-4 shrink-0">إضافة</button>
+                        </div>
+                    </div>
                 </div>
-                <div id="subjectsListContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2.5"></div>
             </div>
 
             <div class="flex flex-wrap justify-between items-center gap-2 mt-5 pt-3 border-t border-slate-200">
@@ -970,6 +978,7 @@
         // 🌟 المنهج الافتراضي (مع الترتيب)
         // ==========================================
         const defaultCurriculum = {
+            main_order: ['primary', 'prep', 'secondary'], // ترتيب المراحل الافتراضي
             primary: {
                 name: '🎒 المرحلة الابتدائية',
                 grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
@@ -1030,13 +1039,23 @@
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
                 return JSON.parse(JSON.stringify(defaultCurriculum));
             }
-            Object.keys(defaultCurriculum).forEach(stageKey => {
+            
+            // التأكد من وجود main_order
+            if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
+                currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order');
+            }
+
+            Object.keys(currObj).forEach(stageKey => {
+                if (stageKey === 'main_order') return;
+                
                 if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
-                    currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    if (defaultCurriculum[stageKey]) {
+                        currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    }
                     return;
                 }
                 const st = currObj[stageKey];
-                const defStage = defaultCurriculum[stageKey];
+                const defStage = defaultCurriculum[stageKey] || {};
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
                 if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) st.gradeSubjects = {};
@@ -1096,7 +1115,16 @@
                         delete st.gradeOrder[g];
                     }
                 });
+                
+                // التأكد من وجود المرحلة في main_order
+                if (!currObj.main_order.includes(stageKey)) {
+                    currObj.main_order.push(stageKey);
+                }
             });
+            
+            // إزالة المراحل المحذوفة من main_order
+            currObj.main_order = currObj.main_order.filter(k => currObj[k]);
+
             return currObj;
         }
 
@@ -1118,6 +1146,12 @@
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             curriculumCache = copy;
             return copy;
+        }
+
+        // ✅ ترتيب المراحل
+        function getSortedStages() {
+            const curr = getCurriculum();
+            return curr.main_order || Object.keys(curr).filter(k => k !== 'main_order');
         }
 
         // ✅ ترتيب الصفوف حسب gradeOrder
@@ -1148,6 +1182,18 @@
 
         async function saveCurriculumAndBroadcast(currObj, toastText) {
             curriculumCache = normalizeCurriculum(JSON.parse(JSON.stringify(currObj)));
+
+            try {
+                localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+                
+                if ('BroadcastChannel' in window) {
+                    const bc = new BroadcastChannel('ehgezly_curriculum_sync');
+                    bc.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
+                }
+            } catch(e) {
+                console.warn("تعذر البث اللحظي:", e);
+            }
 
             if (window.db && window.fsDoc && window.fsSetDoc) {
                 try {
@@ -1215,14 +1261,16 @@
         // ==========================================
         let activeStageKey = null;
         let activeGradeName = null;
+        let activeSubjectName = null;
 
         function openCurriculumModal(targetStageKey = null, targetGradeName = null) {
             const curr = getCurriculum();
-            const keys = Object.keys(curr);
-            activeStageKey = targetStageKey && curr[targetStageKey] ? targetStageKey : (keys[0] || null);
+            const sortedStages = getSortedStages();
+            
+            activeStageKey = targetStageKey && curr[targetStageKey] ? targetStageKey : (sortedStages[0] || null);
             if (activeStageKey) {
-                const sorted = getSortedGrades(activeStageKey);
-                activeGradeName = targetGradeName && curr[activeStageKey].grades.includes(targetGradeName) ? targetGradeName : (sorted[0] || null);
+                const sortedGrades = getSortedGrades(activeStageKey);
+                activeGradeName = targetGradeName && curr[activeStageKey].grades.includes(targetGradeName) ? targetGradeName : (sortedGrades[0] || null);
             }
             renderCurriculumManager();
             document.getElementById('curriculumModal').classList.add('active');
@@ -1230,73 +1278,135 @@
 
         function renderCurriculumManager() {
             const curr = getCurriculum();
-            const keys = Object.keys(curr);
-            const tabsContainer = document.getElementById('stagesTabsContainer');
-            const gradesContainer = document.getElementById('gradesListContainer');
+            const sortedStages = getSortedStages();
+            const stageSelect = document.getElementById('stageSelect');
+            const stageControlsContainer = document.getElementById('stageControlsContainer');
+            
+            const gradesSection = document.getElementById('gradesSection');
+            const gradeSelect = document.getElementById('gradeSelect');
+            const gradeControlsContainer = document.getElementById('gradeControlsContainer');
+            
             const subjectsPanel = document.getElementById('gradeSubjectsPanel');
+            const subjectSelect = document.getElementById('subjectSelect');
+            const subjectControlsContainer = document.getElementById('subjectControlsContainer');
 
-            if (keys.length === 0) return;
-            if (!activeStageKey || !curr[activeStageKey]) activeStageKey = keys[0];
+            if (sortedStages.length === 0) {
+                stageSelect.innerHTML = '<option value="">لا توجد مراحل</option>';
+                stageControlsContainer.innerHTML = '';
+                gradesSection.classList.add('hidden');
+                subjectsPanel.classList.add('hidden');
+                return;
+            }
+            
+            if (!activeStageKey || !curr[activeStageKey]) activeStageKey = sortedStages[0];
 
             const stageObj = curr[activeStageKey];
             const sortedGrades = getSortedGrades(activeStageKey);
+            
             if (!activeGradeName || !stageObj.grades.includes(activeGradeName)) {
                 activeGradeName = sortedGrades[0] || null;
             }
 
-            tabsContainer.innerHTML = keys.map(k => `
-                <div onclick="selectStageTab('${k}')" class="stage-tab ${k === activeStageKey ? 'active' : ''}">
-                    <span>${curr[k].name}</span>
-                    <button type="button" onclick="deleteStage('${k}'); event.stopPropagation();" class="text-rose-600 font-bold mr-2 hover:scale-110 transition-transform" title="حذف المرحلة">🗑️</button>
-                </div>
+            // ✅ تعبئة قائمة المراحل
+            stageSelect.innerHTML = sortedStages.map((k, idx) => `
+                <option value="${k}" ${k === activeStageKey ? 'selected' : ''}>${curr[k].name}</option>
             `).join('');
 
-            // ✅ الصفوف مرتبة + أزرار التحريك
-            gradesContainer.innerHTML = sortedGrades.map((g, idx) => `
-                <div onclick="selectGradeTab('${g.replace(/'/g, "\\'")}')" class="grade-selectable-card ${g === activeGradeName ? 'active' : ''}">
-                    <div class="flex items-center gap-2 flex-1 min-w-0">
-                        <span class="order-index">${idx + 1}</span>
-                        <span class="truncate">👑 ${g}</span>
-                    </div>
-                    <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
-                        <button class="order-btn" onclick="moveGrade(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
-                        <button class="order-btn" onclick="moveGrade(${idx}, 1)" ${idx === sortedGrades.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
-                        <button onclick="deleteGradeItem('${g.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1" title="حذف">🗑️</button>
-                    </div>
-                </div>
-            `).join('');
+            // ✅ عرض أزرار التحكم الخاصة بالمرحلة الحالية المحددة في القائمة المنسدلة
+            const currentStageIdx = sortedStages.indexOf(activeStageKey);
+            stageControlsContainer.innerHTML = `
+                <button class="order-btn" onclick="moveStage(${currentStageIdx}, -1)" ${currentStageIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
+                <button class="order-btn" onclick="moveStage(${currentStageIdx}, 1)" ${currentStageIdx === sortedStages.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                <button onclick="deleteStage('${activeStageKey}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
+            `;
 
-            // ✅ المواد مرتبة + أزرار التحريك
+            // ✅ تحديث عنوان مربع إضافة الصف ليعرض اسم المرحلة
+            const newGradeInput = document.getElementById('newGradeInput');
+            newGradeInput.placeholder = `أضف صفاً لـ (${curr[activeStageKey].name.replace(/^[🎒📐🎓]\s*/, '')})...`;
+            
+            gradesSection.classList.remove('hidden');
+
+            // ✅ الصفوف كقائمة منسدلة
+            if (sortedGrades.length > 0) {
+                gradeSelect.innerHTML = sortedGrades.map((g, idx) => `
+                     <option value="${g.replace(/'/g, "\\'")}" ${g === activeGradeName ? 'selected' : ''}>${g}</option>
+                `).join('');
+                gradeSelect.disabled = false;
+                
+                const currentGradeIdx = sortedGrades.indexOf(activeGradeName);
+                 gradeControlsContainer.innerHTML = `
+                    <button class="order-btn" onclick="moveGrade(${currentGradeIdx}, -1)" ${currentGradeIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
+                    <button class="order-btn" onclick="moveGrade(${currentGradeIdx}, 1)" ${currentGradeIdx === sortedGrades.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                    <button onclick="deleteGradeItem('${activeGradeName.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
+                `;
+            } else {
+                 gradeSelect.innerHTML = `<option value="">-- لا توجد صفوف --</option>`;
+                 gradeSelect.disabled = true;
+                 gradeControlsContainer.innerHTML = '';
+            }
+
+            // ✅ المواد كقائمة منسدلة
             if (activeGradeName) {
                 subjectsPanel.classList.remove('hidden');
+                
+                const newSubjectInput = document.getElementById('newSubjectInput');
+                newSubjectInput.placeholder = `أضف مادة لـ (${activeGradeName})...`;
+                 
                 const sortedSubjs = getSortedSubjects(activeStageKey, activeGradeName);
-                document.getElementById('subjectsListContainer').innerHTML = sortedSubjs.map((s, idx) => `
-                    <div class="subject-item-badge">
-                        <div class="flex items-center gap-2 flex-1 min-w-0">
-                            <span class="order-index" style="background:#10B981;">${idx + 1}</span>
-                            <span class="truncate">📘 ${s}</span>
-                        </div>
-                        <div class="flex items-center gap-1 shrink-0">
-                            <button class="order-btn" onclick="moveSubject(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
-                            <button class="order-btn" onclick="moveSubject(${idx}, 1)" ${idx === sortedSubjs.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
-                            <button onclick="deleteSubjectFromGrade('${s.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1" title="حذف">🗑️</button>
-                        </div>
-                    </div>
-                `).join('');
+                
+                if(!activeSubjectName || !sortedSubjs.includes(activeSubjectName)){
+                     activeSubjectName = sortedSubjs[0] || null;
+                }
+                
+                if (sortedSubjs.length > 0) {
+                     subjectSelect.innerHTML = sortedSubjs.map((s, idx) => `
+                        <option value="${s.replace(/'/g, "\\'")}" ${s === activeSubjectName ? 'selected' : ''}>${s}</option>
+                     `).join('');
+                     subjectSelect.disabled = false;
+                     
+                     const currentSubjIdx = sortedSubjs.indexOf(activeSubjectName);
+                     subjectControlsContainer.innerHTML = `
+                        <button class="order-btn" onclick="moveSubject(${currentSubjIdx}, -1)" ${currentSubjIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
+                        <button class="order-btn" onclick="moveSubject(${currentSubjIdx}, 1)" ${currentSubjIdx === sortedSubjs.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                        <button onclick="deleteSubjectFromGrade('${activeSubjectName.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
+                    `;
+                } else {
+                    subjectSelect.innerHTML = `<option value="">-- لا توجد مواد --</option>`;
+                    subjectSelect.disabled = true;
+                    subjectControlsContainer.innerHTML = '';
+                }
             } else {
                 subjectsPanel.classList.add('hidden');
             }
         }
 
-        function selectStageTab(k) {
-            activeStageKey = k;
-            const sorted = getSortedGrades(k);
-            activeGradeName = sorted[0] || null;
-            renderCurriculumManager();
+        function selectStageFromDropdown() {
+            const selectEl = document.getElementById('stageSelect');
+            if(selectEl.value) {
+                activeStageKey = selectEl.value;
+                const sorted = getSortedGrades(activeStageKey);
+                activeGradeName = sorted[0] || null;
+                activeSubjectName = null; // إعادة تعيين المادة
+                renderCurriculumManager();
+            }
         }
-        function selectGradeTab(g) {
-            activeGradeName = g;
-            renderCurriculumManager();
+        
+        function selectGradeFromDropdown() {
+             const selectEl = document.getElementById('gradeSelect');
+            if(selectEl.value) {
+                activeGradeName = selectEl.value;
+                const sorted = getSortedSubjects(activeStageKey, activeGradeName);
+                activeSubjectName = sorted[0] || null; // إعادة تعيين المادة للصف الجديد
+                renderCurriculumManager();
+            }
+        }
+        
+        function selectSubjectFromDropdown() {
+            const selectEl = document.getElementById('subjectSelect');
+            if(selectEl.value) {
+                activeSubjectName = selectEl.value;
+                renderCurriculumManager();
+            }
         }
 
         function addNewStage() {
@@ -1313,9 +1423,11 @@
                 subjectOrder: { [firstGrade]: { 'مادة عامة': 1 } },
                 subjs: ['مادة عامة']
             };
+            curr.main_order.push(newKey);
             document.getElementById('newStageNameInput').value = '';
             activeStageKey = newKey;
             activeGradeName = firstGrade;
+            activeSubjectName = 'مادة عامة';
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة');
             renderCurriculumManager();
         }
@@ -1325,14 +1437,17 @@
             const stageName = curr[stageKey].name;
             showCustomConfirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`, () => {
                 delete curr[stageKey];
+                curr.main_order = curr.main_order.filter(k => k !== stageKey);
+                
                 if (activeStageKey === stageKey) {
-                    const remainingKeys = Object.keys(curr);
-                    if (remainingKeys.length > 0) {
-                        activeStageKey = remainingKeys[0];
+                    if (curr.main_order.length > 0) {
+                        activeStageKey = curr.main_order[0];
                         activeGradeName = getSortedGrades(activeStageKey)[0] || null;
+                        activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
                     } else {
                         activeStageKey = null;
                         activeGradeName = null;
+                        activeSubjectName = null;
                     }
                 }
                 saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
@@ -1359,6 +1474,7 @@
             st.subjectOrder[val] = {};
             document.getElementById('newGradeInput').value = '';
             activeGradeName = val;
+            activeSubjectName = null;
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة الصف');
             renderCurriculumManager();
         }
@@ -1380,6 +1496,7 @@
                 }
                 if (activeGradeName === gradeName) {
                     activeGradeName = getSortedGrades(activeStageKey)[0] || null;
+                    activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
                 }
                 saveCurriculumAndBroadcast(curr, '🗑️ تم حذف الصف بنجاح');
                 renderCurriculumManager();
@@ -1402,6 +1519,7 @@
             const maxOrder = Math.max(0, ...Object.values(st.subjectOrder[activeGradeName]));
             st.subjectOrder[activeGradeName][val] = maxOrder + 1;
             document.getElementById('newSubjectInput').value = '';
+            activeSubjectName = val;
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المادة');
             renderCurriculumManager();
         }
@@ -1416,9 +1534,27 @@
                 if (st.subjectOrder && st.subjectOrder[activeGradeName]) {
                     delete st.subjectOrder[activeGradeName][subjectName];
                 }
+                
+                if (activeSubjectName === subjectName) {
+                     activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
+                }
                 saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة بنجاح');
                 renderCurriculumManager();
             });
+        }
+
+        // ✅ تحريك مرحلة لأعلى/أسفل (يحدّث main_order فوراً)
+        function moveStage(sortedIdx, direction) {
+            const curr = getCurriculum();
+            const sorted = getSortedStages();
+            const newIdx = sortedIdx + direction;
+            if (newIdx < 0 || newIdx >= sorted.length) return;
+
+            [sorted[sortedIdx], sorted[newIdx]] = [sorted[newIdx], sorted[sortedIdx]];
+            curr.main_order = [...sorted];
+
+            saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب المراحل');
+            renderCurriculumManager();
         }
 
         // ✅ تحريك صف لأعلى/أسفل (يحدّث gradeOrder فوراً)
@@ -1467,8 +1603,9 @@
             showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟ سيتم رفع النسخة الافتراضية إلى السحابة ومسح التعديلات.', () => {
                 const copy = JSON.parse(JSON.stringify(defaultCurriculum));
                 saveCurriculumAndBroadcast(copy, '✨ تم استعادة المنهج الافتراضي الكامل');
-                activeStageKey = Object.keys(copy)[0];
+                activeStageKey = copy.main_order[0];
                 activeGradeName = getSortedGrades(activeStageKey)[0] || null;
+                activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
                 renderCurriculumManager();
                 populateGradeFilter();
             });
@@ -1780,9 +1917,11 @@
             const curr = getCurriculum();
             const gradeSelect = document.getElementById('filterGrade');
             let allGrades = [];
-            Object.keys(curr).forEach(stageKey => {
-                const sorted = getSortedGrades(stageKey);
-                sorted.forEach(g => {
+            
+            const sortedStages = getSortedStages();
+            sortedStages.forEach(stageKey => {
+                const sortedGrades = getSortedGrades(stageKey);
+                sortedGrades.forEach(g => {
                     if (!allGrades.includes(g)) allGrades.push(g);
                 });
             });
