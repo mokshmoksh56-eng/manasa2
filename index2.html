@@ -1204,16 +1204,16 @@
             filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
         }
 
+        /* ✅ تعديل الأفاتار لاستيعاب الصورة الجديدة */
         .reactor-avatar {
             position: relative;
-            width: 130px;
-            height: 130px;
+            width: 140px;
+            height: 140px;
             border-radius: 50%;
-            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
+            background: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 65px;
             box-shadow: 
                 0 0 30px rgba(245, 158, 11, 0.5),
                 0 0 60px rgba(245, 158, 11, 0.25),
@@ -1221,6 +1221,13 @@
             animation: avatarBob 2s ease-in-out infinite;
             border: 4px solid rgba(255, 255, 255, 0.9);
             z-index: 3;
+            overflow: hidden; /* لضمان بقاء الصورة داخل الدائرة */
+        }
+        .reactor-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
         }
         @keyframes avatarBob {
             0%, 100% { transform: translateY(0) rotate(-2deg); }
@@ -1519,7 +1526,7 @@
             .card-text h2 { font-size: 15px; }
 
             .reactor-avatar-stage { width: 150px; height: 150px; }
-            .reactor-avatar { width: 110px; height: 110px; font-size: 55px; }
+            .reactor-avatar { width: 110px; height: 110px; }
             .reactor-title { font-size: 20px; }
             .reactor-message { font-size: 12.5px; }
             .reactor-stats { gap: 6px; }
@@ -1563,7 +1570,10 @@
             <div class="reactor-heartbeat"></div>
             <div class="reactor-heartbeat"></div>
 
-            <div class="reactor-avatar" id="reactorAvatar">👨‍🏫</div>
+            <!-- ✅ تم استبدال الأفاتار النصي بالصورة الجديدة -->
+            <div class="reactor-avatar" id="reactorAvatar">
+                <img src="https://i.ibb.co/0Vq2s6b/teacher-avatar.png" alt="مستر">
+            </div>
         </div>
 
         <h2 class="reactor-title">
@@ -1966,16 +1976,8 @@
 
                 const { name, isMiss } = getInitials();
                 const nameEl = document.getElementById('reactorName');
-                const avatarEl = document.getElementById('reactorAvatar');
-
+                
                 if (nameEl) nameEl.textContent = name;
-                if (avatarEl) {
-                    avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
-                    if (isMiss) {
-                        avatarEl.style.background = 'linear-gradient(135deg, #FCE7F3, #FBCFE8)';
-                        avatarEl.style.boxShadow = '0 0 30px rgba(236, 72, 153, 0.5), 0 0 60px rgba(236, 72, 153, 0.25), inset 0 -4px 10px rgba(0,0,0,0.1)';
-                    }
-                }
 
                 createParticles();
 
