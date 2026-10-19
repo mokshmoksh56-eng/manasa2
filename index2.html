@@ -194,75 +194,75 @@
             flex: 1;
         }
 
+        /* ============================================ */
+        /* ✅ شريط الترحيب — نسخة شيك جديدة */
+        /* ============================================ */
         .welcome-banner {
             position: relative;
             display: flex;
             align-items: center;
             gap: 12px;
-            padding: 14px 16px;
-            margin-bottom: 12px;
-            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
-            border: 2px solid #86EFAC;
-            border-bottom: 5px solid #16A34A;
-            border-radius: 18px;
-            box-shadow: 0 8px 22px -10px rgba(16, 185, 129, 0.35);
+            padding: 12px 16px;
+            margin-bottom: 14px;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border: 1.5px solid #E2E8F0;
+            border-right: 4px solid #10B981;
+            border-radius: 16px;
+            box-shadow: 0 4px 16px -4px rgba(15, 45, 92, 0.08),
+                        0 1px 3px rgba(0,0,0,0.04);
             overflow: hidden;
             animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        @keyframes welcomeSlideIn {
-            from { opacity: 0; transform: translateY(-15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .welcome-banner::before {
+        .welcome-banner::after {
             content: '';
             position: absolute;
-            top: -30px;
-            left: -30px;
-            width: 100px;
-            height: 100px;
-            background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);
-            border-radius: 50%;
-            pointer-events: none;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%);
+            border-radius: 0 16px 16px 0;
+        }
+
+        @keyframes welcomeSlideIn {
+            from { opacity: 0; transform: translateY(-12px); }
+            to   { opacity: 1; transform: translateY(0); }
         }
 
         .welcome-banner.is-miss {
-            background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
-            border-color: #F9A8D4;
-            border-bottom-color: #DB2777;
-            box-shadow: 0 8px 22px -10px rgba(236, 72, 153, 0.35);
+            border-right-color: #EC4899;
         }
-
-        .welcome-banner.is-miss::before {
-            background: radial-gradient(circle, rgba(236,72,153,0.15), transparent 70%);
+        .welcome-banner.is-miss::after {
+            background: linear-gradient(180deg, #F472B6 0%, #EC4899 50%, #DB2777 100%);
         }
 
         .welcome-avatar {
             flex-shrink: 0;
-            width: 52px;
-            height: 52px;
-            border-radius: 50%;
+            width: 46px;
+            height: 46px;
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            background: #FFFFFF;
-            border: 2.5px solid #10B981;
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            font-size: 22px;
+            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
+            border: 1.5px solid #A7F3D0;
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
             z-index: 2;
             animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .welcome-banner.is-miss .welcome-avatar {
-            border-color: #EC4899;
-            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+            background: linear-gradient(135deg, #FDF2F8, #FCE7F3);
+            border-color: #FBCFE8;
+            box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
         }
 
         @keyframes avatarPop {
-            0% { transform: scale(0) rotate(-30deg); }
-            70% { transform: scale(1.1) rotate(5deg); }
-            100% { transform: scale(1) rotate(0deg); }
+            0%   { transform: scale(0) rotate(-20deg); }
+            70%  { transform: scale(1.08) rotate(3deg); }
+            100% { transform: scale(1) rotate(0); }
         }
 
         .welcome-text {
@@ -276,11 +276,12 @@
         }
 
         .welcome-greeting {
-            font-size: 11px;
+            font-size: 10.5px;
             font-weight: 800;
             color: #059669;
             line-height: 1.2;
             margin-bottom: 2px;
+            letter-spacing: 0.2px;
         }
 
         .welcome-banner.is-miss .welcome-greeting {
@@ -288,15 +289,16 @@
         }
 
         .welcome-name {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 900;
-            color: #064E3B;
+            color: #0F2D5C;
             line-height: 1.25;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
             margin-bottom: 3px;
+            letter-spacing: -0.2px;
         }
 
         .welcome-banner.is-miss .welcome-name {
@@ -307,34 +309,36 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            font-size: 11.5px;
-            font-weight: 900;
-            color: #047857;
-            background: rgba(255, 255, 255, 0.7);
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #475569;
+            background: #F1F5F9;
             padding: 2px 8px;
             border-radius: 99px;
-            border: 1px solid #A7F3D0;
+            border: 1px solid #E2E8F0;
             direction: ltr;
+            letter-spacing: 0.3px;
         }
 
         .welcome-banner.is-miss .welcome-phone {
-            color: #BE185D;
+            background: #FDF2F8;
             border-color: #FBCFE8;
+            color: #BE185D;
         }
 
         .welcome-sparkle {
             position: absolute;
             top: 8px;
             left: 12px;
-            font-size: 14px;
-            animation: sparkleTwinkle 2s ease-in-out infinite;
+            font-size: 12px;
+            animation: sparkleTwinkle 2.5s ease-in-out infinite;
             z-index: 1;
-            opacity: 0.7;
+            opacity: 0.6;
         }
 
         @keyframes sparkleTwinkle {
-            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
-            50% { transform: scale(1.2) rotate(20deg); opacity: 1; }
+            0%, 100% { transform: scale(1) rotate(0); opacity: 0.6; }
+            50%      { transform: scale(1.15) rotate(15deg); opacity: 1; }
         }
 
         .blocked-banner {
@@ -768,28 +772,50 @@
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
+        /* ============================================ */
+        /* ✅ زر إنشاء مجموعة جديدة — نسخة شيك جديدة */
+        /* ============================================ */
         .card-add-new {
-            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-            border: 2.5px dashed #10B981;
+            position: relative;
+            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
+            border: 1.5px dashed #10B981;
+            border-right: 4px solid #10B981;
+            border-radius: 22px;
             justify-content: center;
             flex-direction: column;
             text-align: center;
-            padding: 24px 16px;
+            padding: 22px 16px;
             cursor: pointer;
-            border-bottom: 6px solid #059669;
-            box-shadow: 0 6px 20px -8px rgba(16, 185, 129, 0.25);
+            box-shadow: 0 4px 16px -4px rgba(15, 45, 92, 0.08),
+                        0 1px 3px rgba(0,0,0,0.04);
             transition: all 0.25s ease;
+            overflow: hidden;
         }
+
+        .card-add-new::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%);
+            border-radius: 0 22px 22px 0;
+        }
+
         .card-add-new:hover {
-            background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+            background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
             border-color: #059669;
             transform: translateY(-2px);
+            box-shadow: 0 8px 24px -6px rgba(16, 185, 129, 0.25),
+                        0 2px 6px rgba(0,0,0,0.05);
         }
+
         .card-add-new:active {
-            background: #BBF7D0;
-            border-color: #047857;
             transform: scale(0.98);
+            box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.2);
         }
+
         .card-add-new.disabled-add {
             opacity: 0.5;
             pointer-events: none;
@@ -797,38 +823,49 @@
         }
 
         .card-add-new .icon-plus {
-            width: 56px;
-            height: 56px;
+            width: 52px;
+            height: 52px;
             background: linear-gradient(135deg, #10B981, #059669);
             color: #FFFFFF;
-            border-radius: 50%;
+            border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 10px;
-            border: 3px solid #FFFFFF;
-            box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5);
-            transition: all 0.25s ease;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.4);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             animation: plusPulse 2.5s ease-in-out infinite;
         }
+
         .card-add-new:hover .icon-plus {
-            transform: scale(1.08) rotate(90deg);
-            box-shadow: 0 8px 22px -4px rgba(16, 185, 129, 0.7);
+            transform: scale(1.1) rotate(90deg);
+            box-shadow: 0 6px 18px -2px rgba(16, 185, 129, 0.6);
         }
+
         .card-add-new .icon-plus svg {
             stroke: #FFFFFF;
-            stroke-width: 3;
+            stroke-width: 2.8;
         }
 
         @keyframes plusPulse {
-            0%, 100% { box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5); }
-            50%      { box-shadow: 0 6px 24px -2px rgba(16, 185, 129, 0.8); }
+            0%, 100% { box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.4); }
+            50%      { box-shadow: 0 4px 18px -1px rgba(16, 185, 129, 0.65); }
         }
 
         .card-add-new h2 {
-            color: #065F46;
-            font-size: 16.5px;
+            color: #0F2D5C;
+            font-size: 15.5px;
             font-weight: 900;
+            margin: 0;
+            letter-spacing: -0.2px;
+        }
+
+        .card-add-new p {
+            font-size: 10.5px;
+            color: #64748B;
+            font-weight: 700;
+            margin-top: 4px;
         }
 
         .card-image-box {
@@ -1258,11 +1295,11 @@
                 padding-left: 0;
                 padding-top: 35px;
             }
-            .welcome-banner { padding: 12px 12px; gap: 10px; }
-            .welcome-avatar { width: 44px; height: 44px; font-size: 22px; border-width: 2px; }
+            .welcome-banner { padding: 10px 12px; gap: 10px; }
+            .welcome-avatar { width: 40px; height: 40px; font-size: 20px; border-radius: 12px; }
             .welcome-greeting { font-size: 10px; }
             .welcome-name { font-size: 14px; }
-            .welcome-phone { font-size: 10.5px; }
+            .welcome-phone { font-size: 10px; }
 
             .quick-actions-bar {
                 grid-template-columns: 1fr 1fr;
@@ -1693,9 +1730,6 @@
             }
         }
 
-        // ==========================================
-        // 🛡️ فحص حالة الحظر من السحابة — ✅ يشمل "5 سنوات"
-        // ==========================================
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
             if (!teacherPhone || !window.db || !window.fsGetDoc) return false;
@@ -1711,7 +1745,6 @@
                 
                 if (!isBlocked && data.verification && data.createdAt) {
                     const created = new Date(data.createdAt);
-                    // ✅ حساب مدة الباقة — يشمل "5 سنوات" = 1825 يوم
                     const days = data.verification === '30 يوم تجريبي' ? 30
                                : data.verification === '3 شهور' ? 90
                                : data.verification === '6 شهور' ? 180
@@ -2474,12 +2507,12 @@
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
                     <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 28px; height: 28px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.8" stroke="currentColor" style="width: 26px; height: 26px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
                     <h2>${teacherIsBlocked ? '🔒 الحساب محظور' : 'إنشاء مجموعة جديدة'}</h2>
-                    ${!teacherIsBlocked ? '<p style="font-size:11px;color:#64748B;font-weight:700;margin-top:2px;">اضغط لإضافة مجموعة جديدة</p>' : ''}
+                    ${!teacherIsBlocked ? '<p>اضغط لإضافة مجموعة جديدة</p>' : ''}
                 </div>
             `;
             
