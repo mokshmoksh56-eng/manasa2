@@ -1132,7 +1132,12 @@
             const prevSubj = preserveSelection ? document.getElementById('s_subject').value : '';
 
             stageSelect.innerHTML = '<option value="">-- اختر --</option>';
+            
             Object.keys(curr).forEach(stageKey => {
+                // ✅ تخطي الحقول الإضافية التي ليست مراحل دراسية مثل main_order
+                if (stageKey === 'main_order' || stageKey === 'updatedAt' || stageKey === 'id') return;
+                if (typeof curr[stageKey] !== 'object' || curr[stageKey] === null || Array.isArray(curr[stageKey])) return;
+
                 const stageName = curr[stageKey].name || stageKey;
                 stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
             });
@@ -1265,6 +1270,7 @@
                 if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
+                    delete data.main_order;
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
@@ -1301,6 +1307,7 @@
                 if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
+                    delete data.main_order;
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
