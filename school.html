@@ -1175,6 +1175,23 @@
         let isFirstSnapshot = true;
         let firebaseReady = false;
 
+        // ✅ كاش لحظي للدروس والمعلمين
+        let lessonsCache = [];
+        let teachersCache = [];
+        let lessonsUnsubscribe = null;
+        let teachersUnsubscribe = null;
+        let isFirstLessonsSnapshot = true;
+        let isFirstTeachersSnapshot = true;
+
+        // ✅ Debounce للـ render لتحسين الأداء
+        let renderTimeout = null;
+        function scheduleRender(delay = 200) {
+            clearTimeout(renderTimeout);
+            renderTimeout = setTimeout(() => {
+                renderAllRecords();
+            }, delay);
+        }
+
         function setCloudStatus(status, text) {
             const b = document.getElementById('cloudStatusBadge');
             if (!b) return;
@@ -1295,6 +1312,64 @@
                 setCloudStatus('offline', '⚠️ غير متصل بالسحابة');
                 showToast("⚠️ تعذر الاتصال بالسحابة", true);
             });
+        }
+
+        // ==========================================
+        // ✅ المزامنة اللحظية للدروس والمعلمين (onSnapshot)
+        // ==========================================
+        function setupRealtimeListeners() {
+            if (!window.db || !window.fsCollection || !window.fsOnSnapshot) {
+                setTimeout(setupRealtimeListeners, 500);
+                return;
+            }
+
+            // ─── الدروس ───
+            if (lessonsUnsubscribe) lessonsUnsubscribe();
+            lessonsUnsubscribe = window.fsOnSnapshot(
+                window.fsCollection(window.db, "lessons"),
+                (snapshot) => {
+                    lessonsCache = [];
+                    snapshot.forEach((docSnap) => {
+                        lessonsCache.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+
+                    if (isFirstLessonsSnapshot) {
+                        isFirstLessonsSnapshot = false;
+                    } else {
+                        showToast("🔄 تم تحديث الدروس لحظياً");
+                    }
+                    scheduleRender();
+                },
+                (error) => {
+                    console.error("❌ خطأ في الاستماع للدروس:", error);
+                    showToast("⚠️ تعذر المزامنة اللحظية للدروس", true);
+                }
+            );
+
+            // ─── المعلمين ───
+            if (teachersUnsubscribe) teachersUnsubscribe();
+            teachersUnsubscribe = window.fsOnSnapshot(
+                window.fsCollection(window.db, "teachers"),
+                (snapshot) => {
+                    teachersCache = [];
+                    snapshot.forEach((docSnap) => {
+                        teachersCache.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+
+                    if (isFirstTeachersSnapshot) {
+                        isFirstTeachersSnapshot = false;
+                    } else {
+                        showToast("🔄 تم تحديث بيانات المعلمين لحظياً");
+                    }
+                    scheduleRender();
+                },
+                (error) => {
+                    console.error("❌ خطأ في الاستماع للمعلمين:", error);
+                    showToast("⚠️ تعذر المزامنة اللحظية للمعلمين", true);
+                }
+            );
+
+            setCloudStatus('synced', '☁️ مزامنة لحظية نشطة');
         }
 
         // ==========================================
@@ -1697,41 +1772,22 @@
             return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
         }
 
-        async function fetchLessonsFromFirebase() {
-            try {
-                if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
-                const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                const lessons = [];
-                querySnapshot.forEach((doc) => {
-                    lessons.push({ id: doc.id, ...doc.data() });
-                });
-                return lessons;
-            } catch (e) {
-                console.warn("خطأ في جلب الدروس من السحابة:", e);
-                return [];
-            }
+        // ✅ جلب الدروس من الكاش اللحظي (بدل getDocs)
+        function fetchLessonsFromFirebase() {
+            return lessonsCache;
         }
 
-        async function fetchTeachersFromFirebase() {
-            try {
-                if (!window.db || !window.fsCollection || !window.fsGetDocs) return [];
-                const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "teachers"));
-                const teachers = [];
-                querySnapshot.forEach((doc) => {
-                    teachers.push({ id: doc.id, ...doc.data() });
-                });
-                return teachers;
-            } catch (e) {
-                console.warn("خطأ في جلب بيانات المعلمين من السحابة:", e);
-                return [];
-            }
+        // ✅ جلب المعلمين من الكاش اللحظي (بدل getDocs)
+        function fetchTeachersFromFirebase() {
+            return teachersCache;
         }
 
         async function collectAllAppData() {
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة', '5 سنوات'];
 
-            const firebaseLessons = await fetchLessonsFromFirebase();
-            const firebaseTeachers = await fetchTeachersFromFirebase();
+            // ✅ استخدام الكاش اللحظي
+            const firebaseLessons = fetchLessonsFromFirebase();
+            const firebaseTeachers = fetchTeachersFromFirebase();
 
             const unifiedMap = new Map();
 
@@ -2190,7 +2246,7 @@
 
                     setCloudStatus('synced', '☁️ تم الحذف بنجاح');
                     showToast('🗑️ تم الحذف من السحابة بنجاح');
-                    renderAllRecords();
+                    // ✅ لم نعد بحاجة لاستدعاء renderAllRecords - الـ onSnapshot سيتكفل
                 } catch (error) {
                     console.error("خطأ في الحذف:", error);
                     setCloudStatus('offline', '⚠️ فشل الحذف');
@@ -2226,15 +2282,12 @@
         // ==========================================
         window.addEventListener('DOMContentLoaded', () => {
             populateGradeFilter();
-            renderAllRecords(); 
             loadCurriculumFromFirebase();
+            // ✅ تشغيل المزامنة اللحظية للدروس والمعلمين
+            setupRealtimeListeners();
 
-            window.addEventListener('focus', () => {
-                if (firebaseReady && !curriculumUnsubscribe) {
-                    loadCurriculumFromFirebase();
-                }
-                renderAllRecords();
-            });
+            // ⚠️ لا حاجة لـ focus listener أو renderAllRecords الأولي
+            // لأن onSnapshot سيستدعيها تلقائياً بعد أول تحميل
         });
     </script>
 </body>
