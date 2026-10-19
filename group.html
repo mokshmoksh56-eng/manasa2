@@ -1001,6 +1001,7 @@
             primary: {
                 name: '🎒 المرحلة الابتدائية',
                 grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                gradeOrder: { 'الأول': 1, 'الثاني': 2, 'الثالث': 3, 'الرابع': 4, 'الخامس': 5, 'السادس': 6 },
                 gradeSubjects: {
                     'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
                     'الثاني': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
@@ -1009,25 +1010,45 @@
                     'الخامس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
                     'السادس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات']
                 },
+                subjectOrder: {
+                    'الأول': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الثاني': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الثالث': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الرابع': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 },
+                    'الخامس': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 },
+                    'السادس': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 }
+                },
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             prep: {
                 name: '📐 المرحلة الإعدادية',
                 grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                gradeOrder: { 'الأول الإعدادي': 1, 'الثاني الإعدادي': 2, 'الثالث الإعدادي': 3 },
                 gradeSubjects: {
                     'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
                     'الثاني الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
                     'الثالث الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي']
+                },
+                subjectOrder: {
+                    'الأول الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 },
+                    'الثاني الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 },
+                    'الثالث الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 }
                 },
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             secondary: {
                 name: '🎓 المرحلة الثانوية',
                 grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                gradeOrder: { 'الأول الثانوي': 1, 'الثاني الثانوي': 2, 'الثالث الثانوي': 3 },
                 gradeSubjects: {
                     'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
                     'الثاني الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا', 'علم نفس', 'فلسفة'],
                     'الثالث الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+                },
+                subjectOrder: {
+                    'الأول الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'رياضيات': 4, 'علوم متكاملة': 5, 'تاريخ': 6, 'فلسفة ومنطق': 7 },
+                    'الثاني الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'رياضيات': 4, 'فيزياء': 5, 'كيمياء': 6, 'أحياء': 7, 'تاريخ': 8, 'جغرافيا': 9, 'علم نفس': 10, 'فلسفة': 11 },
+                    'الثالث الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'فيزياء': 4, 'كيمياء': 5, 'أحياء': 6, 'جيولوجيا': 7, 'رياضيات': 8, 'تاريخ': 9, 'جغرافيا': 10, 'فلسفة ومنطق': 11, 'علم نفس واجتماع': 12 }
                 },
                 subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات']
             }
@@ -1045,6 +1066,15 @@
                 if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
                     st.gradeSubjects = {};
                 }
+                if (!st.gradeOrder || typeof st.gradeOrder !== 'object' || Array.isArray(st.gradeOrder)) {
+                    st.gradeOrder = {};
+                }
+                if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) {
+                    st.subjectOrder = {};
+                }
+                st.grades.forEach((g, i) => {
+                    if (typeof st.gradeOrder[g] !== 'number') st.gradeOrder[g] = i + 1;
+                });
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g])) {
                         const defStage = defaultCurriculum[stageKey];
@@ -1054,6 +1084,12 @@
                             st.gradeSubjects[g] = [...st.subjs];
                         }
                     }
+                    if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
+                        st.subjectOrder[g] = {};
+                    }
+                    st.gradeSubjects[g].forEach((s, i) => {
+                        if (typeof st.subjectOrder[g][s] !== 'number') st.subjectOrder[g][s] = i + 1;
+                    });
                 });
             });
             return currObj;
@@ -1077,14 +1113,37 @@
             return copy;
         }
 
+        // ✅ ترتيب الصفوف حسب gradeOrder
+        function getSortedGrades(stageKey) {
+            const curr = getCurriculum();
+            const st = curr[stageKey];
+            if (!st) return [];
+            return [...(st.grades || [])].sort((a, b) => {
+                const oa = st.gradeOrder?.[a] ?? 999;
+                const ob = st.gradeOrder?.[b] ?? 999;
+                return oa - ob;
+            });
+        }
+
+        // ✅ ترتيب المواد حسب subjectOrder (الأساس للترتيب القادم من school)
         function getSubjectsForGrade(stageKey, gradeName) {
             const curr = getCurriculum();
             if (!stageKey || !curr[stageKey]) return [];
             const st = curr[stageKey];
+            
+            let subjs = [];
             if (gradeName && st.gradeSubjects && Array.isArray(st.gradeSubjects[gradeName])) {
-                return st.gradeSubjects[gradeName];
+                subjs = [...st.gradeSubjects[gradeName]];
+            } else {
+                subjs = [...(st.subjs || [])];
             }
-            return st.subjs || [];
+            
+            if (gradeName && st.subjectOrder && st.subjectOrder[gradeName]) {
+                const order = st.subjectOrder[gradeName];
+                subjs.sort((a, b) => (order[a] ?? 999) - (order[b] ?? 999));
+            }
+            
+            return subjs;
         }
 
         function populateStagesDropdown(preserveSelection = true) {
@@ -1107,9 +1166,6 @@
             }
         }
 
-        // ==========================================
-        // ✅ متغيرات لفلترة المواد عند تغيير المرحلة/الصف
-        // ==========================================
         let lastStageForPrune = null;
 
         function updateGrades(preferredGrade = '') {
@@ -1118,21 +1174,22 @@
             const gSelect = document.getElementById('s_grade');
             const currentGrade = preferredGrade || gSelect.value;
 
-            // ✅ هل المرحلة اتغيرت يدوياً؟ (مش أثناء تحميل state)
             const stageChanged = (lastStageForPrune !== null && stage !== lastStageForPrune);
 
             gSelect.innerHTML = '<option value="">-- اختر الصف --</option>';
             if (stage && curr[stage]) {
-                (curr[stage].grades || []).forEach(g => {
+                // ✅ ترتيب الصفوف حسب gradeOrder
+                const sortedGrades = getSortedGrades(stage);
+                
+                sortedGrades.forEach(g => {
                     gSelect.innerHTML += `<option value="${g}">${g}</option>`;
                 });
                 gSelect.disabled = false;
 
-                if (currentGrade && (curr[stage].grades || []).includes(currentGrade)) {
+                if (currentGrade && sortedGrades.includes(currentGrade)) {
                     gSelect.value = currentGrade;
                 }
 
-                // ✅ لو المرحلة اتغيرت يدوياً → امسح كل المواد القديمة
                 if (stageChanged && !isLoadingState && selectedSubjects.length > 0) {
                     selectedSubjects = [];
                     renderChips();
@@ -1164,8 +1221,6 @@
                 });
                 sSelect.disabled = false;
 
-                // ✅ فلترة: نشيل أي مادة صفها ≠ الصف الحالي
-                // مثال: لو الصف "الأول" → نشيل "الأول الثانوي - أحياء" ونسيب "الأول - عربي" فقط
                 const prefix = grade + ' - ';
                 const before = selectedSubjects.length;
                 selectedSubjects = selectedSubjects.filter(s => String(s).startsWith(prefix));
@@ -1193,6 +1248,7 @@
                 return;
             }
 
+            // ✅ getSubjectsForGrade ترجع المواد مرتبة بالفعل حسب subjectOrder
             const gradeSubjs = getSubjectsForGrade(stage, grade);
             box.classList.add('show');
             title.textContent = `📖 المواد الخاصة بـ (${grade}) — اضغط على المادة لإضافتها:`;
@@ -1322,7 +1378,7 @@
 
         let currentLessonId = '1';
         let isEditMode = false;
-        let isLoadingState = false;  // ✅ جديد: لمنع الحفظ/المسح أثناء التحميل
+        let isLoadingState = false;
         let mapInitialized = false;
         let map, marker;
         
@@ -1545,7 +1601,6 @@
             }
         }
 
-        // ✅ دالة مساعدة لتحديث عنوان الهيدر
         function updateLessonTitleHeader() {
             const gNameInput = document.getElementById('g_name');
             const val = gNameInput ? gNameInput.value.trim() : '';
@@ -1566,7 +1621,6 @@
                 document.getElementById('editAlert').style.display = 'flex';
             }
             
-            // ✅ نعرض اسم المجموعة من localStorage بدل الـ ID
             let groupNameForTitle = '';
             try {
                 const savedStateRaw = localStorage.getItem('lessonState_' + currentLessonId);
@@ -1587,7 +1641,6 @@
             populateStagesDropdown(false);
             loadState();
 
-            // ✅ مستمع لحظي لتحديث عنوان الهيدر عند تعديل اسم المجموعة
             const gNameInput = document.getElementById('g_name');
             if (gNameInput) {
                 gNameInput.addEventListener('input', updateLessonTitleHeader);
@@ -1837,7 +1890,6 @@
                 return;
             }
 
-            // ✅ احصل على بيانات المعلم الحالي
             let currentTeacherPhone_g = '';
             let currentTeacherName_g = '';
             try {
@@ -1882,14 +1934,12 @@
                 return false;
             }
 
-            // ✅ ابحث عن التعارض فقط مع حصص المعلم الحالي
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 
                 if (key.startsWith('lessonState_') && key !== 'lessonState_' + currentLessonId) {
                     const otherState = JSON.parse(localStorage.getItem(key));
                     
-                    // 🔒 تحقق: هل الحصة دي بتاعة نفس المعلم الحالي؟
                     if (!isLessonForCurrentTeacher_g(otherState)) {
                         continue;
                     }
