@@ -1118,286 +1118,44 @@
             border-bottom-color: #B91C1C;
         }
 
-        /* ═══════════════════════════════════════════════════════
-           🎭 شاشة الانتظار التفاعلية الابتكارية - Reactor Loader
-           ═══════════════════════════════════════════════════════ */
-        .reactor-stage {
+        .initial-loader {
             position: fixed;
             inset: 0;
-            background: linear-gradient(135deg, #0A1E3F 0%, #0F2D5C 40%, #1E40AF 100%);
+            background: rgba(248, 250, 252, 0.95);
+            backdrop-filter: blur(4px);
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             z-index: 99999;
-            overflow: hidden;
-            transition: opacity 0.6s ease, transform 0.6s ease;
-            padding: 20px;
+            gap: 14px;
+            transition: opacity 0.3s ease;
         }
-        .reactor-stage.hide {
+        .initial-loader.hide {
             opacity: 0;
-            transform: scale(1.05);
             pointer-events: none;
         }
-
-        .reactor-particles {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            overflow: hidden;
-        }
-        .reactor-particle {
-            position: absolute;
+        .initial-loader .spinner {
+            width: 48px;
+            height: 48px;
+            border: 4px solid #E2E8F0;
+            border-top-color: var(--primary-600);
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.6), transparent 70%);
-            animation: particleFloat linear infinite;
-            opacity: 0.6;
+            animation: spin 0.8s linear infinite;
         }
-        @keyframes particleFloat {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
-            10% { opacity: 0.6; }
-            90% { opacity: 0.6; }
-            100% { transform: translateY(-100vh) scale(1); opacity: 0; }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
-
-        .reactor-glow {
-            position: absolute;
-            width: 300px;
-            height: 300px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(245, 158, 11, 0.3), transparent 70%);
-            filter: blur(40px);
-            animation: glowPulse 3s ease-in-out infinite;
-        }
-        @keyframes glowPulse {
-            0%, 100% { transform: scale(1); opacity: 0.4; }
-            50% { transform: scale(1.3); opacity: 0.7; }
-        }
-
-        .reactor-avatar-stage {
-            position: relative;
-            width: 180px;
-            height: 180px;
-            margin-bottom: 30px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
-
-        .reactor-progress-ring {
-            position: absolute;
-            inset: 0;
-            transform: rotate(-90deg);
-        }
-        .reactor-progress-ring circle {
-            fill: none;
-            stroke-width: 4;
-        }
-        .reactor-progress-ring .ring-bg {
-            stroke: rgba(255, 255, 255, 0.1);
-        }
-        .reactor-progress-ring .ring-fg {
-            stroke: url(#progressGradient);
-            stroke-linecap: round;
-            transition: stroke-dashoffset 0.5s ease;
-            filter: drop-shadow(0 0 6px rgba(245, 158, 11, 0.6));
-        }
-
-        /* ✅ تعديل الأفاتار لاستيعاب الصورة الجديدة */
-        .reactor-avatar {
-            position: relative;
-            width: 140px;
-            height: 140px;
-            border-radius: 50%;
-            background: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 
-                0 0 30px rgba(245, 158, 11, 0.5),
-                0 0 60px rgba(245, 158, 11, 0.25),
-                inset 0 -4px 10px rgba(0,0,0,0.1);
-            animation: avatarBob 2s ease-in-out infinite;
-            border: 4px solid rgba(255, 255, 255, 0.9);
-            z-index: 3;
-            overflow: hidden; /* لضمان بقاء الصورة داخل الدائرة */
-        }
-        .reactor-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            border-radius: 50%;
-        }
-        @keyframes avatarBob {
-            0%, 100% { transform: translateY(0) rotate(-2deg); }
-            50% { transform: translateY(-8px) rotate(2deg); }
-        }
-
-        .reactor-heartbeat {
-            position: absolute;
-            inset: -10px;
-            border-radius: 50%;
-            border: 2px solid rgba(245, 158, 11, 0.6);
-            animation: heartbeatRing 1.8s ease-out infinite;
-        }
-        .reactor-heartbeat:nth-child(2) { animation-delay: 0.6s; }
-        .reactor-heartbeat:nth-child(3) { animation-delay: 1.2s; }
-        @keyframes heartbeatRing {
-            0% { transform: scale(0.9); opacity: 1; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-
-        .reactor-title {
-            font-size: 24px;
+        .initial-loader p {
+            font-size: 14px;
             font-weight: 900;
-            color: #fff;
-            text-align: center;
-            margin-bottom: 6px;
-            z-index: 2;
-            text-shadow: 0 2px 15px rgba(0,0,0,0.3);
-            animation: titleFadeIn 0.8s ease;
+            color: #0F2D5C;
         }
-        .reactor-title .accent {
-            color: #FCD34D;
-            background: linear-gradient(90deg, #FCD34D, #F59E0B);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: 900;
-        }
-        @keyframes titleFadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .reactor-message {
-            font-size: 13.5px;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.85);
-            text-align: center;
-            min-height: 44px;
-            max-width: 320px;
-            padding: 0 12px;
-            margin-bottom: 20px;
-            z-index: 2;
-            line-height: 1.6;
-            transition: opacity 0.3s ease, transform 0.3s ease;
-        }
-        .reactor-message.fade-out {
-            opacity: 0;
-            transform: translateY(-8px);
-        }
-        .reactor-message.fade-in {
-            animation: messageIn 0.4s ease;
-        }
-        @keyframes messageIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .reactor-status-bar {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border: 1.5px solid rgba(255, 255, 255, 0.15);
-            border-radius: 999px;
-            padding: 8px 18px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.9);
-            z-index: 2;
-            margin-bottom: 16px;
-        }
-        .reactor-status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #10B981;
-            animation: dotPulse 1.5s ease-in-out infinite;
-            box-shadow: 0 0 8px #10B981;
-        }
-        @keyframes dotPulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.4); opacity: 0.7; }
-        }
-
-        .reactor-stats {
-            display: flex;
-            gap: 10px;
-            z-index: 2;
-            margin-top: 8px;
-        }
-        .reactor-stat {
-            background: rgba(255, 255, 255, 0.08);
-            backdrop-filter: blur(10px);
-            border: 1.5px solid rgba(255, 255, 255, 0.12);
-            border-radius: 14px;
-            padding: 8px 14px;
-            text-align: center;
-            min-width: 78px;
-        }
-        .reactor-stat-value {
-            font-size: 20px;
-            font-weight: 900;
-            color: #FCD34D;
-            line-height: 1.1;
-            text-shadow: 0 2px 8px rgba(245, 158, 11, 0.4);
-        }
-        .reactor-stat-label {
-            font-size: 9.5px;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.7);
-            margin-top: 3px;
-            white-space: nowrap;
-        }
-
-        .reactor-achievement {
-            position: fixed;
-            top: 30px;
-            left: 50%;
-            transform: translateX(-50%) translateY(-120px);
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 900;
-            box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-            z-index: 100000;
-            border-bottom: 3px solid #065F46;
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-            white-space: nowrap;
-            max-width: 90vw;
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-        .reactor-achievement.show {
-            transform: translateX(-50%) translateY(0);
-        }
-
-        .reactor-footer {
-            position: absolute;
-            bottom: 24px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 11px;
-            font-weight: 800;
-            color: rgba(255, 255, 255, 0.5);
-            z-index: 2;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-        .reactor-footer span {
-            animation: footerBlink 3s ease-in-out infinite;
-        }
-        @keyframes footerBlink {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        .initial-loader .sync-status {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #64748B;
+            margin-top: 4px;
         }
 
         .device-kicked-modal {
@@ -1524,15 +1282,6 @@
             .card-image-box { width: 68px; height: 68px; }
             .card-text { padding-left: 0; }
             .card-text h2 { font-size: 15px; }
-
-            .reactor-avatar-stage { width: 150px; height: 150px; }
-            .reactor-avatar { width: 110px; height: 110px; }
-            .reactor-title { font-size: 20px; }
-            .reactor-message { font-size: 12.5px; }
-            .reactor-stats { gap: 6px; }
-            .reactor-stat { padding: 6px 10px; min-width: 68px; }
-            .reactor-stat-value { font-size: 17px; }
-            .reactor-stat-label { font-size: 9px; }
         }
     </style>
 </head>
@@ -1545,73 +1294,11 @@
         }
     </script>
 
-    <!-- ═══════════════════════════════════════════════════════
-         🎭 شاشة الانتظار التفاعلية
-         ═══════════════════════════════════════════════════════ -->
-    <div id="reactorStage" class="reactor-stage">
-        <div class="reactor-particles" id="reactorParticles"></div>
-        <div class="reactor-glow"></div>
-
-        <div class="reactor-avatar-stage">
-            <svg class="reactor-progress-ring" viewBox="0 0 180 180">
-                <defs>
-                    <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" stop-color="#FCD34D"/>
-                        <stop offset="50%" stop-color="#F59E0B"/>
-                        <stop offset="100%" stop-color="#D97706"/>
-                    </linearGradient>
-                </defs>
-                <circle class="ring-bg" cx="90" cy="90" r="82"/>
-                <circle class="ring-fg" id="reactorProgressRing" cx="90" cy="90" r="82"
-                        stroke-dasharray="515" stroke-dashoffset="515"/>
-            </svg>
-
-            <div class="reactor-heartbeat"></div>
-            <div class="reactor-heartbeat"></div>
-            <div class="reactor-heartbeat"></div>
-
-            <!-- ✅ استخدام الصورة الجديدة teacher.png -->
-            <div class="reactor-avatar" id="reactorAvatar">
-                <img src="./teacher.png" alt="مستر">
-            </div>
-        </div>
-
-        <h2 class="reactor-title">
-            أهلاً بك يا <span class="accent" id="reactorName">مستر</span> 🎓
-        </h2>
-
-        <p class="reactor-message" id="reactorMessage">
-            ⏳ جاري تجهيز مسرحك التعليمي...
-        </p>
-
-        <div class="reactor-status-bar">
-            <span class="reactor-status-dot"></span>
-            <span id="reactorStatusText">جاري الاتصال بالسحابة...</span>
-        </div>
-
-        <div class="reactor-stats">
-            <div class="reactor-stat">
-                <div class="reactor-stat-value" id="reactorStatLessons">0</div>
-                <div class="reactor-stat-label">📚 مجموعات</div>
-            </div>
-            <div class="reactor-stat">
-                <div class="reactor-stat-value" id="reactorStatPending">0</div>
-                <div class="reactor-stat-label">⏳ قيد الإعداد</div>
-            </div>
-            <div class="reactor-stat">
-                <div class="reactor-stat-value" id="reactorStatLive">0</div>
-                <div class="reactor-stat-label">🟢 نشطة</div>
-            </div>
-        </div>
-
-        <div class="reactor-footer">
-            <span>✨ منصة احجزلى</span>
-            <span>•</span>
-            <span>تعليم باحترافية</span>
-        </div>
+    <div id="initialLoader" class="initial-loader">
+        <div class="spinner"></div>
+        <p>⏳ جاري تحميل مجموعاتك من السحابة...</p>
+        <div class="sync-status" id="syncStatus">جاري الاتصال بـ Firebase...</div>
     </div>
-
-    <div id="reactorAchievement" class="reactor-achievement"></div>
 
     <div id="fbSyncBadge" class="fb-sync-badge">☁️ جاري الحفظ في السحابة...</div>
 
@@ -1837,191 +1524,6 @@
 
         const forceUnpublishingIds = new Set();
 
-        // ═══════════════════════════════════════════════════════
-        // 🎭 Reactor Loader - شاشة انتظار تفاعلية
-        // ═══════════════════════════════════════════════════════
-        const ReactorLoader = (() => {
-            const state = {
-                progress: 0,
-                targetProgress: 0,
-                messageIndex: 0,
-                messageInterval: null,
-                progressInterval: null,
-                stage: null,
-                isHidden: false,
-            };
-
-            const messages = [
-                '⏳ جاري تجهيز مسرحك التعليمي...',
-                '📚 بنجمع مجموعاتك من السحابة...',
-                '🎯 بنرتب أولوياتك في التدريس...',
-                '✨ بنلمع بياناتك عشان تظهر أحلى...',
-                '🎨 بنزين ألوان لوحة التحكم بتاعتك...',
-                '🔥 جاهز تقريباً... استعد!',
-                '💡 نصيحة: نظم حصصك بانتظام = طلاب أسعد',
-                '🎓 تذكر: المعلم الناجح = طلاب ناجحين',
-                '⚡ كل ثانية بتوفرها = وقت أكتر للتدريس',
-                '🌟 منصتك جاهزة تقريباً... لحظة!',
-            ];
-
-            function getInitials() {
-                try {
-                    const loggedStr = localStorage.getItem('loggedInTeacher');
-                    if (!loggedStr) return { name: 'مستر', isMiss: false };
-                    const logged = JSON.parse(loggedStr);
-                    const name = String(logged.name || '').trim() || 'مستر';
-                    const title = String(logged.title || 'مستر').trim();
-                    return { name, isMiss: title === 'مس' };
-                } catch (e) {
-                    return { name: 'مستر', isMiss: false };
-                }
-            }
-
-            function createParticles() {
-                const container = document.getElementById('reactorParticles');
-                if (!container) return;
-                const count = 25;
-                for (let i = 0; i < count; i++) {
-                    const p = document.createElement('div');
-                    p.className = 'reactor-particle';
-                    const size = Math.random() * 8 + 3;
-                    p.style.width = size + 'px';
-                    p.style.height = size + 'px';
-                    p.style.left = Math.random() * 100 + '%';
-                    p.style.animationDuration = (Math.random() * 8 + 6) + 's';
-                    p.style.animationDelay = (Math.random() * 5) + 's';
-                    container.appendChild(p);
-                }
-            }
-
-            function setProgress(value) {
-                state.targetProgress = Math.min(100, Math.max(0, value));
-            }
-
-            function animateProgress() {
-                if (state.progress < state.targetProgress) {
-                    state.progress += Math.max(0.5, (state.targetProgress - state.progress) * 0.08);
-                    if (state.progress > state.targetProgress) state.progress = state.targetProgress;
-
-                    const ring = document.getElementById('reactorProgressRing');
-                    if (ring) {
-                        const circumference = 2 * Math.PI * 82;
-                        const offset = circumference - (state.progress / 100) * circumference;
-                        ring.setAttribute('stroke-dashoffset', offset);
-                    }
-                }
-            }
-
-            function rotateMessages() {
-                const msgEl = document.getElementById('reactorMessage');
-                if (!msgEl) return;
-
-                msgEl.classList.add('fade-out');
-
-                setTimeout(() => {
-                    state.messageIndex = (state.messageIndex + 1) % messages.length;
-                    msgEl.textContent = messages[state.messageIndex];
-                    msgEl.classList.remove('fade-out');
-                    msgEl.classList.add('fade-in');
-
-                    setTimeout(() => msgEl.classList.remove('fade-in'), 400);
-                }, 300);
-            }
-
-            function setStatus(text) {
-                const el = document.getElementById('reactorStatusText');
-                if (el) el.textContent = text;
-            }
-
-            function updateStats(stats) {
-                const lessonsEl = document.getElementById('reactorStatLessons');
-                const pendingEl = document.getElementById('reactorStatPending');
-                const liveEl = document.getElementById('reactorStatLive');
-
-                if (lessonsEl && stats.lessons !== undefined) {
-                    animateNumber(lessonsEl, parseInt(lessonsEl.textContent) || 0, stats.lessons);
-                }
-                if (pendingEl && stats.pending !== undefined) {
-                    animateNumber(pendingEl, parseInt(pendingEl.textContent) || 0, stats.pending);
-                }
-                if (liveEl && stats.live !== undefined) {
-                    animateNumber(liveEl, parseInt(liveEl.textContent) || 0, stats.live);
-                }
-            }
-
-            function animateNumber(el, from, to) {
-                const duration = 600;
-                const start = Date.now();
-                const step = () => {
-                    const elapsed = Date.now() - start;
-                    const progress = Math.min(1, elapsed / duration);
-                    const current = Math.round(from + (to - from) * progress);
-                    el.textContent = current;
-                    if (progress < 1) requestAnimationFrame(step);
-                };
-                requestAnimationFrame(step);
-            }
-
-            function showAchievement(text) {
-                const el = document.getElementById('reactorAchievement');
-                if (!el) return;
-                el.textContent = text;
-                el.classList.add('show');
-                setTimeout(() => el.classList.remove('show'), 2500);
-            }
-
-            function init() {
-                state.stage = document.getElementById('reactorStage');
-                if (!state.stage) return;
-
-                const { name, isMiss } = getInitials();
-                const nameEl = document.getElementById('reactorName');
-                
-                if (nameEl) nameEl.textContent = name;
-
-                createParticles();
-
-                state.messageInterval = setInterval(rotateMessages, 2800);
-                state.progressInterval = setInterval(animateProgress, 50);
-
-                setTimeout(() => {
-                    const visitsKey = 'reactor_first_visit_shown';
-                    if (!localStorage.getItem(visitsKey)) {
-                        localStorage.setItem(visitsKey, '1');
-                        setTimeout(() => showAchievement('🎉 أهلاً بيك في منصة احجزلى!'), 800);
-                    }
-                }, 500);
-
-                setTimeout(() => {
-                    if (!state.isHidden) showAchievement('💎 استعدادك ممتاز — ثواني وتكون جاهز!');
-                }, 5000);
-            }
-
-            function hide() {
-                if (state.isHidden || !state.stage) return;
-                state.isHidden = true;
-
-                setProgress(100);
-
-                const checkProgress = setInterval(() => {
-                    if (state.progress >= 99) {
-                        clearInterval(checkProgress);
-                        setStatus('✅ جاهز! أهلاً بيك');
-                        setTimeout(() => {
-                            state.stage.classList.add('hide');
-                            setTimeout(() => {
-                                state.stage.style.display = 'none';
-                                if (state.messageInterval) clearInterval(state.messageInterval);
-                                if (state.progressInterval) clearInterval(state.progressInterval);
-                            }, 700);
-                        }, 400);
-                    }
-                }, 100);
-            }
-
-            return { init, hide, setProgress, setStatus, updateStats, showAchievement };
-        })();
-
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
@@ -2049,7 +1551,7 @@
         async function verifyCurrentDevice() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
             if (!loggedStr) return true;
-
+            
             try {
                 const logged = JSON.parse(loggedStr);
                 const teacherKey = String(logged.phone || '').replace(/\D/g, '');
@@ -2108,7 +1610,7 @@
                             (snap) => {
                                 if (!snap.exists()) return;
                                 const registeredDeviceId = snap.data().deviceId;
-
+                                
                                 if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
                                     console.warn("🔥 تم تسجيل الدخول من جهاز آخر!");
                                     if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
@@ -2122,8 +1624,8 @@
                     }
                 };
                 tryStart();
-            } catch(e) {
-                console.warn("device watch outer:", e);
+            } catch(e) { 
+                console.warn("device watch outer:", e); 
             }
         }
 
@@ -2154,6 +1656,7 @@
                 const phoneEl = document.getElementById('welcomePhone');
 
                 const isMiss = title === 'مس';
+
                 avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
 
                 const now = new Date();
@@ -2190,6 +1693,9 @@
             }
         }
 
+        // ==========================================
+        // 🛡️ فحص حالة الحظر من السحابة — ✅ يشمل "5 سنوات"
+        // ==========================================
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
             if (!teacherPhone || !window.db || !window.fsGetDoc) return false;
@@ -2197,14 +1703,15 @@
             try {
                 const teacherKey = String(teacherPhone).replace(/\D/g, '');
                 const snap = await window.fsGetDoc(window.fsDoc(window.db, "teachers", teacherKey));
-
+                
                 if (!snap.exists()) return false;
                 const data = snap.data() || {};
-
+                
                 let isBlocked = data.isBlocked === true || data.verification === 'حظر';
-
+                
                 if (!isBlocked && data.verification && data.createdAt) {
                     const created = new Date(data.createdAt);
+                    // ✅ حساب مدة الباقة — يشمل "5 سنوات" = 1825 يوم
                     const days = data.verification === '30 يوم تجريبي' ? 30
                                : data.verification === '3 شهور' ? 90
                                : data.verification === '6 شهور' ? 180
@@ -2218,7 +1725,7 @@
                             await window.fsSetDoc(window.fsDoc(window.db, "teachers", teacherKey),
                                 { isBlocked: true, verification: 'حظر', blockedAt: Date.now(), blockReason: 'expired' },
                                 { merge: true });
-
+                            
                             if (window.fsGetDocs && window.fsCollection) {
                                 const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                                 const updates = [];
@@ -2238,7 +1745,7 @@
                         } catch(e) { console.warn("فشل تحديث الحظر التلقائي:", e); }
                     }
                 }
-
+                
                 return isBlocked;
             } catch (e) {
                 console.warn("⚠️ فشل فحص الحظر:", e);
@@ -2249,9 +1756,9 @@
         function showBlockedBanner() {
             const container = document.getElementById('blockedBannerContainer');
             if (!container) return;
-
+            
             if (document.getElementById('blockedBanner')) return;
-
+            
             const phone = getCurrentTeacherInfo().phone || '';
             const emailSubject = encodeURIComponent('طلب توثيق حساب - منصة احجزلى');
             const emailBody = encodeURIComponent(
@@ -2261,7 +1768,7 @@
                 `📅 التاريخ: ${new Date().toLocaleDateString('ar-EG')}\n\n` +
                 `شكراً لكم.`
             );
-
+            
             const banner = document.createElement('div');
             banner.id = 'blockedBanner';
             banner.className = 'blocked-banner';
@@ -2280,7 +1787,7 @@
                     ⚠️ سيتم إعادة تفعيل حسابك خلال 24 ساعة من استلام طلبك
                 </div>
             `;
-
+            
             container.appendChild(banner);
         }
 
@@ -2325,11 +1832,16 @@
         }
 
         function hideInitialLoader() {
-            ReactorLoader.hide();
+            const loader = document.getElementById('initialLoader');
+            if (loader) {
+                loader.classList.add('hide');
+                setTimeout(() => loader.remove(), 400);
+            }
         }
 
         function updateSyncStatus(text) {
-            ReactorLoader.setStatus(text);
+            const el = document.getElementById('syncStatus');
+            if (el) el.innerText = text;
         }
 
         function getCurrentTeacherInfo() {
@@ -2675,21 +2187,85 @@
             });
         }
 
+        document.addEventListener('DOMContentLoaded', async () => {
+            const isDeviceValid = await verifyCurrentDevice();
+            if (!isDeviceValid) return;
+
+            startDeviceWatch();
+
+            renderWelcomeBanner();
+
+            teacherIsBlocked = await checkTeacherBlockStatus();
+            if (teacherIsBlocked) {
+                showBlockedBanner();
+            }
+
+            const currentInfo = getCurrentTeacherInfo();
+            const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
+            const lessonsOwnerKey = 'lessons_owner_phone';
+            const savedLessonsOwner = localStorage.getItem(lessonsOwnerKey);
+
+            if (savedLessonsOwner && currentPhoneKey && savedLessonsOwner !== currentPhoneKey) {
+                console.log(`🧹 [Clean] معلم جديد (${currentPhoneKey}) مختلف عن القديم (${savedLessonsOwner})`);
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (!k) continue;
+                    if (k.startsWith('lessonState_') || k.startsWith('publishState_')) {
+                        keysToRemove.push(k);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+                localStorage.removeItem('teacher_lessons');
+                lessons = [];
+            }
+
+            if (currentPhoneKey) {
+                localStorage.setItem(lessonsOwnerKey, currentPhoneKey);
+            }
+
+            document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
+                e.preventDefault(); e.stopPropagation(); openLogoutModal();
+            });
+
+            const savedLessons = localStorage.getItem('teacher_lessons');
+            if (savedLessons) {
+                try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
+            }
+            renderLessons();
+
+            updateSyncStatus('📤 جاري رفع الحصص القديمة...');
+            const migResult = await migrateLocalLessonsToFirebase();
+            if (migResult.migrated > 0 || migResult.repaired > 0) {
+                showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
+            }
+
+            await syncLessonsFromFirebase(true);
+
+            startRealtimeSync();
+
+            startAutoSync();
+
+            startBlockStatusWatch();
+
+            hideInitialLoader();
+        });
+
         let blockWatchUnsub = null;
         function startBlockStatusWatch() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
             if (!teacherPhone || !window.db || !window.fsOnSnapshot) return;
-
+            
             const teacherKey = String(teacherPhone).replace(/\D/g, '');
-
+            
             if (blockWatchUnsub) { try { blockWatchUnsub(); } catch(e) {} }
-
+            
             const tryStart = () => {
                 if (!window.db || !window.fsOnSnapshot) {
                     setTimeout(tryStart, 200);
                     return;
                 }
-
+                
                 try {
                     blockWatchUnsub = window.fsOnSnapshot(
                         window.fsDoc(window.db, "teachers", teacherKey),
@@ -2697,7 +2273,7 @@
                             if (!snap.exists()) return;
                             const data = snap.data() || {};
                             const newBlockStatus = data.isBlocked === true || data.verification === 'حظر';
-
+                            
                             if (newBlockStatus !== teacherIsBlocked) {
                                 teacherIsBlocked = newBlockStatus;
                                 if (teacherIsBlocked) {
@@ -2740,9 +2316,9 @@
             const nextNumber = getNextGroupNumber();
 
             const newId = String(Date.now()) + '_' + Math.random().toString(36).substr(2, 6);
-
-            const lessonData = {
-                id: newId,
+            
+            const lessonData = { 
+                id: newId, 
                 title: `مجموعة رقم ${nextNumber}`
             };
             lessons.push(lessonData);
@@ -2813,7 +2389,7 @@
             try { state = JSON.parse(savedState); } catch(e) { return ''; }
             const grade = state.s_grade || '';
             const subj = (state.selectedSubjects && state.selectedSubjects.length > 0) ? state.selectedSubjects[0].split(' - ')[1] || state.selectedSubjects[0] : '';
-
+            
             let stageStr = '';
             if(state.s_stage) {
                 stageStr = state.s_stage;
@@ -2894,7 +2470,7 @@
 
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
-
+            
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
                     <div class="icon-plus">
@@ -2906,7 +2482,7 @@
                     ${!teacherIsBlocked ? '<p style="font-size:11px;color:#64748B;font-weight:700;margin-top:2px;">اضغط لإضافة مجموعة جديدة</p>' : ''}
                 </div>
             `;
-
+            
             container.innerHTML = addCardHTML;
 
             lessons.forEach((lesson, index) => {
@@ -2930,7 +2506,7 @@
 
                 const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
                 const btnText = hasReport ? 'التقرير ➔' : 'إعداد ➔';
-                const descText = hasReport
+                const descText = hasReport 
                     ? (isPublished ? 'ظاهرة للطلاب — يمكنك إدارتها.' : 'مخفية عن الطلاب — اضغط "فتح" لنشرها.')
                     : '⚠️ أكمل الإعداد أولاً — النشر متوقف حتى تكتمل البيانات.';
 
@@ -2977,7 +2553,7 @@
                 let visibilityClass = '';
                 let visibilityTitle;
                 let visibilityDisabled = false;
-
+                
                 if (!hasReport) {
                     visibilityIcon = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" /></svg>`;
                     visibilityClass = 'blocked';
@@ -2994,7 +2570,7 @@
 
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
-
+                
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
                     <div class="card-actions">
@@ -3020,7 +2596,7 @@
                         <a href="${targetUrl}" class="btn-go">${btnText}</a>
                     </div>
                 `;
-
+                
                 container.appendChild(newCard);
             });
         }
@@ -3038,7 +2614,7 @@
                 saveLessonsToStorage();
                 localStorage.removeItem('lessonState_' + idToDelete);
                 localStorage.removeItem('publishState_' + idToDelete);
-
+                
                 try {
                     if (window.db && window.fsDoc && window.fsDeleteDoc) {
                         showFbSyncBadge('🗑️ جاري الحذف...');
@@ -3046,7 +2622,7 @@
                         showFbSyncBadge('✅ تم الحذف');
                     }
                 } catch (err) {}
-
+                
                 renderLessons();
                 closeModal('deleteModal');
                 itemToDelete = null;
@@ -3130,14 +2706,14 @@
             if (hasRealData) {
                 const data = stateObj;
                 const groupName = data.g_name || lessonTitle;
-
-                let statusBadge = isPublished ?
-                    `<span style="font-size: 9.5px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 99px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #10B981; border-radius: 50%; display: inline-block;"></span>ظاهر</span>`
-                    :
+                
+                let statusBadge = isPublished ? 
+                    `<span style="font-size: 9.5px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 99px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #10B981; border-radius: 50%; display: inline-block;"></span>ظاهر</span>` 
+                    : 
                     `<span style="font-size: 9.5px; background: #FEE2E2; color: #991B1B; padding: 2px 6px; border-radius: 99px; border: 1px solid #FECACA; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #EF4444; border-radius: 50%; display: inline-block;"></span>مخفي</span>`;
 
                 nameEl.innerHTML = `<span>${groupName}</span> ${statusBadge}`;
-
+                
                 const startTime12 = (data.start_hour && data.start_min && data.start_ampm) ? `${data.start_hour}:${data.start_min} ${data.start_ampm}` : '--:--';
                 const endTime12 = (data.end_hour && data.end_min && data.end_ampm) ? `${data.end_hour}:${data.end_min} ${data.end_ampm}` : '--:--';
                 const daysStr = data.g_days && data.g_days.length > 0 ? data.g_days.join('، ') : 'غير محدد';
@@ -3168,8 +2744,8 @@
                 }
 
                 const gradeStr = data.s_grade || 'غير محدد';
-                const subjectsStr = data.selectedSubjects && data.selectedSubjects.length > 0
-                                    ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ')
+                const subjectsStr = data.selectedSubjects && data.selectedSubjects.length > 0 
+                                    ? data.selectedSubjects.map(sub => sub.split(' - ')[1] || sub).join('، ') 
                                     : 'غير محدد';
 
                 contentEl.innerHTML = `
@@ -3201,113 +2777,6 @@
         function saveLessonsToStorage() {
             try { localStorage.setItem('teacher_lessons', JSON.stringify(lessons)); } catch(e) {}
         }
-
-        document.addEventListener('DOMContentLoaded', async () => {
-            // ✅ شغّل شاشة الانتظار التفاعلية أولاً
-            ReactorLoader.init();
-            ReactorLoader.setProgress(10);
-            ReactorLoader.setStatus('🔐 جاري التحقق من الجهاز...');
-
-            const isDeviceValid = await verifyCurrentDevice();
-            if (!isDeviceValid) return;
-
-            ReactorLoader.setProgress(25);
-            ReactorLoader.setStatus('👋 جاري الترحيب...');
-
-            startDeviceWatch();
-            renderWelcomeBanner();
-
-            ReactorLoader.setProgress(40);
-            ReactorLoader.setStatus('🛡️ جاري فحص حالة الحساب...');
-
-            teacherIsBlocked = await checkTeacherBlockStatus();
-            if (teacherIsBlocked) {
-                showBlockedBanner();
-            }
-
-            const currentInfo = getCurrentTeacherInfo();
-            const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
-            const lessonsOwnerKey = 'lessons_owner_phone';
-            const savedLessonsOwner = localStorage.getItem(lessonsOwnerKey);
-
-            if (savedLessonsOwner && currentPhoneKey && savedLessonsOwner !== currentPhoneKey) {
-                console.log(`🧹 [Clean] معلم جديد (${currentPhoneKey}) مختلف عن القديم (${savedLessonsOwner})`);
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (!k) continue;
-                    if (k.startsWith('lessonState_') || k.startsWith('publishState_')) {
-                        keysToRemove.push(k);
-                    }
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-                localStorage.removeItem('teacher_lessons');
-                lessons = [];
-            }
-
-            if (currentPhoneKey) {
-                localStorage.setItem(lessonsOwnerKey, currentPhoneKey);
-            }
-
-            document.getElementById('logoutBtn')?.addEventListener('click', function(e) {
-                e.preventDefault(); e.stopPropagation(); openLogoutModal();
-            });
-
-            const savedLessons = localStorage.getItem('teacher_lessons');
-            if (savedLessons) {
-                try { lessons = JSON.parse(savedLessons); } catch(e) { lessons = []; }
-            }
-            renderLessons();
-
-            ReactorLoader.setProgress(55);
-            ReactorLoader.setStatus('📤 جاري رفع الحصص القديمة...');
-
-            const migResult = await migrateLocalLessonsToFirebase();
-            if (migResult.migrated > 0 || migResult.repaired > 0) {
-                showFbSyncBadge(`✅ رُفعت ${migResult.migrated}، صُلحت ${migResult.repaired}`);
-            }
-
-            ReactorLoader.setProgress(75);
-            ReactorLoader.setStatus('📥 جاري جلب مجموعاتك من السحابة...');
-
-            await syncLessonsFromFirebase(true);
-
-            // ✅ حدّث الإحصائيات على شاشة الانتظار
-            const totalLessons = lessons.length;
-            let pendingCount = 0;
-            let liveCount = 0;
-            lessons.forEach(l => {
-                const stateRaw = localStorage.getItem('lessonState_' + l.id);
-                let stateObj = null;
-                try { stateObj = stateRaw ? JSON.parse(stateRaw) : null; } catch(e) {}
-                if (isSetupComplete(stateObj)) {
-                    if (localStorage.getItem('publishState_' + l.id) === 'true') liveCount++;
-                } else {
-                    pendingCount++;
-                }
-            });
-            ReactorLoader.updateStats({
-                lessons: totalLessons,
-                pending: pendingCount,
-                live: liveCount,
-            });
-
-            ReactorLoader.setProgress(95);
-            ReactorLoader.setStatus('🎨 جاري تجهيز الواجهة...');
-
-            startRealtimeSync();
-            startAutoSync();
-            startBlockStatusWatch();
-
-            // ✅ اخفِ الشاشة بحلاوة
-            setTimeout(() => hideInitialLoader(), 600);
-
-            if (totalLessons > 0) {
-                setTimeout(() => {
-                    ReactorLoader.showAchievement(`🏆 عندك ${totalLessons} مجموعة — استعد للتدريس!`);
-                }, 1000);
-            }
-        });
     </script>
 
     <script>
