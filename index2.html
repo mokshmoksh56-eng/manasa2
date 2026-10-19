@@ -104,6 +104,12 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
+        .top-nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
         .hero-content {
             position: relative;
             z-index: 3;
@@ -188,71 +194,52 @@
             flex: 1;
         }
 
-        /* =========================================
-           الشكل الموحد لكارت المستر + كارت إنشاء مجموعة
-        ========================================== */
-        .premium-banner {
+        .welcome-banner {
             position: relative;
             display: flex;
             align-items: center;
-            gap: 15px;
-            padding: 16px 20px;
-            margin-bottom: 14px;
-            background: linear-gradient(135deg, #0F2D5C 0%, #1E3A8A 50%, #2563EB 100%);
-            border: 2px solid #60A5FA;
-            border-bottom: 5px solid #1D4ED8;
-            border-radius: 22px;
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
+            gap: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
+            border: 2px solid #86EFAC;
+            border-bottom: 5px solid #16A34A;
+            border-radius: 18px;
+            box-shadow: 0 8px 22px -10px rgba(16, 185, 129, 0.35);
             overflow: hidden;
-            color: white;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            animation: slideInDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        @keyframes slideInDown {
+        @keyframes welcomeSlideIn {
             from { opacity: 0; transform: translateY(-15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .premium-banner::before {
+        .welcome-banner::before {
             content: '';
             position: absolute;
-            right: -20px;
-            top: -20px;
-            width: 120px;
-            height: 120px;
-            background: radial-gradient(circle, rgba(255,255,255,0.1), transparent 70%);
+            top: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
 
-        .premium-banner.clickable {
-            cursor: pointer;
+        .welcome-banner.is-miss {
+            background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
+            border-color: #F9A8D4;
+            border-bottom-color: #DB2777;
+            box-shadow: 0 8px 22px -10px rgba(236, 72, 153, 0.35);
         }
 
-        .premium-banner.clickable:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 14px 25px -5px rgba(37, 99, 235, 0.45);
-            border-color: #93C5FD;
+        .welcome-banner.is-miss::before {
+            background: radial-gradient(circle, rgba(236,72,153,0.15), transparent 70%);
         }
 
-        .premium-banner.clickable:active {
-            transform: scale(0.98);
-        }
-
-        .premium-banner.disabled-add {
-            opacity: 0.65;
-            filter: grayscale(0.8);
-            cursor: not-allowed;
-        }
-        
-        .premium-banner.disabled-add:hover {
-            transform: none;
-            box-shadow: 0 10px 25px -5px rgba(37, 99, 235, 0.3);
-            border-color: #60A5FA;
-        }
-
-        .premium-icon-box {
+        .welcome-avatar {
+            flex-shrink: 0;
             width: 52px;
             height: 52px;
             border-radius: 50%;
@@ -260,68 +247,95 @@
             align-items: center;
             justify-content: center;
             font-size: 26px;
-            background: linear-gradient(135deg, #FACC15, #F59E0B);
-            border: 3px solid #FEF08A;
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
+            background: #FFFFFF;
+            border: 2.5px solid #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
             z-index: 2;
-            flex-shrink: 0;
+            animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .premium-text-box {
+        .welcome-banner.is-miss .welcome-avatar {
+            border-color: #EC4899;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+        }
+
+        @keyframes avatarPop {
+            0% { transform: scale(0) rotate(-30deg); }
+            70% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .welcome-text {
             flex: 1;
-            z-index: 2;
+            min-width: 0;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             text-align: right;
-            min-width: 0;
+            z-index: 2;
         }
 
-        .premium-subtitle {
-            font-size: 12.5px;
+        .welcome-greeting {
+            font-size: 11px;
             font-weight: 800;
-            color: #BFDBFE;
+            color: #059669;
+            line-height: 1.2;
             margin-bottom: 2px;
         }
 
-        .premium-title {
-            font-size: 17px;
+        .welcome-banner.is-miss .welcome-greeting {
+            color: #DB2777;
+        }
+
+        .welcome-name {
+            font-size: 16px;
             font-weight: 900;
-            color: #FFFFFF;
+            color: #064E3B;
             line-height: 1.25;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
+            margin-bottom: 3px;
         }
 
-        .premium-deco-star {
+        .welcome-banner.is-miss .welcome-name {
+            color: #831843;
+        }
+
+        .welcome-phone {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11.5px;
+            font-weight: 900;
+            color: #047857;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 99px;
+            border: 1px solid #A7F3D0;
+            direction: ltr;
+        }
+
+        .welcome-banner.is-miss .welcome-phone {
+            color: #BE185D;
+            border-color: #FBCFE8;
+        }
+
+        .welcome-sparkle {
             position: absolute;
-            top: 15px;
-            left: 20px;
-            font-size: 18px;
-            animation: pulseStar 2s infinite alternate;
+            top: 8px;
+            left: 12px;
+            font-size: 14px;
+            animation: sparkleTwinkle 2s ease-in-out infinite;
+            z-index: 1;
+            opacity: 0.7;
         }
 
-        .premium-arrow-icon {
-            position: absolute;
-            left: 20px;
-            color: rgba(255,255,255,0.7);
-            z-index: 2;
-            transition: transform 0.3s ease;
+        @keyframes sparkleTwinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            50% { transform: scale(1.2) rotate(20deg); opacity: 1; }
         }
-
-        .premium-banner.clickable:hover .premium-arrow-icon {
-            transform: translateX(-5px);
-            color: #FFFFFF;
-        }
-
-        @keyframes pulseStar {
-            0% { transform: scale(0.8); opacity: 0.5; }
-            100% { transform: scale(1.2); opacity: 1; }
-        }
-
-        /* ========================================= */
 
         .blocked-banner {
             margin: 12px 0;
@@ -519,16 +533,6 @@
         }
         .portal-card:active {
             transform: scale(0.985);
-        }
-
-        /* 🌟 التأثير البصري للكارت الجديد عند الإضافة 🌟 */
-        @keyframes flashHighlight {
-            0%, 100% { box-shadow: 0 6px 20px -8px rgba(0,0,0,0.07); transform: scale(1); }
-            50% { box-shadow: 0 0 0 4px #60A5FA, 0 15px 30px rgba(37, 99, 235, 0.4); transform: scale(1.02); }
-        }
-        .highlight-new {
-            animation: flashHighlight 1.5s ease-in-out;
-            z-index: 10;
         }
 
         .portal-card.hidden-card {
@@ -763,6 +767,69 @@
         .btn-visibility { background: #F1F5F9; color: #64748B; }
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
+
+        .card-add-new {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            border: 2.5px dashed #10B981;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            padding: 24px 16px;
+            cursor: pointer;
+            border-bottom: 6px solid #059669;
+            box-shadow: 0 6px 20px -8px rgba(16, 185, 129, 0.25);
+            transition: all 0.25s ease;
+        }
+        .card-add-new:hover {
+            background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+            border-color: #059669;
+            transform: translateY(-2px);
+        }
+        .card-add-new:active {
+            background: #BBF7D0;
+            border-color: #047857;
+            transform: scale(0.98);
+        }
+        .card-add-new.disabled-add {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
+
+        .card-add-new .icon-plus {
+            width: 56px;
+            height: 56px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #FFFFFF;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5);
+            transition: all 0.25s ease;
+            animation: plusPulse 2.5s ease-in-out infinite;
+        }
+        .card-add-new:hover .icon-plus {
+            transform: scale(1.08) rotate(90deg);
+            box-shadow: 0 8px 22px -4px rgba(16, 185, 129, 0.7);
+        }
+        .card-add-new .icon-plus svg {
+            stroke: #FFFFFF;
+            stroke-width: 3;
+        }
+
+        @keyframes plusPulse {
+            0%, 100% { box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5); }
+            50%      { box-shadow: 0 6px 24px -2px rgba(16, 185, 129, 0.8); }
+        }
+
+        .card-add-new h2 {
+            color: #065F46;
+            font-size: 16.5px;
+            font-weight: 900;
+        }
 
         .card-image-box {
             flex-shrink: 0;
@@ -1191,17 +1258,15 @@
                 padding-left: 0;
                 padding-top: 35px;
             }
-            
-            /* تعديلات شاشة الجوال للكروت الجديدة الموحدة */
-            .premium-banner { padding: 12px 14px; gap: 12px; border-radius: 18px; margin-bottom: 10px; }
-            .premium-icon-box { width: 46px; height: 46px; font-size: 24px; border-width: 2px; }
-            .premium-subtitle { font-size: 11px; }
-            .premium-title { font-size: 15px; }
+            .welcome-banner { padding: 12px 12px; gap: 10px; }
+            .welcome-avatar { width: 44px; height: 44px; font-size: 22px; border-width: 2px; }
+            .welcome-greeting { font-size: 10px; }
+            .welcome-name { font-size: 14px; }
+            .welcome-phone { font-size: 10.5px; }
 
             .quick-actions-bar {
                 grid-template-columns: 1fr 1fr;
                 gap: 8px;
-                margin-bottom: 14px;
             }
             .quick-action-btn { padding: 10px 10px; gap: 8px; border-radius: 14px; }
             .quick-action-icon { width: 30px; height: 30px; border-radius: 10px; }
@@ -1286,14 +1351,14 @@
 
             <div id="blockedBannerContainer"></div>
 
-            <!-- كارت المستر (التصميم الموحد الجديد) -->
-            <div id="welcomeBanner" class="premium-banner" style="display: none;">
-                <div class="premium-icon-box" id="welcomeAvatar">👨‍🏫</div>
-                <div class="premium-text-box">
-                    <div class="premium-subtitle" id="welcomeGreeting">مرحباً بعودتك</div>
-                    <div class="premium-title" id="welcomeName">--</div>
+            <div id="welcomeBanner" class="welcome-banner" style="display: none;">
+                <div class="welcome-sparkle">✨</div>
+                <div class="welcome-avatar" id="welcomeAvatar">👨‍🏫</div>
+                <div class="welcome-text">
+                    <div class="welcome-greeting" id="welcomeGreeting">مرحباً بعودتك</div>
+                    <div class="welcome-name" id="welcomeName">--</div>
+                    <div class="welcome-phone" id="welcomePhone">📱 --</div>
                 </div>
-                <div class="premium-deco-star">✨</div>
             </div>
 
             <div class="quick-actions-bar">
@@ -1322,24 +1387,6 @@
                     </div>
                     <div class="quick-action-arrow">←</div>
                 </button>
-            </div>
-
-            <!-- كارت إنشاء مجموعة (التصميم الموحد الجديد) -->
-            <div id="createGroupBanner" class="premium-banner clickable" onclick="createNewLesson(true)">
-                <div class="premium-icon-box" style="background: linear-gradient(135deg, #10B981, #059669); border-color: #6EE7B7; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.4);">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="#FFF" style="width: 26px; height: 26px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                </div>
-                <div class="premium-text-box">
-                    <div class="premium-subtitle" id="createGroupSub">إدارة الجداول</div>
-                    <div class="premium-title" id="createGroupTitle">إنشاء مجموعة جديدة</div>
-                </div>
-                <div class="premium-arrow-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px; transform: rotate(180deg);">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
-                    </svg>
-                </div>
             </div>
 
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
@@ -1463,7 +1510,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .premium-banner.clickable');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn');
             if (clickableElement) { playHighPitchSound(); }
         });
 
@@ -1606,6 +1653,7 @@
                 const avatarEl = document.getElementById('welcomeAvatar');
                 const greetingEl = document.getElementById('welcomeGreeting');
                 const nameEl = document.getElementById('welcomeName');
+                const phoneEl = document.getElementById('welcomePhone');
 
                 const isMiss = title === 'مس';
 
@@ -1620,10 +1668,24 @@
                 else greeting = 'سهرة سعيدة ✨';
 
                 const prefix = isMiss ? 'مس' : 'مستر';
-                greetingEl.textContent = greeting;
-                nameEl.textContent = `${prefix} / ${name || 'بدون اسم'}`;
+                greetingEl.textContent = `${greeting} يا ${prefix}`;
+                nameEl.textContent = name || 'بدون اسم';
+
+                if (phone && phone.length >= 10) {
+                    phoneEl.textContent = `📱 ${phone}`;
+                    phoneEl.style.display = 'inline-flex';
+                } else {
+                    phoneEl.style.display = 'none';
+                }
+
+                if (isMiss) {
+                    banner.classList.add('is-miss');
+                } else {
+                    banner.classList.remove('is-miss');
+                }
 
                 banner.style.display = 'flex';
+                console.log(`✅ [Welcome] عرض الترحيب: ${prefix} ${name} (${phone})`);
             } catch (err) {
                 console.warn('⚠️ [Welcome] فشل عرض الترحيب:', err);
                 const banner = document.getElementById('welcomeBanner');
@@ -1632,7 +1694,7 @@
         }
 
         // ==========================================
-        // 🛡️ فحص حالة الحظر
+        // 🛡️ فحص حالة الحظر من السحابة — ✅ يشمل "5 سنوات"
         // ==========================================
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
@@ -1649,6 +1711,7 @@
                 
                 if (!isBlocked && data.verification && data.createdAt) {
                     const created = new Date(data.createdAt);
+                    // ✅ حساب مدة الباقة — يشمل "5 سنوات" = 1825 يوم
                     const days = data.verification === '30 يوم تجريبي' ? 30
                                : data.verification === '3 شهور' ? 90
                                : data.verification === '6 شهور' ? 180
@@ -2124,23 +2187,6 @@
             });
         }
 
-        // تحديث حالة زر إضافة مجموعة بناء على الحظر
-        function updateCreateBtnState() {
-            const btn = document.getElementById('createGroupBanner');
-            if (!btn) return;
-            if (teacherIsBlocked) {
-                btn.classList.add('disabled-add');
-                btn.onclick = () => showToast('🔒 الحساب محظور — لا يمكن إنشاء مجموعات جديدة', true);
-                document.getElementById('createGroupTitle').innerText = '🔒 الحساب محظور';
-                document.getElementById('createGroupSub').innerText = 'تواصل مع الإدارة للتوثيق';
-            } else {
-                btn.classList.remove('disabled-add');
-                btn.onclick = () => createNewLesson(true);
-                document.getElementById('createGroupTitle').innerText = 'إنشاء مجموعة جديدة';
-                document.getElementById('createGroupSub').innerText = 'إدارة الجداول';
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', async () => {
             const isDeviceValid = await verifyCurrentDevice();
             if (!isDeviceValid) return;
@@ -2153,7 +2199,6 @@
             if (teacherIsBlocked) {
                 showBlockedBanner();
             }
-            updateCreateBtnState();
 
             const currentInfo = getCurrentTeacherInfo();
             const currentPhoneKey = String(currentInfo.phone || '').replace(/\D/g, '');
@@ -2231,7 +2276,6 @@
                             
                             if (newBlockStatus !== teacherIsBlocked) {
                                 teacherIsBlocked = newBlockStatus;
-                                updateCreateBtnState(); // تحديث زر الإضافة
                                 if (teacherIsBlocked) {
                                     showBlockedBanner();
                                     renderLessons();
@@ -2279,18 +2323,7 @@
             };
             lessons.push(lessonData);
             if (saveToStorage) saveLessonsToStorage();
-            
             renderLessons();
-
-            // 🌟 توجيه الشاشة تلقائياً للأسفل إلى الكارت الجديد بعد إضافته
-            setTimeout(() => {
-                const newCardEl = document.getElementById('lesson-card-' + newId);
-                if (newCardEl) {
-                    newCardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    newCardEl.classList.add('highlight-new');
-                    setTimeout(() => newCardEl.classList.remove('highlight-new'), 1500);
-                }
-            }, 100);
 
             (async () => {
                 try {
@@ -2438,7 +2471,19 @@
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
-            container.innerHTML = ''; // تفريغ الـ Container القديم تماماً
+            const addCardHTML = `
+                <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
+                    <div class="icon-plus">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 28px; height: 28px;">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+                        </svg>
+                    </div>
+                    <h2>${teacherIsBlocked ? '🔒 الحساب محظور' : 'إنشاء مجموعة جديدة'}</h2>
+                    ${!teacherIsBlocked ? '<p style="font-size:11px;color:#64748B;font-weight:700;margin-top:2px;">اضغط لإضافة مجموعة جديدة</p>' : ''}
+                </div>
+            `;
+            
+            container.innerHTML = addCardHTML;
 
             lessons.forEach((lesson, index) => {
                 const isBlue = (index + 1) % 2 !== 0;
@@ -2524,7 +2569,6 @@
                 }
 
                 const newCard = document.createElement('div');
-                newCard.id = `lesson-card-${lesson.id}`; // 🌟 تمت الإضافة ليتمكن من التوجيه التلقائي
                 newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
                 
                 newCard.innerHTML = `
