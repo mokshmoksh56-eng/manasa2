@@ -559,64 +559,6 @@
             pointer-events: none;
         }
 
-        /* ✅ كارت المجموعة الجديدة اللي محتاجة استكمال بيانات */
-        .portal-card.needs-setup-card {
-            border: 2.5px dashed #F59E0B;
-            border-bottom: 6px solid #D97706;
-            background: linear-gradient(135deg, #FFFBEB 0%, #FEF3C7 50%, #FFFFFF 100%);
-            animation: setupPulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes setupPulse {
-            0%, 100% { box-shadow: 0 6px 20px -8px rgba(245, 158, 11, 0.3); }
-            50%      { box-shadow: 0 6px 28px -4px rgba(245, 158, 11, 0.6); }
-        }
-
-        /* ✅ بانر تحذيري فوق كارت المجموعة الجديدة */
-        .needs-setup-banner {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 8px;
-            background: linear-gradient(135deg, #FEF3C7, #FDE68A);
-            border: 1.5px solid #F59E0B;
-            border-radius: 10px;
-            margin-bottom: 8px;
-            width: 100%;
-            box-sizing: border-box;
-            animation: setupBannerPulse 2.5s ease-in-out infinite;
-        }
-
-        @keyframes setupBannerPulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.3); }
-            50%      { box-shadow: 0 0 0 4px rgba(245, 158, 11, 0); }
-        }
-
-        .needs-setup-icon {
-            font-size: 15px;
-            flex-shrink: 0;
-            animation: warnBounce 1.6s ease-in-out infinite;
-        }
-
-        @keyframes warnBounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50%      { transform: translateY(-3px) scale(1.15); }
-        }
-
-        .needs-setup-text {
-            font-size: 11px;
-            font-weight: 900;
-            color: #92400E;
-            line-height: 1.3;
-            text-align: center;
-        }
-
-        .portal-card.needs-setup-card .card-text p {
-            color: #B45309;
-        }
-
         .locked-overlay {
             position: absolute;
             inset: 0;
@@ -1279,11 +1221,6 @@
                 padding: 8px;
                 font-size: 12px;
             }
-            .needs-setup-banner {
-                flex-direction: column;
-                gap: 4px;
-                padding: 10px;
-            }
             .card-text {
                 padding-left: 0;
                 padding-top: 35px;
@@ -1942,13 +1879,33 @@
         }
 
         // ==========================================
+        // ✅ هل الحصة اتعملها إعداد حقيقي؟
+        // (مش بس الـ auto-generated fields من Firebase)
+        // ==========================================
+        function hasRealSetupData(data) {
+            if (!data || typeof data !== 'object') return false;
+            return !!(
+                data.s_grade ||
+                data.s_stage ||
+                (Array.isArray(data.g_days) && data.g_days.length > 0) ||
+                (Array.isArray(data.selectedSubjects) && data.selectedSubjects.length > 0)
+            );
+        }
+
+        // ==========================================
         // ✅ ترقيم المجموعات
+        // - لو مفيش مجموعات خالص → يبدأ من 1
+        // - لو فيه مجموعات → ياخد أول رقم فاضي من 1 لأعلى
+        //   (يعني 1,2,3 ومسحت 3 → الجديدة تبقى 3)
+        //   (يعني 1,2,3 ومسحت 2 → الجديدة تبقى 2)
         // ==========================================
         function getNextGroupNumber() {
+            // ✅ لو مفيش أي مجموعات → نبدأ من 1
             if (!lessons || lessons.length === 0) {
                 return 1;
             }
 
+            // ✅ نجمع كل الأرقام المستخدمة حالياً
             const usedNumbers = new Set();
             lessons.forEach(l => {
                 const match = String(l.title || '').match(/مجموعة\s*رقم\s*(\d+)/);
@@ -1958,6 +1915,7 @@
                 }
             });
 
+            // ✅ ندوّر على أول رقم فاضي بدءًا من 1
             let nextNumber = 1;
             while (usedNumbers.has(nextNumber)) {
                 nextNumber++;
@@ -2079,7 +2037,13 @@
 
                     const stateToSave = { ...data };
                     delete stateToSave.updatedAt;
-                    localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+
+                    // ✅ نحمّل lessonState فقط لو فيه إعداد حقيقي
+                    if (hasRealSetupData(stateToSave)) {
+                        localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+                    } else {
+                        localStorage.removeItem('lessonState_' + lessonId);
+                    }
                     localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
                 });
 
@@ -2126,7 +2090,13 @@
 
                             const stateToSave = { ...data };
                             delete stateToSave.updatedAt;
-                            localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+
+                            // ✅ نحمّل lessonState فقط لو فيه إعداد حقيقي
+                            if (hasRealSetupData(stateToSave)) {
+                                localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+                            } else {
+                                localStorage.removeItem('lessonState_' + lessonId);
+                            }
                             localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
                         });
 
@@ -2144,6 +2114,9 @@
                             saveLessonsToStorage();
                             renderLessons();
                             showFbSyncBadge('🔄 تم التحديث من السحابة');
+                        } else {
+                            // حتى لو الأسماء متطابقة، لازم نحدّث الكروت عشان تعكس حالة lessonState الحقيقية
+                            renderLessons();
                         }
                     },
                     (err) => console.warn("⚠️ onSnapshot:", err)
@@ -2334,9 +2307,6 @@
             if (saveToStorage) saveLessonsToStorage();
             renderLessons();
 
-            // ✅ إشعار للمستخدم إن المجموعة اتعملت ومحتاجة بيانات
-            showToast('⚠️ المجموعة اتعملت — استكمل بياناتها الآن');
-
             (async () => {
                 try {
                     if (window.db && window.fsDoc && window.fsSetDoc) {
@@ -2428,13 +2398,6 @@
         async function toggleVisibility(id, event) {
             if (event) event.stopPropagation();
 
-            // ✅ منع النشر لو المجموعة لسه محتاجة استكمال بيانات
-            const hasReport = localStorage.getItem('lessonState_' + id) !== null;
-            if (!hasReport) {
-                showToast('⚠️ استكمل بيانات المجموعة أولاً قبل النشر', true);
-                return;
-            }
-
             if (teacherIsBlocked) {
                 showToast('🔒 الحساب محظور — تواصل مع الإدارة للتوثيق', true);
                 return;
@@ -2479,9 +2442,6 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
-        // ==========================================
-        // ✅ Render Lessons (معدل - مع إشارة "محتاجة إعداد")
-        // ==========================================
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
@@ -2503,39 +2463,29 @@
                 const isBlue = (index + 1) % 2 !== 0;
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
-                const savedState = localStorage.getItem('lessonState_' + lesson.id);
-                const hasReport = savedState !== null;
-                
-                // ✅ هل المجموعة تحتاج استكمال بيانات؟
-                const needsSetup = !hasReport;
-                
-                const isPublished = hasReport && localStorage.getItem('publishState_' + lesson.id) === 'true';
+
+                // ✅ فحص حقيقي: هل يوجد إعداد فعلي أم مجرد auto-generated fields؟
+                const savedStateRaw = localStorage.getItem('lessonState_' + lesson.id);
+                let savedStateObj = null;
+                try {
+                    savedStateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null;
+                } catch (e) { savedStateObj = null; }
+
+                const hasReport = hasRealSetupData(savedStateObj);
+                // ✅ نمرر null لدوال الحالة/الشارات لو مفيش إعداد حقيقي
+                const savedState = hasReport ? JSON.stringify(savedStateObj) : null;
+
+                const isPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
                 const hiddenClass = isPublished ? '' : 'hidden-card';
                 const lockedClass = teacherIsBlocked ? 'locked-card' : '';
-                const needsSetupClass = needsSetup ? 'needs-setup-card' : '';
-                
-                const targetUrl = hasReport 
-                    ? `./end.html?lessonId=${lesson.id}` 
-                    : `./group.html?lessonId=${lesson.id}`;
-                
-                const btnText = hasReport ? 'التقرير ➔' : '⚠️ استكمل البيانات ➔';
-                const descText = hasReport 
-                    ? 'تم الإعداد بنجاح، يمكنك إدارة التفاصيل.' 
-                    : '⚠️ لم يتم الإعداد بعد — اضغط لملء بيانات المجموعة';
+                const targetUrl = hasReport ? `./end.html?lessonId=${lesson.id}` : `./group.html?lessonId=${lesson.id}`;
+                const btnText = hasReport ? 'التقرير ➔' : 'إعداد ➔';
+                const descText = hasReport ? 'تم الإعداد بنجاح، يمكنك إدارة التفاصيل.' : 'اضغط لإعداد المواعيد والمكان.';
 
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
-                // ✅ بانر تحذيري فوق الكارت لو المجموعة جديدة
-                const needsSetupBannerHTML = needsSetup ? `
-                    <div class="needs-setup-banner">
-                        <span class="needs-setup-icon">⚠️</span>
-                        <span class="needs-setup-text">هذه المجموعة تحتاج استكمال البيانات</span>
-                    </div>
-                ` : '';
-
-                // ✅ منع إظهار بانر "مخفية" لو المجموعة لسه محتاجة إعداد
-                const hiddenNoticeHTML = (hasReport && !isPublished && !teacherIsBlocked) ? `
+                const hiddenNoticeHTML = (!isPublished && !teacherIsBlocked) ? `
                     <div class="hidden-notice-banner">
                         <span class="hidden-notice-icon">🔒</span>
                         <span class="hidden-notice-text">هذه المجموعة مخفية عن الطلاب</span>
@@ -2561,11 +2511,8 @@
                     : 
                     `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 16px; height: 16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223A10.477 10.477 0 001.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.45 10.45 0 0112 4.5c4.756 0 8.773 3.162 10.065 7.498a10.523 10.523 0 01-4.293 5.774M6.228 6.228L3 3m3.228 3.228l3.65 3.65m7.894 7.894L21 21m-3.228-3.228l-3.65-3.65m0 0a3 3 0 10-4.243-4.243m4.242 4.242L9.88 9.88" /></svg>`;
 
-                // ✅ زر العين معطّل لو المجموعة محتاجة إعداد (مينفعش تنشر مجموعة فاضية)
-                const visibilityDisabled = teacherIsBlocked || needsSetup;
-
                 const newCard = document.createElement('div');
-                newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${lockedClass} ${needsSetupClass}`;
+                newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${lockedClass}`;
                 
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
@@ -2573,7 +2520,7 @@
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
                         </button>
-                        <button class="btn-action btn-visibility ${isPublished ? 'published' : ''}" title="${needsSetup ? 'استكمل البيانات أولاً' : 'إخفاء/إظهار للطلاب'}" onclick="toggleVisibility('${lesson.id}', event)" ${visibilityDisabled ? 'disabled' : ''}>
+                        <button class="btn-action btn-visibility ${isPublished ? 'published' : ''}" title="إخفاء/إظهار للطلاب" onclick="toggleVisibility('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
                             ${eyeIcon}
                         </button>
                         <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal('${lesson.id}', event)">
@@ -2584,13 +2531,12 @@
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
                     <div class="card-text">
-                        ${needsSetupBannerHTML}
                         ${hiddenNoticeHTML}
                         ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
-                        <p style="${needsSetup ? 'color:#DC2626;font-weight:900;' : ''}">${descText}</p>
-                        <a href="${targetUrl}" class="btn-go" style="${needsSetup ? 'background:linear-gradient(135deg,#F59E0B,#D97706);box-shadow:0 4px 12px rgba(245,158,11,0.4);' : ''}">${btnText}</a>
+                        <p>${descText}</p>
+                        <a href="${targetUrl}" class="btn-go">${btnText}</a>
                     </div>
                 `;
                 
@@ -2680,9 +2626,19 @@
                 return;
             }
 
-            const savedState = localStorage.getItem('lessonState_' + lessonId);
+            // ✅ فحص حقيقي: هل فيه إعداد فعلي؟
+            const savedStateRaw = localStorage.getItem('lessonState_' + lessonId);
+            let stateObj = null;
+            try {
+                stateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null;
+            } catch (e) { stateObj = null; }
+
+            const hasRealData = hasRealSetupData(stateObj);
             const isPublished = localStorage.getItem('publishState_' + lessonId) === 'true';
-            
+
+            const lesson = lessons.find(l => l.id === lessonId);
+            const lessonTitle = lesson ? lesson.title : `مجموعة`;
+
             const modal = document.getElementById('groupModal');
             const nameEl = document.getElementById('modalGroupName');
             const contentEl = document.getElementById('modalBodyContent');
@@ -2692,9 +2648,9 @@
             nameEl.style.flexWrap = 'wrap';
             nameEl.style.gap = '5px';
 
-            if (savedState) {
-                const data = JSON.parse(savedState);
-                const groupName = data.g_name || `مجموعة رقم ${lessonId}`;
+            if (hasRealData) {
+                const data = stateObj;
+                const groupName = data.g_name || lessonTitle;
                 
                 let statusBadge = isPublished ? 
                     `<span style="font-size: 9.5px; background: #D1FAE5; color: #065F46; padding: 2px 6px; border-radius: 99px; border: 1px solid #A7F3D0; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #10B981; border-radius: 50%; display: inline-block;"></span>ظاهر</span>` 
@@ -2749,25 +2705,8 @@
                     <p>📍 <b>العنوان:</b> ${data.m_address || 'لم يتم تحديد الموقع'}</p>
                 `;
             } else {
-                // ✅ رسالة واضحة مع زر مباشر لاستكمال البيانات
-                const lesson = lessons.find(l => l.id === lessonId);
-                const groupTitle = lesson ? lesson.title : `مجموعة رقم ${lessonId}`;
-                
-                nameEl.innerHTML = `<span>⚠️ ${groupTitle}</span>`;
-                contentEl.innerHTML = `
-                    <div style="text-align: center; padding: 8px 6px;">
-                        <p style="color: #DC2626; font-weight: 900; font-size: 13px; margin-bottom: 10px;">
-                            ⚠️ لم يتم إعداد بيانات هذه المجموعة بعد
-                        </p>
-                        <p style="color: #64748B; font-size: 11.5px; font-weight: 700; margin-bottom: 12px; line-height: 1.6;">
-                            لازم تملأ بيانات المجموعة (المواعيد، المكان، المادة...) قبل ما تظهر للطلاب
-                        </p>
-                        <a href="./group.html?lessonId=${lessonId}" 
-                           style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,#F59E0B,#D97706);color:white;padding:10px 20px;border-radius:12px;font-weight:900;font-size:12.5px;text-decoration:none;box-shadow:0 4px 12px rgba(245,158,11,0.4);border-bottom:3px solid #92400E;">
-                            ✏️ استكمل البيانات الآن
-                        </a>
-                    </div>
-                `;
+                nameEl.innerHTML = `<span>${lessonTitle}</span>`;
+                contentEl.innerHTML = `<p style="text-align: center; color: #EF4444; padding: 10px 6px;">⚠️ لم تقم بإعداد بيانات هذه المجموعة بعد. اضغط على زر "إعداد" للبدء.</p>`;
             }
 
             modal.classList.add('active');
