@@ -104,12 +104,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.03);
         }
 
-        .top-nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
         .hero-content {
             position: relative;
             z-index: 3;
@@ -194,151 +188,103 @@
             flex: 1;
         }
 
-        /* ============================================ */
-        /* ✅ شريط الترحيب — نسخة شيك جديدة */
-        /* ============================================ */
-        .welcome-banner {
+        /* =========================================
+           ستايل كارت الترحيب (التصميم الليلي)
+        ========================================== */
+        .evening-banner {
             position: relative;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            margin-bottom: 14px;
-            background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-            border: 1.5px solid #E2E8F0;
-            border-right: 4px solid #10B981;
-            border-radius: 16px;
-            box-shadow: 0 4px 16px -4px rgba(15, 45, 92, 0.08),
-                        0 1px 3px rgba(0,0,0,0.04);
+            gap: 14px;
+            padding: 16px 20px;
+            margin-bottom: 16px;
+            background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #4338CA 100%);
+            border: 2px solid #4F46E5;
+            border-bottom: 5px solid #3730A3;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px -5px rgba(49, 46, 129, 0.4);
             overflow: hidden;
-            animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            color: white;
+            animation: slideInDown 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .welcome-banner::after {
-            content: '';
+        @keyframes slideInDown {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .evening-banner::before {
+            content: '🌙';
             position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%);
-            border-radius: 0 16px 16px 0;
+            left: -10px;
+            top: -15px;
+            font-size: 80px;
+            opacity: 0.1;
+            transform: rotate(-15deg);
+            pointer-events: none;
         }
 
-        @keyframes welcomeSlideIn {
-            from { opacity: 0; transform: translateY(-12px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
-
-        .welcome-banner.is-miss {
-            border-right-color: #EC4899;
-        }
-        .welcome-banner.is-miss::after {
-            background: linear-gradient(180deg, #F472B6 0%, #EC4899 50%, #DB2777 100%);
-        }
-
-        .welcome-avatar {
-            flex-shrink: 0;
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
+        .evening-avatar {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 22px;
-            background: linear-gradient(135deg, #ECFDF5, #D1FAE5);
-            border: 1.5px solid #A7F3D0;
-            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+            font-size: 28px;
+            background: linear-gradient(135deg, #FACC15, #F59E0B);
+            border: 3px solid #FEF08A;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.4);
             z-index: 2;
+            flex-shrink: 0;
             animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        .welcome-banner.is-miss .welcome-avatar {
-            background: linear-gradient(135deg, #FDF2F8, #FCE7F3);
-            border-color: #FBCFE8;
-            box-shadow: 0 2px 8px rgba(236, 72, 153, 0.15);
-        }
-
         @keyframes avatarPop {
-            0%   { transform: scale(0) rotate(-20deg); }
-            70%  { transform: scale(1.08) rotate(3deg); }
-            100% { transform: scale(1) rotate(0); }
+            0% { transform: scale(0) rotate(-30deg); }
+            70% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
-        .welcome-text {
+        .evening-text {
             flex: 1;
-            min-width: 0;
+            z-index: 2;
             display: flex;
             flex-direction: column;
             align-items: flex-start;
             text-align: right;
-            z-index: 2;
+            min-width: 0;
         }
 
-        .welcome-greeting {
-            font-size: 10.5px;
+        .evening-greeting {
+            font-size: 13px;
             font-weight: 800;
-            color: #059669;
-            line-height: 1.2;
+            color: #A5B4FC;
             margin-bottom: 2px;
-            letter-spacing: 0.2px;
         }
 
-        .welcome-banner.is-miss .welcome-greeting {
-            color: #DB2777;
-        }
-
-        .welcome-name {
-            font-size: 15px;
+        .evening-name {
+            font-size: 18px;
             font-weight: 900;
-            color: #0F2D5C;
-            line-height: 1.25;
+            color: #FFFFFF;
+            line-height: 1.2;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
-            margin-bottom: 3px;
-            letter-spacing: -0.2px;
         }
 
-        .welcome-banner.is-miss .welcome-name {
-            color: #831843;
-        }
-
-        .welcome-phone {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 10.5px;
-            font-weight: 800;
-            color: #475569;
-            background: #F1F5F9;
-            padding: 2px 8px;
-            border-radius: 99px;
-            border: 1px solid #E2E8F0;
-            direction: ltr;
-            letter-spacing: 0.3px;
-        }
-
-        .welcome-banner.is-miss .welcome-phone {
-            background: #FDF2F8;
-            border-color: #FBCFE8;
-            color: #BE185D;
-        }
-
-        .welcome-sparkle {
+        .evening-stars {
             position: absolute;
-            top: 8px;
-            left: 12px;
-            font-size: 12px;
-            animation: sparkleTwinkle 2.5s ease-in-out infinite;
-            z-index: 1;
-            opacity: 0.6;
+            top: 15px;
+            right: 20px;
+            font-size: 16px;
+            animation: pulseStar 2s infinite alternate;
         }
 
-        @keyframes sparkleTwinkle {
-            0%, 100% { transform: scale(1) rotate(0); opacity: 0.6; }
-            50%      { transform: scale(1.15) rotate(15deg); opacity: 1; }
+        @keyframes pulseStar {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.2); opacity: 1; }
         }
 
         .blocked-banner {
@@ -772,100 +718,83 @@
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
-        /* ============================================ */
-        /* ✅ زر إنشاء مجموعة جديدة — نسخة شيك جديدة */
-        /* ============================================ */
-        .card-add-new {
-            position: relative;
+        /* =========================================
+           كارت إنشاء مجموعة عصري
+        ========================================== */
+        .modern-add-card {
             background: linear-gradient(135deg, #FFFFFF 0%, #F8FAFC 100%);
-            border: 1.5px dashed #10B981;
-            border-right: 4px solid #10B981;
+            border: 2px solid #E2E8F0;
+            border-bottom: 6px solid #2563EB; 
             border-radius: 22px;
-            justify-content: center;
-            flex-direction: column;
-            text-align: center;
-            padding: 22px 16px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.15);
             cursor: pointer;
-            box-shadow: 0 4px 16px -4px rgba(15, 45, 92, 0.08),
-                        0 1px 3px rgba(0,0,0,0.04);
-            transition: all 0.25s ease;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
             overflow: hidden;
         }
 
-        .card-add-new::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 4px;
-            background: linear-gradient(180deg, #34D399 0%, #10B981 50%, #059669 100%);
-            border-radius: 0 22px 22px 0;
-        }
-
-        .card-add-new:hover {
-            background: linear-gradient(135deg, #ECFDF5 0%, #F0FDF4 100%);
-            border-color: #059669;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 24px -6px rgba(16, 185, 129, 0.25),
-                        0 2px 6px rgba(0,0,0,0.05);
-        }
-
-        .card-add-new:active {
-            transform: scale(0.98);
-            box-shadow: 0 2px 8px -2px rgba(16, 185, 129, 0.2);
-        }
-
-        .card-add-new.disabled-add {
+        .modern-add-card.disabled-add {
             opacity: 0.5;
             pointer-events: none;
             filter: grayscale(1);
         }
 
-        .card-add-new .icon-plus {
-            width: 52px;
-            height: 52px;
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: #FFFFFF;
+        .modern-add-card:hover {
+            transform: translateY(-4px);
+            border-color: #BFDBFE;
+            box-shadow: 0 12px 25px -6px rgba(37, 99, 235, 0.3);
+        }
+
+        .modern-add-card:active {
+            transform: scale(0.98);
+        }
+
+        .modern-add-text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: right;
+        }
+
+        .modern-add-title {
+            color: #0F2D5C;
+            font-size: 17px;
+            font-weight: 900;
+            margin-bottom: 4px;
+        }
+
+        .modern-add-subtitle {
+            font-size: 11.5px;
+            font-weight: 700;
+            color: #64748B;
+        }
+
+        .modern-add-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #3B82F6, #1D4ED8);
             border-radius: 16px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 10px;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            animation: plusPulse 2.5s ease-in-out infinite;
+            border: 3px solid #DBEAFE;
+            box-shadow: 0 6px 15px rgba(37, 99, 235, 0.4);
+            transition: transform 0.4s ease;
+            flex-shrink: 0;
         }
 
-        .card-add-new:hover .icon-plus {
-            transform: scale(1.1) rotate(90deg);
-            box-shadow: 0 6px 18px -2px rgba(16, 185, 129, 0.6);
+        .modern-add-card:hover .modern-add-icon {
+            transform: rotate(90deg) scale(1.1);
         }
 
-        .card-add-new .icon-plus svg {
+        .modern-add-icon svg {
             stroke: #FFFFFF;
-            stroke-width: 2.8;
-        }
-
-        @keyframes plusPulse {
-            0%, 100% { box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.4); }
-            50%      { box-shadow: 0 4px 18px -1px rgba(16, 185, 129, 0.65); }
-        }
-
-        .card-add-new h2 {
-            color: #0F2D5C;
-            font-size: 15.5px;
-            font-weight: 900;
-            margin: 0;
-            letter-spacing: -0.2px;
-        }
-
-        .card-add-new p {
-            font-size: 10.5px;
-            color: #64748B;
-            font-weight: 700;
-            margin-top: 4px;
+            width: 26px;
+            height: 26px;
         }
 
         .card-image-box {
@@ -1295,11 +1224,10 @@
                 padding-left: 0;
                 padding-top: 35px;
             }
-            .welcome-banner { padding: 10px 12px; gap: 10px; }
-            .welcome-avatar { width: 40px; height: 40px; font-size: 20px; border-radius: 12px; }
-            .welcome-greeting { font-size: 10px; }
-            .welcome-name { font-size: 14px; }
-            .welcome-phone { font-size: 10px; }
+            .evening-banner { padding: 12px 14px; gap: 12px; border-radius: 16px; }
+            .evening-avatar { width: 48px; height: 48px; font-size: 24px; border-width: 2px; }
+            .evening-greeting { font-size: 11.5px; }
+            .evening-name { font-size: 16px; }
 
             .quick-actions-bar {
                 grid-template-columns: 1fr 1fr;
@@ -1319,6 +1247,9 @@
             .card-image-box { width: 68px; height: 68px; }
             .card-text { padding-left: 0; }
             .card-text h2 { font-size: 15px; }
+            .modern-add-icon { width: 44px; height: 44px; }
+            .modern-add-title { font-size: 15px; }
+            .modern-add-subtitle { font-size: 10px; }
         }
     </style>
 </head>
@@ -1388,13 +1319,13 @@
 
             <div id="blockedBannerContainer"></div>
 
-            <div id="welcomeBanner" class="welcome-banner" style="display: none;">
-                <div class="welcome-sparkle">✨</div>
-                <div class="welcome-avatar" id="welcomeAvatar">👨‍🏫</div>
-                <div class="welcome-text">
-                    <div class="welcome-greeting" id="welcomeGreeting">مرحباً بعودتك</div>
-                    <div class="welcome-name" id="welcomeName">--</div>
-                    <div class="welcome-phone" id="welcomePhone">📱 --</div>
+            <!-- كارت الترحيب الليلي الأنيق -->
+            <div id="welcomeBanner" class="evening-banner" style="display: none;">
+                <div class="evening-stars">✨</div>
+                <div class="evening-avatar" id="welcomeAvatar">👨‍🏫</div>
+                <div class="evening-text">
+                    <div class="evening-greeting" id="welcomeGreeting">مساء النور والسرور</div>
+                    <div class="evening-name" id="welcomeName">--</div>
                 </div>
             </div>
 
@@ -1547,7 +1478,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .modern-add-card');
             if (clickableElement) { playHighPitchSound(); }
         });
 
@@ -1690,10 +1621,8 @@
                 const avatarEl = document.getElementById('welcomeAvatar');
                 const greetingEl = document.getElementById('welcomeGreeting');
                 const nameEl = document.getElementById('welcomeName');
-                const phoneEl = document.getElementById('welcomePhone');
 
                 const isMiss = title === 'مس';
-
                 avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
 
                 const now = new Date();
@@ -1705,24 +1634,11 @@
                 else greeting = 'سهرة سعيدة ✨';
 
                 const prefix = isMiss ? 'مس' : 'مستر';
-                greetingEl.textContent = `${greeting} يا ${prefix}`;
-                nameEl.textContent = name || 'بدون اسم';
-
-                if (phone && phone.length >= 10) {
-                    phoneEl.textContent = `📱 ${phone}`;
-                    phoneEl.style.display = 'inline-flex';
-                } else {
-                    phoneEl.style.display = 'none';
-                }
-
-                if (isMiss) {
-                    banner.classList.add('is-miss');
-                } else {
-                    banner.classList.remove('is-miss');
-                }
+                greetingEl.textContent = greeting;
+                nameEl.textContent = `${prefix} / ${name || 'بدون اسم'}`;
 
                 banner.style.display = 'flex';
-                console.log(`✅ [Welcome] عرض الترحيب: ${prefix} ${name} (${phone})`);
+                console.log(`✅ [Welcome] عرض الترحيب: ${prefix} ${name}`);
             } catch (err) {
                 console.warn('⚠️ [Welcome] فشل عرض الترحيب:', err);
                 const banner = document.getElementById('welcomeBanner');
@@ -2504,15 +2420,18 @@
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             
+            // كارت إنشاء المجموعة بالتصميم العصري
             const addCardHTML = `
-                <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
-                    <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.8" stroke="currentColor" style="width: 26px; height: 26px;">
+                <div onclick="createNewLesson(true)" class="modern-add-card ${teacherIsBlocked ? 'disabled-add' : ''}">
+                    <div class="modern-add-text">
+                        <h2 class="modern-add-title">${teacherIsBlocked ? '🔒 الحساب محظور' : 'إنشاء مجموعة جديدة'}</h2>
+                        ${!teacherIsBlocked ? '<span class="modern-add-subtitle">اضغط هنا لإضافة مجموعة لجدولك</span>' : ''}
+                    </div>
+                    <div class="modern-add-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
-                    <h2>${teacherIsBlocked ? '🔒 الحساب محظور' : 'إنشاء مجموعة جديدة'}</h2>
-                    ${!teacherIsBlocked ? '<p>اضغط لإضافة مجموعة جديدة</p>' : ''}
                 </div>
             `;
             
