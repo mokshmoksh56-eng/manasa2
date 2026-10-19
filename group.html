@@ -779,19 +779,15 @@
         </div>
     </div>
 
-    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
+    <!-- 🌟 Firebase Module 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
-          getFirestore,
-          doc,
-          setDoc,
-          getDoc,
-          collection,
-          getDocs,
-          deleteDoc,
-          onSnapshot
+          getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+      
+      // ✅ إضافة مكتبة المصادقة للتعرف على المعلم
+      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
@@ -804,8 +800,10 @@
 
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
+      const auth = getAuth(app); // ✅ تفعيل المصادقة
 
       window.db = db;
+      window.auth = auth; // حفظ للوصول السريع
       window.doc = doc;
       window.setDoc = setDoc;
       window.fsGetDoc = getDoc;
@@ -814,7 +812,16 @@
       window.fsDeleteDoc = deleteDoc;
       window.fsOnSnapshot = onSnapshot;
 
-      console.log("✅ Firebase + Firestore جاهز في group.html");
+      // ✅ مراقبة حالة الدخول للتأكد من ربط الجلسة
+      onAuthStateChanged(auth, (user) => {
+          if (user) {
+              console.log("✅ المستخدم مسجل دخول بأمان في group.html:", user.email);
+          } else {
+              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth (قد يتم رفض الحفظ من السحابة)");
+          }
+      });
+
+      console.log("✅ Firebase + Auth + Firestore جاهزين في group.html");
     </script>
 
     <script>
