@@ -1107,11 +1107,19 @@
             }
         }
 
+        // ==========================================
+        // ✅ متغيرات لفلترة المواد عند تغيير المرحلة/الصف
+        // ==========================================
+        let lastStageForPrune = null;
+
         function updateGrades(preferredGrade = '') {
             const curr = getCurriculum();
             const stage = document.getElementById('s_stage').value;
             const gSelect = document.getElementById('s_grade');
             const currentGrade = preferredGrade || gSelect.value;
+
+            // ✅ هل المرحلة اتغيرت يدوياً؟ (مش أثناء تحميل state)
+            const stageChanged = (lastStageForPrune !== null && stage !== lastStageForPrune);
 
             gSelect.innerHTML = '<option value="">-- اختر الصف --</option>';
             if (stage && curr[stage]) {
@@ -1123,9 +1131,19 @@
                 if (currentGrade && (curr[stage].grades || []).includes(currentGrade)) {
                     gSelect.value = currentGrade;
                 }
+
+                // ✅ لو المرحلة اتغيرت يدوياً → امسح كل المواد القديمة
+                if (stageChanged && !isLoadingState && selectedSubjects.length > 0) {
+                    selectedSubjects = [];
+                    renderChips();
+                    renderQuickSubjectsBox();
+                }
+
+                lastStageForPrune = stage;
                 updateSubjects();
             } else {
                 gSelect.disabled = true;
+                lastStageForPrune = stage;
                 const sSelect = document.getElementById('s_subject');
                 sSelect.innerHTML = '<option value="">-- اختر الصف أولاً --</option>';
                 sSelect.disabled = true;
@@ -1145,6 +1163,17 @@
                     sSelect.innerHTML += `<option value="${s}">${s}</option>`;
                 });
                 sSelect.disabled = false;
+
+                // ✅ فلترة: نشيل أي مادة صفها ≠ الصف الحالي
+                // مثال: لو الصف "الأول" → نشيل "الأول الثانوي - أحياء" ونسيب "الأول - عربي" فقط
+                const prefix = grade + ' - ';
+                const before = selectedSubjects.length;
+                selectedSubjects = selectedSubjects.filter(s => String(s).startsWith(prefix));
+
+                if (selectedSubjects.length !== before) {
+                    renderChips();
+                    if (!isLoadingState) saveState();
+                }
             } else {
                 sSelect.disabled = true;
             }
@@ -1293,6 +1322,7 @@
 
         let currentLessonId = '1';
         let isEditMode = false;
+        let isLoadingState = false;  // ✅ جديد: لمنع الحفظ/المسح أثناء التحميل
         let mapInitialized = false;
         let map, marker;
         
@@ -1425,89 +1455,94 @@
         }
 
         function loadState() {
-            const saved = localStorage.getItem('lessonState_' + currentLessonId);
-            if (saved) {
-                const state = JSON.parse(saved);
-                
-                if(state.g_name) document.getElementById('g_name').value = state.g_name;
-                if(state.g_center) document.getElementById('g_center').value = state.g_center;
-                if(state.g_count) document.getElementById('g_count').value = state.g_count;
-                
-                if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
-                if(state.start_min) document.getElementById('start_min').value = state.start_min;
-                if(state.start_ampm) document.getElementById('start_ampm').value = state.start_ampm;
-                if(state.end_hour) document.getElementById('end_hour').value = state.end_hour;
-                if(state.end_min) document.getElementById('end_min').value = state.end_min;
-                if(state.end_ampm) document.getElementById('end_ampm').value = state.end_ampm;
-                
-                if(state.g_days && Array.isArray(state.g_days)) {
-                    state.g_days.forEach(day => {
-                        if(day === 'السبت') document.getElementById('day_sat').checked = true;
-                        if(day === 'الأحد') document.getElementById('day_sun').checked = true;
-                        if(day === 'الإثنين') document.getElementById('day_mon').checked = true;
-                        if(day === 'الثلاثاء') document.getElementById('day_tue').checked = true;
-                        if(day === 'الأربعاء') document.getElementById('day_wed').checked = true;
-                        if(day === 'الخميس') document.getElementById('day_thu').checked = true;
-                        if(day === 'الجمعة') document.getElementById('day_fri').checked = true;
-                    });
-                }
+            isLoadingState = true;
+            try {
+                const saved = localStorage.getItem('lessonState_' + currentLessonId);
+                if (saved) {
+                    const state = JSON.parse(saved);
 
-                if(state.g_months && Array.isArray(state.g_months)) {
-                    const monthMap = {
-                        'يناير': 'm_jan', 'فبراير': 'm_feb', 'مارس': 'm_mar', 'أبريل': 'm_apr',
-                        'مايو': 'm_may', 'يونيو': 'm_jun', 'يوليو': 'm_jul', 'أغسطس': 'm_aug',
-                        'سبتمبر': 'm_sep', 'أكتوبر': 'm_oct', 'نوفمبر': 'm_nov', 'ديسمبر': 'm_dec'
-                    };
-                    state.g_months.forEach(m => {
-                        if(monthMap[m]) document.getElementById(monthMap[m]).checked = true;
-                    });
-                }
+                    if(state.g_name) document.getElementById('g_name').value = state.g_name;
+                    if(state.g_center) document.getElementById('g_center').value = state.g_center;
+                    if(state.g_count) document.getElementById('g_count').value = state.g_count;
 
-                if(state.g_repeat_weekly !== undefined) {
-                    document.getElementById('g_repeat_weekly').checked = state.g_repeat_weekly;
-                }
+                    if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
+                    if(state.start_min) document.getElementById('start_min').value = state.start_min;
+                    if(state.start_ampm) document.getElementById('start_ampm').value = state.start_ampm;
+                    if(state.end_hour) document.getElementById('end_hour').value = state.end_hour;
+                    if(state.end_min) document.getElementById('end_min').value = state.end_min;
+                    if(state.end_ampm) document.getElementById('end_ampm').value = state.end_ampm;
 
-                if(state.g_gender && document.getElementById(state.g_gender)) document.getElementById(state.g_gender).checked = true;
-                if(state.g_loc && document.getElementById(state.g_loc)) document.getElementById(state.g_loc).checked = true;
-                
-                if(state.selectedSubjects) {
-                    selectedSubjects = state.selectedSubjects;
-                    renderChips();
-                }
-
-                if(state.s_stage && getCurriculum()[state.s_stage]) {
-                    document.getElementById('s_stage').value = state.s_stage;
-                    updateGrades(state.s_grade || '');
-                }
-
-                if(state.m_address) document.getElementById('m_address').value = state.m_address;
-                
-                if(state.g_publish_map !== undefined) {
-                    document.getElementById('g_publish_map').checked = state.g_publish_map;
-                }
-
-                if(state.lat && state.lng) {
-                    savedLat = state.lat;
-                    savedLng = state.lng;
-                }
-
-                if(state.step && state.step > 1) {
-                    nextStep(state.step, true);
-                }
-            }
-
-            const loggedInTeacherStr = localStorage.getItem('loggedInTeacher');
-            if (loggedInTeacherStr) {
-                try {
-                    const teacher = JSON.parse(loggedInTeacherStr);
-                    const teacherInput = document.getElementById('g_teacher');
-                    if (teacherInput) {
-                        const tName = teacher.fullName || `${teacher.title || ''} ${teacher.name || ''}`.trim();
-                        if (tName) teacherInput.value = tName;
+                    if(state.g_days && Array.isArray(state.g_days)) {
+                        state.g_days.forEach(day => {
+                            if(day === 'السبت') document.getElementById('day_sat').checked = true;
+                            if(day === 'الأحد') document.getElementById('day_sun').checked = true;
+                            if(day === 'الإثنين') document.getElementById('day_mon').checked = true;
+                            if(day === 'الثلاثاء') document.getElementById('day_tue').checked = true;
+                            if(day === 'الأربعاء') document.getElementById('day_wed').checked = true;
+                            if(day === 'الخميس') document.getElementById('day_thu').checked = true;
+                            if(day === 'الجمعة') document.getElementById('day_fri').checked = true;
+                        });
                     }
-                } catch (e) {}
+
+                    if(state.g_months && Array.isArray(state.g_months)) {
+                        const monthMap = {
+                            'يناير': 'm_jan', 'فبراير': 'm_feb', 'مارس': 'm_mar', 'أبريل': 'm_apr',
+                            'مايو': 'm_may', 'يونيو': 'm_jun', 'يوليو': 'm_jul', 'أغسطس': 'm_aug',
+                            'سبتمبر': 'm_sep', 'أكتوبر': 'm_oct', 'نوفمبر': 'm_nov', 'ديسمبر': 'm_dec'
+                        };
+                        state.g_months.forEach(m => {
+                            if(monthMap[m]) document.getElementById(monthMap[m]).checked = true;
+                        });
+                    }
+
+                    if(state.g_repeat_weekly !== undefined) {
+                        document.getElementById('g_repeat_weekly').checked = state.g_repeat_weekly;
+                    }
+
+                    if(state.g_gender && document.getElementById(state.g_gender)) document.getElementById(state.g_gender).checked = true;
+                    if(state.g_loc && document.getElementById(state.g_loc)) document.getElementById(state.g_loc).checked = true;
+
+                    if(state.selectedSubjects) {
+                        selectedSubjects = state.selectedSubjects;
+                        renderChips();
+                    }
+
+                    if(state.s_stage && getCurriculum()[state.s_stage]) {
+                        document.getElementById('s_stage').value = state.s_stage;
+                        updateGrades(state.s_grade || '');
+                    }
+
+                    if(state.m_address) document.getElementById('m_address').value = state.m_address;
+
+                    if(state.g_publish_map !== undefined) {
+                        document.getElementById('g_publish_map').checked = state.g_publish_map;
+                    }
+
+                    if(state.lat && state.lng) {
+                        savedLat = state.lat;
+                        savedLng = state.lng;
+                    }
+
+                    if(state.step && state.step > 1) {
+                        nextStep(state.step, true);
+                    }
+                }
+
+                const loggedInTeacherStr = localStorage.getItem('loggedInTeacher');
+                if (loggedInTeacherStr) {
+                    try {
+                        const teacher = JSON.parse(loggedInTeacherStr);
+                        const teacherInput = document.getElementById('g_teacher');
+                        if (teacherInput) {
+                            const tName = teacher.fullName || `${teacher.title || ''} ${teacher.name || ''}`.trim();
+                            if (tName) teacherInput.value = tName;
+                        }
+                    } catch (e) {}
+                }
+                checkTeacherBlockedStatus();
+            } finally {
+                isLoadingState = false;
             }
-            checkTeacherBlockedStatus();
         }
 
         // ✅ دالة مساعدة لتحديث عنوان الهيدر
