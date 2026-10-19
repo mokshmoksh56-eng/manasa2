@@ -16,6 +16,7 @@
         :root {
             --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
             --emerald-900:#064E3B; --emerald-600:#10B981;
+            --pure-red:#DC2626; --pure-green:#16A34A;
         }
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
@@ -208,6 +209,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
+        /* ✅ الكارت الأساسي */
         .record-card {
             background: #FFFFFF;
             border-radius: 22px;
@@ -219,13 +221,58 @@
             position: relative;
             overflow: hidden;
         }
-        .record-card.is-mr { border-top: 5px solid #2563EB; }
-        .record-card.is-ms { border-top: 5px solid #EC4899; }
-        .record-card.is-blocked { opacity: 0.72; border-top-color: #EF4444; border-bottom-color: #991B1B; background: #FFFBFB; }
-        .record-card.is-free { border-top-color: #10B981 !important; box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25); }
+
         .record-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
+        }
+
+        /* ✅ الحظر: أحمر صريح - أعلى الأولوية */
+        .record-card.is-blocked {
+            opacity: 1 !important;
+            background: linear-gradient(135deg, #FEF2F2 0%, #FEE2E2 50%, #FECACA 100%) !important;
+            border: 3px solid var(--pure-red) !important;
+            border-top: 6px solid var(--pure-red) !important;
+            border-bottom: 6px solid #991B1B !important;
+            box-shadow: 0 12px 30px -10px rgba(220, 38, 38, 0.4) !important;
+        }
+        .record-card.is-blocked h3,
+        .record-card.is-blocked .teacher-name {
+            color: #7F1D1D !important;
+        }
+
+        /* ✅ المسموح: أخضر صريح - أعلى الأولوية */
+        .record-card.is-allowed {
+            opacity: 1 !important;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%) !important;
+            border: 3px solid var(--pure-green) !important;
+            border-top: 6px solid #22C55E !important;
+            border-bottom: 6px solid #15803D !important;
+            box-shadow: 0 12px 30px -10px rgba(22, 163, 74, 0.4) !important;
+        }
+        .record-card.is-allowed h3,
+        .record-card.is-allowed .teacher-name {
+            color: #064E3B !important;
+        }
+
+        /* ✅ خلفية الجدول داخل الكارت الملون */
+        .record-card.is-blocked .unified-schedule-box {
+            border: 2px solid #FCA5A5;
+            background: #FFFFFF;
+        }
+        .record-card.is-blocked .unified-schedule-table th {
+            background: #FEE2E2;
+            color: #991B1B;
+            border-bottom: 2px solid #FCA5A5;
+        }
+        .record-card.is-allowed .unified-schedule-box {
+            border: 2px solid #86EFAC;
+            background: #FFFFFF;
+        }
+        .record-card.is-allowed .unified-schedule-table th {
+            background: #DCFCE7;
+            color: #065F46;
+            border-bottom: 2px solid #86EFAC;
         }
 
         .info-pill {
@@ -448,6 +495,34 @@
         .cloud-status-badge.syncing { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
         .cloud-status-badge.synced { background: #D1FAE5; color: #065F46; border-color: #6EE7B7; }
         .cloud-status-badge.offline { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
+
+        /* ✅ ستاتس شارات صريحة */
+        .status-pure-red {
+            background: #DC2626 !important;
+            color: #FFFFFF !important;
+            border: 2px solid #991B1B !important;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 3px 8px rgba(220, 38, 38, 0.4);
+        }
+        .status-pure-green {
+            background: #16A34A !important;
+            color: #FFFFFF !important;
+            border: 2px solid #15803D !important;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 3px 8px rgba(22, 163, 74, 0.4);
+        }
     </style>
 </head>
 <body>
@@ -1109,7 +1184,6 @@
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
         }
 
-        // ✅ تعديل: إضافة isFree
         function calculateExpiration(regDateStr, plan, isFree = false) {
             if (isFree) return { expired: false, text: '♾️ مجاني - غير محدود' };
             if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
@@ -1177,7 +1251,6 @@
                 let verifRaw = t.verification || '30 يوم تجريبي';
                 if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
 
-                // ✅ إضافة isFree
                 unifiedMap.set(targetKey, {
                     type: 'account_only', 
                     docId: t.id,
@@ -1273,7 +1346,6 @@
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
-            // ✅ حساب حالة الانتهاء مع isFree
             const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
                 entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification, entry.isFree);
                 if (entry.isFree) {
@@ -1288,7 +1360,7 @@
         }
 
         // ==========================================
-        // 🛡️ تحديث التوثيق/الحظر + مزامنة حالة المجموعات
+        // 🛡️ تحديث التوثيق/الحظر
         // ==========================================
         async function updateVerification(docId, phone, val, teacherName = '') {
             const cleanName = cleanTeacherName(teacherName);
@@ -1436,10 +1508,8 @@
                 
                 setCloudStatus('synced', '☁️ متزامن مع السحابة');
                 
-                if (teacherKey) {
-                    if (newFreeStatus) {
-                        localStorage.removeItem('teacherBlocked_' + teacherKey);
-                    }
+                if (teacherKey && newFreeStatus) {
+                    localStorage.removeItem('teacherBlocked_' + teacherKey);
                 }
                 
                 if (newFreeStatus) {
@@ -1501,6 +1571,9 @@
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
 
+        // ==========================================
+        // 🎨 الدالة الرئيسية لرسم الكروت
+        // ==========================================
         async function renderAllRecords() {
             const { records, totalLessonsCount } = await collectAllAppData();
             const uniqueMrSet = new Set(), uniqueMsSet = new Set();
@@ -1551,11 +1624,13 @@
 
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                const blockClass = r.isBlocked ? 'is-blocked' : (r.isFree ? 'is-free' : '');
+                // ✅ class الحالة: أحمر صريح للمحظور، أخضر صريح للمسموح
+                const stateClass = r.isBlocked ? 'is-blocked' : 'is-allowed';
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
 
+                // ✅ الجدول يظهر دائماً لجميع المعلمين
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
                     const rowsHTML = r.groups.map(g => {
@@ -1579,38 +1654,45 @@
                     }).join('');
                     unifiedScheduleHTML = `<div class="unified-schedule-box"><table class="unified-schedule-table"><thead><tr><th>👥 المجموعة</th><th>🎓 المرحلة والصف</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead><tbody>${rowsHTML}</tbody></table></div>`;
                 } else {
-                    let stageName = r.stageKey;
-                    if (stageName === 'primary') stageName = 'المرحلة الابتدائية';
-                    else if (stageName === 'prep') stageName = 'المرحلة الإعدادية';
-                    else if (stageName === 'secondary') stageName = 'المرحلة الثانوية';
-                    else if (curr[r.stageKey] && curr[r.stageKey].name) stageName = curr[r.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
-
-                    let mapBtn = '';
-                    if (r.lat && r.lng) {
-                        mapBtn = `<button onclick="openMapModal('${r.address.replace(/'/g, "\\'")}', ${r.lat}, ${r.lng})" class="mt-1 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
-                    }
+                    // ✅ جدول فارغ لجميع المعلمين اللي ماعندهمش مجموعات — يظهر دايماً
                     unifiedScheduleHTML = `
-                        <div class="info-pill"><span class="label">🎓 المرحلة:</span><span class="text-slate-900 font-black">${stageName}</span></div>
-                        <div class="info-pill"><span class="label">👑 الصف والمادة:</span><span class="text-slate-900 font-black">${r.grade} — <span class="text-emerald-700">${r.subjects}</span></span></div>
-                        <div class="info-pill"><span class="label">📍 العنوان:</span><div><span>[${r.locType}] ${r.address}</span><br>${mapBtn}</div></div>
-                        <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>`;
+                        <div class="unified-schedule-box">
+                            <table class="unified-schedule-table">
+                                <thead>
+                                    <tr>
+                                        <th>👥 المجموعة</th>
+                                        <th>🎓 المرحلة والصف</th>
+                                        <th>⏰ المواعيد</th>
+                                        <th>📍 العنوان</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td colspan="4" style="text-align: center; padding: 14px; color: #64748B; font-weight: 900; background: #F8FAFC;">
+                                            📭 لا توجد مجموعات مسجّلة حتى الآن — سيتم تحديث الجدول عند إضافة المعلم لمجموعاته
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    `;
                 }
 
-                // ✅ شارة الحالة: مجاني / محظور / نشط
+                // ✅ شارة الحالة الصريحة: أحمر/أخضر
                 let statusBadgeHTML = '';
-                if (r.isFree) {
-                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-400">🎁 مجاني ♾️</span>`;
-                } else if (r.isBlocked) {
-                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
+                if (r.isBlocked) {
+                    statusBadgeHTML = `<span class="status-pure-red">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
+                } else if (r.isFree) {
+                    statusBadgeHTML = `<span class="status-pure-green">🎁 مجاني ♾️</span>`;
                 } else {
-                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ نشط</span>`;
+                    statusBadgeHTML = `<span class="status-pure-green">✅ نشط</span>`;
                 }
 
                 return `
-                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass}">
-                        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-200">
-                            <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-400">(${r.groupName})</span></div>
-                            <div class="flex items-center gap-1.5">${iconOnlyPhoneBadge}${statusBadgeHTML}<span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span></div>
+                    <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}">
+                        <div class="flex flex-wrap items-center justify-between gap-2 pb-3 mb-3 border-b border-dashed border-slate-300">
+                            <div class="flex items-center gap-2">${badgeHTML}<h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3><span class="text-xs font-bold text-slate-500">(${r.groupName})</span></div>
+                            <div class="flex items-center gap-1.5 flex-wrap">${iconOnlyPhoneBadge}${statusBadgeHTML}<span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span></div>
                         </div>
                         <div class="space-y-2">
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -1639,7 +1721,7 @@
 
                             <!-- 🎁 خانة المجاني المستقلة -->
                             <div class="info-pill" style="background:${r.isFree ? '#ECFDF5' : '#F0F9FF'}; border-color:${r.isFree ? '#86EFAC' : '#BAE6FD'};">
-                                <div class="flex items-center justify-between w-full gap-2">
+                                <div class="flex items-center justify-between w-full gap-2 flex-wrap">
                                     <div class="flex flex-col items-start">
                                         <span class="label ${r.isFree ? 'text-emerald-900' : 'text-sky-900'}">🎁 حساب مجاني (غير محدود):</span>
                                         <span class="text-[10px] font-bold ${r.isFree ? 'text-emerald-700' : 'text-slate-500'} mt-0.5">
@@ -1654,9 +1736,10 @@
                                 </div>
                             </div>
 
+                            <!-- ✅ الجدول ظاهر دايماً -->
                             ${unifiedScheduleHTML}
                         </div>
-                        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
                             <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
                             <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
                         </div>
