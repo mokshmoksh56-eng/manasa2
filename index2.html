@@ -1378,11 +1378,11 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                 </svg>
             </div>
-            <h3 class="modal-title" style="color: #991B1B;">تأكيد الحذف</h3>
-            <p class="modal-desc">هل أنت متأكد من رغبتك في حذف هذه المجموعة نهائياً؟ لا يمكن التراجع عن هذا الإجراء.</p>
+            <h3 class="modal-title" style="color: #991B1B;">تأكيد الحذف النهائي</h3>
+            <p class="modal-desc">هل أنت متأكد من حذف هذه المجموعة <b style="color: #DC2626;">نهائياً من السحابة</b>؟<br>لا يمكن التراجع عن هذا الإجراء.</p>
             <div class="modal-actions">
                 <button class="btn-modal btn-cancel" onclick="closeModal('deleteModal')">تراجع</button>
-                <button class="btn-modal btn-confirm-delete" id="confirmDeleteBtn">نعم، احذف</button>
+                <button class="btn-modal btn-confirm-delete" id="confirmDeleteBtn">نعم، احذف نهائياً</button>
             </div>
         </div>
     </div>
@@ -1886,12 +1886,10 @@
         //   (يعني 1,2,3 ومسحت 2 → الجديدة تبقى 2)
         // ==========================================
         function getNextGroupNumber() {
-            // ✅ لو مفيش أي مجموعات → نبدأ من 1
             if (!lessons || lessons.length === 0) {
                 return 1;
             }
 
-            // ✅ نجمع كل الأرقام المستخدمة حالياً
             const usedNumbers = new Set();
             lessons.forEach(l => {
                 const match = String(l.title || '').match(/مجموعة\s*رقم\s*(\d+)/);
@@ -1901,7 +1899,6 @@
                 }
             });
 
-            // ✅ ندوّر على أول رقم فاضي بدءًا من 1
             let nextNumber = 1;
             while (usedNumbers.has(nextNumber)) {
                 nextNumber++;
@@ -2484,7 +2481,7 @@
                         <button class="btn-action btn-visibility ${isPublished ? 'published' : ''}" title="إخفاء/إظهار للطلاب" onclick="toggleVisibility('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
                             ${eyeIcon}
                         </button>
-                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal('${lesson.id}', event)">
+                        <button class="btn-action btn-delete" title="حذف المجموعة نهائياً" onclick="openDeleteModal('${lesson.id}', event)">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
                         </button>
                     </div>
@@ -2511,25 +2508,55 @@
             document.getElementById('deleteModal').classList.add('active');
         }
 
+        // ==========================================
+        // 🗑️ حذف نهائي من Firebase + Storage
+        // ==========================================
         document.getElementById('confirmDeleteBtn').addEventListener('click', async function() {
-            if(itemToDelete !== null) {
-                const idToDelete = itemToDelete;
+            if(itemToDelete === null) return;
+
+            const idToDelete = itemToDelete;
+            const btn = this;
+            
+            // تعطيل الزر لمنع النقر المزدوج
+            btn.disabled = true;
+            btn.innerText = '⏳ جاري الحذف...';
+
+            try {
+                // 1) حذف من Firebase أولاً
+                if (window.db && window.fsDoc && window.fsDeleteDoc) {
+                    showFbSyncBadge('🗑️ جاري الحذف من السحابة...');
+                    try {
+                        await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", String(idToDelete)));
+                        console.log(`✅ [Firebase] تم حذف المستند ${idToDelete} نهائياً`);
+                        showFbSyncBadge('✅ تم الحذف من السحابة');
+                    } catch (fbErr) {
+                        console.error('❌ [Firebase] فشل الحذف:', fbErr);
+                        showFbSyncBadge('⚠️ فشل الحذف من السحابة', true);
+                        // نكمل الحذف المحلي على أي حال
+                    }
+                }
+
+                // 2) حذف من المصفوفة المحلية
                 lessons = lessons.filter(l => l.id !== idToDelete);
                 saveLessonsToStorage();
+
+                // 3) حذف من localStorage بالكامل
                 localStorage.removeItem('lessonState_' + idToDelete);
                 localStorage.removeItem('publishState_' + idToDelete);
-                
-                try {
-                    if (window.db && window.fsDoc && window.fsDeleteDoc) {
-                        showFbSyncBadge('🗑️ جاري الحذف...');
-                        await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", String(idToDelete)));
-                        showFbSyncBadge('✅ تم الحذف');
-                    }
-                } catch (err) {}
-                
+
+                // 4) تحديث الواجهة
                 renderLessons();
                 closeModal('deleteModal');
                 itemToDelete = null;
+
+                showToast('🗑️ تم حذف المجموعة نهائياً من السحابة');
+            } catch (err) {
+                console.error('❌ خطأ في الحذف:', err);
+                showToast('⚠️ حدث خطأ أثناء الحذف', true);
+            } finally {
+                // إرجاع الزر لحالته
+                btn.disabled = false;
+                btn.innerText = 'نعم، احذف نهائياً';
             }
         });
 
