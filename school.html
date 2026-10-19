@@ -222,6 +222,7 @@
         .record-card.is-mr { border-top: 5px solid #2563EB; }
         .record-card.is-ms { border-top: 5px solid #EC4899; }
         .record-card.is-blocked { opacity: 0.72; border-top-color: #EF4444; border-bottom-color: #991B1B; background: #FFFBFB; }
+        .record-card.is-free { border-top-color: #10B981 !important; box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.25); }
         .record-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12);
@@ -1108,7 +1109,9 @@
             return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
         }
 
-        function calculateExpiration(regDateStr, plan) {
+        // ✅ تعديل: إضافة isFree
+        function calculateExpiration(regDateStr, plan, isFree = false) {
+            if (isFree) return { expired: false, text: '♾️ مجاني - غير محدود' };
             if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
             if (!regDateStr) return { expired: false, text: 'تاريخ غير معروف' };
             let days = 30;
@@ -1174,6 +1177,7 @@
                 let verifRaw = t.verification || '30 يوم تجريبي';
                 if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
 
+                // ✅ إضافة isFree
                 unifiedMap.set(targetKey, {
                     type: 'account_only', 
                     docId: t.id,
@@ -1198,7 +1202,8 @@
                     groups: [], 
                     phoneType: t.phoneType || '',
                     verification: verifRaw,
-                    isBlocked: t.isBlocked || false
+                    isBlocked: t.isBlocked || false,
+                    isFree: t.isFree || false
                 });
             });
 
@@ -1227,7 +1232,8 @@
                         waClicks: 0,
                         groups: [],
                         verification: '30 يوم تجريبي',
-                        isBlocked: false
+                        isBlocked: false,
+                        isFree: false
                     });
                 }
 
@@ -1267,9 +1273,12 @@
                 entry.isPublished = entry.groups.some(g => g.isPublished);
             });
 
+            // ✅ حساب حالة الانتهاء مع isFree
             const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
-                entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification);
-                if (entry.verification === 'حظر' || entry.expiryInfo.expired) {
+                entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification, entry.isFree);
+                if (entry.isFree) {
+                    entry.isBlocked = false;
+                } else if (entry.verification === 'حظر' || entry.expiryInfo.expired) {
                     entry.isBlocked = true;
                 }
                 return entry;
@@ -1285,7 +1294,6 @@
             const cleanName = cleanTeacherName(teacherName);
             const isBlocked = (val === 'حظر');
             
-            // حساب تاريخ الانتهاء الجديد
             const regDate = new Date().toISOString().split('T')[0];
             const expiryInfo = calculateExpiration(regDate, val);
             const shouldBlock = isBlocked || expiryInfo.expired;
@@ -1300,7 +1308,6 @@
                 const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
                 const teacherKey = String(phone || '').replace(/\D/g, '');
 
-                // 1) تحديث وثيقة المعلم
                 await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
                     phone: phone,
                     teacherName: cleanName,
@@ -1311,9 +1318,6 @@
                     updatedAt: Date.now()
                 }, { merge: true });
 
-                // 2) مزامنة حالة الإخفاء على كل دروس المعلم
-                //    لو محظور → g_publish_map = false
-                //    لو مفعّل → g_publish_map = true (يفك الحظر تلقائياً)
                 if (teacherKey && window.fsGetDocs && window.fsCollection) {
                     const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                     const updates = [];
@@ -1336,12 +1340,10 @@
                         }
                     });
                     await Promise.all(updates);
-                    console.log(`✅ تم تحديث ${updates.length} درس بناءً على حالة الحظر`);
                 }
 
                 setCloudStatus('synced', '☁️ متزامن مع السحابة');
                 
-                // 3) تنظيف الـ localStorage المحلي (لو الجهاز نفسه)
                 if (phone && phone !== 'غير مسجل') {
                     if (shouldBlock) {
                         localStorage.setItem('teacherBlocked_' + teacherKey, 'true');
@@ -1350,7 +1352,6 @@
                     }
                 }
                 
-                // 4) الخروج من عرض الأرشيف لو الباقة اتفعلت
                 if (showingArchive && !shouldBlock) {
                     showingArchive = false;
                     const btn = document.getElementById('btnToggleArchive');
@@ -1365,7 +1366,6 @@
 
                 await renderAllRecords();
 
-                // 5) رسالة توضيحية
                 if (shouldBlock && val !== 'حظر') {
                     showToast(`⛔ الباقة (${val}) منتهية — تم حظر الحساب وإخفاء المجموعات`, true);
                 } else if (shouldBlock) {
@@ -1375,6 +1375,82 @@
                 }
             } catch (error) {
                 console.error("❌ خطأ في التحديث:", error);
+                setCloudStatus('offline', '⚠️ فشل التحديث');
+                showToast("⚠️ فشل الاتصال بالسحابة", true);
+            }
+        }
+
+        // ==========================================
+        // 🎁 تفعيل/إلغاء الحساب المجاني
+        // ==========================================
+        async function toggleFreeStatus(docId, phone, teacherName, currentFreeStatus) {
+            const newFreeStatus = !currentFreeStatus;
+            const cleanName = cleanTeacherName(teacherName);
+            
+            if (!window.db || !window.fsDoc || !window.fsSetDoc) {
+                showToast("⚠️ Firebase غير جاهز", true);
+                return;
+            }
+            
+            try {
+                setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
+                const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
+                const teacherKey = String(phone || '').replace(/\D/g, '');
+                
+                const updateData = {
+                    phone: phone,
+                    teacherName: cleanName,
+                    isFree: newFreeStatus,
+                    updatedAt: Date.now()
+                };
+                
+                if (newFreeStatus) {
+                    updateData.isBlocked = false;
+                }
+                
+                await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), updateData, { merge: true });
+                
+                if (teacherKey && window.fsGetDocs && window.fsCollection) {
+                    const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                    const updates = [];
+                    lessonsSnap.forEach((lessonDoc) => {
+                        const data = lessonDoc.data() || {};
+                        const lessonPhone = String(data.g_phone || '').replace(/\D/g, '');
+                        const lessonTeacher = cleanTeacherName(data.g_teacher || '');
+                        
+                        const matchesPhone = teacherKey && lessonPhone && lessonPhone === teacherKey;
+                        const matchesName  = cleanName && lessonTeacher && lessonTeacher === cleanName;
+                        
+                        if (matchesPhone || matchesName) {
+                            updates.push(
+                                window.fsSetDoc(
+                                    window.fsDoc(window.db, "lessons", lessonDoc.id),
+                                    { g_publish_map: newFreeStatus ? true : false, blockedByAdmin: false },
+                                    { merge: true }
+                                )
+                            );
+                        }
+                    });
+                    await Promise.all(updates);
+                }
+                
+                setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                
+                if (teacherKey) {
+                    if (newFreeStatus) {
+                        localStorage.removeItem('teacherBlocked_' + teacherKey);
+                    }
+                }
+                
+                if (newFreeStatus) {
+                    showToast('🎁 تم تفعيل الحساب المجاني - غير محدود');
+                } else {
+                    showToast('✅ تم إلغاء الوضع المجاني - يرجى اختيار باقة');
+                }
+                
+                await renderAllRecords();
+            } catch (error) {
+                console.error("❌ خطأ في تحديث الحالة المجانية:", error);
                 setCloudStatus('offline', '⚠️ فشل التحديث');
                 showToast("⚠️ فشل الاتصال بالسحابة", true);
             }
@@ -1475,7 +1551,7 @@
 
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                const blockClass = r.isBlocked ? 'is-blocked' : '';
+                const blockClass = r.isBlocked ? 'is-blocked' : (r.isFree ? 'is-free' : '');
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
@@ -1520,9 +1596,15 @@
                         <div class="info-pill"><span class="label">⏰ المواعيد:</span><span>${r.days} | من ${r.timeFrom} إلى ${r.timeTo}</span></div>`;
                 }
 
-                const statusBadgeHTML = r.isBlocked
-                    ? `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`
-                    : `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ نشط</span>`;
+                // ✅ شارة الحالة: مجاني / محظور / نشط
+                let statusBadgeHTML = '';
+                if (r.isFree) {
+                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 border border-emerald-400">🎁 مجاني ♾️</span>`;
+                } else if (r.isBlocked) {
+                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-rose-200 text-rose-900 border border-rose-400">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
+                } else {
+                    statusBadgeHTML = `<span class="px-2.5 py-1 rounded-full text-xs font-black bg-blue-50 text-blue-700 border border-blue-200">🛡️ نشط</span>`;
+                }
 
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${blockClass}">
@@ -1535,9 +1617,18 @@
                                 <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
                                 <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                             </div>
-                            <div class="info-pill flex flex-col gap-2" style="background:#FEF3C7; border-color:#FCD34D;">
-                                <div class="flex items-center justify-between w-full"><span class="label text-amber-900">🛡️ خطة وتوثيق الحساب:</span><span class="text-[11px] font-black ${r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700'}">${r.expiryInfo.text}</span></div>
-                                <select onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" class="form-input py-1.5 text-xs font-black text-amber-950 bg-white border-amber-300 cursor-pointer w-full">
+                            
+                            <!-- 🛡️ باقة التوثيق (تتعطل لو مجاني) -->
+                            <div class="info-pill flex flex-col gap-2" style="background:${r.isFree ? '#F1F5F9' : '#FEF3C7'}; border-color:${r.isFree ? '#CBD5E1' : '#FCD34D'};">
+                                <div class="flex items-center justify-between w-full">
+                                    <span class="label ${r.isFree ? 'text-slate-500' : 'text-amber-900'}">🛡️ خطة وتوثيق الحساب:</span>
+                                    <span class="text-[11px] font-black ${r.isFree ? 'text-emerald-700' : (r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700')}">${r.expiryInfo.text}</span>
+                                </div>
+                                <select 
+                                    ${r.isFree ? 'disabled' : ''} 
+                                    onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" 
+                                    class="form-input py-1.5 text-xs font-black w-full ${r.isFree ? 'text-slate-400 bg-slate-100 border-slate-300 cursor-not-allowed' : 'text-amber-950 bg-white border-amber-300 cursor-pointer'}"
+                                    style="${r.isFree ? 'opacity:0.6;' : ''}">
                                     <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
                                     <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
                                     <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
@@ -1545,6 +1636,24 @@
                                     <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
                                 </select>
                             </div>
+
+                            <!-- 🎁 خانة المجاني المستقلة -->
+                            <div class="info-pill" style="background:${r.isFree ? '#ECFDF5' : '#F0F9FF'}; border-color:${r.isFree ? '#86EFAC' : '#BAE6FD'};">
+                                <div class="flex items-center justify-between w-full gap-2">
+                                    <div class="flex flex-col items-start">
+                                        <span class="label ${r.isFree ? 'text-emerald-900' : 'text-sky-900'}">🎁 حساب مجاني (غير محدود):</span>
+                                        <span class="text-[10px] font-bold ${r.isFree ? 'text-emerald-700' : 'text-slate-500'} mt-0.5">
+                                            ${r.isFree ? '✅ مُفعّل — الباقات معطلة' : 'اضغط للتفعيل وتعطيل الباقات'}
+                                        </span>
+                                    </div>
+                                    <button 
+                                        onclick="toggleFreeStatus('${docIdSafe}', '${r.phone}', '${safeTeacherName}', ${r.isFree})" 
+                                        class="action-chip ${r.isFree ? 'bg-emerald-600 text-white border-2 border-emerald-800' : 'bg-sky-600 text-white border-2 border-sky-800'} px-4 py-2 text-xs font-black whitespace-nowrap shadow-md">
+                                        ${r.isFree ? '♾️ إلغاء المجاني' : '🎁 تفعيل مجاني'}
+                                    </button>
+                                </div>
+                            </div>
+
                             ${unifiedScheduleHTML}
                         </div>
                         <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-100">
