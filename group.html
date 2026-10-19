@@ -998,6 +998,7 @@
         // 🌟 المنهج الافتراضي
         // ==========================================
         const defaultCurriculum = {
+            main_order: ['primary', 'prep', 'secondary'], // ترتيب المراحل الافتراضي
             primary: {
                 name: '🎒 المرحلة الابتدائية',
                 grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
@@ -1058,9 +1059,23 @@
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj)) {
                 currObj = JSON.parse(JSON.stringify(defaultCurriculum));
             }
+            
+            // التأكد من وجود main_order
+            if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
+                currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order');
+            }
+
             Object.keys(currObj).forEach(stageKey => {
+                if (stageKey === 'main_order') return;
+                
+                if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
+                    if (defaultCurriculum[stageKey]) {
+                        currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
+                    }
+                    return;
+                }
                 const st = currObj[stageKey];
-                if (!st || typeof st !== 'object') return;
+                const defStage = defaultCurriculum[stageKey] || {};
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
                 if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
@@ -1072,17 +1087,21 @@
                 if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) {
                     st.subjectOrder = {};
                 }
+                
+                const mergedGrades = [...st.grades];
+                (defStage.grades || []).forEach(defGrade => {
+                    if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
+                });
+                st.grades = mergedGrades;
+
                 st.grades.forEach((g, i) => {
                     if (typeof st.gradeOrder[g] !== 'number') st.gradeOrder[g] = i + 1;
                 });
+
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g])) {
-                        const defStage = defaultCurriculum[stageKey];
-                        if (defStage && defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
-                            st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
-                        } else {
-                            st.gradeSubjects[g] = [...st.subjs];
-                        }
+                        const defSubjs = (defStage.gradeSubjects && defStage.gradeSubjects[g]) || [];
+                        st.gradeSubjects[g] = defSubjs.length > 0 ? [...defSubjs] : [...st.subjs];
                     }
                     if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
                         st.subjectOrder[g] = {};
@@ -1111,6 +1130,12 @@
             localStorage.setItem('app_curriculum', JSON.stringify(copy));
             curriculumCache = copy;
             return copy;
+        }
+
+        // ✅ تم حل الخطأ هنا (جلب الترتيب من المصفوفة الصحيحة دون ظهور كلمة main_order)
+        function getSortedStages() {
+            const curr = getCurriculum();
+            return curr.main_order || Object.keys(curr).filter(k => k !== 'main_order');
         }
 
         // ✅ ترتيب الصفوف حسب gradeOrder
@@ -1153,9 +1178,14 @@
             const prevGrade = preserveSelection ? document.getElementById('s_grade').value : '';
 
             stageSelect.innerHTML = '<option value="">-- اختر المرحلة --</option>';
-            Object.keys(curr).forEach(stageKey => {
-                const stageName = curr[stageKey].name || stageKey;
-                stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
+            
+            // ✅ استخدام الدالة الجديدة لجلب المراحل الصحيحة فقط
+            const sortedStages = getSortedStages();
+            sortedStages.forEach(stageKey => {
+                if (curr[stageKey]) {
+                    const stageName = curr[stageKey].name || stageKey;
+                    stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
+                }
             });
 
             if (prevStage && curr[prevStage]) {
