@@ -249,23 +249,11 @@
             color: #064E3B !important;
         }
 
-        .record-card.is-blocked .unified-schedule-box {
-            border: 2px solid #FCA5A5;
-            background: #FFFFFF;
+        .record-card.is-blocked .smart-card {
+            border-color: #FCA5A5;
         }
-        .record-card.is-blocked .unified-schedule-table th {
-            background: #FEE2E2;
-            color: #991B1B;
-            border-bottom: 2px solid #FCA5A5;
-        }
-        .record-card.is-allowed .unified-schedule-box {
-            border: 2px solid #86EFAC;
-            background: #FFFFFF;
-        }
-        .record-card.is-allowed .unified-schedule-table th {
-            background: #DCFCE7;
-            color: #065F46;
-            border-bottom: 2px solid #86EFAC;
+        .record-card.is-allowed .smart-card {
+            border-color: #86EFAC;
         }
 
         /* ====== Card header (clickable) ====== */
@@ -328,39 +316,20 @@
             white-space: nowrap;
         }
 
-        .unified-schedule-box {
+        /* ✅ تصميم smart-card مطابق لـ group.html */
+        .smart-card {
+            background: #fff;
             border: 1.5px solid #E2E8F0;
-            border-radius: 14px;
-            overflow-x: auto;
-            background: #FFFFFF;
-            margin-top: 8px;
+            border-top: 5px solid var(--c-main, #2563EB);
+            border-bottom: 6px solid #334155;
+            border-radius: 16px;
+            padding: 15px;
+            box-shadow: 0 6px 15px -5px rgba(0,0,0,0.1);
+            transition: all 0.25s ease;
         }
-        .unified-schedule-table {
-            width: 100%;
-            border-collapse: collapse;
-            text-align: right;
-            font-size: 12px;
-            font-weight: 800;
-        }
-        .unified-schedule-table th {
-            background: #F1F5F9;
-            color: #0F2D5C;
-            padding: 9px 10px;
-            font-weight: 900;
-            border-bottom: 2px solid #E2E8F0;
-            white-space: nowrap;
-        }
-        .unified-schedule-table td {
-            padding: 9px 10px;
-            border-bottom: 1px solid #F1F5F9;
-            color: #334155;
-            vertical-align: middle;
-        }
-        .unified-schedule-table tr:last-child td {
-            border-bottom: none;
-        }
-        .unified-schedule-table tr:hover td {
-            background: #F8FAFC;
+        .smart-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 25px -8px rgba(0,0,0,0.15);
         }
 
         .action-chip {
@@ -491,6 +460,66 @@
             font-size: 13px;
             font-weight: 900;
             color: #1E293B;
+        }
+
+        /* ✅ أزرار الترتيب ⬆️⬇️ */
+        .order-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            background: #EFF6FF;
+            color: #1E40AF;
+            border: 1.5px solid #93C5FD;
+            font-size: 11px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.15s;
+            padding: 0;
+            line-height: 1;
+            flex-shrink: 0;
+        }
+        .order-btn:hover {
+            background: #2563EB;
+            color: #fff;
+            border-color: #1D4ED8;
+            transform: scale(1.1);
+        }
+        .order-btn:active {
+            transform: scale(0.95);
+        }
+        .order-btn:disabled {
+            opacity: 0.35;
+            cursor: not-allowed;
+            background: #F1F5F9;
+            color: #94A3B8;
+            border-color: #CBD5E1;
+            transform: none;
+        }
+        .order-btn:disabled:hover {
+            background: #F1F5F9;
+            color: #94A3B8;
+            border-color: #CBD5E1;
+            transform: none;
+        }
+
+        /* ✅ عرض رقم الترتيب */
+        .order-index {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
+            height: 24px;
+            padding: 0 6px;
+            border-radius: 8px;
+            background: #0F2D5C;
+            color: #fff;
+            font-size: 11px;
+            font-weight: 900;
+            font-family: 'Cairo', sans-serif;
+            flex-shrink: 0;
         }
 
         .custom-toast {
@@ -938,12 +967,13 @@
         }
 
         // ==========================================
-        // 🌟 المنهج
+        // 🌟 المنهج الافتراضي (مع الترتيب)
         // ==========================================
         const defaultCurriculum = {
             primary: {
                 name: '🎒 المرحلة الابتدائية',
                 grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                gradeOrder: { 'الأول': 1, 'الثاني': 2, 'الثالث': 3, 'الرابع': 4, 'الخامس': 5, 'السادس': 6 },
                 gradeSubjects: {
                     'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
                     'الثاني': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
@@ -952,25 +982,45 @@
                     'الخامس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات'],
                     'السادس': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'مهارات مهنية', 'تكنولوجيا المعلومات']
                 },
+                subjectOrder: {
+                    'الأول': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الثاني': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الثالث': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'تربية دينية': 4, 'اكتشف': 5 },
+                    'الرابع': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 },
+                    'الخامس': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 },
+                    'السادس': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'مهارات مهنية': 6, 'تكنولوجيا المعلومات': 7 }
+                },
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             prep: {
                 name: '📐 المرحلة الإعدادية',
                 grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                gradeOrder: { 'الأول الإعدادي': 1, 'الثاني الإعدادي': 2, 'الثالث الإعدادي': 3 },
                 gradeSubjects: {
                     'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
                     'الثاني الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
                     'الثالث الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي']
+                },
+                subjectOrder: {
+                    'الأول الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 },
+                    'الثاني الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 },
+                    'الثالث الإعدادي': { 'عربي': 1, 'إنجليزي': 2, 'رياضيات': 3, 'علوم': 4, 'دراسات': 5, 'حاسب آلي': 6 }
                 },
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             secondary: {
                 name: '🎓 المرحلة الثانوية',
                 grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                gradeOrder: { 'الأول الثانوي': 1, 'الثاني الثانوي': 2, 'الثالث الثانوي': 3 },
                 gradeSubjects: {
                     'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
                     'الثاني الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'فيزياء', 'كيمياء', 'أحياء', 'تاريخ', 'جغرافيا', 'علم نفس', 'فلسفة'],
                     'الثالث الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'فيزياء', 'كيمياء', 'أحياء', 'جيولوجيا', 'رياضيات', 'تاريخ', 'جغرافيا', 'فلسفة ومنطق', 'علم نفس واجتماع']
+                },
+                subjectOrder: {
+                    'الأول الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'رياضيات': 4, 'علوم متكاملة': 5, 'تاريخ': 6, 'فلسفة ومنطق': 7 },
+                    'الثاني الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'رياضيات': 4, 'فيزياء': 5, 'كيمياء': 6, 'أحياء': 7, 'تاريخ': 8, 'جغرافيا': 9, 'علم نفس': 10, 'فلسفة': 11 },
+                    'الثالث الثانوي': { 'عربي': 1, 'إنجليزي': 2, 'لغة ثانية': 3, 'فيزياء': 4, 'كيمياء': 5, 'أحياء': 6, 'جيولوجيا': 7, 'رياضيات': 8, 'تاريخ': 9, 'جغرافيا': 10, 'فلسفة ومنطق': 11, 'علم نفس واجتماع': 12 }
                 },
                 subjs: ['فيزياء', 'كيمياء', 'أحياء', 'رياضيات']
             }
@@ -990,12 +1040,21 @@
                 if (!Array.isArray(st.grades)) st.grades = [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
                 if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) st.gradeSubjects = {};
+                if (!st.gradeOrder || typeof st.gradeOrder !== 'object' || Array.isArray(st.gradeOrder)) st.gradeOrder = {};
+                if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) st.subjectOrder = {};
                 
                 const mergedGrades = [...st.grades];
                 (defStage.grades || []).forEach(defGrade => {
                     if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
                 });
                 st.grades = mergedGrades;
+
+                // ✅ تأكد أن كل صف له ترتيب
+                st.grades.forEach((g, i) => {
+                    if (typeof st.gradeOrder[g] !== 'number') {
+                        st.gradeOrder[g] = i + 1;
+                    }
+                });
 
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
@@ -1011,6 +1070,30 @@
                             if (!existing.includes(ds)) existing.push(ds);
                         });
                         st.gradeSubjects[g] = existing;
+                    }
+
+                    // ✅ تأكد أن كل مادة لها ترتيب
+                    if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
+                        st.subjectOrder[g] = {};
+                    }
+                    st.gradeSubjects[g].forEach((s, i) => {
+                        if (typeof st.subjectOrder[g][s] !== 'number') {
+                            st.subjectOrder[g][s] = i + 1;
+                        }
+                    });
+
+                    // ✅ احذف أي ترتيب لمادة لم تعد موجودة
+                    Object.keys(st.subjectOrder[g]).forEach(s => {
+                        if (!st.gradeSubjects[g].includes(s)) {
+                            delete st.subjectOrder[g][s];
+                        }
+                    });
+                });
+
+                // ✅ احذف أي ترتيب لصف لم يعد موجوداً
+                Object.keys(st.gradeOrder).forEach(g => {
+                    if (!st.grades.includes(g)) {
+                        delete st.gradeOrder[g];
                     }
                 });
             });
@@ -1035,6 +1118,32 @@
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             curriculumCache = copy;
             return copy;
+        }
+
+        // ✅ ترتيب الصفوف حسب gradeOrder
+        function getSortedGrades(stageKey) {
+            const curr = getCurriculum();
+            const st = curr[stageKey];
+            if (!st) return [];
+            return [...(st.grades || [])].sort((a, b) => {
+                const oa = st.gradeOrder?.[a] ?? 999;
+                const ob = st.gradeOrder?.[b] ?? 999;
+                return oa - ob;
+            });
+        }
+
+        // ✅ ترتيب المواد حسب subjectOrder
+        function getSortedSubjects(stageKey, gradeName) {
+            const curr = getCurriculum();
+            const st = curr[stageKey];
+            if (!st) return [];
+            const subjs = st.gradeSubjects?.[gradeName] || [];
+            const order = st.subjectOrder?.[gradeName] || {};
+            return [...subjs].sort((a, b) => {
+                const oa = order[a] ?? 999;
+                const ob = order[b] ?? 999;
+                return oa - ob;
+            });
         }
 
         async function saveCurriculumAndBroadcast(currObj, toastText) {
@@ -1112,8 +1221,8 @@
             const keys = Object.keys(curr);
             activeStageKey = targetStageKey && curr[targetStageKey] ? targetStageKey : (keys[0] || null);
             if (activeStageKey) {
-                const grades = curr[activeStageKey].grades || [];
-                activeGradeName = targetGradeName && grades.includes(targetGradeName) ? targetGradeName : (grades[0] || null);
+                const sorted = getSortedGrades(activeStageKey);
+                activeGradeName = targetGradeName && curr[activeStageKey].grades.includes(targetGradeName) ? targetGradeName : (sorted[0] || null);
             }
             renderCurriculumManager();
             document.getElementById('curriculumModal').classList.add('active');
@@ -1130,8 +1239,10 @@
             if (!activeStageKey || !curr[activeStageKey]) activeStageKey = keys[0];
 
             const stageObj = curr[activeStageKey];
-            const grades = stageObj.grades || [];
-            if (!activeGradeName || !grades.includes(activeGradeName)) activeGradeName = grades[0] || null;
+            const sortedGrades = getSortedGrades(activeStageKey);
+            if (!activeGradeName || !stageObj.grades.includes(activeGradeName)) {
+                activeGradeName = sortedGrades[0] || null;
+            }
 
             tabsContainer.innerHTML = keys.map(k => `
                 <div onclick="selectStageTab('${k}')" class="stage-tab ${k === activeStageKey ? 'active' : ''}">
@@ -1140,20 +1251,36 @@
                 </div>
             `).join('');
 
-            gradesContainer.innerHTML = grades.map((g, idx) => `
+            // ✅ الصفوف مرتبة + أزرار التحريك
+            gradesContainer.innerHTML = sortedGrades.map((g, idx) => `
                 <div onclick="selectGradeTab('${g.replace(/'/g, "\\'")}')" class="grade-selectable-card ${g === activeGradeName ? 'active' : ''}">
-                    <span>👑 ${g}</span>
-                    <button onclick="deleteGradeItem(${idx}); event.stopPropagation();" class="text-rose-600 font-bold">🗑️</button>
+                    <div class="flex items-center gap-2 flex-1 min-w-0">
+                        <span class="order-index">${idx + 1}</span>
+                        <span class="truncate">👑 ${g}</span>
+                    </div>
+                    <div class="flex items-center gap-1 shrink-0" onclick="event.stopPropagation()">
+                        <button class="order-btn" onclick="moveGrade(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
+                        <button class="order-btn" onclick="moveGrade(${idx}, 1)" ${idx === sortedGrades.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                        <button onclick="deleteGradeItem('${g.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1" title="حذف">🗑️</button>
+                    </div>
                 </div>
             `).join('');
 
+            // ✅ المواد مرتبة + أزرار التحريك
             if (activeGradeName) {
                 subjectsPanel.classList.remove('hidden');
-                const subjs = stageObj.gradeSubjects?.[activeGradeName] || [];
-                document.getElementById('subjectsListContainer').innerHTML = subjs.map((s, idx) => `
+                const sortedSubjs = getSortedSubjects(activeStageKey, activeGradeName);
+                document.getElementById('subjectsListContainer').innerHTML = sortedSubjs.map((s, idx) => `
                     <div class="subject-item-badge">
-                        <span>📘 ${s}</span>
-                        <button onclick="deleteSubjectFromGrade(${idx})" class="text-rose-600 font-bold">🗑️</button>
+                        <div class="flex items-center gap-2 flex-1 min-w-0">
+                            <span class="order-index" style="background:#10B981;">${idx + 1}</span>
+                            <span class="truncate">📘 ${s}</span>
+                        </div>
+                        <div class="flex items-center gap-1 shrink-0">
+                            <button class="order-btn" onclick="moveSubject(${idx}, -1)" ${idx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
+                            <button class="order-btn" onclick="moveSubject(${idx}, 1)" ${idx === sortedSubjs.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                            <button onclick="deleteSubjectFromGrade('${s.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1" title="حذف">🗑️</button>
+                        </div>
                     </div>
                 `).join('');
             } else {
@@ -1163,7 +1290,8 @@
 
         function selectStageTab(k) {
             activeStageKey = k;
-            activeGradeName = getCurriculum()[k].grades[0] || null;
+            const sorted = getSortedGrades(k);
+            activeGradeName = sorted[0] || null;
             renderCurriculumManager();
         }
         function selectGradeTab(g) {
@@ -1175,11 +1303,20 @@
             const val = document.getElementById('newStageNameInput').value.trim();
             if (!val) return;
             const curr = getCurriculum();
-            curr['stage_' + Date.now()] = { name: val, grades: ['الصف الأول'], gradeSubjects: {'الصف الأول': ['مادة عامة']}, subjs: ['مادة عامة'] };
+            const newKey = 'stage_' + Date.now();
+            const firstGrade = 'الصف الأول';
+            curr[newKey] = {
+                name: val,
+                grades: [firstGrade],
+                gradeOrder: { [firstGrade]: 1 },
+                gradeSubjects: { [firstGrade]: ['مادة عامة'] },
+                subjectOrder: { [firstGrade]: { 'مادة عامة': 1 } },
+                subjs: ['مادة عامة']
+            };
             document.getElementById('newStageNameInput').value = '';
+            activeStageKey = newKey;
+            activeGradeName = firstGrade;
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة');
-            activeStageKey = Object.keys(curr).slice(-1)[0];
-            activeGradeName = 'الصف الأول';
             renderCurriculumManager();
         }
 
@@ -1192,7 +1329,7 @@
                     const remainingKeys = Object.keys(curr);
                     if (remainingKeys.length > 0) {
                         activeStageKey = remainingKeys[0];
-                        activeGradeName = curr[activeStageKey].grades[0] || null;
+                        activeGradeName = getSortedGrades(activeStageKey)[0] || null;
                     } else {
                         activeStageKey = null;
                         activeGradeName = null;
@@ -1207,25 +1344,42 @@
             const val = document.getElementById('newGradeInput').value.trim();
             if (!val || !activeStageKey) return;
             const curr = getCurriculum();
-            curr[activeStageKey].grades.push(val);
-            if (!curr[activeStageKey].gradeSubjects) curr[activeStageKey].gradeSubjects = {};
-            curr[activeStageKey].gradeSubjects[val] = [];
+            const st = curr[activeStageKey];
+            if (st.grades.includes(val)) {
+                showToast('⚠️ هذا الصف موجود بالفعل', true);
+                return;
+            }
+            st.grades.push(val);
+            st.gradeOrder = st.gradeOrder || {};
+            const maxOrder = Math.max(0, ...Object.values(st.gradeOrder));
+            st.gradeOrder[val] = maxOrder + 1;
+            if (!st.gradeSubjects) st.gradeSubjects = {};
+            st.gradeSubjects[val] = [];
+            if (!st.subjectOrder) st.subjectOrder = {};
+            st.subjectOrder[val] = {};
             document.getElementById('newGradeInput').value = '';
             activeGradeName = val;
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة الصف');
             renderCurriculumManager();
         }
 
-        function deleteGradeItem(idx) {
+        function deleteGradeItem(gradeName) {
             const curr = getCurriculum();
-            const gradeName = curr[activeStageKey].grades[idx];
             showCustomConfirm(`هل أنت متأكد من حذف (${gradeName}) وجميع المواد التابعة له نهائياً؟`, () => {
-                curr[activeStageKey].grades.splice(idx, 1);
-                if (curr[activeStageKey].gradeSubjects && curr[activeStageKey].gradeSubjects[gradeName]) {
-                    delete curr[activeStageKey].gradeSubjects[gradeName];
+                const st = curr[activeStageKey];
+                const idx = st.grades.indexOf(gradeName);
+                if (idx > -1) st.grades.splice(idx, 1);
+                if (st.gradeSubjects && st.gradeSubjects[gradeName]) {
+                    delete st.gradeSubjects[gradeName];
+                }
+                if (st.gradeOrder && st.gradeOrder[gradeName]) {
+                    delete st.gradeOrder[gradeName];
+                }
+                if (st.subjectOrder && st.subjectOrder[gradeName]) {
+                    delete st.subjectOrder[gradeName];
                 }
                 if (activeGradeName === gradeName) {
-                    activeGradeName = curr[activeStageKey].grades[0] || null;
+                    activeGradeName = getSortedGrades(activeStageKey)[0] || null;
                 }
                 saveCurriculumAndBroadcast(curr, '🗑️ تم حذف الصف بنجاح');
                 renderCurriculumManager();
@@ -1236,21 +1390,77 @@
             const val = document.getElementById('newSubjectInput').value.trim();
             if (!val || !activeStageKey || !activeGradeName) return;
             const curr = getCurriculum();
-            if (!curr[activeStageKey].gradeSubjects[activeGradeName]) curr[activeStageKey].gradeSubjects[activeGradeName] = [];
-            curr[activeStageKey].gradeSubjects[activeGradeName].push(val);
+            const st = curr[activeStageKey];
+            if (!st.gradeSubjects[activeGradeName]) st.gradeSubjects[activeGradeName] = [];
+            if (st.gradeSubjects[activeGradeName].includes(val)) {
+                showToast('⚠️ هذه المادة موجودة بالفعل لهذا الصف', true);
+                return;
+            }
+            st.gradeSubjects[activeGradeName].push(val);
+            if (!st.subjectOrder) st.subjectOrder = {};
+            if (!st.subjectOrder[activeGradeName]) st.subjectOrder[activeGradeName] = {};
+            const maxOrder = Math.max(0, ...Object.values(st.subjectOrder[activeGradeName]));
+            st.subjectOrder[activeGradeName][val] = maxOrder + 1;
             document.getElementById('newSubjectInput').value = '';
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المادة');
             renderCurriculumManager();
         }
 
-        function deleteSubjectFromGrade(idx) {
+        function deleteSubjectFromGrade(subjectName) {
             const curr = getCurriculum();
-            const subjectName = curr[activeStageKey].gradeSubjects[activeGradeName][idx];
             showCustomConfirm(`هل أنت متأكد من حذف مادة (${subjectName}) من ${activeGradeName}؟`, () => {
-                curr[activeStageKey].gradeSubjects[activeGradeName].splice(idx, 1);
+                const st = curr[activeStageKey];
+                const arr = st.gradeSubjects[activeGradeName] || [];
+                const idx = arr.indexOf(subjectName);
+                if (idx > -1) arr.splice(idx, 1);
+                if (st.subjectOrder && st.subjectOrder[activeGradeName]) {
+                    delete st.subjectOrder[activeGradeName][subjectName];
+                }
                 saveCurriculumAndBroadcast(curr, '🗑️ تم حذف المادة بنجاح');
                 renderCurriculumManager();
             });
+        }
+
+        // ✅ تحريك صف لأعلى/أسفل (يحدّث gradeOrder فوراً)
+        function moveGrade(sortedIdx, direction) {
+            const curr = getCurriculum();
+            const st = curr[activeStageKey];
+            const sorted = getSortedGrades(activeStageKey);
+            const newIdx = sortedIdx + direction;
+            if (newIdx < 0 || newIdx >= sorted.length) return;
+
+            [sorted[sortedIdx], sorted[newIdx]] = [sorted[newIdx], sorted[sortedIdx]];
+
+            st.gradeOrder = {};
+            sorted.forEach((g, i) => {
+                st.gradeOrder[g] = i + 1;
+            });
+            st.grades = [...sorted];
+
+            saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب الصفوف');
+            renderCurriculumManager();
+        }
+
+        // ✅ تحريك مادة لأعلى/أسفل (يحدّث subjectOrder فوراً)
+        function moveSubject(sortedIdx, direction) {
+            const curr = getCurriculum();
+            const st = curr[activeStageKey];
+            if (!st.subjectOrder) st.subjectOrder = {};
+            if (!st.subjectOrder[activeGradeName]) st.subjectOrder[activeGradeName] = {};
+            const sorted = getSortedSubjects(activeStageKey, activeGradeName);
+            const newIdx = sortedIdx + direction;
+            if (newIdx < 0 || newIdx >= sorted.length) return;
+
+            [sorted[sortedIdx], sorted[newIdx]] = [sorted[newIdx], sorted[sortedIdx]];
+
+            st.subjectOrder[activeGradeName] = {};
+            sorted.forEach((s, i) => {
+                st.subjectOrder[activeGradeName][s] = i + 1;
+            });
+            st.gradeSubjects[activeGradeName] = [...sorted];
+
+            saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب المواد');
+            renderCurriculumManager();
         }
 
         function resetCurriculumToDefault() {
@@ -1258,7 +1468,7 @@
                 const copy = JSON.parse(JSON.stringify(defaultCurriculum));
                 saveCurriculumAndBroadcast(copy, '✨ تم استعادة المنهج الافتراضي الكامل');
                 activeStageKey = Object.keys(copy)[0];
-                activeGradeName = copy[activeStageKey].grades[0] || null;
+                activeGradeName = getSortedGrades(activeStageKey)[0] || null;
                 renderCurriculumManager();
                 populateGradeFilter();
             });
@@ -1565,17 +1775,23 @@
             document.getElementById('teachersSummaryModal').classList.add('active');
         }
 
+        // ✅ فلتر الصفوف مرتب حسب الترتيب
         function populateGradeFilter() {
             const curr = getCurriculum();
             const gradeSelect = document.getElementById('filterGrade');
-            let allGrades = new Set();
-            Object.values(curr).forEach(stageObj => (stageObj.grades || []).forEach(g => allGrades.add(g)));
+            let allGrades = [];
+            Object.keys(curr).forEach(stageKey => {
+                const sorted = getSortedGrades(stageKey);
+                sorted.forEach(g => {
+                    if (!allGrades.includes(g)) allGrades.push(g);
+                });
+            });
             gradeSelect.innerHTML = `<option value="all">جميع الصفوف الدراسية</option>`;
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
 
         // ==========================================
-        // 🎨 الدالة الرئيسية لرسم الكروت (قائمة منسدلة)
+        // 🎨 الدالة الرئيسية لرسم الكروت
         // ==========================================
         async function renderAllRecords() {
             const { records, totalLessonsCount } = await collectAllAppData();
@@ -1628,48 +1844,67 @@
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
 
+                // ✅ كروت المجموعات بتصميم smart-card مطابق لـ group.html
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
-                    const rowsHTML = r.groups.map(g => {
+                    const cardsHTML = r.groups.map(g => {
                         let stageName = g.stageKey;
-                        if (stageName === 'primary') stageName = 'المرحلة الابتدائية';
-                        else if (stageName === 'prep') stageName = 'المرحلة الإعدادية';
-                        else if (stageName === 'secondary') stageName = 'المرحلة الثانوية';
-                        else if (curr[g.stageKey] && curr[g.stageKey].name) stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                        if (curr[g.stageKey] && curr[g.stageKey].name) {
+                            stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                        }
 
                         let mapBtn = '';
                         if (g.lat && g.lng) {
-                            mapBtn = `<br><button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="mt-1.5 action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-0.5 shadow-sm">📍 عرض على الخريطة (GPS)</button>`;
+                            mapBtn = `<button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" 
+                                       class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 shadow-sm mt-1">📍 عرض على الخريطة (GPS)</button>`;
                         }
+
                         return `
-                        <tr>
-                            <td class="font-black text-slate-900">${g.groupName}</td>
-                            <td><div class="text-[11px] text-blue-600 font-black mb-0.5">${stageName}</div><span class="text-slate-900 font-black">${g.grade}</span> — <span class="text-emerald-700 font-black">${g.subjects}</span></td>
-                            <td>${g.days}<br><span class="text-[11px] text-blue-700">من ${g.timeFrom} إلى ${g.timeTo}</span></td>
-                            <td>[${g.locType}] ${g.address}${mapBtn}</td>
-                        </tr>`;
+                        <div class="smart-card" style="--c-main: #2563EB; --c-dark: #1D4ED8; --c-light: #EFF6FF; --c-border: #93C5FD;">
+                            <div class="flex items-center justify-between mb-2 pb-2 border-b border-dashed border-slate-300">
+                                <h4 class="font-black text-slate-800 text-sm">👥 ${g.groupName}</h4>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${g.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
+                                    ${g.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}
+                                </span>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="info-pill">
+                                    <span class="label">🎓 المرحلة:</span>
+                                    <span class="font-black text-blue-900">${stageName}</span>
+                                </div>
+                                <div class="info-pill">
+                                    <span class="label">👑 الصف:</span>
+                                    <span class="font-black text-emerald-700">${g.grade}</span>
+                                </div>
+                                <div class="info-pill sm:col-span-2">
+                                    <span class="label">📚 المواد:</span>
+                                    <span class="font-black text-emerald-700">${g.subjects}</span>
+                                </div>
+                                <div class="info-pill">
+                                    <span class="label">⏰ الأيام:</span>
+                                    <span class="font-black text-slate-700">${g.days}</span>
+                                </div>
+                                <div class="info-pill">
+                                    <span class="label">🕐 الوقت:</span>
+                                    <span class="font-black text-slate-700">من ${g.timeFrom} إلى ${g.timeTo}</span>
+                                </div>
+                                <div class="info-pill sm:col-span-2 flex-wrap">
+                                    <span class="label">📍 العنوان:</span>
+                                    <span class="font-black text-slate-700">[${g.locType}] ${g.address}</span>
+                                    ${mapBtn}
+                                </div>
+                            </div>
+                        </div>`;
                     }).join('');
-                    unifiedScheduleHTML = `<div class="unified-schedule-box"><table class="unified-schedule-table"><thead><tr><th>👥 المجموعة</th><th>🎓 المرحلة والصف</th><th>⏰ المواعيد</th><th>📍 العنوان</th></tr></thead><tbody>${rowsHTML}</tbody></table></div>`;
+                    
+                    unifiedScheduleHTML = `<div class="space-y-2 mt-3">${cardsHTML}</div>`;
                 } else {
                     unifiedScheduleHTML = `
-                        <div class="unified-schedule-box">
-                            <table class="unified-schedule-table">
-                                <thead>
-                                    <tr>
-                                        <th>👥 المجموعة</th>
-                                        <th>🎓 المرحلة والصف</th>
-                                        <th>⏰ المواعيد</th>
-                                        <th>📍 العنوان</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td colspan="4" style="text-align: center; padding: 14px; color: #64748B; font-weight: 900; background: #F8FAFC;">
-                                            📭 لا توجد مجموعات مسجّلة حتى الآن — سيتم تحديث الجدول عند إضافة المعلم لمجموعاته
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                        <div class="smart-card" style="--c-main: #94A3B8; --c-dark: #64748B; --c-light: #F8FAFC; --c-border: #CBD5E1; text-align: center; padding: 20px; margin-top: 12px;">
+                            <div class="text-4xl mb-2">📭</div>
+                            <p class="font-black text-slate-500 text-sm">لا توجد مجموعات مسجّلة حتى الآن</p>
+                            <p class="text-xs font-bold text-slate-400 mt-1">سيتم تحديث الجدول عند إضافة المعلم لمجموعاته</p>
                         </div>
                     `;
                 }
@@ -1685,7 +1920,6 @@
 
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
-                        <!-- Header (clickable - expand/collapse) -->
                         <div class="card-header flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
                             <div class="flex items-center gap-2 flex-wrap">
                                 ${badgeHTML}
@@ -1700,7 +1934,6 @@
                             </div>
                         </div>
 
-                        <!-- Details (collapsible) -->
                         <div class="card-details mt-3" style="display:${isExpanded ? 'block' : 'none'};">
                             <div class="space-y-2">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
