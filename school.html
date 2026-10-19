@@ -721,10 +721,51 @@
                             <div class="stage-controls" id="stageControlsContainer"></div>
                         </div>
                     </div>
+                    
                     <div class="flex-1">
-                        <label class="block text-xs font-black text-slate-600 mb-1">➕ إضافة مرحلة جديدة</label>
+                        <label class="block text-xs font-black text-slate-600 mb-1">➕ إضافة مرحلة جديدة (مع أيقونة اختياري)</label>
                         <div class="flex gap-2">
-                            <input type="text" id="newStageNameInput" class="form-input py-1.5 text-xs" placeholder="اسم المرحلة...">
+                            <!-- قائمة اختيار الأيقونة -->
+                            <select id="newStageIconSelect" class="form-input py-1.5 text-xs w-20 cursor-pointer text-center" title="اختر أيقونة (اختياري)">
+                                <option value="">بدون</option>
+                                
+                                <optgroup label="التعليم الأساسي والمدارس">
+                                    <option value="🎒">🎒</option>
+                                    <option value="🏫">🏫</option>
+                                    <option value="📚">📚</option>
+                                    <option value="📖">📖</option>
+                                    <option value="✏️">✏️</option>
+                                    <option value="📝">📝</option>
+                                    <option value="🚌">🚌</option>
+                                </optgroup>
+
+                                <optgroup label="الثانوي والجامعات">
+                                    <option value="🎓">🎓</option>
+                                    <option value="🏛️">🏛️</option>
+                                    <option value="🔬">🔬</option>
+                                    <option value="🧪">🧪</option>
+                                    <option value="💻">💻</option>
+                                    <option value="🥇">🥇</option>
+                                    <option value="🧩">🧩</option>
+                                </optgroup>
+
+                                <optgroup label="دور العبادة والثقافة">
+                                    <option value="🕌">🕌</option>
+                                    <option value="🕋">🕋</option>
+                                    <option value="⛪">⛪</option>
+                                    <option value="🌙">🌙</option>
+                                    <option value="📿">📿</option>
+                                </optgroup>
+
+                                <optgroup label="مراكز وأماكن أخرى">
+                                    <option value="🏢">🏢</option>
+                                    <option value="🏠">🏠</option>
+                                    <option value="📍">📍</option>
+                                    <option value="⭐">⭐</option>
+                                    <option value="💡">💡</option>
+                                </optgroup>
+                            </select>
+                            <input type="text" id="newStageNameInput" class="form-input py-1.5 text-xs flex-1" placeholder="اسم المرحلة...">
                             <button onclick="addNewStage()" class="action-chip bg-blue-600 text-white px-4 shrink-0">إضافة</button>
                         </div>
                     </div>
@@ -1322,7 +1363,7 @@
 
             // ✅ تحديث عنوان مربع إضافة الصف ليعرض اسم المرحلة
             const newGradeInput = document.getElementById('newGradeInput');
-            newGradeInput.placeholder = `أضف صفاً لـ (${curr[activeStageKey].name.replace(/^[🎒📐🎓]\s*/, '')})...`;
+            newGradeInput.placeholder = `أضف صفاً لـ (${curr[activeStageKey].name.replace(/^[🎒📐🎓🏫📚📖✏️📝🚌🏛️🔬🧪💻🥇🧩🕌🕋⛪🌙📿🏢🏠📍⭐💡]\s*/, '')})...`;
             
             gradesSection.classList.remove('hidden');
 
@@ -1410,25 +1451,40 @@
         }
 
         function addNewStage() {
-            const val = document.getElementById('newStageNameInput').value.trim();
-            if (!val) return;
+            const nameInput = document.getElementById('newStageNameInput').value.trim();
+            if (!nameInput) return;
+
+            // جلب الأيقونة المختارة (إن وجدت)
+            const iconSelect = document.getElementById('newStageIconSelect');
+            const iconValue = iconSelect ? iconSelect.value : '';
+
+            // دمج الأيقونة مع الاسم (مع ترك مسافة بينهما إذا تم اختيار أيقونة)
+            const finalStageName = iconValue ? `${iconValue} ${nameInput}` : nameInput;
+
             const curr = getCurriculum();
             const newKey = 'stage_' + Date.now();
             const firstGrade = 'الصف الأول';
+            
             curr[newKey] = {
-                name: val,
+                name: finalStageName, // استخدام الاسم المدمج
                 grades: [firstGrade],
                 gradeOrder: { [firstGrade]: 1 },
                 gradeSubjects: { [firstGrade]: ['مادة عامة'] },
                 subjectOrder: { [firstGrade]: { 'مادة عامة': 1 } },
                 subjs: ['مادة عامة']
             };
+            
             curr.main_order.push(newKey);
+            
+            // إفراغ الحقول بعد الإضافة
             document.getElementById('newStageNameInput').value = '';
+            if(iconSelect) iconSelect.value = ''; 
+
             activeStageKey = newKey;
             activeGradeName = firstGrade;
             activeSubjectName = 'مادة عامة';
-            saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة');
+            
+            saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة بنجاح');
             renderCurriculumManager();
         }
 
@@ -1989,7 +2045,7 @@
                     const cardsHTML = r.groups.map(g => {
                         let stageName = g.stageKey;
                         if (curr[g.stageKey] && curr[g.stageKey].name) {
-                            stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                            stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓🏫📚📖✏️📝🚌🏛️🔬🧪💻🥇🧩🕌🕋⛪🌙📿🏢🏠📍⭐💡]\s*/, '');
                         }
 
                         let mapBtn = '';
