@@ -1457,12 +1457,11 @@
     </footer>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
           getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
       
-      // ✅ 1. إضافة مكتبة المصادقة للتعرف على المعلم
       import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
@@ -1474,12 +1473,12 @@
         appId: "1:472216348338:web:db726630ef6781301e0bab"
       };
 
-      const app = initializeApp(firebaseConfig);
+      const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      const auth = getAuth(app); // ✅ 2. تفعيل المصادقة
+      const auth = getAuth(app);
 
       window.db = db;
-      window.auth = auth; // حفظ للوصول السريع
+      window.auth = auth;
       window.fsDoc = doc;
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
@@ -1488,13 +1487,11 @@
       window.fsGetDocs = getDocs;
       window.fsOnSnapshot = onSnapshot;
 
-      // ✅ 3. مراقبة حالة الدخول (اختياري للتأكد)
       onAuthStateChanged(auth, (user) => {
           if (user) {
               console.log("✅ المستخدم مسجل دخول بأمان:", user.email);
-              // بعد التأكد من تسجيل الدخول، سيتم رفع الكروت المعلقة إن وجدت
           } else {
-              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth (سيتم الرفض من السحابة)");
+              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth");
           }
       });
 
@@ -1532,10 +1529,14 @@
 
         const forceUnpublishingIds = new Set();
 
+        // ==========================================
+        // ✅ إدارة الجهاز
+        // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
-                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
+                // ✅ استخدام substring بدلاً من substr المهجورة
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
                 localStorage.setItem('device_id', deviceId);
             }
             return deviceId;
@@ -1701,9 +1702,6 @@
             }
         }
 
-        // ==========================================
-        // 🛡️ فحص حالة الحظر من السحابة — ✅ يشمل "5 سنوات"
-        // ==========================================
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
             if (!teacherPhone || !window.db || !window.fsGetDoc) return false;
@@ -1719,7 +1717,6 @@
                 
                 if (!isBlocked && data.verification && data.createdAt) {
                     const created = new Date(data.createdAt);
-                    // ✅ حساب مدة الباقة — يشمل "5 سنوات" = 1825 يوم
                     const days = data.verification === '30 يوم تجريبي' ? 30
                                : data.verification === '3 شهور' ? 90
                                : data.verification === '6 شهور' ? 180
@@ -2323,7 +2320,7 @@
 
             const nextNumber = getNextGroupNumber();
 
-            const newId = String(Date.now()) + '_' + Math.random().toString(36).substr(2, 6);
+            const newId = String(Date.now()) + '_' + Math.random().toString(36).substring(2, 8);
             
             const lessonData = { 
                 id: newId, 
@@ -2428,12 +2425,13 @@
                 return;
             }
 
+            // ✅ التحقق الإضافي من اكتمال البيانات قبل النشر
             const raw = localStorage.getItem('lessonState_' + id);
             let data = null;
             try { data = raw ? JSON.parse(raw) : null; } catch(e) {}
 
             if (!isSetupComplete(data)) {
-                showToast('⚠️ لازم تكمل إعدادات المجموعة الأول قبل ما تنشرها', true);
+                showToast('⚠️ أكمل إعدادات المجموعة أولاً قبل النشر', true);
                 return;
             }
 
