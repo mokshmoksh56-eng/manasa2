@@ -344,7 +344,6 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة طرد الجهاز -->
     <div id="deviceKickedModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 36px; margin-bottom: 8px;">🚪</div>
@@ -528,11 +527,13 @@
     </div>
 
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
           getFirestore,
           collection,
           getDocs,
+          query,
+          where,
           doc,
           onSnapshot,
           getDoc,
@@ -548,12 +549,14 @@
         appId: "1:472216348338:web:db726630ef6781301e0bab"
       };
 
-      const app = initializeApp(firebaseConfig);
+      const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
       window.db = db;
       window.collection = collection;
       window.getDocs = getDocs;
+      window.query = query;
+      window.where = where;
       window.fsDoc = doc;
       window.fsOnSnapshot = onSnapshot;
       window.fsGetDoc = getDoc;
@@ -576,9 +579,7 @@
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
 
-        // ==========================================
         // ✅ معرّف المعلم الحالي
-        // ==========================================
         function getCurrentTeacherKey() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -595,21 +596,17 @@
             return 'guest';
         }
 
-        // ==========================================
-        // 📱 Device ID Management
-        // ==========================================
+        // ✅ إدارة الجهاز
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
-                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
                 localStorage.setItem('device_id', deviceId);
             }
             return deviceId;
         }
 
-        // ==========================================
         // ✅ التحقق من الجهاز
-        // ==========================================
         async function verifyDeviceOnLoad() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -650,9 +647,7 @@
             }, 2500);
         }
 
-        // ==========================================
         // ✅ Watch listener
-        // ==========================================
         function startDeviceWatch() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
             if (!loggedStr) return;
@@ -685,6 +680,7 @@
             }
         }
 
+        // 🔊 الصوت
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -710,6 +706,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
+        // ✅ WhatsApp + Share
         window.openTeacherWhatsApp = function(rawPhone, teacherName = '', subject = '', grade = '', groupName = '') {
             let cleanPhone = String(rawPhone || '').replace(/\D/g, '');
             if (!cleanPhone) {
@@ -745,7 +742,7 @@
         };
 
         // ==========================================
-        // ✅ Firebase Module Loader
+        // ✅ Firebase Module Loader (مرة واحدة)
         // ==========================================
         let firebaseSyncModule = null;
 
@@ -779,7 +776,9 @@
                     onSnapshot: fs.onSnapshot,
                     doc: fs.doc,
                     collection: fs.collection,
-                    getDocs: fs.getDocs
+                    getDocs: fs.getDocs,
+                    query: fs.query,
+                    where: fs.where
                 };
                 return firebaseSyncModule;
             } catch (err) {
@@ -1010,7 +1009,7 @@
         }
 
         // ==========================================
-        // 🌟 المنهج الافتراضي (مع الترتيب الجديد)
+        // 🌟 المنهج الافتراضي
         // ==========================================
         const defaultCurriculum = {
             main_order: ['primary', 'prep', 'secondary'],
@@ -1075,7 +1074,6 @@
                 return JSON.parse(JSON.stringify(defaultCurriculum));
             }
             
-            // التأكد من وجود main_order
             if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
                 currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order' && k !== 'updatedAt');
             }
@@ -1104,7 +1102,6 @@
                 });
                 st.grades = mergedGrades;
 
-                // ✅ تأكد أن كل صف له ترتيب
                 st.grades.forEach((g, i) => {
                     if (typeof st.gradeOrder[g] !== 'number') {
                         st.gradeOrder[g] = i + 1;
@@ -1127,7 +1124,6 @@
                         st.gradeSubjects[g] = existing;
                     }
 
-                    // ✅ تأكد أن كل مادة لها ترتيب
                     if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
                         st.subjectOrder[g] = {};
                     }
@@ -1137,7 +1133,6 @@
                         }
                     });
 
-                    // ✅ احذف أي ترتيب لمادة لم تعد موجودة
                     Object.keys(st.subjectOrder[g]).forEach(s => {
                         if (!st.gradeSubjects[g].includes(s)) {
                             delete st.subjectOrder[g][s];
@@ -1145,20 +1140,17 @@
                     });
                 });
 
-                // ✅ احذف أي ترتيب لصف لم يعد موجوداً
                 Object.keys(st.gradeOrder).forEach(g => {
                     if (!st.grades.includes(g)) {
                         delete st.gradeOrder[g];
                     }
                 });
                 
-                // التأكد من وجود المرحلة في main_order
                 if (!currObj.main_order.includes(stageKey)) {
                     currObj.main_order.push(stageKey);
                 }
             });
             
-            // إزالة المراحل المحذوفة من main_order
             currObj.main_order = currObj.main_order.filter(k => currObj[k]);
 
             return currObj;
@@ -1183,13 +1175,21 @@
             return copy;
         }
 
-        // ✅ ترتيب المراحل
+        // ✅ ترتيب المراحل (مع إصلاح main_order الفارغة)
         function getSortedStages() {
             const curr = getCurriculum();
-            return curr.main_order || Object.keys(curr).filter(k => k !== 'main_order' && k !== 'updatedAt' && k !== 'id' && typeof curr[k] === 'object' && !Array.isArray(curr[k]));
+            if (curr.main_order && Array.isArray(curr.main_order) && curr.main_order.length > 0) {
+                return curr.main_order.filter(k => curr[k]);
+            }
+            return Object.keys(curr).filter(k => 
+                k !== 'main_order' && 
+                k !== 'updatedAt' && 
+                k !== 'id' && 
+                typeof curr[k] === 'object' && 
+                !Array.isArray(curr[k])
+            );
         }
 
-        // ✅ ترتيب الصفوف حسب gradeOrder
         function getSortedGrades(stageKey) {
             const curr = getCurriculum();
             const st = curr[stageKey];
@@ -1201,7 +1201,6 @@
             });
         }
 
-        // ✅ ترتيب المواد حسب subjectOrder
         function getSortedSubjects(stageKey, gradeName) {
             const curr = getCurriculum();
             const st = curr[stageKey];
@@ -1228,7 +1227,6 @@
 
             stageSelect.innerHTML = '<option value="">-- اختر --</option>';
             
-            // ✅ استخدام الدالة الجديدة لجلب المراحل الصحيحة والمرتبة
             const sortedStages = getSortedStages();
             sortedStages.forEach(stageKey => {
                 if (curr[stageKey]) {
@@ -1257,7 +1255,6 @@
             sSelect.disabled = true;
 
             if (stage && curr[stage]) {
-                // ✅ ترتيب الصفوف حسب gradeOrder
                 const sortedGrades = getSortedGrades(stage);
                 
                 sortedGrades.forEach(g => {
@@ -1283,7 +1280,6 @@
 
             sSelect.innerHTML = '<option value="">-- المادة --</option>';
             if (stage && grade) {
-                // ✅ getSubjectsForGrade تستخدم الترتيب الجديد
                 const subjs = getSubjectsForGrade(stage, grade);
                 subjs.forEach(s => {
                     sSelect.innerHTML += `<option value="${s}">${s}</option>`;
@@ -1323,7 +1319,6 @@
                 return;
             }
 
-            // ✅ المواد مرتبة حسب الترتيب المحدد في لوحة التحكم
             const subjs = getSubjectsForGrade(stage, grade);
             box.classList.add('show');
             title.textContent = `📖 المواد المقررة لـ (${grade}) — اضغط لاختيار المادة:`;
@@ -1521,17 +1516,17 @@
         }
 
         // ==========================================
-        // ✅ onload: Device Check + Cleanup + Firebase
+        // ✅ onload المحسّن
         // ==========================================
         window.onload = async () => {
-            // ✅ 1) التحقق من الجهاز
+            // 1) التحقق من الجهاز
             const isDeviceValid = await verifyDeviceOnLoad();
             if (!isDeviceValid) return;
 
-            // ✅ 2) بدء المراقبة اللحظية
+            // 2) بدء المراقبة اللحظية
             startDeviceWatch();
 
-            // ✅ 3) تنظيف حصص المعلم القديم (احتياطي)
+            // 3) تنظيف حصص المعلم القديم
             const currentKey_talep = getCurrentTeacherKey();
             const lessonsOwnerKey_talep = 'lessons_owner_phone';
             const savedLessonsOwner_talep = localStorage.getItem(lessonsOwnerKey_talep);
@@ -1554,7 +1549,7 @@
                 localStorage.setItem(lessonsOwnerKey_talep, currentKey_talep);
             }
 
-            // ✅ 4) عزل بيانات talep حسب المعلم
+            // 4) عزل بيانات talep حسب المعلم
             const ownerKey = 'talep_data_owner';
             const currentKey = getCurrentTeacherKey();
             const savedOwner = localStorage.getItem(ownerKey);
@@ -1852,7 +1847,7 @@
         }
 
         // ==========================================
-        // 4. جلب الحصص من Firebase
+        // ✅ 4. جلب الحصص من Firebase (محسّن باستعلامات)
         // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
@@ -1863,13 +1858,32 @@
                 return { registeredList, hiddenCount };
             }
 
+            // ✅ قراءة فلتر المرحلة والصف الحاليين للفلترة على السيرفر
+            const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
+            const selectedGrade = (document.getElementById('s_grade').value || '').trim();
+
             try {
-                const querySnapshot = await window.getDocs(window.collection(window.db, "lessons"));
+                const mod = await loadFirebaseModule();
+                if (!mod) return { registeredList, hiddenCount };
+
+                // ✅ بناء استعلام Firestore مُفلتر من السيرفر
+                const constraints = [mod.where("g_publish_map", "==", true)];
+                
+                if (selectedStageKey) {
+                    constraints.push(mod.where("s_stage", "==", selectedStageKey));
+                }
+                if (selectedGrade) {
+                    constraints.push(mod.where("s_grade", "==", selectedGrade));
+                }
+
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const querySnapshot = await mod.getDocs(q);
                 
                 querySnapshot.forEach((doc) => {
                     const state = doc.data();
                     const lessonId = doc.id;
 
+                    // إعادة التحقق من الحالة (احتياطي)
                     if (state.g_publish_map === false) {
                         hiddenCount++;
                         return;
@@ -1921,7 +1935,73 @@
                     });
                 });
             } catch (error) {
-                console.error("❌ خطأ في جلب البيانات من السحابة:", error);
+                // ✅ إذا فشل الاستعلام المركب، نجرب بدونه (قد يحتاج فهرس مركب)
+                console.warn("⚠️ الاستعلام المركب فشل، جاري المحاولة بدون فلترة متقدمة:", error);
+                
+                try {
+                    const mod = await loadFirebaseModule();
+                    const q2 = mod.query(
+                        mod.collection(mod.db, "lessons"), 
+                        mod.where("g_publish_map", "==", true)
+                    );
+                    const snap2 = await mod.getDocs(q2);
+                    
+                    snap2.forEach((doc) => {
+                        const state = doc.data();
+                        const lessonId = doc.id;
+                        
+                        // ✅ فلترة يدوية احتياطية بعد الجلب
+                        if (selectedStageKey && state.s_stage !== selectedStageKey) return;
+                        if (selectedGrade && state.s_grade !== selectedGrade) return;
+
+                        let subjectsText = '';
+                        if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
+                            subjectsText = state.selectedSubjects.map(sub => {
+                                const parts = String(sub).split(' - ');
+                                return parts[1] ? parts[1].trim() : String(sub).trim();
+                            }).join('، ');
+                        }
+
+                        let locLabel = 'السنتر';
+                        if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
+                        else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
+                        else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+
+                        let fullAddress = state.m_address || 'محدد على الخريطة';
+                        if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
+
+                        const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
+                        const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
+
+                        const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+
+                        const lat = state.lat ? parseFloat(state.lat) : 30.0444;
+                        const lng = state.lng ? parseFloat(state.lng) : 31.2357;
+
+                        registeredList.push({
+                            lessonId: lessonId,
+                            groupName: state.g_name || `مجموعة ${lessonId}`,
+                            teacherName: state.g_teacher || 'المعلم',
+                            count: state.g_count || '--',
+                            grade: (state.s_grade || '').trim(),
+                            stageKey: (state.s_stage || '').trim(),
+                            stageName: getStageNameByKey(state.s_stage),
+                            subject: subjectsText || '',
+                            subjectsRaw: state.selectedSubjects || [],
+                            days: daysText,
+                            startTime: startTime,
+                            endTime: endTime,
+                            locType: locLabel,
+                            address: fullAddress,
+                            phone: state.g_phone || '',
+                            gender: state.t_gender || 'مستر',
+                            lat: lat,
+                            lng: lng
+                        });
+                    });
+                } catch (err2) {
+                    console.error("❌ فشل الاستعلام الاحتياطي أيضاً:", err2);
+                }
             }
 
             return { registeredList, hiddenCount };
@@ -2037,7 +2117,7 @@
         }
 
         // ==========================================
-        // Text normalization + strict matching
+        // Text normalization
         // ==========================================
         function normalizeArabicText(str) {
             if (!str) return '';
