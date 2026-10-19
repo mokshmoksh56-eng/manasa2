@@ -136,16 +136,6 @@
         #st_girl:checked + label, #t_ms:checked + label { border-color: #EC4899 !important; border-bottom-color: #DB2777 !important; background-color: #FCE7F3 !important; color: #9D174D !important; }
         #st_girl:checked + label::before, #t_ms:checked + label::before { background: #EC4899 !important; }
 
-        /* ✅ تنسيق الخيارات المعطلة */
-        .radio-grid input:disabled + label {
-            opacity: 0.35;
-            cursor: not-allowed !important;
-            filter: grayscale(0.7);
-        }
-        .radio-grid input:disabled + label:active {
-            transform: none;
-        }
-
         .student-summary-card {
             background: linear-gradient(135deg, #F0FDF4, #DCFCE7); border: 1.5px solid #86EFAC; border-bottom: 3px solid #16A34A;
             border-radius: 10px; padding: 10px 12px; margin-top: 15px; margin-bottom: 10px; display: none; 
@@ -192,6 +182,7 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
+        /* ✅ مؤشر المزامنة اللحظية */
         .live-indicator {
             position: absolute;
             top: 10px;
@@ -478,7 +469,7 @@
             <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
                 <label>تفضل الدرس مع؟</label>
-                <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);" id="prefTeacherGroup">
+                <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
                     <div><input type="radio" name="pref_teacher" id="t_any" value="مستر او مس" checked><label for="t_any"><i>🤷‍♂️</i> مستر او مس</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر</label></div>
                     <div><input type="radio" name="pref_teacher" id="t_ms" value="مس"><label for="t_ms"><i>👩‍🏫</i> مس</label></div>
@@ -533,6 +524,7 @@
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                    <!-- ✅ مؤشر المزامنة اللحظية -->
                     <div id="liveIndicator" class="live-indicator">
                         <span class="dot"></span>
                         <span>مباشر</span>
@@ -636,11 +628,13 @@
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
 
+        // ✅ مستمع لحظي للمعلمين على الخريطة
         let teachersRealtimeUnsub = null;
         let isFirstTeachersSnapshot = true;
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
+        // ✅ معرّف المعلم الحالي
         function getCurrentTeacherKey() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -657,6 +651,7 @@
             return 'guest';
         }
 
+        // ✅ إدارة الجهاز
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
@@ -666,6 +661,7 @@
             return deviceId;
         }
 
+        // ✅ التحقق من الجهاز
         async function verifyDeviceOnLoad() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -706,6 +702,7 @@
             }, 2500);
         }
 
+        // ✅ Watch listener
         function startDeviceWatch() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
             if (!loggedStr) return;
@@ -738,6 +735,7 @@
             }
         }
 
+        // 🔊 الصوت
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -763,6 +761,7 @@
             setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
+        // ✅ WhatsApp + Share
         window.openTeacherWhatsApp = function(rawPhone, teacherName = '', subject = '', grade = '', groupName = '') {
             let cleanPhone = String(rawPhone || '').replace(/\D/g, '');
             if (!cleanPhone) {
@@ -798,7 +797,7 @@
         };
 
         // ==========================================
-        // ✅ Firebase Module Loader
+        // ✅ Firebase Module Loader (مرة واحدة)
         // ==========================================
         let firebaseSyncModule = null;
 
@@ -844,7 +843,7 @@
         }
 
         // ==========================================
-        // ✅ Talep Firestore
+        // ✅ Talep Firestore: حفظ / تحميل
         // ==========================================
         let _talepSaveTimer = null;
         let _talepSavePending = false;
@@ -1123,57 +1122,6 @@
                 phoneLabel.innerHTML = "📱 رقم الهاتف";
                 phoneInput.placeholder = "010XXXXXXXX";
                 ageWarning.style.display = "none";
-            }
-        }
-
-        // ==========================================
-        // ✅ تحديث خيارات "تفضل الدرس مع" حسب جنس الطالب
-        // ==========================================
-        function updatePrefTeacherOptions() {
-            const genderRadio = document.querySelector('input[name="st_gender"]:checked');
-            if (!genderRadio) return;
-            
-            const studentGender = genderRadio.value;
-            const tMr = document.getElementById('t_mr');
-            const tMs = document.getElementById('t_ms');
-            const tAny = document.getElementById('t_any');
-            const labelMr = tMr?.parentElement?.querySelector('label');
-            const labelMs = tMs?.parentElement?.querySelector('label');
-            
-            if (!tMr || !tMs || !tAny) return;
-            
-            if (studentGender === 'ولد') {
-                tMs.disabled = true;
-                tMr.disabled = false;
-                if (labelMs) {
-                    labelMs.style.opacity = '0.4';
-                    labelMs.style.cursor = 'not-allowed';
-                    labelMs.title = 'غير متاح — الطالب ولد';
-                }
-                if (labelMr) {
-                    labelMr.style.opacity = '1';
-                    labelMr.style.cursor = 'pointer';
-                    labelMr.title = '';
-                }
-                if (tMs.checked) {
-                    tAny.checked = true;
-                }
-            } else if (studentGender === 'بنت') {
-                tMr.disabled = true;
-                tMs.disabled = false;
-                if (labelMr) {
-                    labelMr.style.opacity = '0.4';
-                    labelMr.style.cursor = 'not-allowed';
-                    labelMr.title = 'غير متاح — الطالبة بنت';
-                }
-                if (labelMs) {
-                    labelMs.style.opacity = '1';
-                    labelMs.style.cursor = 'pointer';
-                    labelMs.title = '';
-                }
-                if (tMr.checked) {
-                    tAny.checked = true;
-                }
             }
         }
 
@@ -1632,12 +1580,10 @@
             const subject = document.getElementById('s_subject').value;
             const prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value;
             const prefLoc = document.querySelector('input[name="pref_loc"]:checked')?.value;
-            const genderRadio = document.querySelector('input[name="st_gender"]:checked');
-            const genderText = genderRadio?.value || '--';
 
             if (grade && subject) {
                 document.getElementById('studentSummaryCard').style.display = 'block';
-                document.getElementById('sum_name').innerText = `${name || 'بدون اسم'} (${genderText})`;
+                document.getElementById('sum_name').innerText = name || 'بدون اسم';
                 document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : '--';
                 document.getElementById('sum_subject').innerText = subject || '--';
                 document.getElementById('sum_teacher_pref').innerText = prefTeacher || 'أي منهما';
@@ -1684,20 +1630,20 @@
             }
             
             updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
-            
-            // ✅ تحديث خيارات المعلم حسب الجنس
-            updatePrefTeacherOptions();
         }
 
         // ==========================================
         // ✅ onload المحسّن
         // ==========================================
         window.onload = async () => {
+            // 1) التحقق من الجهاز
             const isDeviceValid = await verifyDeviceOnLoad();
             if (!isDeviceValid) return;
 
+            // 2) بدء المراقبة اللحظية
             startDeviceWatch();
 
+            // 3) تنظيف حصص المعلم القديم
             const currentKey_talep = getCurrentTeacherKey();
             const lessonsOwnerKey_talep = 'lessons_owner_phone';
             const savedLessonsOwner_talep = localStorage.getItem(lessonsOwnerKey_talep);
@@ -1720,6 +1666,7 @@
                 localStorage.setItem(lessonsOwnerKey_talep, currentKey_talep);
             }
 
+            // 4) عزل بيانات talep حسب المعلم
             const ownerKey = 'talep_data_owner';
             const currentKey = getCurrentTeacherKey();
             const savedOwner = localStorage.getItem(ownerKey);
@@ -1729,6 +1676,7 @@
             }
             localStorage.setItem(ownerKey, currentKey);
 
+            // 5) جلب المنهج
             try { await fetchCurriculumOnceFromFirebase(); } catch (e) {}
 
             if (!curriculumCache) {
@@ -1745,8 +1693,10 @@
                 }
             }
 
+            // 6) تحميل بيانات talep
             await loadTalepFromFirebase();
 
+            // 7) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
@@ -1773,21 +1723,14 @@
                 });
             });
 
-            // ✅ ربط تغيير جنس الطالب بتحديث خيارات المعلم
+            // ✅ إعادة البحث عند تغيير جنس الطالب
             document.querySelectorAll('input[name="st_gender"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    updatePrefTeacherOptions();
-                    saveStudentData();
-                    updateStudentSummary();
-                    
+                radio.addEventListener('change', () => {
                     if (currentCenter && map) {
                         renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
                     }
                 });
             });
-
-            // ✅ تشغيل التحديث الأولي
-            updatePrefTeacherOptions();
 
             window.addEventListener('storage', (e) => {
                 if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
@@ -1817,7 +1760,7 @@
 
             startCurriculumRealtimeListener();
             startTalepRealtimeListener();
-            startTeachersRealtimeListener();
+            startTeachersRealtimeListener(); // ✅ المزامنة اللحظية للمعلمين
         };
 
         // ==========================================
@@ -2031,7 +1974,7 @@
         }
 
         // ==========================================
-        // 4. جلب الحصص من Firebase
+        // 4. جلب الحصص من Firebase (محسّن باستعلامات)
         // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
@@ -2111,6 +2054,7 @@
                         address: fullAddress,
                         phone: state.g_phone || '',
                         gender: state.t_gender || 'مستر',
+                        allowedGender: state.g_gender || 'ولاد وبنات', // ✅ إضافة الفئات المسموح بها
                         lat: lat,
                         lng: lng
                     });
@@ -2174,6 +2118,7 @@
                             address: fullAddress,
                             phone: state.g_phone || '',
                             gender: state.t_gender || 'مستر',
+                            allowedGender: state.g_gender || 'ولاد وبنات', // ✅ إضافة الفئات المسموح بها
                             lat: lat,
                             lng: lng
                         });
@@ -2293,6 +2238,7 @@
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
 
+            // ✅ إظهار مؤشر المزامنة اللحظية
             const liveIndicator = document.getElementById('liveIndicator');
             if (liveIndicator) liveIndicator.classList.add('show');
 
@@ -2375,6 +2321,23 @@
             return normTeacher.includes(normStudent) || normStudent.includes(normTeacher);
         }
 
+        // ✅ دالة التحقق من تطابق الفئة (ولد/بنت)
+        function isTeacherGenderMatches(teacherGenderAllowed, studentGender) {
+            // إذا لم يحدد المعلم شيئاً، نعتبره متاحاً للجميع
+            if (!teacherGenderAllowed) return true;
+            
+            // إذا كان المعلم يسمح بـ "ولاد وبنات" فهو متاح للجميع
+            if (teacherGenderAllowed === 'ولاد وبنات' || teacherGenderAllowed === 'g_mix') return true;
+            
+            // إذا كان الطالب "ولد" والمعلم يسمح بـ "اولاد فقط"
+            if (studentGender === 'ولد' && (teacherGenderAllowed === 'اولاد فقط' || teacherGenderAllowed === 'g_boys')) return true;
+            
+            // إذا كانت الطالبة "بنت" والمعلم يسمح بـ "بنات فقط"
+            if (studentGender === 'بنت' && (teacherGenderAllowed === 'بنات فقط' || teacherGenderAllowed === 'g_girls')) return true;
+            
+            return false;
+        }
+
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
 
@@ -2384,10 +2347,9 @@
             let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
             if (prefTeacher === 'أيهم') prefTeacher = 'مستر او مس';
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
-
-            // ✅ قراءة جنس الطالب للفلترة
-            const studentGenderRadio = document.querySelector('input[name="st_gender"]:checked');
-            const studentGender = studentGenderRadio ? studentGenderRadio.value : 'ولد';
+            
+            // ✅ جلب جنس الطالب الحالي
+            const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
@@ -2398,6 +2360,9 @@
 
             const matched = registeredList.filter(t => {
                 if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
+
+                // ✅ فلترة الفئات المسموح بها
+                if (!isTeacherGenderMatches(t.allowedGender, studentGender)) return false;
 
                 if (selectedStageKey) {
                     const tStageKey = String(t.stageKey || '').trim();
@@ -2414,13 +2379,8 @@
                     return false;
                 }
 
-                // ✅ فلترة تفضيل المعلم
                 if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
                 if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
-
-                // ✅ فلترة جنس الطالب: ولد → مستر فقط، بنت → مس فقط
-                if (studentGender === 'ولد' && t.gender === 'مس') return false;
-                if (studentGender === 'بنت' && t.gender !== 'مس') return false;
 
                 return true;
             });
