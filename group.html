@@ -779,14 +779,12 @@
         </div>
     </div>
 
-    <!-- 🌟 Firebase Module 🌟 -->
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
           getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
       
-      // ✅ إضافة مكتبة المصادقة للتعرف على المعلم
       import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
@@ -798,12 +796,12 @@
         appId: "1:472216348338:web:db726630ef6781301e0bab"
       };
 
-      const app = initializeApp(firebaseConfig);
+      const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      const auth = getAuth(app); // ✅ تفعيل المصادقة
+      const auth = getAuth(app);
 
       window.db = db;
-      window.auth = auth; // حفظ للوصول السريع
+      window.auth = auth;
       window.doc = doc;
       window.setDoc = setDoc;
       window.fsGetDoc = getDoc;
@@ -812,12 +810,11 @@
       window.fsDeleteDoc = deleteDoc;
       window.fsOnSnapshot = onSnapshot;
 
-      // ✅ مراقبة حالة الدخول للتأكد من ربط الجلسة
       onAuthStateChanged(auth, (user) => {
           if (user) {
               console.log("✅ المستخدم مسجل دخول بأمان في group.html:", user.email);
           } else {
-              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth (قد يتم رفض الحفظ من السحابة)");
+              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth");
           }
       });
 
@@ -1005,7 +1002,7 @@
         // 🌟 المنهج الافتراضي
         // ==========================================
         const defaultCurriculum = {
-            main_order: ['primary', 'prep', 'secondary'], // ترتيب المراحل الافتراضي
+            main_order: ['primary', 'prep', 'secondary'],
             primary: {
                 name: '🎒 المرحلة الابتدائية',
                 grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
@@ -1067,7 +1064,6 @@
                 currObj = JSON.parse(JSON.stringify(defaultCurriculum));
             }
             
-            // التأكد من وجود main_order
             if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
                 currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order');
             }
@@ -1139,13 +1135,21 @@
             return copy;
         }
 
-        // ✅ تم حل الخطأ هنا (جلب الترتيب من المصفوفة الصحيحة دون ظهور كلمة main_order)
+        // ✅ ترتيب المراحل مع الإصلاح الجديد
         function getSortedStages() {
             const curr = getCurriculum();
-            return curr.main_order || Object.keys(curr).filter(k => k !== 'main_order');
+            if (curr.main_order && Array.isArray(curr.main_order) && curr.main_order.length > 0) {
+                return curr.main_order.filter(k => curr[k]);
+            }
+            return Object.keys(curr).filter(k => 
+                k !== 'main_order' && 
+                k !== 'updatedAt' && 
+                k !== 'id' && 
+                typeof curr[k] === 'object' && 
+                !Array.isArray(curr[k])
+            );
         }
 
-        // ✅ ترتيب الصفوف حسب gradeOrder
         function getSortedGrades(stageKey) {
             const curr = getCurriculum();
             const st = curr[stageKey];
@@ -1157,7 +1161,6 @@
             });
         }
 
-        // ✅ ترتيب المواد حسب subjectOrder (الأساس للترتيب القادم من school)
         function getSubjectsForGrade(stageKey, gradeName) {
             const curr = getCurriculum();
             if (!stageKey || !curr[stageKey]) return [];
@@ -1186,7 +1189,6 @@
 
             stageSelect.innerHTML = '<option value="">-- اختر المرحلة --</option>';
             
-            // ✅ استخدام الدالة الجديدة لجلب المراحل الصحيحة فقط
             const sortedStages = getSortedStages();
             sortedStages.forEach(stageKey => {
                 if (curr[stageKey]) {
@@ -1215,7 +1217,6 @@
 
             gSelect.innerHTML = '<option value="">-- اختر الصف --</option>';
             if (stage && curr[stage]) {
-                // ✅ ترتيب الصفوف حسب gradeOrder
                 const sortedGrades = getSortedGrades(stage);
                 
                 sortedGrades.forEach(g => {
@@ -1285,7 +1286,6 @@
                 return;
             }
 
-            // ✅ getSubjectsForGrade ترجع المواد مرتبة بالفعل حسب subjectOrder
             const gradeSubjs = getSubjectsForGrade(stage, grade);
             box.classList.add('show');
             title.textContent = `📖 المواد الخاصة بـ (${grade}) — اضغط على المادة لإضافتها:`;
@@ -1480,71 +1480,89 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
+        // ==========================================
+        // ✅ حفظ الحالة مع debounce لتقليل كتابات Firestore
+        // ==========================================
+        let saveStateTimer = null;
+        let saveStatePending = false;
+
         async function saveState() {
-            const selectedDays = [];
-            ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el && el.checked) selectedDays.push(el.value);
-            });
-
-            const selectedMonths = [];
-            ['m_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el && el.checked) selectedMonths.push(el.value);
-            });
+            // debounce: ننتظر 500ms قبل الحفظ الفعلي
+            if (saveStateTimer) clearTimeout(saveStateTimer);
             
-            let teacherPhone = '';
-            let teacherTitle = 'مستر';
-            try {
-                const loggedStr = localStorage.getItem('loggedInTeacher');
-                if(loggedStr) {
-                    const logged = JSON.parse(loggedStr);
-                    teacherPhone = logged.phone || '';
-                    teacherTitle = logged.title || 'مستر';
+            saveStateTimer = setTimeout(async () => {
+                if (saveStatePending) return;
+                saveStatePending = true;
+                
+                try {
+                    const selectedDays = [];
+                    ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && el.checked) selectedDays.push(el.value);
+                    });
+
+                    const selectedMonths = [];
+                    ['m_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec'].forEach(id => {
+                        const el = document.getElementById(id);
+                        if (el && el.checked) selectedMonths.push(el.value);
+                    });
+                    
+                    let teacherPhone = '';
+                    let teacherTitle = 'مستر';
+                    try {
+                        const loggedStr = localStorage.getItem('loggedInTeacher');
+                        if(loggedStr) {
+                            const logged = JSON.parse(loggedStr);
+                            teacherPhone = logged.phone || '';
+                            teacherTitle = logged.title || 'مستر';
+                        }
+                    } catch(e){}
+
+                    const state = {
+                        step: currentStepNumber,
+                        g_name: document.getElementById('g_name').value,
+                        g_center: document.getElementById('g_center').value,
+                        g_teacher: document.getElementById('g_teacher').value,
+                        g_count: document.getElementById('g_count').value,
+                        g_phone: teacherPhone,
+                        t_gender: teacherTitle,
+                        phoneType: detectPhoneType(),
+                        start_hour: document.getElementById('start_hour').value,
+                        start_min: document.getElementById('start_min').value,
+                        start_ampm: document.getElementById('start_ampm').value,
+                        end_hour: document.getElementById('end_hour').value,
+                        end_min: document.getElementById('end_min').value,
+                        end_ampm: document.getElementById('end_ampm').value,
+                        g_days: selectedDays,
+                        g_months: selectedMonths,
+                        g_repeat_weekly: document.getElementById('g_repeat_weekly').checked,
+                        g_gender: document.querySelector('input[name="g_gender"]:checked')?.id,
+                        g_loc: document.querySelector('input[name="g_loc"]:checked')?.id,
+                        s_stage: document.getElementById('s_stage').value,
+                        s_grade: document.getElementById('s_grade').value,
+                        selectedSubjects: selectedSubjects,
+                        m_address: document.getElementById('m_address').value,
+                        g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
+                        lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
+                        lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng,
+                        createdAt: new Date().toISOString().split('T')[0]
+                    };
+                    
+                    localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
+                    localStorage.setItem('publishState_' + currentLessonId, state.g_publish_map);
+                    
+                    if(window.db && window.setDoc && window.doc) {
+                        try {
+                            await window.setDoc(window.doc(window.db, "lessons", currentLessonId), state);
+                            console.log("☁️ تم تحديث السحابة بنجاح");
+                        } catch(e) {
+                            console.error("خطأ في تحديث السحابة", e);
+                        }
+                    }
+                } finally {
+                    saveStatePending = false;
                 }
-            } catch(e){}
-
-            const state = {
-                step: currentStepNumber,
-                g_name: document.getElementById('g_name').value,
-                g_center: document.getElementById('g_center').value,
-                g_teacher: document.getElementById('g_teacher').value,
-                g_count: document.getElementById('g_count').value,
-                g_phone: teacherPhone,
-                t_gender: teacherTitle,
-                phoneType: detectPhoneType(),
-                start_hour: document.getElementById('start_hour').value,
-                start_min: document.getElementById('start_min').value,
-                start_ampm: document.getElementById('start_ampm').value,
-                end_hour: document.getElementById('end_hour').value,
-                end_min: document.getElementById('end_min').value,
-                end_ampm: document.getElementById('end_ampm').value,
-                g_days: selectedDays,
-                g_months: selectedMonths,
-                g_repeat_weekly: document.getElementById('g_repeat_weekly').checked,
-                g_gender: document.querySelector('input[name="g_gender"]:checked')?.id,
-                g_loc: document.querySelector('input[name="g_loc"]:checked')?.id,
-                s_stage: document.getElementById('s_stage').value,
-                s_grade: document.getElementById('s_grade').value,
-                selectedSubjects: selectedSubjects,
-                m_address: document.getElementById('m_address').value,
-                g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
-                lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
-                lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng,
-                createdAt: new Date().toISOString().split('T')[0]
-            };
-            
-            localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
-            localStorage.setItem('publishState_' + currentLessonId, state.g_publish_map);
-            
-            if(window.db && window.setDoc && window.doc) {
-                 try {
-                     await window.setDoc(window.doc(window.db, "lessons", currentLessonId), state);
-                     console.log("☁️ تم تحديث السحابة بنجاح");
-                 } catch(e) {
-                     console.error("خطأ في تحديث السحابة", e);
-                 }
-            }
+            }, 500);
         }
 
         function loadState() {
@@ -1611,6 +1629,7 @@
                         document.getElementById('g_publish_map').checked = state.g_publish_map;
                     }
 
+                    // ✅ إصلاح مشكلة حفظ lat/lng
                     if(state.lat && state.lng) {
                         savedLat = state.lat;
                         savedLng = state.lng;
@@ -1649,13 +1668,40 @@
                 : `${titlePrefix} المجموعة`;
         }
 
-        window.onload = () => {
+        // ==========================================
+        // ✅ onload المحسّن (async)
+        // ==========================================
+        window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
             if(urlParams.has('mode') && urlParams.get('mode') === 'edit') {
                 isEditMode = true;
                 document.getElementById('editAlert').style.display = 'flex';
+            }
+            
+            // ✅ محاولة جلب أحدث بيانات المجموعة من Firestore أولاً
+            if (window.fsGetDoc && window.doc && window.db) {
+                try {
+                    const ref = window.doc(window.db, "lessons", currentLessonId);
+                    const snap = await window.fsGetDoc(ref);
+                    if (snap.exists()) {
+                        const firebaseData = snap.data();
+                        // ✅ إذا كانت البيانات في Firestore أحدث، حفظها في localStorage
+                        const localRaw = localStorage.getItem('lessonState_' + currentLessonId);
+                        const localData = localRaw ? JSON.parse(localRaw) : null;
+                        
+                        const fbTimestamp = firebaseData.updatedAt || firebaseData.createdAt || 0;
+                        const localTimestamp = localData?.createdAt ? new Date(localData.createdAt).getTime() : 0;
+                        
+                        if (!localData || fbTimestamp > localTimestamp) {
+                            localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(firebaseData));
+                            console.log("☁️ تم جلب البيانات الأحدث من Firestore");
+                        }
+                    }
+                } catch (err) {
+                    console.warn("⚠️ فشل جلب البيانات من Firestore:", err);
+                }
             }
             
             let groupNameForTitle = '';
@@ -1893,6 +1939,17 @@
 
         function finishSetup() {
             checkTeacherBlockedStatus();
+            
+            // ✅ التحقق من الحظر قبل الحفظ
+            const teacherInput = document.getElementById('g_teacher');
+            const teacherNameRaw = teacherInput ? teacherInput.value.trim() : '';
+            const teacherNameClean = cleanTeacherName(teacherNameRaw);
+            
+            if (localStorage.getItem('teacherBlocked_name_' + teacherNameClean) === 'true') {
+                document.getElementById('blockedModal').classList.add('active');
+                return;
+            }
+            
             const address = document.getElementById('m_address').value.trim();
 
             if (!address || address.includes("جاري")) {
@@ -1971,6 +2028,7 @@
                 return false;
             }
 
+            // ✅ التحقق من تعارض المواعيد
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 
