@@ -356,7 +356,10 @@
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">⚠️</div>
             <h3 class="modal-title-text" style="color: #991B1B;">هل أنت متأكد من حذف الحساب؟</h3>
-            <p class="modal-desc-text">سيتم حذف بياناتك فقط نهائياً ولن يمكنك التراجع</p>
+            <p class="modal-desc-text">
+                سيتم حذف حسابك بشكل نهائي مع جميع بياناتك.<br>
+                <strong style="color: #DC2626;">لا يمكن التراجع عن هذا الإجراء!</strong>
+            </p>
             <div class="modal-btn-row">
                 <button type="button" class="modal-btn modal-btn-cancel" onclick="closeCustomModal('confirmDeleteModal')">إلغاء</button>
                 <button type="button" class="modal-btn modal-btn-danger" onclick="executeDeleteAccount()">نعم، احذف</button>
@@ -483,6 +486,9 @@
     </div>
 
     <script>
+        // ==========================================
+        // 🔊 تأثير الصوت
+        // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
             try {
@@ -500,6 +506,9 @@
             if (e.target.closest('button, .auth-tab, .radio-label, .modal-btn')) playHighPitchSound();
         });
 
+        // ==========================================
+        // 🧹 تنظيف بيانات المعلم السابق
+        // ==========================================
         function clearPreviousTeacherData() {
             try {
                 const keysToRemove = [];
@@ -508,8 +517,8 @@
                     if (!k) continue;
                     if (
                         k === 'teacher_lessons' ||
-                        k === 'talep_data' ||
-                        k === 'talep_data_owner' ||
+                        k === 'talep_data' ||              // ✅ جديد: تنظيف بيانات الطالب
+                        k === 'talep_data_owner' ||        // ✅ جديد: تنظيف مالك البيانات
                         k === 'lessons_owner_phone' ||
                         k === 'location_consent_given' ||
                         k.startsWith('lessonState_') ||
@@ -527,15 +536,22 @@
             }
         }
 
+        // ==========================================
+        // 📱 إدارة معرّف الجهاز
+        // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
-                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
+                // ✅ استخدام substring بدلاً من substr المهجورة
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
                 localStorage.setItem('device_id', deviceId);
             }
             return deviceId;
         }
 
+        // ==========================================
+        // 🔥 تحميل Firebase Module
+        // ==========================================
         let _fbModule = null;
         async function getFbModule() {
             if (_fbModule) return _fbModule;
@@ -574,6 +590,9 @@
             }
         }
 
+        // ==========================================
+        // 📲 التحقق من الجهاز وتسجيله
+        // ==========================================
         async function verifyAndRegisterDevice(phone, accountData) {
             const currentDeviceId = getOrCreateDeviceId();
             const teacherKey = String(phone).replace(/\D/g, '');
@@ -613,6 +632,9 @@
             }
         }
 
+        // ==========================================
+        // 🚀 عند تحميل الصفحة
+        // ==========================================
         window.onload = function() {
             localStorage.removeItem('loggedInTeacher');
 
@@ -690,7 +712,7 @@
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
 
-                // 2️⃣ حفظ بيانات المعلم العامة في Firestore باستخدام رقم التليفون
+                // 2️⃣ حفظ بيانات المعلم العامة في Firestore
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -732,7 +754,7 @@
         }
 
         // ==========================================
-        // 🔐 Login — تسجيل الدخول باستخدام Firebase Auth
+        // 🔐 Login — تسجيل الدخول
         // ==========================================
         async function handleLogin(event) {
             const phone = document.getElementById('loginPhone').value.trim();
@@ -757,10 +779,10 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ التحقق من الحساب وكلمة المرور بواسطة فايربيز (Auth)
+                // 1️⃣ التحقق من الحساب وكلمة المرور
                 const userCredential = await fb.signIn(fb.auth, fakeEmail, pass);
                 
-                // 2️⃣ جلب بيانات المعلم من Firestore بعد نجاح الدخول
+                // 2️⃣ جلب بيانات المعلم من Firestore
                 const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
                 let savedData = {};
                 
@@ -821,6 +843,8 @@
                 console.warn("⚠️ خطأ تسجيل الدخول:", error);
                 if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
                     showAlert('رقم التليفون أو الرقم السري غير صحيح.');
+                } else if (error.code === 'auth/too-many-requests') {
+                    showAlert('محاولات كثيرة فاشلة، حاول لاحقاً.');
                 } else {
                     showAlert('حدث خطأ في الاتصال، حاول مرة أخرى.');
                 }
@@ -833,105 +857,97 @@
         }
 
         // ==========================================
-        // 🗑️ حذف الحساب (يتطلب تسجيل الدخول للتحقق)
+        // 🗑️ حذف الحساب (النسخة الآمنة الجديدة)
         // ==========================================
         async function confirmDeleteAccount() {
-            const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
-            const pass = document.getElementById('loginPassword').value || document.getElementById('regPassword1').value;
-
-            if (!phone) {
-                return showAlert('لا يوجد رقم تليفون محدد.');
-            }
-            if (!pass) {
-                return showAlert('يرجى كتابة الرقم السري الخاص بك لتأكيد الحذف.');
-            }
-
-            const btn = document.querySelector('.btn-delete-small');
-            const origText = btn.innerText;
-            btn.innerText = '⏳ جاري التحقق...';
-            btn.disabled = true;
-
             const fb = await getFbModule();
             if (!fb) {
-                btn.innerText = origText;
-                btn.disabled = false;
                 return showAlert('تعذر الاتصال بالسحابة.');
             }
 
-            const fakeEmail = phone + "@ehgezly.com";
-            try {
-                // محاولة تسجيل الدخول للتحقق من كلمة المرور قبل الحذف
-                await fb.signIn(fb.auth, fakeEmail, pass);
-                btn.innerText = origText;
-                btn.disabled = false;
-                // كلمة المرور صحيحة، إظهار رسالة التأكيد
-                document.getElementById('confirmDeleteModal').classList.add('active');
-            } catch (error) {
-                btn.innerText = origText;
-                btn.disabled = false;
-                return showAlert('الرقم السري غير صحيح، لا يمكنك حذف الحساب.');
+            // ✅ التحقق من وجود مستخدم مسجل دخول فعلاً
+            const currentUser = fb.auth.currentUser;
+            if (!currentUser) {
+                return showAlert('يجب تسجيل الدخول أولاً لحذف الحساب.');
             }
+
+            // ✅ التحقق من أن الإيميل يطابق رقم الهاتف المدخل
+            const phone = document.getElementById('loginPhone').value.trim() || 
+                          document.getElementById('regPhone').value.trim();
+            if (!phone) {
+                return showAlert('لا يوجد رقم تليفون محدد.');
+            }
+
+            const fakeEmail = phone + "@ehgezly.com";
+            if (currentUser.email !== fakeEmail) {
+                return showAlert('الرقم المدخل لا يطابق الحساب المسجل. سجل دخول أولاً بنفس الرقم.');
+            }
+
+            // ✅ عرض نافذة التأكيد
+            document.getElementById('confirmDeleteModal').classList.add('active');
         }
 
         async function executeDeleteAccount() {
             closeCustomModal('confirmDeleteModal');
-            const phone = document.getElementById('loginPhone').value.trim() || document.getElementById('regPhone').value.trim();
-            if (!phone) return;
-
-            const savedDataStr = localStorage.getItem('teacherAccount_' + phone);
-            let cleanName = '';
-            if (savedDataStr) {
-                try {
-                    const savedData = JSON.parse(savedDataStr);
-                    cleanName = (savedData.name || '').replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
-                } catch(e) {}
-            }
-
-            localStorage.removeItem('teacherAccount_' + phone);
-            localStorage.removeItem('teacherVerification_' + phone);
-            localStorage.removeItem('teacherBlocked_' + phone);
-            if (cleanName) {
-                localStorage.removeItem('teacherVerification_name_' + cleanName);
-                localStorage.removeItem('teacherBlocked_name_' + cleanName);
-            }
             
-            const keysToRemove = [];
-            for (let i = 0; i < localStorage.length; i++) {
-                const k = localStorage.key(i);
-                if (k && k.startsWith('lessonState_')) {
-                    try {
-                        const st = JSON.parse(localStorage.getItem(k) || '{}');
-                        const stCleanName = (st.g_teacher || '').replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
-                        if (st.g_phone === phone || (cleanName && stCleanName === cleanName)) {
-                            const id = k.replace('lessonState_', '');
-                            keysToRemove.push('lessonState_' + id); 
-                            keysToRemove.push('publishState_' + id);
-                        }
-                    } catch (e) {}
-                }
+            const fb = await getFbModule();
+            if (!fb || !fb.auth.currentUser) {
+                return showAlert('انتهت الجلسة. سجل دخول مرة أخرى.');
             }
-            keysToRemove.forEach(k => localStorage.removeItem(k));
-            localStorage.removeItem('loggedInTeacher'); 
+
+            const phone = fb.auth.currentUser.email.split('@')[0];
+            const teacherKey = String(phone).replace(/\D/g, '');
+            const btn = document.querySelector('.btn-delete-small');
+            const origText = btn.innerText;
+            btn.innerText = '⏳ جاري الحذف...';
+            btn.disabled = true;
 
             try {
-                const fb = await getFbModule();
-                if (fb) {
-                    const teacherKey = String(phone).replace(/\D/g, '');
-                    await fb.deleteDoc(fb.doc(fb.db, "teacher_devices", teacherKey)).catch(() => {});
-                    await fb.deleteDoc(fb.doc(fb.db, "teachers", teacherKey)).catch(() => {});
-                    
-                    // حذف المستخدم من Firebase Auth بشكل نهائي
-                    if (fb.auth.currentUser) {
-                        await fb.auth.currentUser.delete();
-                    }
-                    console.log("✅ تم حذف سجل الجهاز والحساب والمصادقة من Firebase");
-                }
-            } catch (e) {
-                console.warn("⚠️ فشل حذف سجل الجهاز أو الحساب من السحابة:", e);
-            }
+                // 1️⃣ حذف بيانات Firestore أولاً
+                await fb.deleteDoc(fb.doc(fb.db, "teacher_devices", teacherKey)).catch(() => {});
+                await fb.deleteDoc(fb.doc(fb.db, "teachers", teacherKey)).catch(() => {});
+                await fb.deleteDoc(fb.doc(fb.db, "talep_data", teacherKey)).catch(() => {});
+                console.log("✅ تم حذف بيانات Firestore");
 
-            document.getElementById('deletedSuccessModal').classList.add('active');
-            setTimeout(() => { window.location.href = './index.html'; }, 1600);
+                // 2️⃣ حذف حساب Auth
+                await fb.auth.currentUser.delete();
+                console.log("✅ تم حذف حساب Auth بالكامل");
+
+                // 3️⃣ تنظيف localStorage
+                localStorage.removeItem('loggedInTeacher');
+                localStorage.removeItem('rememberedPhone');
+                localStorage.removeItem('teacherAccount_' + phone);
+                localStorage.removeItem('teacherVerification_' + phone);
+                localStorage.removeItem('teacherBlocked_' + phone);
+                localStorage.removeItem('talep_data');
+                localStorage.removeItem('talep_data_owner');
+                localStorage.removeItem('location_consent_given');
+
+                // 4️⃣ تنظيف الحصص المرتبطة
+                const keysToRemove = [];
+                for (let i = 0; i < localStorage.length; i++) {
+                    const k = localStorage.key(i);
+                    if (k && (k.startsWith('lessonState_') || k.startsWith('publishState_'))) {
+                        keysToRemove.push(k);
+                    }
+                }
+                keysToRemove.forEach(k => localStorage.removeItem(k));
+
+                // 5️⃣ عرض رسالة النجاح والتوجيه
+                document.getElementById('deletedSuccessModal').classList.add('active');
+                setTimeout(() => { window.location.href = './index.html'; }, 1600);
+
+            } catch (error) {
+                console.error("❌ فشل حذف الحساب:", error);
+                btn.innerText = origText;
+                btn.disabled = false;
+                
+                if (error.code === 'auth/requires-recent-login') {
+                    showAlert('لأسباب أمنية، سجل خروج ثم دخول مرة أخرى قبل الحذف.');
+                } else {
+                    showAlert('حدث خطأ أثناء الحذف. حاول مرة أخرى.');
+                }
+            }
         }
     </script>
 </body>
