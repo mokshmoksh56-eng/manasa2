@@ -8,14 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- Leaflet CSS للخريطة -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        /* ✅ منع إيماءات اللمس (السحب الجانبي للرجوع) في الهواتف */
         html, body {
             overscroll-behavior-x: none;
             touch-action: pan-y;
@@ -23,9 +21,6 @@
 
         body { background: #F1F5F9; min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; margin: 0; }
 
-        /* ============================================ */
-        /* ✅ الهيدر */
-        /* ============================================ */
         .hero-banner {
             background: linear-gradient(135deg, #0F2D5C, #1E40AF);
             color: white; padding: 30px 15px 55px; text-align: center;
@@ -51,9 +46,6 @@
             border: 1px solid rgba(255, 255, 255, 0.25);
         }
 
-        /* ============================================ */
-        /* ✅ بطاقات التقرير */
-        /* ============================================ */
         .report-container { max-width: 800px; margin: -20px auto 0; width: 100%; padding: 0 10px 80px; position: relative; z-index: 10; }
         .report-grid { display: grid; grid-template-columns: 1fr; gap: 15px; }
         
@@ -75,16 +67,12 @@
         
         .badge-value { background: #F1F5F9; padding: 3px 10px; border-radius: 6px; border: 1px solid #E2E8F0; }
 
-        /* ============================================ */
-        /* ✅ إعدادات الخريطة وتأثيرات الإخفاء والإظهار للموبايل الصغير */
-        /* ============================================ */
         .map-wrapper {
             position: relative; border-radius: 12px; overflow: hidden; border: 2px solid #E2E8F0; width: 100%; height: 240px;
             transition: all 0.4s ease; box-shadow: 0 10px 25px rgba(0,0,0,0.05);
         }
         #static-map { width: 100%; height: 100%; z-index: 1; transition: filter 0.4s ease; }
         
-        /* طبقة حجب الخريطة عند الإخفاء */
         .map-hidden-overlay {
             position: absolute; inset: 0; background: rgba(15, 23, 42, 0.78);
             z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -93,13 +81,11 @@
         }
         .is-hidden .map-hidden-overlay { opacity: 1; pointer-events: all; }
         .is-hidden #static-map { filter: grayscale(1) blur(5px); }
-        /* عند الحظر الإداري، نلغي القدرة على التفاعل مع طبقة الحجب */
         .is-blocked .map-hidden-overlay { cursor: not-allowed; pointer-events: auto; }
 
         .map-hidden-overlay i { font-size: 36px; margin-bottom: 6px; font-style: normal; }
         .map-hidden-overlay h4 { font-size: 16px; font-weight: 900; margin: 0; color: #FCA5A5; }
         
-        /* زر التفعيل الأخضر (Bold) */
         .map-hidden-overlay p { 
             font-size: 14px; 
             font-weight: 900; 
@@ -110,14 +96,12 @@
             border-radius: 99px; 
             box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4); 
         }
-        /* تغيير شكل الزر في حالة الحظر */
         .is-blocked .map-hidden-overlay p {
             background: #DC2626;
             box-shadow: 0 6px 15px rgba(220, 38, 38, 0.4);
             cursor: not-allowed;
         }
 
-        /* أزرار التحكم داخل الخريطة (عند النشر) */
         .map-controls {
             position: absolute; top: 10px; left: 10px; right: 10px;
             display: flex; justify-content: flex-end; z-index: 500;
@@ -125,7 +109,6 @@
         }
         .is-hidden .map-controls { opacity: 0; visibility: hidden; }
         
-        /* زر إخفاء الموقع عن الطلاب (Bold وصغير للموبايل) */
         .map-action-btn {
             pointer-events: auto; background: #fff; padding: 6px 14px; border-radius: 999px;
             font-size: 12px; font-weight: 900; display: flex; align-items: center; gap: 4px;
@@ -134,7 +117,6 @@
         }
         .map-action-btn:hover { background: #DC2626; color: white; border-color: #DC2626; }
 
-        /* تصميم النقطة (Marker) داخل الخريطة */
         .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
         .leaflet-popup-content { margin: 10px 12px; font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 12px;}
         
@@ -150,9 +132,6 @@
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
-        /* ============================================ */
-        /* ✅ أزرار الإجراءات العائمة (FAB Container) للموبايل */
-        /* ============================================ */
         .fab-container {
             position: fixed; bottom: 15px; left: 15px; right: 15px;
             display: flex; gap: 10px; z-index: 100; justify-content: space-between;
@@ -182,7 +161,6 @@
             .lesson-title { font-size: 28px; }
         }
 
-        /* تنبيه الحظر */
         #blockAlert {
             background: #FEE2E2;
             color: #991B1B;
@@ -196,7 +174,6 @@
             display: none;
         }
 
-        /* ✅ شارة الحفظ اللحظي في Firebase */
         .fb-sync-badge {
             position: fixed;
             top: 15px;
@@ -222,6 +199,36 @@
             background: #EF4444;
             border-bottom-color: #B91C1C;
         }
+
+        /* ✅ شارة المزامنة اللحظية */
+        .live-data-badge {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 900;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            border: 1.5px solid white;
+        }
+        .live-data-badge .dot {
+            width: 6px;
+            height: 6px;
+            background: white;
+            border-radius: 50%;
+            animation: liveDot 1.5s infinite;
+        }
+        @keyframes liveDot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(1.3); }
+        }
     </style>
 </head>
 <body>
@@ -229,7 +236,12 @@
     <!-- ✅ شارة الحفظ اللحظي -->
     <div id="fbSyncBadge" class="fb-sync-badge">☁️ جاري الحفظ في السحابة...</div>
 
-    <!-- ✅ الهيدر (مع شارة بيانات المعلم مستر/مس ورقم التليفون) -->
+    <!-- ✅ شارة المزامنة اللحظية -->
+    <div id="liveDataBadge" class="live-data-badge">
+        <span class="dot"></span>
+        <span>بيانات لحظية</span>
+    </div>
+
     <section class="hero-banner">
         <div class="lesson-title" id="reportTitle">بيانات المجموعة</div>
         <div id="teacherHeaderBadge" class="teacher-header-badge" style="display: none;">
@@ -237,10 +249,8 @@
         </div>
     </section>
 
-    <!-- ✅ تقرير البيانات -->
     <div class="report-container">
         
-        <!-- تنبيه الحظر -->
         <div id="blockAlert">⚠️ تم حظر هذا الحساب من الإدارة. بعض الميزات مثل تفعيل الموقع معطلة.</div>
 
         <div class="report-grid">
@@ -307,7 +317,7 @@
                 </div>
             </div>
 
-            <!-- 3. الموقع والخريطة (مع تحكم الخريطة المباشر) -->
+            <!-- 3. الموقع والخريطة -->
             <div class="report-card full-width">
                 <div class="card-header"><span>📍</span> الموقع الجغرافي للدرس</div>
                 <div class="data-row" style="border: none; padding-bottom: 8px;">
@@ -315,18 +325,14 @@
                     <span class="data-value" id="val-address">--</span>
                 </div>
                 
-                <!-- حاوية الخريطة -->
                 <div class="map-wrapper is-hidden" id="mapWrapper">
                     
-                    <!-- أزرار التحكم داخل الخريطة (تظهر عند النشر فقط) -->
                     <div class="map-controls">
-                        <!-- زر الإخفاء صنفناه بـ clickable-element لتشغيل الصوت -->
                         <button class="map-action-btn clickable-element" onclick="togglePublish(false)">
                             <b>إخفاء الموقع عن الطلاب</b>
                         </button>
                     </div>
 
-                    <!-- طبقة الحجب عند الإخفاء (قابلة للضغط لتفعيل الموقع) صنفناها بـ clickable-element لتشغيل الصوت -->
                     <div class="map-hidden-overlay clickable-element" id="mapOverlay" onclick="handleMapOverlayClick()" title="اضغط هنا لتفعيل الموقع">
                         <i>🔒</i>
                         <h4 id="overlayTitle">الموقع محجوب عن الطلاب</h4>
@@ -340,9 +346,7 @@
         </div>
     </div>
 
-    <!-- ✅ أزرار الإجراءات العائمة -->
     <div class="fab-container">
-        <!-- زر إدارة الحصص صنفناه بـ clickable-element لتشغيل الصوت -->
         <button class="fab-btn fab-home clickable-element" onclick="window.location.href='index2.html'">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125H2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
@@ -350,7 +354,6 @@
             إدارة الحصص
         </button>
         
-        <!-- زر التعديل صنفناه بـ clickable-element لتشغيل الصوت -->
         <button class="fab-btn fab-edit clickable-element" onclick="editLesson()">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
@@ -359,14 +362,13 @@
         </button>
     </div>
 
-    <!-- 🌟 Firebase Module — يجب أن يكون قبل السكريبت الرئيسي 🌟 -->
+    <!-- 🌟 Firebase Module 🌟 -->
     <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
           getFirestore, doc, getDoc, setDoc, onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
       
-      // ✅ 1. إضافة مكتبة المصادقة للتعرف على المعلم
       import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
@@ -378,33 +380,31 @@
         appId: "1:472216348338:web:db726630ef6781301e0bab"
       };
 
-      const app = initializeApp(firebaseConfig);
+      const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      const auth = getAuth(app); // ✅ 2. تفعيل المصادقة
+      const auth = getAuth(app);
 
       window.db = db;
-      window.auth = auth; // حفظ للوصول السريع
+      window.auth = auth;
       window.fsDoc = doc;
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
       window.fsOnSnapshot = onSnapshot;
 
-      // ✅ 3. مراقبة حالة الدخول (لضمان عمل قواعد الحماية)
       onAuthStateChanged(auth, (user) => {
           if (user) {
               console.log("✅ المستخدم مسجل دخول بأمان في end.html:", user.email);
           } else {
-              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth (قد يتم رفض الحفظ من السحابة)");
+              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth");
           }
       });
 
       console.log("✅ Firebase + Auth + Firestore جاهزين في end.html");
     </script>
 
-    <!-- ✅ السكريبتات -->
     <script>
         // ==========================================
-        // ✅ إضافة تأثير الصوت المرتفع (Click Sound)
+        // 🔊 تأثير الصوت
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -437,7 +437,7 @@
         });
 
         // ==========================================
-        // بقية سكريبتات الصفحة
+        // المتغيرات الأساسية
         // ==========================================
         let currentLessonId = '1';
         let staticMap = null;
@@ -446,8 +446,10 @@
         let currentLat = 30.0444;
         let currentLng = 31.2357;
         let isTeacherBlocked = false;
-        let publishStateListener = null; // مرجع مستمع onSnapshot
-        
+        let publishStateListener = null;
+        let teacherDataListener = null;
+        let lessonDataListener = null;
+
         history.pushState(null, null, location.href);
         window.addEventListener('popstate', function () {
             history.pushState(null, null, location.href);
@@ -465,43 +467,84 @@
             }, 2000);
         }
 
-        // الاستماع لتحديثات حالة الحظر من لوحة الإدارة
-        const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
-        if (authStatusChannel) {
-            authStatusChannel.onmessage = (event) => {
-                if (event.data.type === 'AUTH_STATUS_CHANGED') {
-                    const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
-                    const nameParts = document.getElementById('headerTeacherTitleAndName').innerText.split(' / ');
-                    const currentName = nameParts.length > 1 ? nameParts[1] : '';
-
-                    if (event.data.phone === phoneEl || event.data.teacherName === currentName) {
-                        isTeacherBlocked = event.data.isBlocked;
-                        applyBlockStatus();
-                    }
-                }
-            };
-        }
-        
+        // ==========================================
+        // ✅ onload المحسّن
+        // ==========================================
         window.onload = async () => {
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
-            
-            // ✅ لم نعد نضع currentLessonId هنا، سيتم تحديث العنوان داخل loadActualData()
 
-            // 1) تحميل البيانات من localStorage أولاً (سريع)
+            // 1) قراءة البيانات من localStorage أولاً (سريع)
             loadActualData();
-            checkBlockStatus();
 
-            // 2) ✅ قراءة حالة النشر من Firebase (المصدر الحقيقي)
+            // 2) ✅ التحقق من الحظر من Firestore مباشرة
+            await checkBlockStatusFromFirestore();
+
+            // 3) ✅ قراءة حالة النشر من Firebase
             let initialPublishState = false;
             if (!isTeacherBlocked) {
                 initialPublishState = await readPublishStateFromFirebase(currentLessonId);
             }
-            togglePublish(initialPublishState, true); // true = لا تكتب في Firebase (دي قراءة أولية)
+            togglePublish(initialPublishState, true);
 
-            // 3) ✅ مستمع لحظي لحالة النشر من Firebase
+            // 4) ✅ مستمعات لحظية
             startPublishStateRealtimeListener();
+            startTeacherBlockRealtimeListener();
+            startLessonDataRealtimeListener();
         };
+
+        // ==========================================
+        // ✅ التحقق من الحظر من Firestore مباشرة
+        // ==========================================
+        async function checkBlockStatusFromFirestore() {
+            try {
+                // قراءة رقم الهاتف من localStorage (كمصدر أولي فقط)
+                let teacherPhone = '';
+                try {
+                    const logged = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}');
+                    teacherPhone = String(logged.phone || '').replace(/\D/g, '');
+                } catch(e) {}
+
+                if (!teacherPhone) {
+                    const remembered = localStorage.getItem('rememberedPhone');
+                    teacherPhone = String(remembered || '').replace(/\D/g, '');
+                }
+
+                if (!teacherPhone || !window.db || !window.fsGetDoc) {
+                    isTeacherBlocked = false;
+                    applyBlockStatus();
+                    return;
+                }
+
+                // ✅ قراءة أحدث حالة من Firestore
+                const ref = window.fsDoc(window.db, "teachers", teacherPhone);
+                const snap = await window.fsGetDoc(ref);
+
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    isTeacherBlocked = (data.isBlocked === true || data.verification === 'حظر');
+                    
+                    // حفظ نسخة احتياطية
+                    if (isTeacherBlocked) {
+                        localStorage.setItem('teacherBlocked_' + teacherPhone, 'true');
+                    } else {
+                        localStorage.removeItem('teacherBlocked_' + teacherPhone);
+                    }
+                } else {
+                    isTeacherBlocked = false;
+                }
+
+                applyBlockStatus();
+                console.log(`✅ [end] حالة الحظر من Firestore: ${isTeacherBlocked ? 'محظور' : 'نشط'}`);
+
+            } catch (err) {
+                console.warn("⚠️ فشل التحقق من الحظر:", err);
+                // في حالة الفشل، نعتمد على localStorage كاحتياطي
+                const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
+                isTeacherBlocked = localStorage.getItem('teacherBlocked_' + phoneEl) === 'true';
+                applyBlockStatus();
+            }
+        }
 
         // ==========================================
         // ✅ قراءة حالة النشر من Firebase
@@ -516,7 +559,6 @@
                 const snap = await window.fsGetDoc(ref);
                 if (snap.exists()) {
                     const data = snap.data();
-                    // g_publish_map لو مش موجود يبقى default false (مخفي)
                     const isPublished = data.g_publish_map === true;
                     localStorage.setItem('publishState_' + lessonId, isPublished);
                     console.log(`☁️ [end] حالة النشر من Firebase: ${isPublished ? 'ظاهر' : 'مخفي'}`);
@@ -539,7 +581,6 @@
                 return;
             }
 
-            // إلغاء مستمع قديم لو موجود
             if (publishStateListener) {
                 try { publishStateListener(); } catch (e) {}
             }
@@ -570,21 +611,82 @@
             });
         }
 
-        function checkBlockStatus() {
-            const phoneEl = document.getElementById('headerTeacherPhone').innerText.replace('📱 ', '');
-            const nameParts = document.getElementById('headerTeacherTitleAndName').innerText.split(' / ');
-            const currentName = nameParts.length > 1 ? nameParts[1] : '';
+        // ==========================================
+        // ✅ مستمع لحظي لحالة الحظر
+        // ==========================================
+        function startTeacherBlockRealtimeListener() {
+            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) return;
 
-            isTeacherBlocked = false;
-            
-            if (phoneEl && phoneEl !== 'غير مسجل') {
-                if (localStorage.getItem('teacherBlocked_' + phoneEl) === 'true') isTeacherBlocked = true;
-            }
-            if (!isTeacherBlocked && currentName && currentName !== 'غير محدد') {
-                 if (localStorage.getItem('teacherBlocked_name_' + currentName) === 'true') isTeacherBlocked = true;
+            let teacherPhone = '';
+            try {
+                const logged = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}');
+                teacherPhone = String(logged.phone || '').replace(/\D/g, '');
+            } catch(e) {}
+
+            if (!teacherPhone) {
+                const remembered = localStorage.getItem('rememberedPhone');
+                teacherPhone = String(remembered || '').replace(/\D/g, '');
             }
 
-            applyBlockStatus();
+            if (!teacherPhone) return;
+
+            if (teacherDataListener) {
+                try { teacherDataListener(); } catch (e) {}
+            }
+
+            const ref = window.fsDoc(window.db, "teachers", teacherPhone);
+            teacherDataListener = window.fsOnSnapshot(ref, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    const newBlockStatus = data.isBlocked === true || data.verification === 'حظر';
+                    
+                    if (newBlockStatus !== isTeacherBlocked) {
+                        isTeacherBlocked = newBlockStatus;
+                        applyBlockStatus();
+                        
+                        if (isTeacherBlocked) {
+                            // إخفاء الموقع فوراً عند الحظر
+                            togglePublish(false, false);
+                            showFbSyncBadge('🔒 تم حظر الحساب — الموقع مخفي', true);
+                        } else {
+                            showFbSyncBadge('✅ تم تفعيل الحساب');
+                        }
+                    }
+                }
+            }, (err) => {
+                console.warn("⚠️ [end] teacher onSnapshot فشل:", err);
+            });
+        }
+
+        // ==========================================
+        // ✅ مستمع لحظي لتحديثات بيانات الحصة
+        // ==========================================
+        function startLessonDataRealtimeListener() {
+            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) return;
+
+            if (lessonDataListener) {
+                try { lessonDataListener(); } catch(e) {}
+            }
+
+            const ref = window.fsDoc(window.db, "lessons", String(currentLessonId));
+            lessonDataListener = window.fsOnSnapshot(ref, (snap) => {
+                if (!snap.exists()) return;
+                
+                const data = snap.data();
+                // حفظ البيانات المحدثة في localStorage
+                const localRaw = localStorage.getItem('lessonState_' + currentLessonId);
+                const localData = localRaw ? JSON.parse(localRaw) : null;
+                
+                // مقارنة بسيطة
+                if (JSON.stringify(data) !== JSON.stringify(localData)) {
+                    localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(data));
+                    console.log("🔄 [end] تم تحديث بيانات الحصة من Firebase");
+                    // إعادة تحميل البيانات
+                    loadActualData(false); // false = لا تعيد تهيئة الخريطة
+                }
+            }, (err) => {
+                console.warn("⚠️ [end] lesson onSnapshot فشل:", err);
+            });
         }
 
         function applyBlockStatus() {
@@ -618,7 +720,7 @@
             togglePublish(true);
         }
 
-        function loadActualData() {
+        function loadActualData(reinitMap = true) {
             const savedData = localStorage.getItem('lessonState_' + currentLessonId);
 
             let teacherTitle = 'مستر';
@@ -629,7 +731,6 @@
             if (savedData) {
                 const state = JSON.parse(savedData);
 
-                // ✅ هنا بقى نحدّث اسم المجموعة في الهيدر
                 if(state.g_name) {
                     groupNameForTitle = state.g_name;
                     document.getElementById('val-groupName').innerText = state.g_name;
@@ -779,13 +880,14 @@
                 badgeEl.style.display = 'inline-flex';
             }
 
-            // ✅ Fallback: لو مفيش اسم مجموعة (حالة نادرة) — نعرض عنوان افتراضي بدون ID
             const titleEl = document.getElementById('reportTitle');
             if (!groupNameForTitle) {
                 titleEl.innerText = 'بيانات المجموعة';
             }
 
-            initStaticMap();
+            if (reinitMap) {
+                initStaticMap();
+            }
         }
 
         function initStaticMap() {
@@ -840,7 +942,7 @@
         }
 
         // ==========================================
-        // ✅ togglePublish محدّث: بيقرأ ويحفظ في Firebase
+        // ✅ togglePublish محسّن
         // ==========================================
         async function togglePublish(forceState = null, skipFirebaseWrite = false) {
             let isPublished;
@@ -851,7 +953,6 @@
                 isPublished = !current;
             }
 
-            // لا يمكن نشر الموقع إذا كان المعلم محظوراً
             if (isTeacherBlocked && isPublished) {
                 isPublished = false;
             }
@@ -867,7 +968,6 @@
             updateMapMarker(isPublished);
             localStorage.setItem('publishState_' + currentLessonId, isPublished);
 
-            // ✅ حفظ في Firebase (إلا لو skipFirebaseWrite=true)
             if (!skipFirebaseWrite) {
                 try {
                     if (window.db && window.fsDoc && window.fsSetDoc) {
@@ -888,6 +988,10 @@
         }
 
         function editLesson() {
+            if (isTeacherBlocked) {
+                alert("لا يمكن التعديل. الحساب محظور من الإدارة.");
+                return;
+            }
             const stateKey = 'lessonState_' + currentLessonId;
             const savedState = localStorage.getItem(stateKey);
             if (savedState) {
