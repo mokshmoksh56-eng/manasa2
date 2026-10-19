@@ -182,6 +182,49 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
+        /* ✅ مؤشر المزامنة اللحظية */
+        .live-indicator {
+            position: absolute;
+            top: 10px;
+            right: 50%;
+            transform: translateX(50%);
+            background: #10B981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 99px;
+            font-size: 10px;
+            font-weight: 900;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
+            z-index: 1000;
+            border: 1.5px solid white;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .live-indicator.show {
+            opacity: 1;
+        }
+
+        .live-indicator .dot {
+            width: 7px;
+            height: 7px;
+            background: white;
+            border-radius: 50%;
+            animation: livePulse 1.5s infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
+        }
+
+        .live-indicator.updating {
+            background: #F59E0B;
+        }
+
         .map-container.is-fullscreen {
             position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100vw !important; height: 100vh !important; max-width: none !important; z-index: 999999 !important; border-radius: 0 !important; border: none !important; margin: 0 !important;
@@ -481,6 +524,12 @@
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
+                    <!-- ✅ مؤشر المزامنة اللحظية -->
+                    <div id="liveIndicator" class="live-indicator">
+                        <span class="dot"></span>
+                        <span>مباشر</span>
+                    </div>
+
                     <button class="fullscreen-btn clickable-element" onclick="toggleMapFullscreen()" title="تكبير/تصغير الخريطة">
                         <svg id="iconExpand" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75v4.5m0-4.5h-4.5m4.5 0L15 9M20.25 20.25v-4.5m0 4.5h-4.5m4.5 0L15 15" /></svg>
                         <svg id="iconCompress" style="display: none;" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 20px; height: 20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9V4.5M15 9h4.5M15 9l5.25-5.25M15 15v4.5M15 15h4.5M15 15l5.25 5.25" /></svg>
@@ -578,6 +627,12 @@
         let curriculumUnsubscribe = null;
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
+
+        // ✅ مستمع لحظي للمعلمين على الخريطة
+        let teachersRealtimeUnsub = null;
+        let isFirstTeachersSnapshot = true;
+        let lastRenderCenter = null;
+        let lastRenderRadius = 3000;
 
         // ✅ معرّف المعلم الحالي
         function getCurrentTeacherKey() {
@@ -934,6 +989,68 @@
         }
 
         // ==========================================
+        // ✅ المزامنة اللحظية للمعلمين على الخريطة
+        // ==========================================
+        async function startTeachersRealtimeListener() {
+            const mod = await loadFirebaseModule();
+            if (!mod) {
+                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
+                return;
+            }
+
+            if (teachersRealtimeUnsub) {
+                try { teachersRealtimeUnsub(); } catch(e) {}
+                teachersRealtimeUnsub = null;
+            }
+
+            console.log("🔴 بدء المزامنة اللحظية للمعلمين على الخريطة...");
+
+            const q = mod.query(
+                mod.collection(mod.db, "lessons"),
+                mod.where("g_publish_map", "==", true)
+            );
+
+            teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
+                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
+
+                const liveIndicator = document.getElementById('liveIndicator');
+                
+                if (!currentCenter || !map) {
+                    isFirstTeachersSnapshot = false;
+                    return;
+                }
+
+                if (liveIndicator) {
+                    liveIndicator.classList.add('show');
+                    if (!isFirstTeachersSnapshot) {
+                        liveIndicator.classList.add('updating');
+                        const textEl = liveIndicator.querySelector('span:last-child');
+                        if (textEl) textEl.textContent = 'جاري التحديث...';
+                        
+                        setTimeout(() => {
+                            liveIndicator.classList.remove('updating');
+                            if (textEl) textEl.textContent = 'مباشر';
+                        }, 1500);
+                    }
+                }
+
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+
+                if (!isFirstTeachersSnapshot) {
+                    showToast(`🔄 تم تحديث المعلمين على الخريطة`);
+                }
+                isFirstTeachersSnapshot = false;
+
+            }, (error) => {
+                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) {
+                    liveIndicator.classList.remove('show');
+                }
+            });
+        }
+
+        // ==========================================
         // 1. Fullscreen Map
         // ==========================================
         function toggleMapFullscreen() {
@@ -1175,7 +1292,6 @@
             return copy;
         }
 
-        // ✅ ترتيب المراحل (مع إصلاح main_order الفارغة)
         function getSortedStages() {
             const curr = getCurriculum();
             if (curr.main_order && Array.isArray(curr.main_order) && curr.main_order.length > 0) {
@@ -1451,7 +1567,8 @@
 
         function onRadiusChangeEnd() {
             if (currentCenter && searchCircle) {
-                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                lastRenderRadius = parseInt(document.getElementById('search_radius').value);
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius);
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
             }
         }
@@ -1634,6 +1751,7 @@
 
             startCurriculumRealtimeListener();
             startTalepRealtimeListener();
+            startTeachersRealtimeListener(); // ✅ المزامنة اللحظية للمعلمين
         };
 
         // ==========================================
@@ -1847,7 +1965,7 @@
         }
 
         // ==========================================
-        // ✅ 4. جلب الحصص من Firebase (محسّن باستعلامات)
+        // 4. جلب الحصص من Firebase (محسّن باستعلامات)
         // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
@@ -1858,7 +1976,6 @@
                 return { registeredList, hiddenCount };
             }
 
-            // ✅ قراءة فلتر المرحلة والصف الحاليين للفلترة على السيرفر
             const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
             const selectedGrade = (document.getElementById('s_grade').value || '').trim();
 
@@ -1866,7 +1983,6 @@
                 const mod = await loadFirebaseModule();
                 if (!mod) return { registeredList, hiddenCount };
 
-                // ✅ بناء استعلام Firestore مُفلتر من السيرفر
                 const constraints = [mod.where("g_publish_map", "==", true)];
                 
                 if (selectedStageKey) {
@@ -1883,7 +1999,6 @@
                     const state = doc.data();
                     const lessonId = doc.id;
 
-                    // إعادة التحقق من الحالة (احتياطي)
                     if (state.g_publish_map === false) {
                         hiddenCount++;
                         return;
@@ -1935,7 +2050,6 @@
                     });
                 });
             } catch (error) {
-                // ✅ إذا فشل الاستعلام المركب، نجرب بدونه (قد يحتاج فهرس مركب)
                 console.warn("⚠️ الاستعلام المركب فشل، جاري المحاولة بدون فلترة متقدمة:", error);
                 
                 try {
@@ -1950,7 +2064,6 @@
                         const state = doc.data();
                         const lessonId = doc.id;
                         
-                        // ✅ فلترة يدوية احتياطية بعد الجلب
                         if (selectedStageKey && state.s_stage !== selectedStageKey) return;
                         if (selectedGrade && state.s_grade !== selectedGrade) return;
 
@@ -2094,6 +2207,9 @@
             const searchRadius = parseInt(document.getElementById('search_radius').value);
             
             currentCenter = [lat, lng];
+            lastRenderCenter = currentCenter;
+            lastRenderRadius = searchRadius;
+            
             map.setView(currentCenter, 15);
 
             searchCircle = L.circle(currentCenter, { color: '#10B981', weight: 2, dashArray: '8, 8', fillColor: '#34D399', fillOpacity: 0.15 }).addTo(map);
@@ -2105,10 +2221,16 @@
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
+                lastRenderCenter = currentCenter;
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             });
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
+
+            // ✅ إظهار مؤشر المزامنة اللحظية
+            const liveIndicator = document.getElementById('liveIndicator');
+            if (liveIndicator) liveIndicator.classList.add('show');
+
             setTimeout(() => {
                 map.invalidateSize();
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
