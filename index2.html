@@ -194,7 +194,149 @@
             flex: 1;
         }
 
-        /* ✅ بانر الحظر */
+        .welcome-banner {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
+            border: 2px solid #86EFAC;
+            border-bottom: 5px solid #16A34A;
+            border-radius: 18px;
+            box-shadow: 0 8px 22px -10px rgba(16, 185, 129, 0.35);
+            overflow: hidden;
+            animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes welcomeSlideIn {
+            from { opacity: 0; transform: translateY(-15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            left: -30px;
+            width: 100px;
+            height: 100px;
+            background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);
+            border-radius: 50%;
+            pointer-events: none;
+        }
+
+        .welcome-banner.is-miss {
+            background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
+            border-color: #F9A8D4;
+            border-bottom-color: #DB2777;
+            box-shadow: 0 8px 22px -10px rgba(236, 72, 153, 0.35);
+        }
+
+        .welcome-banner.is-miss::before {
+            background: radial-gradient(circle, rgba(236,72,153,0.15), transparent 70%);
+        }
+
+        .welcome-avatar {
+            flex-shrink: 0;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            background: #FFFFFF;
+            border: 2.5px solid #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+            z-index: 2;
+            animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .welcome-banner.is-miss .welcome-avatar {
+            border-color: #EC4899;
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
+        }
+
+        @keyframes avatarPop {
+            0% { transform: scale(0) rotate(-30deg); }
+            70% { transform: scale(1.1) rotate(5deg); }
+            100% { transform: scale(1) rotate(0deg); }
+        }
+
+        .welcome-text {
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            text-align: right;
+            z-index: 2;
+        }
+
+        .welcome-greeting {
+            font-size: 11px;
+            font-weight: 800;
+            color: #059669;
+            line-height: 1.2;
+            margin-bottom: 2px;
+        }
+
+        .welcome-banner.is-miss .welcome-greeting {
+            color: #DB2777;
+        }
+
+        .welcome-name {
+            font-size: 16px;
+            font-weight: 900;
+            color: #064E3B;
+            line-height: 1.25;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 100%;
+            margin-bottom: 3px;
+        }
+
+        .welcome-banner.is-miss .welcome-name {
+            color: #831843;
+        }
+
+        .welcome-phone {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11.5px;
+            font-weight: 900;
+            color: #047857;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 99px;
+            border: 1px solid #A7F3D0;
+            direction: ltr;
+        }
+
+        .welcome-banner.is-miss .welcome-phone {
+            color: #BE185D;
+            border-color: #FBCFE8;
+        }
+
+        .welcome-sparkle {
+            position: absolute;
+            top: 8px;
+            left: 12px;
+            font-size: 14px;
+            animation: sparkleTwinkle 2s ease-in-out infinite;
+            z-index: 1;
+            opacity: 0.7;
+        }
+
+        @keyframes sparkleTwinkle {
+            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.7; }
+            50% { transform: scale(1.2) rotate(20deg); opacity: 1; }
+        }
+
         .blocked-banner {
             margin: 12px 0;
             padding: 20px 16px;
@@ -264,117 +406,12 @@
             border: 1px dashed #FCA5A5;
         }
 
-        /* ============================================ */
-        /* ✅ شبكة الإجراءات العلوية الجديدة 2×2 */
-        /* ============================================ */
-        .top-actions-grid {
+        .quick-actions-bar {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-bottom: 18px;
-            align-items: stretch;
-        }
-
-        /* ============================================ */
-        /* ✅ كارت ترحيب صغير — pill أخضر (فوق الرئيسية والخروج) */
-        /* ============================================ */
-        .welcome-mini-green {
-            grid-column: 1 / -1;
-            justify-self: center;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            padding: 7px 16px;
-            background: #16A34A;
-            border: 2px solid #15803D;
-            border-bottom: 3px solid #14532D;
-            border-radius: 999px;
-            box-shadow: 0 4px 14px -4px rgba(22, 163, 74, 0.5);
-            max-width: 100%;
-            overflow: hidden;
-            animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        @keyframes welcomeSlideIn {
-            from { opacity: 0; transform: translateY(-10px) scale(0.95); }
-            to { opacity: 1; transform: translateY(0) scale(1); }
-        }
-
-        /* ============================================ */
-        /* ✅ كارت الإحصائيات المبتكر */
-        /* ============================================ */
-        .mini-stats-card {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 12px;
-            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 100%);
-            border: 2px solid #BFDBFE;
-            border-bottom: 3px solid #2563EB;
-            border-radius: 16px;
-            box-shadow: 0 4px 14px -4px rgba(37, 99, 235, 0.25);
-            min-height: 68px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .mini-stats-card::before {
-            content: '';
-            position: absolute;
-            top: -25px;
-            left: -25px;
-            width: 70px;
-            height: 70px;
-            background: radial-gradient(circle, rgba(37,99,235,0.12), transparent 70%);
-            border-radius: 50%;
-        }
-
-        .mini-stats-icon {
-            width: 40px;
-            height: 40px;
-            background: #FFFFFF;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            flex-shrink: 0;
-            border: 2px solid #BFDBFE;
-            box-shadow: 0 3px 8px rgba(37,99,235,0.15);
-            z-index: 2;
-        }
-
-        .mini-stats-content {
-            flex: 1;
-            min-width: 0;
-            text-align: right;
-            z-index: 2;
-        }
-
-        .mini-stats-label {
-            font-size: 10px;
-            font-weight: 800;
-            color: #1E40AF;
-            line-height: 1.2;
-            margin-bottom: 2px;
-        }
-
-        .mini-stats-value {
-            font-size: 12.5px;
-            font-weight: 900;
-            color: #0F2D5C;
-            line-height: 1.2;
-            white-space: nowrap;
-        }
-
-        .mini-stats-value #totalGroupsCount {
-            font-size: 18px;
-            color: #2563EB;
-            font-weight: 900;
-            display: inline-block;
-            min-width: 20px;
-            text-align: center;
+            padding: 0;
         }
 
         .quick-action-btn {
@@ -509,7 +546,6 @@
             box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
         }
 
-        /* ✅ كارت غير مكتمل الإعداد */
         .portal-card.incomplete-card {
             border-color: #FCD34D;
             border-bottom-color: #D97706;
@@ -578,7 +614,6 @@
             animation: hiddenPulse 2.5s ease-in-out infinite;
         }
 
-        /* ✅ بانر "أكمل الإعداد" */
         .hidden-notice-banner.incomplete-banner {
             background: linear-gradient(135deg, #FEF3C7, #FDE68A);
             border-color: #FCD34D;
@@ -733,33 +768,28 @@
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
-        /* ✅ كارت إضافة مجموعة جديدة — أخضر — بحجم مصغر */
         .card-add-new {
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-            border: 2px dashed #10B981;
+            border: 2.5px dashed #10B981;
             justify-content: center;
             flex-direction: column;
             text-align: center;
-            padding: 14px 12px;
+            padding: 24px 16px;
             cursor: pointer;
-            border-bottom: 4px solid #059669;
-            box-shadow: 0 4px 14px -6px rgba(16, 185, 129, 0.3);
+            border-bottom: 6px solid #059669;
+            box-shadow: 0 6px 20px -8px rgba(16, 185, 129, 0.25);
             transition: all 0.25s ease;
-            min-height: unset;
         }
-
         .card-add-new:hover {
             background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
             border-color: #059669;
             transform: translateY(-2px);
         }
-
         .card-add-new:active {
             background: #BBF7D0;
             border-color: #047857;
             transform: scale(0.98);
         }
-
         .card-add-new.disabled-add {
             opacity: 0.5;
             pointer-events: none;
@@ -767,50 +797,38 @@
         }
 
         .card-add-new .icon-plus {
-            width: 42px;
-            height: 42px;
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, #10B981, #059669);
             color: #FFFFFF;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.5);
+            margin-bottom: 10px;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5);
             transition: all 0.25s ease;
             animation: plusPulse 2.5s ease-in-out infinite;
         }
-
         .card-add-new:hover .icon-plus {
             transform: scale(1.08) rotate(90deg);
-            box-shadow: 0 6px 16px -2px rgba(16, 185, 129, 0.7);
+            box-shadow: 0 8px 22px -4px rgba(16, 185, 129, 0.7);
         }
-
         .card-add-new .icon-plus svg {
             stroke: #FFFFFF;
             stroke-width: 3;
-            width: 20px;
-            height: 20px;
         }
 
         @keyframes plusPulse {
-            0%, 100% { box-shadow: 0 4px 12px -2px rgba(16, 185, 129, 0.5); }
-            50%      { box-shadow: 0 4px 18px 0px rgba(16, 185, 129, 0.8); }
+            0%, 100% { box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5); }
+            50%      { box-shadow: 0 6px 24px -2px rgba(16, 185, 129, 0.8); }
         }
 
         .card-add-new h2 {
             color: #065F46;
-            font-size: 13.5px;
+            font-size: 16.5px;
             font-weight: 900;
-            line-height: 1.2;
-        }
-
-        .card-add-new p {
-            font-size: 10px !important;
-            font-weight: 700 !important;
-            color: #64748B !important;
-            margin-top: 2px !important;
         }
 
         .card-image-box {
@@ -1240,8 +1258,16 @@
                 padding-left: 0;
                 padding-top: 35px;
             }
+            .welcome-banner { padding: 12px 12px; gap: 10px; }
+            .welcome-avatar { width: 44px; height: 44px; font-size: 22px; border-width: 2px; }
+            .welcome-greeting { font-size: 10px; }
+            .welcome-name { font-size: 14px; }
+            .welcome-phone { font-size: 10.5px; }
 
-            .top-actions-grid { gap: 8px; }
+            .quick-actions-bar {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
             .quick-action-btn { padding: 10px 10px; gap: 8px; border-radius: 14px; }
             .quick-action-icon { width: 30px; height: 30px; border-radius: 10px; }
             .quick-action-icon svg { width: 15px; height: 15px; }
@@ -1325,17 +1351,17 @@
 
             <div id="blockedBannerContainer"></div>
 
-            <div class="top-actions-grid">
-
-                <!-- ✅ Row 1: صباح الخير (pill صغيرة فوق — على قد الكلام فقط) -->
-                <div id="welcomeBanner" class="welcome-mini-green" style="display: none;">
-                    <span id="welcomeAvatar" style="font-size: 15px; line-height: 1;">👨‍🏫</span>
-                    <span id="welcomeGreeting" style="font-size: 12.5px; font-weight: 900; color: #fff; white-space: nowrap;">صباح الخير يا مستر</span>
-                    <span id="welcomeName" style="font-size: 12.5px; font-weight: 900; color: #fff; white-space: nowrap;">أحمد</span>
-                    <span id="welcomePhone" style="font-size: 10px; font-weight: 800; color: rgba(255,255,255,0.9); direction: ltr; white-space: nowrap; background: rgba(0,0,0,0.2); padding: 1px 7px; border-radius: 99px; border: 1px solid rgba(255,255,255,0.15); display: none;">📱 --</span>
+            <div id="welcomeBanner" class="welcome-banner" style="display: none;">
+                <div class="welcome-sparkle">✨</div>
+                <div class="welcome-avatar" id="welcomeAvatar">👨‍🏫</div>
+                <div class="welcome-text">
+                    <div class="welcome-greeting" id="welcomeGreeting">مرحباً بعودتك</div>
+                    <div class="welcome-name" id="welcomeName">--</div>
+                    <div class="welcome-phone" id="welcomePhone">📱 --</div>
                 </div>
+            </div>
 
-                <!-- ✅ Row 2, Col 1: الرئيسية -->
+            <div class="quick-actions-bar">
                 <a href="./index.html" class="quick-action-btn quick-action-home">
                     <div class="quick-action-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -1349,7 +1375,6 @@
                     <div class="quick-action-arrow">←</div>
                 </a>
 
-                <!-- ✅ Row 2, Col 2: تسجيل الخروج -->
                 <button type="button" id="logoutBtn" class="quick-action-btn quick-action-logout">
                     <div class="quick-action-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -1362,16 +1387,6 @@
                     </div>
                     <div class="quick-action-arrow">←</div>
                 </button>
-
-                <!-- ✅ Row 3: إحصائيات المجموعات (full width) -->
-                <div class="mini-stats-card" style="grid-column: 1 / -1;">
-                    <div class="mini-stats-icon">📊</div>
-                    <div class="mini-stats-content">
-                        <div class="mini-stats-label">مجموعاتك الحالية</div>
-                        <div class="mini-stats-value"><span id="totalGroupsCount">0</span> مجموعة</div>
-                    </div>
-                </div>
-
             </div>
 
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
@@ -1441,7 +1456,6 @@
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
-    <!-- 🌟 Firebase Module -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
@@ -1508,12 +1522,8 @@
         let autoSyncInterval = null;
         let teacherIsBlocked = false;
 
-        // منع تكرار محاولات الـ force-unpublish على نفس المجموعة
         const forceUnpublishingIds = new Set();
 
-        // ==========================================
-        // 📱 Device ID Management
-        // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
@@ -1619,9 +1629,6 @@
             }
         }
 
-        // ==========================================
-        // ✅ عرض شريط الترحيب (pill صغيرة فوق)
-        // ==========================================
         function renderWelcomeBanner() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -1649,6 +1656,7 @@
                 const phoneEl = document.getElementById('welcomePhone');
 
                 const isMiss = title === 'مس';
+
                 avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
 
                 const now = new Date();
@@ -1670,7 +1678,14 @@
                     phoneEl.style.display = 'none';
                 }
 
-                banner.style.display = 'inline-flex';
+                if (isMiss) {
+                    banner.classList.add('is-miss');
+                } else {
+                    banner.classList.remove('is-miss');
+                }
+
+                banner.style.display = 'flex';
+                console.log(`✅ [Welcome] عرض الترحيب: ${prefix} ${name} (${phone})`);
             } catch (err) {
                 console.warn('⚠️ [Welcome] فشل عرض الترحيب:', err);
                 const banner = document.getElementById('welcomeBanner');
@@ -1679,7 +1694,7 @@
         }
 
         // ==========================================
-        // 🛡️ فحص حالة الحظر من السحابة
+        // 🛡️ فحص حالة الحظر من السحابة — ✅ يشمل "5 سنوات"
         // ==========================================
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
@@ -1696,10 +1711,12 @@
                 
                 if (!isBlocked && data.verification && data.createdAt) {
                     const created = new Date(data.createdAt);
+                    // ✅ حساب مدة الباقة — يشمل "5 سنوات" = 1825 يوم
                     const days = data.verification === '30 يوم تجريبي' ? 30
                                : data.verification === '3 شهور' ? 90
                                : data.verification === '6 شهور' ? 180
                                : data.verification === 'سنة واحدة' ? 365
+                               : data.verification === '5 سنوات' ? 1825
                                : 30;
                     const expiry = new Date(created.getTime() + days * 24 * 60 * 60 * 1000);
                     if (expiry < new Date()) {
@@ -1736,9 +1753,6 @@
             }
         }
 
-        // ==========================================
-        // 🔒 عرض بانر الحظر
-        // ==========================================
         function showBlockedBanner() {
             const container = document.getElementById('blockedBannerContainer');
             if (!container) return;
@@ -1782,9 +1796,6 @@
             if (banner) banner.remove();
         }
 
-        // ==========================================
-        // ✅ Logout
-        // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
             if (modal) modal.classList.add('active');
@@ -1810,9 +1821,6 @@
             }
         }
 
-        // ==========================================
-        // ✅ Helpers
-        // ==========================================
         function showFbSyncBadge(message, isError = false) {
             const badge = document.getElementById('fbSyncBadge');
             if (!badge) return;
@@ -1891,10 +1899,6 @@
             return false;
         }
 
-        // ==========================================
-        // ✅ هل الإعداد مكتمل؟ (فحص صارم)
-        // لازم: المرحلة + الصف + المواد + الأيام + وقت البداية + وقت النهاية
-        // ==========================================
         function isSetupComplete(data) {
             if (!data || typeof data !== 'object') return false;
 
@@ -1910,9 +1914,6 @@
             return hasStage && hasGrade && hasSubjects && hasDays && hasStart && hasEnd;
         }
 
-        // ==========================================
-        // ✅ محاولة إلغاء نشر قسري (محمية ضد التكرار)
-        // ==========================================
         function tryForceUnpublish(lessonId) {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return;
             if (forceUnpublishingIds.has(lessonId)) return;
@@ -1929,9 +1930,6 @@
             });
         }
 
-        // ==========================================
-        // ✅ ترقيم المجموعات
-        // ==========================================
         function getNextGroupNumber() {
             if (!lessons || lessons.length === 0) return 1;
 
@@ -1952,9 +1950,6 @@
             return nextNumber;
         }
 
-        // ==========================================
-        // ✅ Migration
-        // ==========================================
         async function migrateLocalLessonsToFirebase() {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return { migrated: 0, repaired: 0 };
 
@@ -2023,7 +2018,6 @@
                         if (!existingData.g_phone && teacherPhone) updateObj.g_phone = teacherPhone;
                         if (!existingData.g_teacher && teacherName) updateObj.g_teacher = teacherName;
 
-                        // لو الإعداد ناقص بس منشور → نفرض إخفاء
                         if (!isSetupComplete(existingData) && existingData.g_publish_map === true) {
                             updateObj.g_publish_map = false;
                         }
@@ -2041,9 +2035,6 @@
             return { migrated: migratedCount, repaired: repairedCount };
         }
 
-        // ==========================================
-        // ✅ Sync Lessons
-        // ==========================================
         async function syncLessonsFromFirebase(showLoader = false) {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
                 return { success: false };
@@ -2074,14 +2065,12 @@
 
                     const setupComplete = isSetupComplete(stateToSave);
 
-                    // ✅ نحفظ lessonState فقط لو الإعداد مكتمل
                     if (setupComplete) {
                         localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
                     } else {
                         localStorage.removeItem('lessonState_' + lessonId);
                     }
 
-                    // ✅ لو الإعداد ناقص بس منشور في Firebase → force unpublish
                     if (!setupComplete && data.g_publish_map === true) {
                         localStorage.setItem('publishState_' + lessonId, 'false');
                         tryForceUnpublish(lessonId);
@@ -2156,7 +2145,6 @@
                             return String(a.id).localeCompare(String(b.id));
                         });
 
-                        // نحدّث الكروت دايماً عشان تعكس أحدث حالة
                         lessons = firebaseLessons;
                         saveLessonsToStorage();
                         renderLessons();
@@ -2168,9 +2156,6 @@
             }
         }
 
-        // ==========================================
-        // ✅ Auto Sync
-        // ==========================================
         function startAutoSync() {
             if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
 
@@ -2202,9 +2187,6 @@
             });
         }
 
-        // ==========================================
-        // ✅ DOMContentLoaded
-        // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             const isDeviceValid = await verifyCurrentDevice();
             if (!isDeviceValid) return;
@@ -2269,9 +2251,6 @@
             hideInitialLoader();
         });
 
-        // ==========================================
-        // 🛡️ مراقبة حالة الحظر لحظياً
-        // ==========================================
         let blockWatchUnsub = null;
         function startBlockStatusWatch() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
@@ -2322,9 +2301,6 @@
             if (el) el.classList.remove('active');
         }
 
-        // ==========================================
-        // ✅ Create Lesson
-        // ==========================================
         function createNewLesson(saveToStorage = true) {
             if (teacherIsBlocked) {
                 showToast('🔒 الحساب محظور — لا يمكن إنشاء مجموعات جديدة', true);
@@ -2436,9 +2412,6 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
-        // ==========================================
-        // ✅ Toggle Visibility (مع منع النشر لو الإعداد ناقص)
-        // ==========================================
         async function toggleVisibility(id, event) {
             if (event) event.stopPropagation();
 
@@ -2447,7 +2420,6 @@
                 return;
             }
 
-            // ✅ فحص صارم: ما ينفعش تنشر قبل ما الإعداد يكتمل
             const raw = localStorage.getItem('lessonState_' + id);
             let data = null;
             try { data = raw ? JSON.parse(raw) : null; } catch(e) {}
@@ -2502,12 +2474,12 @@
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
                     <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 20px; height: 20px;">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
                     <h2>${teacherIsBlocked ? '🔒 الحساب محظور' : 'إنشاء مجموعة جديدة'}</h2>
-                    ${!teacherIsBlocked ? '<p style="font-size:10px;color:#64748B;font-weight:700;margin-top:2px;">اضغط لإضافة مجموعة جديدة</p>' : ''}
+                    ${!teacherIsBlocked ? '<p style="font-size:11px;color:#64748B;font-weight:700;margin-top:2px;">اضغط لإضافة مجموعة جديدة</p>' : ''}
                 </div>
             `;
             
@@ -2518,7 +2490,6 @@
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
 
-                // ✅ فحص: هل الإعداد مكتمل فعلاً؟
                 const savedStateRaw = localStorage.getItem('lessonState_' + lesson.id);
                 let savedStateObj = null;
                 try { savedStateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
@@ -2526,7 +2497,6 @@
                 const hasReport = isSetupComplete(savedStateObj);
                 const savedState = hasReport ? JSON.stringify(savedStateObj) : null;
 
-                // ✅ لو الإعداد ناقص، ما ينفعش تكون منشورة
                 const rawPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
                 const isPublished = rawPublished && hasReport;
 
@@ -2543,10 +2513,6 @@
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
-                // ✅ بانر الحالة:
-                // - لو الإعداد ناقص → "أكمل الإعداد" (لينك لـ group.html)
-                // - لو الإعداد مكتمل + مخفي → "مخفية عن الطلاب" + زرار فتح
-                // - لو منشور → لا بانر
                 let noticeBannerHTML = '';
                 if (!teacherIsBlocked) {
                     if (!hasReport) {
@@ -2583,7 +2549,6 @@
                     </div>
                 ` : '';
 
-                // ✅ أيقونة العين: لو الإعداد ناقص → قفل
                 let visibilityIcon;
                 let visibilityClass = '';
                 let visibilityTitle;
@@ -2634,10 +2599,6 @@
                 
                 container.appendChild(newCard);
             });
-
-            // ✅ تحديث عداد المجموعات في كارت الإحصائيات
-            const totalEl = document.getElementById('totalGroupsCount');
-            if (totalEl) totalEl.textContent = lessons.length;
         }
 
         function openDeleteModal(id, event) {
@@ -2722,7 +2683,6 @@
                 return;
             }
 
-            // ✅ فحص: هل الإعداد مكتمل؟
             const savedStateRaw = localStorage.getItem('lessonState_' + lessonId);
             let stateObj = null;
             try { stateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
@@ -2800,7 +2760,6 @@
                     <p>📍 <b>العنوان:</b> ${data.m_address || 'لم يتم تحديد الموقع'}</p>
                 `;
             } else {
-                // ✅ إعداد ناقص — شارة "غير مكتمل" + رسالة توجيهية
                 const incompleteBadge = `<span style="font-size: 9.5px; background: #FEF3C7; color: #92400E; padding: 2px 6px; border-radius: 99px; border: 1px solid #FCD34D; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #D97706; border-radius: 50%; display: inline-block;"></span>غير مكتمل</span>`;
                 nameEl.innerHTML = `<span>${lessonTitle}</span> ${incompleteBadge}`;
                 contentEl.innerHTML = `
