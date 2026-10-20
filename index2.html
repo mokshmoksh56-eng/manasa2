@@ -1237,6 +1237,126 @@
             width: 100%;
         }
 
+        /* ===== زر حذف الحساب ===== */
+        .delete-account-row {
+            display: flex;
+            justify-content: center;
+            margin: 24px 0 8px;
+            padding: 0 12px;
+        }
+
+        .btn-delete-account {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: transparent;
+            color: #94A3B8;
+            border: 1px solid #E2E8F0;
+            padding: 5px 14px;
+            border-radius: 99px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 10.5px;
+            font-weight: 800;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            line-height: 1.4;
+        }
+        .btn-delete-account:hover {
+            color: #DC2626;
+            border-color: #FCA5A5;
+            background: #FEF2F2;
+        }
+        .btn-delete-account:active { transform: scale(0.95); }
+        .btn-delete-account svg {
+            width: 11px; height: 11px;
+            stroke: currentColor; stroke-width: 2.5;
+        }
+
+        .delete-account-modal-box {
+            border-bottom: 5px solid #DC2626 !important;
+        }
+        .delete-account-emoji {
+            font-size: 52px;
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: lockBounce 1.6s ease-in-out infinite;
+        }
+        .delete-account-title {
+            font-size: 19px;
+            font-weight: 900;
+            color: #991B1B;
+            margin-bottom: 8px;
+        }
+        .delete-account-desc {
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #475569;
+            line-height: 1.7;
+            margin-bottom: 14px;
+            padding: 0 4px;
+        }
+        .delete-account-desc .highlight {
+            color: #DC2626;
+            font-weight: 900;
+        }
+        .delete-account-list {
+            background: #FEF2F2;
+            border: 1px dashed #FCA5A5;
+            border-radius: 10px;
+            padding: 8px 12px;
+            margin-bottom: 14px;
+            text-align: right;
+            font-size: 11px;
+            font-weight: 800;
+            color: #7F1D1D;
+            line-height: 1.7;
+        }
+        .delete-account-list div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .delete-account-list div::before {
+            content: '✕';
+            color: #DC2626;
+            font-weight: 900;
+            font-size: 9px;
+        }
+        .btn-delete-account-confirm {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            border: none;
+            background: linear-gradient(135deg, #F87171, #DC2626);
+            color: #fff;
+            border-bottom: 3px solid #991B1B;
+            transition: all 0.2s;
+            font-family: 'Cairo', sans-serif;
+        }
+        .btn-delete-account-confirm:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+        .btn-delete-account-confirm:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .btn-delete-account-cancel {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            border: none;
+            background: #E2E8F0;
+            color: #475569;
+            font-family: 'Cairo', sans-serif;
+        }
+
         @media (max-width: 450px) {
             .hidden-notice-banner {
                 flex-direction: column;
@@ -1390,6 +1510,15 @@
             </div>
 
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
+
+            <div class="delete-account-row">
+                <button type="button" id="deleteAccountBtn" class="btn-delete-account">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
+                    </svg>
+                    حذف الحساب نهائياً
+                </button>
+            </div>
         </div>
     </section>
 
@@ -1452,6 +1581,50 @@
         </div>
     </div>
 
+    <div id="deleteAccountModal" class="modal-overlay" onclick="closeModal('deleteAccountModal')">
+        <div class="custom-modal delete-account-modal-box" onclick="event.stopPropagation()">
+            <div class="delete-account-emoji">🔐</div>
+            <h3 class="delete-account-title">حذف الحساب نهائياً</h3>
+            <p class="delete-account-desc">
+                هذا الإجراء <span class="highlight">لا يمكن التراجع عنه</span>.<br>
+                سيتم حذف جميع بياناتك من السحابة:
+            </p>
+            <div class="delete-account-list">
+                <div>جميع المجموعات والحصص</div>
+                <div>بيانات المعلم والمركز</div>
+                <div>ربط الجهاز بالحساب</div>
+                <div>حساب الدخول نفسه</div>
+            </div>
+            <p class="delete-account-desc" style="margin-bottom:10px;">
+                للتأكيد، اكتب <b style="color:#DC2626;">الرقم السري</b> الخاص بحسابك:
+            </p>
+
+            <div style="position: relative; margin-bottom: 8px;">
+                <input type="password" id="deleteAccountPasswordInput" class="custom-input"
+                       placeholder="••••••••" autocomplete="new-password"
+                       style="padding-left: 42px; direction: rtl; text-align: right; letter-spacing: 3px;">
+                <button type="button" id="toggleDeleteAccPw"
+                        style="position:absolute; left:8px; top:50%; transform:translateY(-50%);
+                               background:transparent; border:none; cursor:pointer;
+                               font-size:16px; color:#64748B; padding:4px; line-height:1;">
+                    👁️
+                </button>
+            </div>
+
+            <p id="deleteAccountErrorMsg"
+               style="display:none; font-size:11.5px; font-weight:900; color:#DC2626;
+                      background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px;
+                      padding:6px 10px; margin: 0 0 10px; text-align:center;">
+                ❌ الرقم السري غير صحيح
+            </p>
+
+            <div class="modal-actions">
+                <button type="button" class="btn-delete-account-cancel" onclick="closeModal('deleteAccountModal')">تراجع</button>
+                <button type="button" class="btn-delete-account-confirm" id="confirmDeleteAccountBtn" disabled>احذف نهائياً</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="py-5 text-center text-slate-400 font-bold text-xs">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
@@ -1462,7 +1635,7 @@
           getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
       
-      import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
@@ -1486,6 +1659,7 @@
       window.fsCollection = collection;
       window.fsGetDocs = getDocs;
       window.fsOnSnapshot = onSnapshot;
+      window.fbSignIn = signInWithEmailAndPassword;
 
       onAuthStateChanged(auth, (user) => {
           if (user) {
@@ -1515,7 +1689,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .btn-delete-account, .btn-delete-account-confirm, .btn-delete-account-cancel');
             if (clickableElement) { playHighPitchSound(); }
         });
 
@@ -1535,7 +1709,6 @@
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
-                // ✅ استخدام substring بدلاً من substr المهجورة
                 deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
                 localStorage.setItem('device_id', deviceId);
             }
@@ -2425,7 +2598,6 @@
                 return;
             }
 
-            // ✅ التحقق الإضافي من اكتمال البيانات قبل النشر
             const raw = localStorage.getItem('lessonState_' + id);
             let data = null;
             try { data = raw ? JSON.parse(raw) : null; } catch(e) {}
@@ -2783,6 +2955,167 @@
         function saveLessonsToStorage() {
             try { localStorage.setItem('teacher_lessons', JSON.stringify(lessons)); } catch(e) {}
         }
+
+        // ==========================================
+        // 🗑️ حذف الحساب نهائياً — بالرقم السري
+        // ==========================================
+        function openDeleteAccountModal() {
+            const input = document.getElementById('deleteAccountPasswordInput');
+            const btn = document.getElementById('confirmDeleteAccountBtn');
+            const err = document.getElementById('deleteAccountErrorMsg');
+            const toggleBtn = document.getElementById('toggleDeleteAccPw');
+
+            if (input) { input.value = ''; input.type = 'password'; }
+            if (btn) { btn.disabled = true; btn.innerText = 'احذف نهائياً'; }
+            if (err) err.style.display = 'none';
+            if (toggleBtn) toggleBtn.textContent = '👁️';
+
+            document.getElementById('deleteAccountModal').classList.add('active');
+            setTimeout(() => { if (input) input.focus(); }, 150);
+        }
+
+        async function verifyPasswordViaAuth(phone, password) {
+            if (!window.auth || !window.fbSignIn) return { ok: false, error: 'no-auth' };
+            try {
+                const fakeEmail = String(phone).replace(/\D/g, '') + "@ehgezly.com";
+                await window.fbSignIn(window.auth, fakeEmail, password);
+                return { ok: true };
+            } catch (e) {
+                return { ok: false, error: e.code || e.message };
+            }
+        }
+
+        async function performAccountDeletion() {
+            const btn = document.getElementById('confirmDeleteAccountBtn');
+            const err = document.getElementById('deleteAccountErrorMsg');
+            const input = document.getElementById('deleteAccountPasswordInput');
+
+            const { phone: teacherPhone } = getCurrentTeacherInfo();
+            const teacherKey = String(teacherPhone || '').replace(/\D/g, '');
+            const typedPassword = (input ? input.value : '').trim();
+
+            if (!typedPassword) {
+                if (err) { err.innerText = '⚠️ اكتب الرقم السري أولاً'; err.style.display = 'block'; }
+                return;
+            }
+            if (!teacherKey) {
+                if (err) { err.innerText = '⚠️ لا يوجد رقم تليفون مسجل'; err.style.display = 'block'; }
+                return;
+            }
+
+            if (btn) { btn.disabled = true; btn.innerText = '⏳ جاري التحقق...'; }
+            if (err) err.style.display = 'none';
+
+            const verify = await verifyPasswordViaAuth(teacherKey, typedPassword);
+
+            if (!verify.ok) {
+                if (err) { err.innerText = '❌ الرقم السري غير صحيح'; err.style.display = 'block'; }
+                if (btn) { btn.disabled = false; btn.innerText = 'احذف نهائياً'; }
+                if (input) { input.value = ''; input.focus(); }
+                try { if (navigator.vibrate) navigator.vibrate([60, 40, 60]); } catch(e) {}
+                return;
+            }
+
+            if (btn) btn.innerText = '⏳ جاري الحذف...';
+
+            try {
+                if (teacherKey && window.db && window.fsCollection && window.fsGetDocs && window.fsDeleteDoc) {
+                    try {
+                        const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                        const deletions = [];
+                        snap.forEach(docSnap => {
+                            const d = docSnap.data() || {};
+                            const lp = String(d.g_phone || '').replace(/\D/g, '');
+                            if (lp && lp === teacherKey) {
+                                deletions.push(window.fsDeleteDoc(window.fsDoc(window.db, "lessons", docSnap.id)));
+                            }
+                        });
+                        await Promise.all(deletions);
+                    } catch (e) { console.warn("فشل حذف الحصص:", e); }
+                }
+
+                if (teacherKey && window.db && window.fsDeleteDoc) {
+                    try { await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", teacherKey)); }
+                    catch (e) { console.warn("فشل حذف وثيقة المعلم:", e); }
+                    try { await window.fsDeleteDoc(window.fsDoc(window.db, "teacher_devices", teacherKey)); }
+                    catch (e) { console.warn("فشل حذف وثيقة الجهاز:", e); }
+                }
+
+                try {
+                    if (window.auth && window.auth.currentUser) {
+                        await window.auth.currentUser.delete();
+                        console.log("✅ تم حذف حساب Auth");
+                    }
+                } catch (authErr) {
+                    console.warn("⚠️ فشل حذف حساب Auth:", authErr);
+                }
+
+                try {
+                    const keysToRemove = [];
+                    for (let i = 0; i < localStorage.length; i++) {
+                        const k = localStorage.key(i);
+                        if (!k) continue;
+                        if (k.startsWith('lessonState_') || k.startsWith('publishState_')) {
+                            keysToRemove.push(k);
+                        }
+                    }
+                    keysToRemove.forEach(k => localStorage.removeItem(k));
+                    ['loggedInTeacher', 'rememberedPhone', 'teacher_location_consent',
+                     'mokshmoksh', 'mokshmoksh_logged', 'loggedIn', 'user',
+                     'teacher_lessons', 'lessons_owner_phone', 'device_id',
+                     'teacherAccount_' + teacherKey, 'teacherVerification_' + teacherKey,
+                     'teacherBlocked_' + teacherKey, 'talep_data', 'talep_data_owner',
+                     'location_consent_given'].forEach(k => localStorage.removeItem(k));
+                    sessionStorage.clear();
+                } catch (e) { console.warn("فشل مسح التخزين المحلي:", e); }
+
+                if (realtimeUnsubscribe) { try { realtimeUnsubscribe(); } catch(e) {} }
+                if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+                if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
+                if (blockWatchUnsub) { try { blockWatchUnsub(); } catch(e) {} }
+
+                closeModal('deleteAccountModal');
+                showToast('🗑️ تم حذف الحساب نهائياً');
+                setTimeout(() => window.location.replace('./login.html'), 1000);
+            } catch (err2) {
+                console.error('فشل حذف الحساب:', err2);
+                showToast('❌ فشل الحذف — حاول مرة أخرى', true);
+                if (btn) { btn.disabled = false; btn.innerText = 'احذف نهائياً'; }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const deleteAccBtn = document.getElementById('deleteAccountBtn');
+            if (deleteAccBtn) deleteAccBtn.addEventListener('click', openDeleteAccountModal);
+
+            const input = document.getElementById('deleteAccountPasswordInput');
+            const btn = document.getElementById('confirmDeleteAccountBtn');
+            const err = document.getElementById('deleteAccountErrorMsg');
+            const toggleBtn = document.getElementById('toggleDeleteAccPw');
+
+            if (input && btn) {
+                input.addEventListener('input', () => {
+                    if (err) err.style.display = 'none';
+                    btn.disabled = input.value.trim().length === 0;
+                });
+                input.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter' && !btn.disabled) btn.click();
+                });
+                btn.addEventListener('click', performAccountDeletion);
+            }
+
+            if (toggleBtn && input) {
+                toggleBtn.addEventListener('click', () => {
+                    if (input.type === 'password') {
+                        input.type = 'text';
+                        toggleBtn.textContent = '🙈';
+                    } else {
+                        input.type = 'password';
+                        toggleBtn.textContent = '👁️';
+                    }
+                });
+            }
+        });
     </script>
 
     <script>
