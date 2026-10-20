@@ -270,18 +270,6 @@
             min-width: 120px;
         }
 
-        .btn-delete-small {
-            background: #FEF2F2;
-            color: #DC2626;
-            border: 1px solid #FECACA;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-
         .alert-msg {
             padding: 12px;
             border-radius: 10px;
@@ -331,7 +319,6 @@
         .modal-btn-row { display: flex; gap: 10px; }
         .modal-btn { flex: 1; padding: 11px; border-radius: 12px; font-size: 14px; font-weight: 900; cursor: pointer; border: none; }
         .modal-btn-cancel { background: #E2E8F0; color: #475569; }
-        .modal-btn-danger { background: #EF4444; color: #FFFFFF; }
 
         .device-info-badge {
             display: none;
@@ -351,29 +338,6 @@
     </style>
 </head>
 <body>
-
-    <div id="confirmDeleteModal" class="custom-modal-overlay" onclick="closeCustomModal('confirmDeleteModal')">
-        <div class="custom-modal-box" style="border-bottom-color: #EF4444;" onclick="event.stopPropagation()">
-            <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">⚠️</div>
-            <h3 class="modal-title-text" style="color: #991B1B;">هل أنت متأكد من حذف الحساب؟</h3>
-            <p class="modal-desc-text">
-                سيتم حذف حسابك بشكل نهائي مع جميع بياناتك.<br>
-                <strong style="color: #DC2626;">لا يمكن التراجع عن هذا الإجراء!</strong>
-            </p>
-            <div class="modal-btn-row">
-                <button type="button" class="modal-btn modal-btn-cancel" onclick="closeCustomModal('confirmDeleteModal')">إلغاء</button>
-                <button type="button" class="modal-btn modal-btn-danger" onclick="executeDeleteAccount()">نعم، احذف</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="deletedSuccessModal" class="custom-modal-overlay">
-        <div class="custom-modal-box" style="border-bottom-color: #10B981;">
-            <div class="modal-icon-circle" style="background: #D1FAE5; color: #059669;">✅</div>
-            <h3 class="modal-title-text" style="color: #065F46;">تم حذف الحساب</h3>
-            <p class="modal-desc-text">تم حذف بيانات الحساب بنجاح، جاري الرجوع...</p>
-        </div>
-    </div>
 
     <div id="blockedAccountModal" class="custom-modal-overlay" onclick="closeCustomModal('blockedAccountModal')">
         <div class="custom-modal-box" style="border-bottom-color: #D97706;" onclick="event.stopPropagation()">
@@ -482,7 +446,6 @@
 
     <div id="actionButtonsContainer" class="action-buttons-container" style="display: flex;">
         <button class="btn-logout" onclick="handleLogout()">الرئيسية</button>
-        <button class="btn-delete-small" onclick="confirmDeleteAccount()">حذف الحساب</button>
     </div>
 
     <script>
@@ -517,8 +480,8 @@
                     if (!k) continue;
                     if (
                         k === 'teacher_lessons' ||
-                        k === 'talep_data' ||              // ✅ جديد: تنظيف بيانات الطالب
-                        k === 'talep_data_owner' ||        // ✅ جديد: تنظيف مالك البيانات
+                        k === 'talep_data' ||
+                        k === 'talep_data_owner' ||
                         k === 'lessons_owner_phone' ||
                         k === 'location_consent_given' ||
                         k.startsWith('lessonState_') ||
@@ -542,7 +505,6 @@
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
-                // ✅ استخدام substring بدلاً من substr المهجورة
                 deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
                 localStorage.setItem('device_id', deviceId);
             }
@@ -854,100 +816,6 @@
         function handleLogout() { 
             localStorage.removeItem('loggedInTeacher');
             window.location.href = './index.html'; 
-        }
-
-        // ==========================================
-        // 🗑️ حذف الحساب (النسخة الآمنة الجديدة)
-        // ==========================================
-        async function confirmDeleteAccount() {
-            const fb = await getFbModule();
-            if (!fb) {
-                return showAlert('تعذر الاتصال بالسحابة.');
-            }
-
-            // ✅ التحقق من وجود مستخدم مسجل دخول فعلاً
-            const currentUser = fb.auth.currentUser;
-            if (!currentUser) {
-                return showAlert('يجب تسجيل الدخول أولاً لحذف الحساب.');
-            }
-
-            // ✅ التحقق من أن الإيميل يطابق رقم الهاتف المدخل
-            const phone = document.getElementById('loginPhone').value.trim() || 
-                          document.getElementById('regPhone').value.trim();
-            if (!phone) {
-                return showAlert('لا يوجد رقم تليفون محدد.');
-            }
-
-            const fakeEmail = phone + "@ehgezly.com";
-            if (currentUser.email !== fakeEmail) {
-                return showAlert('الرقم المدخل لا يطابق الحساب المسجل. سجل دخول أولاً بنفس الرقم.');
-            }
-
-            // ✅ عرض نافذة التأكيد
-            document.getElementById('confirmDeleteModal').classList.add('active');
-        }
-
-        async function executeDeleteAccount() {
-            closeCustomModal('confirmDeleteModal');
-            
-            const fb = await getFbModule();
-            if (!fb || !fb.auth.currentUser) {
-                return showAlert('انتهت الجلسة. سجل دخول مرة أخرى.');
-            }
-
-            const phone = fb.auth.currentUser.email.split('@')[0];
-            const teacherKey = String(phone).replace(/\D/g, '');
-            const btn = document.querySelector('.btn-delete-small');
-            const origText = btn.innerText;
-            btn.innerText = '⏳ جاري الحذف...';
-            btn.disabled = true;
-
-            try {
-                // 1️⃣ حذف بيانات Firestore أولاً
-                await fb.deleteDoc(fb.doc(fb.db, "teacher_devices", teacherKey)).catch(() => {});
-                await fb.deleteDoc(fb.doc(fb.db, "teachers", teacherKey)).catch(() => {});
-                await fb.deleteDoc(fb.doc(fb.db, "talep_data", teacherKey)).catch(() => {});
-                console.log("✅ تم حذف بيانات Firestore");
-
-                // 2️⃣ حذف حساب Auth
-                await fb.auth.currentUser.delete();
-                console.log("✅ تم حذف حساب Auth بالكامل");
-
-                // 3️⃣ تنظيف localStorage
-                localStorage.removeItem('loggedInTeacher');
-                localStorage.removeItem('rememberedPhone');
-                localStorage.removeItem('teacherAccount_' + phone);
-                localStorage.removeItem('teacherVerification_' + phone);
-                localStorage.removeItem('teacherBlocked_' + phone);
-                localStorage.removeItem('talep_data');
-                localStorage.removeItem('talep_data_owner');
-                localStorage.removeItem('location_consent_given');
-
-                // 4️⃣ تنظيف الحصص المرتبطة
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const k = localStorage.key(i);
-                    if (k && (k.startsWith('lessonState_') || k.startsWith('publishState_'))) {
-                        keysToRemove.push(k);
-                    }
-                }
-                keysToRemove.forEach(k => localStorage.removeItem(k));
-
-                // 5️⃣ عرض رسالة النجاح والتوجيه
-                document.getElementById('deletedSuccessModal').classList.add('active');
-                setTimeout(() => { window.location.href = './index.html'; }, 1600);
-
-            } catch (error) {
-                console.error("❌ فشل حذف الحساب:", error);
-                btn.innerText = origText;
-                btn.disabled = false;
-                
-                if (error.code === 'auth/requires-recent-login') {
-                    showAlert('لأسباب أمنية، سجل خروج ثم دخول مرة أخرى قبل الحذف.');
-                } else {
-                    showAlert('حدث خطأ أثناء الحذف. حاول مرة أخرى.');
-                }
-            }
         }
     </script>
 </body>
