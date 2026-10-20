@@ -437,6 +437,25 @@
         });
 
         // ==========================================
+        // ✅ تنظيف الاسم من اللقب المكرر (مستر/مس/أستاذ...)
+        // ==========================================
+        function cleanTeacherNameForHeader(rawName, titlePrefix) {
+            if (!rawName) return '';
+            let name = String(rawName).trim();
+
+            // شيل أي لقب في بداية الاسم
+            name = name.replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s*[\/\-]?\s*/i, '');
+
+            // شيل أي لقب في نهاية الاسم (لو مكرر)
+            name = name.replace(/\s*[\/\-]?\s*(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s*$/i, '');
+
+            // شيل الشرطة المائلة أو الفاصلة الزائدة
+            name = name.replace(/^[\/\-\s]+|[\/\-\s]+$/g, '').trim();
+
+            return name;
+        }
+
+        // ==========================================
         // المتغيرات الأساسية
         // ==========================================
         let currentLessonId = '1';
@@ -875,7 +894,13 @@
             const phoneEl = document.getElementById('headerTeacherPhone');
 
             if (badgeEl && teacherName && teacherName !== 'غير محدد') {
-                titleAndNameEl.innerText = `${teacherTitle} / ${teacherName}`;
+                // ✅ تنظيف الاسم من اللقب المكرر
+                const cleanName = cleanTeacherNameForHeader(teacherName, teacherTitle);
+                const cleanTitle = String(teacherTitle || '').trim();
+
+                // عرض: "مستر / أحمد" — اللقب مرة واحدة بس
+                titleAndNameEl.innerText = cleanName ? `${cleanTitle} / ${cleanName}` : cleanTitle;
+
                 phoneEl.innerText = teacherPhone ? `📱 ${teacherPhone}` : '📱 غير مسجل';
                 badgeEl.style.display = 'inline-flex';
             }
