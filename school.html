@@ -889,6 +889,20 @@
         </div>
     </div>
 
+    <!-- ✅ نافذة تعديل الأسماء (Prompt Modal) -->
+    <div id="customPromptModal" class="modal-overlay" onclick="closeModal('customPromptModal')" style="z-index: 999999;">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 420px; border-bottom-color: #2563EB; text-align: center;">
+            <div class="text-5xl mb-3">✏️</div>
+            <h3 id="promptModalTitle" class="text-lg font-black text-slate-800 mb-2">تعديل الاسم</h3>
+            <p id="promptModalMessage" class="text-xs font-bold text-slate-500 mb-4 leading-relaxed">أدخل الاسم الجديد</p>
+            <input type="text" id="promptInput" class="form-input mb-4" placeholder="الاسم الجديد..." style="text-align: right;">
+            <div class="flex gap-3 justify-center">
+                <button id="btnPromptConfirm" class="action-chip bg-blue-600 text-white px-6 py-2.5 flex-1 text-sm shadow-md">💾 حفظ التعديل</button>
+                <button onclick="closeModal('customPromptModal')" class="action-chip bg-slate-200 text-slate-700 px-6 py-2.5 flex-1 text-sm">إلغاء</button>
+            </div>
+        </div>
+    </div>
+
     <!-- 🌟 Firebase Module مع Auth للمشرف 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -1066,6 +1080,48 @@
             if (confirmActionCallback) {
                 confirmActionCallback();
                 confirmActionCallback = null;
+            }
+        });
+
+        // ==========================================
+        // ✏️ Prompt Modal — نافذة إدخال نص مخصصة
+        // ==========================================
+        let promptActionCallback = null;
+        function showCustomPrompt(title, message, currentValue, callback) {
+            document.getElementById('promptModalTitle').textContent = title;
+            document.getElementById('promptModalMessage').textContent = message;
+            const input = document.getElementById('promptInput');
+            input.value = currentValue || '';
+            promptActionCallback = callback;
+            document.getElementById('customPromptModal').classList.add('active');
+            setTimeout(() => { input.focus(); input.select(); }, 150);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const btnPrompt = document.getElementById('btnPromptConfirm');
+            if (btnPrompt) {
+                btnPrompt.addEventListener('click', () => {
+                    const val = document.getElementById('promptInput').value.trim();
+                    if (!val) {
+                        showToast('⚠️ الاسم لا يمكن أن يكون فارغاً', true);
+                        return;
+                    }
+                    closeModal('customPromptModal');
+                    if (promptActionCallback) {
+                        promptActionCallback(val);
+                        promptActionCallback = null;
+                    }
+                });
+            }
+
+            const promptInput = document.getElementById('promptInput');
+            if (promptInput) {
+                promptInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.getElementById('btnPromptConfirm').click();
+                    }
+                });
             }
         });
 
@@ -1484,6 +1540,7 @@
             stageControlsContainer.innerHTML = `
                 <button class="order-btn" onclick="moveStage(${currentStageIdx}, -1)" ${currentStageIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
                 <button class="order-btn" onclick="moveStage(${currentStageIdx}, 1)" ${currentStageIdx === sortedStages.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                <button onclick="editStageName('${activeStageKey}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
                 <button onclick="deleteStage('${activeStageKey}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
             `;
 
@@ -1501,6 +1558,7 @@
                  gradeControlsContainer.innerHTML = `
                     <button class="order-btn" onclick="moveGrade(${currentGradeIdx}, -1)" ${currentGradeIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
                     <button class="order-btn" onclick="moveGrade(${currentGradeIdx}, 1)" ${currentGradeIdx === sortedGrades.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                    <button onclick="editGradeName('${activeGradeName.replace(/'/g, "\\'")}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
                     <button onclick="deleteGradeItem('${activeGradeName.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
                 `;
             } else {
@@ -1529,6 +1587,7 @@
                      subjectControlsContainer.innerHTML = `
                         <button class="order-btn" onclick="moveSubject(${currentSubjIdx}, -1)" ${currentSubjIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
                         <button class="order-btn" onclick="moveSubject(${currentSubjIdx}, 1)" ${currentSubjIdx === sortedSubjs.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
+                        <button onclick="editSubjectName('${activeSubjectName.replace(/'/g, "\\'")}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
                         <button onclick="deleteSubjectFromGrade('${activeSubjectName.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
                     `;
                 } else {
@@ -1753,6 +1812,184 @@
 
             saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب المواد');
             renderCurriculumManager();
+        }
+
+        // ==========================================
+        // ✏️ دوال تعديل الأسماء (Stage / Grade / Subject)
+        // ==========================================
+        function editStageName(stageKey) {
+            const curr = getCurriculum();
+            const st = curr[stageKey];
+            if (!st) return;
+            
+            showCustomPrompt(
+                '✏️ تعديل اسم المرحلة',
+                'اكتب الاسم الجديد (يمكنك تغيير الأيقونة أيضاً):',
+                st.name,
+                (newName) => {
+                    st.name = newName;
+                    saveCurriculumAndBroadcast(curr, '✅ تم تعديل اسم المرحلة بنجاح');
+                    renderCurriculumManager();
+                    populateGradeFilter();
+                }
+            );
+        }
+
+        function editGradeName(oldGradeName) {
+            const curr = getCurriculum();
+            const st = curr[activeStageKey];
+            if (!st || !st.grades.includes(oldGradeName)) return;
+            
+            showCustomPrompt(
+                '✏️ تعديل اسم الصف',
+                'سيتم تحديث اسم الصف في المنهج وفي جميع المجموعات المرتبطة به تلقائياً.',
+                oldGradeName,
+                async (newGradeName) => {
+                    if (newGradeName === oldGradeName) return;
+                    if (st.grades.includes(newGradeName)) {
+                        showToast('⚠️ هذا الصف موجود بالفعل', true);
+                        return;
+                    }
+                    
+                    const idx = st.grades.indexOf(oldGradeName);
+                    if (idx > -1) st.grades[idx] = newGradeName;
+                    
+                    if (st.gradeOrder && st.gradeOrder[oldGradeName] !== undefined) {
+                        st.gradeOrder[newGradeName] = st.gradeOrder[oldGradeName];
+                        delete st.gradeOrder[oldGradeName];
+                    }
+                    if (st.gradeSubjects && st.gradeSubjects[oldGradeName] !== undefined) {
+                        st.gradeSubjects[newGradeName] = st.gradeSubjects[oldGradeName];
+                        delete st.gradeSubjects[oldGradeName];
+                    }
+                    if (st.subjectOrder && st.subjectOrder[oldGradeName] !== undefined) {
+                        st.subjectOrder[newGradeName] = st.subjectOrder[oldGradeName];
+                        delete st.subjectOrder[oldGradeName];
+                    }
+                    
+                    if (activeGradeName === oldGradeName) activeGradeName = newGradeName;
+                    
+                    saveCurriculumAndBroadcast(curr, '✅ تم تعديل اسم الصف');
+                    renderCurriculumManager();
+                    populateGradeFilter();
+                    
+                    setCloudStatus('syncing', '⏳ جاري تحديث المجموعات المرتبطة...');
+                    const updated = await migrateLessonsForGrade(activeStageKey, oldGradeName, newGradeName);
+                    if (updated > 0) showToast(`✅ تم تحديث ${updated} مجموعة بالاسم الجديد`);
+                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                }
+            );
+        }
+
+        function editSubjectName(oldSubjectName) {
+            const curr = getCurriculum();
+            const st = curr[activeStageKey];
+            if (!st || !activeGradeName) return;
+            const arr = st.gradeSubjects[activeGradeName] || [];
+            if (!arr.includes(oldSubjectName)) return;
+            
+            showCustomPrompt(
+                '✏️ تعديل اسم المادة',
+                'سيتم تحديث اسم المادة في المنهج وفي جميع المجموعات المرتبطة بها تلقائياً.',
+                oldSubjectName,
+                async (newSubjectName) => {
+                    if (newSubjectName === oldSubjectName) return;
+                    if (arr.includes(newSubjectName)) {
+                        showToast('⚠️ هذه المادة موجودة بالفعل لهذا الصف', true);
+                        return;
+                    }
+                    
+                    const idx = arr.indexOf(oldSubjectName);
+                    if (idx > -1) arr[idx] = newSubjectName;
+                    
+                    if (st.subjectOrder && st.subjectOrder[activeGradeName] &&
+                        st.subjectOrder[activeGradeName][oldSubjectName] !== undefined) {
+                        st.subjectOrder[activeGradeName][newSubjectName] = st.subjectOrder[activeGradeName][oldSubjectName];
+                        delete st.subjectOrder[activeGradeName][oldSubjectName];
+                    }
+                    
+                    if (activeSubjectName === oldSubjectName) activeSubjectName = newSubjectName;
+                    
+                    saveCurriculumAndBroadcast(curr, '✅ تم تعديل اسم المادة');
+                    renderCurriculumManager();
+                    
+                    setCloudStatus('syncing', '⏳ جاري تحديث المجموعات المرتبطة...');
+                    const updated = await migrateLessonsForSubject(oldSubjectName, newSubjectName);
+                    if (updated > 0) showToast(`✅ تم تحديث ${updated} مجموعة بالمادة الجديدة`);
+                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                }
+            );
+        }
+
+        // ==========================================
+        // 🔄 دوال Migration — تحديث الدروس المرتبطة
+        // ==========================================
+        async function migrateLessonsForGrade(stageKey, oldGradeName, newGradeName) {
+            if (!window.db || !window.fsGetDocs || !window.fsCollection || !window.fsSetDoc) return 0;
+            try {
+                const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                const updates = [];
+                snap.forEach((docSnap) => {
+                    const data = docSnap.data() || {};
+                    if (String(data.s_stage || '') === String(stageKey) &&
+                        String(data.s_grade || '').trim() === oldGradeName.trim()) {
+                        updates.push(window.fsSetDoc(
+                            window.fsDoc(window.db, "lessons", docSnap.id),
+                            { s_grade: newGradeName },
+                            { merge: true }
+                        ));
+                    }
+                });
+                if (updates.length > 0) await Promise.all(updates);
+                return updates.length;
+            } catch (e) {
+                console.warn("⚠️ فشل تحديث الدروس بالصف الجديد:", e);
+                return 0;
+            }
+        }
+
+        async function migrateLessonsForSubject(oldSubjectName, newSubjectName) {
+            if (!window.db || !window.fsGetDocs || !window.fsCollection || !window.fsSetDoc) return 0;
+            try {
+                const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                const updates = [];
+                snap.forEach((docSnap) => {
+                    const data = docSnap.data() || {};
+                    const subjects = data.selectedSubjects;
+                    if (!Array.isArray(subjects)) return;
+                    
+                    let changed = false;
+                    const newSubjects = subjects.map(s => {
+                        const str = String(s);
+                        if (str.includes(' - ')) {
+                            const parts = str.split(' - ');
+                            if (parts.slice(1).join(' - ').trim() === oldSubjectName.trim()) {
+                                changed = true;
+                                return parts[0] + ' - ' + newSubjectName;
+                            }
+                            return str;
+                        }
+                        if (str.trim() === oldSubjectName.trim()) {
+                            changed = true;
+                            return newSubjectName;
+                        }
+                        return str;
+                    });
+                    
+                    if (changed) {
+                        updates.push(window.fsSetDoc(
+                            window.fsDoc(window.db, "lessons", docSnap.id),
+                            { selectedSubjects: newSubjects },
+                            { merge: true }
+                        ));
+                    }
+                });
+                if (updates.length > 0) await Promise.all(updates);
+                return updates.length;
+            } catch (e) {
+                console.warn("⚠️ فشل تحديث الدروس بالمادة الجديدة:", e);
+                return 0;
+            }
         }
 
         function resetCurriculumToDefault() {
