@@ -1236,6 +1236,7 @@
             }
         };
 
+        // ✅ تم تعديل هذه الدالة لمنع إعادة إضافة العناصر الافتراضية بعد حذفها
         function normalizeCurriculum(currObj) {
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
                 return JSON.parse(JSON.stringify(defaultCurriculum));
@@ -1243,6 +1244,7 @@
             if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
                 currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order' && k !== 'updatedAt');
             }
+            
             Object.keys(currObj).forEach(stageKey => {
                 if (stageKey === 'main_order' || stageKey === 'updatedAt' || stageKey === 'id') return;
                 
@@ -1250,59 +1252,61 @@
                     if (defaultCurriculum[stageKey]) currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
                     return;
                 }
+                
                 const st = currObj[stageKey];
                 const defStage = defaultCurriculum[stageKey] || {};
                 
-                if (!Array.isArray(st.grades)) st.grades = [];
+                if (!Array.isArray(st.grades)) {
+                    st.grades = defStage.grades ? [...defStage.grades] : [];
+                }
                 if (!Array.isArray(st.subjs)) st.subjs = [];
-                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) st.gradeSubjects = {};
-                if (!st.gradeOrder || typeof st.gradeOrder !== 'object' || Array.isArray(st.gradeOrder)) st.gradeOrder = {};
-                if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) st.subjectOrder = {};
-                
-                const mergedGrades = [...st.grades];
-                (defStage.grades || []).forEach(defGrade => {
-                    if (!mergedGrades.includes(defGrade)) mergedGrades.push(defGrade);
-                });
-                st.grades = mergedGrades;
-
+                if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
+                    st.gradeSubjects = defStage.gradeSubjects ? JSON.parse(JSON.stringify(defStage.gradeSubjects)) : {};
+                }
+                if (!st.gradeOrder || typeof st.gradeOrder !== 'object' || Array.isArray(st.gradeOrder)) {
+                    st.gradeOrder = defStage.gradeOrder ? { ...defStage.gradeOrder } : {};
+                }
+                if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) {
+                    st.subjectOrder = defStage.subjectOrder ? JSON.parse(JSON.stringify(defStage.subjectOrder)) : {};
+                }
+        
                 st.grades.forEach((g, i) => {
                     if (typeof st.gradeOrder[g] !== 'number') st.gradeOrder[g] = i + 1;
                 });
-
+        
                 st.grades.forEach(g => {
-                    if (!Array.isArray(st.gradeSubjects[g]) || st.gradeSubjects[g].length === 0) {
+                    if (!Array.isArray(st.gradeSubjects[g])) {
                         if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
                             st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
                         } else {
                             st.gradeSubjects[g] = [...st.subjs];
                         }
-                    } else {
-                        const existing = st.gradeSubjects[g];
-                        const defSubjs = (defStage.gradeSubjects && defStage.gradeSubjects[g]) || [];
-                        defSubjs.forEach(ds => {
-                            if (!existing.includes(ds)) existing.push(ds);
-                        });
-                        st.gradeSubjects[g] = existing;
                     }
-
+        
                     if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
-                        st.subjectOrder[g] = {};
+                        if (defStage.subjectOrder && typeof defStage.subjectOrder[g] === 'object') {
+                            st.subjectOrder[g] = { ...defStage.subjectOrder[g] };
+                        } else {
+                            st.subjectOrder[g] = {};
+                        }
                     }
+                    
                     st.gradeSubjects[g].forEach((s, i) => {
                         if (typeof st.subjectOrder[g][s] !== 'number') st.subjectOrder[g][s] = i + 1;
                     });
-
+        
                     Object.keys(st.subjectOrder[g]).forEach(s => {
                         if (!st.gradeSubjects[g].includes(s)) delete st.subjectOrder[g][s];
                     });
                 });
-
+        
                 Object.keys(st.gradeOrder).forEach(g => {
                     if (!st.grades.includes(g)) delete st.gradeOrder[g];
                 });
                 
                 if (!currObj.main_order.includes(stageKey)) currObj.main_order.push(stageKey);
             });
+            
             currObj.main_order = currObj.main_order.filter(k => currObj[k]);
             return currObj;
         }
