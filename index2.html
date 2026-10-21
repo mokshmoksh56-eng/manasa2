@@ -611,7 +611,7 @@
             background: linear-gradient(135deg, #FEE2E2, #FECACA);
             border: 1.5px solid #FCA5A5;
             border-radius: 10px;
-            margin-bottom: 8px;
+            margin-top: 6px;
             width: 100%;
             box-sizing: border-box;
             animation: hiddenPulse 2.5s ease-in-out infinite;
@@ -1548,6 +1548,39 @@
                 top: 10px !important;
                 right: 10px !important;
                 border-width: 1.5px !important;
+            }
+
+            /* ✅ الحل الجديد: الأيقونات محمية ومش بتتداخل مع زر الفتح */
+            .card-actions {
+                top: 8px !important;
+                left: 8px !important;
+                gap: 4px !important;
+            }
+            .btn-action {
+                width: 28px !important;
+                height: 28px !important;
+            }
+            .card-text {
+                padding-top: 38px !important; /* مساحة كافية للأيقونات */
+            }
+            .hidden-notice-banner {
+                margin-top: 6px !important;
+                margin-bottom: 6px !important;
+                padding: 6px 8px !important;
+                gap: 4px !important;
+                flex-direction: row !important;
+                align-items: center !important;
+            }
+            .hidden-notice-text {
+                font-size: 10px !important;
+                text-align: right !important;
+                min-width: auto !important;
+            }
+            .hidden-open-btn {
+                width: auto !important;
+                padding: 4px 8px !important;
+                font-size: 10px !important;
+                border-radius: 6px !important;
             }
         }
     </style>
@@ -2928,6 +2961,7 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
                 
+                // ✅ وضعنا noticeBannerHTML تحت زر التقرير لتجنب التداخل
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
                     ${statusDotHTML}
@@ -2946,12 +2980,12 @@
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
                     <div class="card-text">
-                        ${noticeBannerHTML}
                         ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
                         <p>${descText}</p>
                         <a href="${targetUrl}" class="btn-go">${btnText}</a>
+                        ${noticeBannerHTML} <!-- ✅ تحت الزر مباشرة -->
                     </div>
                 `;
                 
