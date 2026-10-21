@@ -165,6 +165,13 @@
         .save-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
 
         @keyframes pulse-btn { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20% { transform: translateX(-6px); }
+            40% { transform: translateX(6px); }
+            60% { transform: translateX(-4px); }
+            80% { transform: translateX(4px); }
+        }
 
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
@@ -505,7 +512,7 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
-                تحديد الموقع والبحث بالـ GPS
+                <span id="searchBtnText">تحديد الموقع والبحث بالـ GPS</span>
             </button>
 
             <div class="radius-card-below-search">
@@ -745,6 +752,50 @@
             gain.gain.setValueAtTime(0.04, audioCtx.currentTime);
             gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
+        }
+
+        // ✅ صوت تنبيه خطأ (Beep-Beep)
+        function playErrorSound() {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const now = audioCtx.currentTime;
+                [0, 0.18].forEach((offset) => {
+                    const osc = audioCtx.createOscillator();
+                    const gain = audioCtx.createGain();
+                    osc.connect(gain);
+                    gain.connect(audioCtx.destination);
+                    osc.type = 'square';
+                    osc.frequency.setValueAtTime(880, now + offset);
+                    osc.frequency.exponentialRampToValueAtTime(440, now + offset + 0.12);
+                    gain.gain.setValueAtTime(0.08, now + offset);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + offset + 0.15);
+                    osc.start(now + offset);
+                    osc.stop(now + offset + 0.15);
+                });
+            } catch (e) {
+                console.warn("⚠️ audio error:", e);
+            }
+        }
+
+        // ✅ اهتزاز الهاتف عند الخطأ
+        function vibrateError() {
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
+        }
+
+        // ✅ اهتزاز النجاح
+        function vibrateSuccess() {
+            if (navigator.vibrate) {
+                navigator.vibrate([80, 50, 80]);
+            }
+        }
+
+        // ✅ التنبيه الكامل (صوت + اهتزاز + رسالة)
+        function alertMissingData(missingList) {
+            playErrorSound();
+            vibrateError();
+            showToast(`⚠️ يرجى اختيار: ${missingList.join(' + ')} أولاً!`, true);
         }
 
         document.addEventListener('click', function(e) {
@@ -1126,6 +1177,39 @@
         }
 
         // ==========================================
+        // ✅ highlightMissingField
+        // ==========================================
+        function highlightMissingField(fieldId, isMissing) {
+            const el = document.getElementById(fieldId);
+            if (!el) return;
+            if (isMissing) {
+                el.style.borderColor = '#EF4444';
+                el.style.boxShadow = '0 0 0 3px rgba(239,68,68,0.35)';
+                el.style.animation = 'shake 0.4s';
+                setTimeout(() => {
+                    el.style.borderColor = '';
+                    el.style.boxShadow = '';
+                    el.style.animation = '';
+                }, 2000);
+            }
+        }
+
+        // ✅ تحديث نص زر البحث حسب حالة الاختيار
+        function updateSearchBtnHint() {
+            const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
+            const subject = document.getElementById('s_subject').value;
+            const btnText = document.getElementById('searchBtnText');
+            if (!btnText) return;
+            
+            if (!stage || !grade || !subject) {
+                btnText.textContent = '⚠️ اختر المرحلة والصف والمادة أولاً';
+            } else {
+                btnText.textContent = 'تحديد الموقع والبحث بالـ GPS';
+            }
+        }
+
+        // ==========================================
         // 🌟 المنهج الافتراضي
         // ==========================================
         const defaultCurriculum = {
@@ -1357,6 +1441,7 @@
             } else {
                 updateGrades('', '');
             }
+            updateSearchBtnHint();
         }
 
         function updateGrades(preferredGrade = '', preferredSubj = '') {
@@ -1386,6 +1471,7 @@
                 gSelect.disabled = true;
                 renderStudentGradeSubjectsBar();
             }
+            updateSearchBtnHint();
         }
 
         function updateSubjects(preferredSubj = '') {
@@ -1410,12 +1496,14 @@
             }
             renderStudentGradeSubjectsBar();
             updateStudentSummary();
+            updateSearchBtnHint();
         }
 
         function onSubjectSelectChange() {
             renderStudentGradeSubjectsBar();
             saveStudentData();
             updateStudentSummary();
+            updateSearchBtnHint();
             if (currentCenter && map) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             }
@@ -1462,6 +1550,7 @@
             renderStudentGradeSubjectsBar();
             saveStudentData();
             updateStudentSummary();
+            updateSearchBtnHint();
             if (currentCenter && map) {
                 renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             }
@@ -1609,6 +1698,7 @@
             };
             localStorage.setItem('talep_data', JSON.stringify(studentData));
             updateStudentSummary();
+            updateSearchBtnHint();
             saveTalepToFirebase(false);
         }
 
@@ -1629,7 +1719,7 @@
                 updateRadiusDisplay();
             }
             
-            updateStudentSummary(); renderSavedLocationsList(); renderSavedTeachersList();
+            updateStudentSummary(); updateSearchBtnHint(); renderSavedLocationsList(); renderSavedTeachersList();
         }
 
         // ==========================================
@@ -1760,18 +1850,27 @@
 
             startCurriculumRealtimeListener();
             startTalepRealtimeListener();
-            startTeachersRealtimeListener(); // ✅ المزامنة اللحظية للمعلمين
+            startTeachersRealtimeListener();
         };
 
         // ==========================================
         // Location flow
         // ==========================================
         function triggerLocationFlow() {
-            const subject = document.getElementById('s_subject').value;
+            const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
-            
-            if (!subject || !grade) {
-                showToast("يرجى استكمال البيانات (المرحلة، الصف، المادة) أولاً!", true);
+            const subject = document.getElementById('s_subject').value;
+
+            const missing = [];
+            if (!stage) missing.push("المرحلة الدراسية");
+            if (!grade) missing.push("الصف");
+            if (!subject) missing.push("المادة");
+
+            if (missing.length > 0) {
+                alertMissingData(missing);
+                highlightMissingField('s_stage', !stage);
+                highlightMissingField('s_grade', !grade);
+                highlightMissingField('s_subject', !subject);
                 return;
             }
 
@@ -2054,7 +2153,7 @@
                         address: fullAddress,
                         phone: state.g_phone || '',
                         gender: state.t_gender || 'مستر',
-                        allowedGender: state.g_gender || 'ولاد وبنات', // ✅ إضافة الفئات المسموح بها
+                        allowedGender: state.g_gender || 'ولاد وبنات',
                         lat: lat,
                         lng: lng
                     });
@@ -2118,7 +2217,7 @@
                             address: fullAddress,
                             phone: state.g_phone || '',
                             gender: state.t_gender || 'مستر',
-                            allowedGender: state.g_gender || 'ولاد وبنات', // ✅ إضافة الفئات المسموح بها
+                            allowedGender: state.g_gender || 'ولاد وبنات',
                             lat: lat,
                             lng: lng
                         });
@@ -2209,6 +2308,24 @@
         }
 
         function buildRadarMap(lat, lng) {
+            // ✅ حماية إضافية: لا تعرض الخريطة إلا إذا اكتملت البيانات
+            const stageCheck = document.getElementById('s_stage').value;
+            const gradeCheck = document.getElementById('s_grade').value;
+            const subjectCheck = document.getElementById('s_subject').value;
+            
+            if (!stageCheck || !gradeCheck || !subjectCheck) {
+                const missing = [];
+                if (!stageCheck) missing.push("المرحلة");
+                if (!gradeCheck) missing.push("الصف");
+                if (!subjectCheck) missing.push("المادة");
+                alertMissingData(missing);
+                highlightMissingField('s_stage', !stageCheck);
+                highlightMissingField('s_grade', !gradeCheck);
+                highlightMissingField('s_subject', !subjectCheck);
+                document.getElementById('mapOuterWrapper').style.display = 'none';
+                return;
+            }
+
             document.getElementById('mapOuterWrapper').style.display = 'block';
             initMap();
             if (studentMarker) map.removeLayer(studentMarker);
@@ -2323,23 +2440,26 @@
 
         // ✅ دالة التحقق من تطابق الفئة (ولد/بنت)
         function isTeacherGenderMatches(teacherGenderAllowed, studentGender) {
-            // إذا لم يحدد المعلم شيئاً، نعتبره متاحاً للجميع
             if (!teacherGenderAllowed) return true;
-            
-            // إذا كان المعلم يسمح بـ "ولاد وبنات" فهو متاح للجميع
             if (teacherGenderAllowed === 'ولاد وبنات' || teacherGenderAllowed === 'g_mix') return true;
-            
-            // إذا كان الطالب "ولد" والمعلم يسمح بـ "اولاد فقط"
             if (studentGender === 'ولد' && (teacherGenderAllowed === 'اولاد فقط' || teacherGenderAllowed === 'g_boys')) return true;
-            
-            // إذا كانت الطالبة "بنت" والمعلم يسمح بـ "بنات فقط"
             if (studentGender === 'بنت' && (teacherGenderAllowed === 'بنات فقط' || teacherGenderAllowed === 'g_girls')) return true;
-            
             return false;
         }
 
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             teachersLayer.clearLayers();
+
+            // ✅ حماية نهائية: لا تعرض أي معلم بدون اختيار كامل
+            const stageCheck = document.getElementById('s_stage').value;
+            const gradeCheck = document.getElementById('s_grade').value;
+            const subjectCheck = document.getElementById('s_subject').value;
+            
+            if (!stageCheck || !gradeCheck || !subjectCheck) {
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) liveIndicator.classList.remove('show');
+                return;
+            }
 
             const selectedSubject = (document.getElementById('s_subject').value || '').trim();
             const selectedGrade = (document.getElementById('s_grade').value || '').trim();
@@ -2348,7 +2468,6 @@
             if (prefTeacher === 'أيهم') prefTeacher = 'مستر او مس';
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
             
-            // ✅ جلب جنس الطالب الحالي
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
@@ -2360,8 +2479,6 @@
 
             const matched = registeredList.filter(t => {
                 if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
-
-                // ✅ فلترة الفئات المسموح بها
                 if (!isTeacherGenderMatches(t.allowedGender, studentGender)) return false;
 
                 if (selectedStageKey) {
@@ -2450,6 +2567,7 @@
                     showToast(noMatchMsg, true);
                 }
             } else {
+                vibrateSuccess();
                 showToast(`تم العثور على (${shownCount}) مدرس مطابق لـ (${selectedSubject} - ${selectedGrade}) ✨`);
             }
         }
