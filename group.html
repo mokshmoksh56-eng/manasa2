@@ -523,6 +523,20 @@
         </div>
     </div>
 
+    <!-- ✅ مودال طرد المعلم عند الدخول من جهاز آخر -->
+    <div id="deviceKickedModal" class="modal-overlay">
+        <div class="success-modal error-modal" style="max-width: 360px;">
+            <div class="success-icon error-icon" style="background: #FEE2E2; color: #EF4444; border-bottom-color: #B91C1C;">
+                <span style="font-size: 32px; margin-top: 5px;">🚪</span>
+            </div>
+            <h3 style="color: #991B1B;">تم تسجيل الخروج</h3>
+            <p style="color: #475569; font-size: 14px; font-weight: 900; line-height: 1.6; margin-bottom: 20px;">
+                تم تسجيل الدخول من جهاز آخر بنفس الحساب.<br>
+                جاري توجيهك لصفحة الدخول...
+            </p>
+        </div>
+    </div>
+
     <div id="syncToast" class="sync-toast">🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة</div>
     
     <div id="unblockedToast" class="sync-toast" style="background: #10B981; border-bottom: 3px solid #059669; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);">🎉 مرحباً بعودتك! تم تفعيل وتوثيق حسابك بنجاح.</div>
@@ -830,6 +844,90 @@
         let isFirstCurriculumSnapshot = true;
 
         let previousBlockedState = null;
+        let deviceWatchUnsub = null;
+
+        // ✅ دوال الحماية ومراقبة الجهاز
+        function getOrCreateDeviceId() {
+            let deviceId = localStorage.getItem('device_id');
+            if (!deviceId) {
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
+                localStorage.setItem('device_id', deviceId);
+            }
+            return deviceId;
+        }
+
+        async function verifyDeviceOnLoad() {
+            try {
+                const loggedStr = localStorage.getItem('loggedInTeacher');
+                if (!loggedStr) return true;
+                
+                const logged = JSON.parse(loggedStr);
+                const teacherKey = String(logged.phone || '').replace(/\D/g, '');
+                if (!teacherKey) return true;
+
+                const currentDeviceId = getOrCreateDeviceId();
+                if (!window.db || !window.fsGetDoc || !window.doc) return true;
+
+                const ref = window.doc(window.db, "teacher_devices", teacherKey);
+                const snap = await window.fsGetDoc(ref);
+
+                if (snap.exists()) {
+                    const registeredDeviceId = snap.data().deviceId;
+                    if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
+                        console.warn("🚪 جهاز مختلف — سيتم الخروج");
+                        showDeviceKickedAndRedirect();
+                        return false;
+                    }
+                }
+            } catch (err) {
+                console.warn("⚠️ device check:", err);
+            }
+            return true;
+        }
+
+        function showDeviceKickedAndRedirect() {
+            const modal = document.getElementById('deviceKickedModal');
+            if (modal) modal.classList.add('active');
+            setTimeout(() => {
+                localStorage.removeItem('loggedInTeacher');
+                localStorage.removeItem('rememberedPhone');
+                window.location.replace('./login.html');
+            }, 2500);
+        }
+
+        function startDeviceWatch() {
+            const loggedStr = localStorage.getItem('loggedInTeacher');
+            if (!loggedStr) return;
+
+            try {
+                const logged = JSON.parse(loggedStr);
+                const teacherKey = String(logged.phone || '').replace(/\D/g, '');
+                if (!teacherKey) return;
+
+                if (!window.db || !window.fsOnSnapshot || !window.doc) {
+                    setTimeout(startDeviceWatch, 1000);
+                    return;
+                }
+
+                const ref = window.doc(window.db, "teacher_devices", teacherKey);
+                const currentDeviceId = getOrCreateDeviceId();
+
+                if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+
+                deviceWatchUnsub = window.fsOnSnapshot(ref, (snap) => {
+                    if (!snap.exists()) return;
+                    const registeredDeviceId = snap.data().deviceId;
+                    
+                    if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
+                        console.warn("🔥 تم تسجيل الدخول من جهاز آخر!");
+                        if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
+                        showDeviceKickedAndRedirect();
+                    }
+                }, (err) => console.warn("⚠️ device watch:", err));
+            } catch(e) { 
+                console.warn("device watch:", e); 
+            }
+        }
 
         function cleanTeacherName(rawName) {
             if (!rawName) return '';
@@ -1424,7 +1522,7 @@
         let savedLat = null, savedLng = null;
 
         window.addEventListener('popstate', function (event) {
-            const activeModal = document.querySelector('.modal-overlay.active:not(#blockedModal)');
+            const activeModal = document.querySelector('.modal-overlay.active:not(#blockedModal):not(#deviceKickedModal)');
             
             if (activeModal) {
                 activeModal.classList.remove('active');
@@ -1440,7 +1538,7 @@
         history.pushState(null, null, location.href);
 
         window.addEventListener('pageshow', function (e) {
-            document.querySelectorAll('.modal-overlay:not(#blockedModal)').forEach(modal => {
+            document.querySelectorAll('.modal-overlay:not(#blockedModal):not(#deviceKickedModal)').forEach(modal => {
                 modal.classList.remove('active');
             });
             
@@ -1487,7 +1585,6 @@
         let saveStatePending = false;
 
         async function saveState() {
-            // debounce: ننتظر 500ms قبل الحفظ الفعلي
             if (saveStateTimer) clearTimeout(saveStateTimer);
             
             saveStateTimer = setTimeout(async () => {
@@ -1545,7 +1642,8 @@
                         g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
                         lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
                         lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng,
-                        createdAt: new Date().toISOString().split('T')[0]
+                        createdAt: new Date().toISOString().split('T')[0],
+                        updatedAt: Date.now() // ✅ إضافة وقت التحديث الدقيق للمزامنة
                     };
                     
                     localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
@@ -1629,7 +1727,6 @@
                         document.getElementById('g_publish_map').checked = state.g_publish_map;
                     }
 
-                    // ✅ إصلاح مشكلة حفظ lat/lng
                     if(state.lat && state.lng) {
                         savedLat = state.lat;
                         savedLng = state.lng;
@@ -1672,6 +1769,11 @@
         // ✅ onload المحسّن (async)
         // ==========================================
         window.onload = async () => {
+            // ✅ التحقق من الجهاز ومراقبته (نظام الأمان)
+            const isDeviceValid = await verifyDeviceOnLoad();
+            if (!isDeviceValid) return;
+            startDeviceWatch();
+
             const urlParams = new URLSearchParams(window.location.search);
             if(urlParams.has('lessonId')) currentLessonId = urlParams.get('lessonId');
             
@@ -1680,23 +1782,23 @@
                 document.getElementById('editAlert').style.display = 'flex';
             }
             
-            // ✅ محاولة جلب أحدث بيانات المجموعة من Firestore أولاً
+            // ✅ محاولة جلب أحدث بيانات المجموعة من Firestore
             if (window.fsGetDoc && window.doc && window.db) {
                 try {
                     const ref = window.doc(window.db, "lessons", currentLessonId);
                     const snap = await window.fsGetDoc(ref);
                     if (snap.exists()) {
                         const firebaseData = snap.data();
-                        // ✅ إذا كانت البيانات في Firestore أحدث، حفظها في localStorage
                         const localRaw = localStorage.getItem('lessonState_' + currentLessonId);
                         const localData = localRaw ? JSON.parse(localRaw) : null;
                         
-                        const fbTimestamp = firebaseData.updatedAt || firebaseData.createdAt || 0;
-                        const localTimestamp = localData?.createdAt ? new Date(localData.createdAt).getTime() : 0;
+                        // ✅ إصلاح دالة المقارنة باستخدام updatedAt
+                        const fbTimestamp = firebaseData.updatedAt || 0;
+                        const localTimestamp = localData?.updatedAt || 0;
                         
                         if (!localData || fbTimestamp > localTimestamp) {
                             localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(firebaseData));
-                            console.log("☁️ تم جلب البيانات الأحدث من Firestore");
+                            console.log("☁️ تم جلب البيانات الأحدث من Firestore وتحديث المحلي");
                         }
                     }
                 } catch (err) {
@@ -1940,7 +2042,6 @@
         function finishSetup() {
             checkTeacherBlockedStatus();
             
-            // ✅ التحقق من الحظر قبل الحفظ
             const teacherInput = document.getElementById('g_teacher');
             const teacherNameRaw = teacherInput ? teacherInput.value.trim() : '';
             const teacherNameClean = cleanTeacherName(teacherNameRaw);
@@ -2028,7 +2129,6 @@
                 return false;
             }
 
-            // ✅ التحقق من تعارض المواعيد
             for (let i = 0; i < localStorage.length; i++) {
                 const key = localStorage.key(i);
                 
