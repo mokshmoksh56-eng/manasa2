@@ -507,7 +507,7 @@
             background: #10B981;
             color: white;
             padding: 10px 22px;
-            border-radius: 99px;
+            border-radius: 999px;
             font-weight: 900;
             font-size: 13px;
             z-index: 999999;
@@ -684,7 +684,17 @@
     </header>
 
     <section class="stats-container">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
+            
+            <!-- كارت الطلاب الجديد -->
+            <div class="stat-card" style="border-bottom-color: #8B5CF6;" title="عدد الطلاب الذين دخلوا صفحة البحث">
+                <div class="stat-icon bg-purple-100 text-purple-700">👨‍🎓</div>
+                <div>
+                    <div class="text-xs font-extrabold text-slate-400">إجمالي الطلاب 🔍</div>
+                    <div id="statStudentsCount" class="text-2xl font-black text-slate-800">0</div>
+                </div>
+            </div>
+
             <div class="stat-card" style="border-bottom-color: #2563EB;" onclick="openTeachersSummaryModal('مستر')" title="اضغط لعرض تفاصيل المستر">
                 <div class="stat-icon bg-blue-100 text-blue-700">👨‍🏫</div>
                 <div>
@@ -1354,6 +1364,7 @@
         let teachersCache = [];
         let lessonsUnsubscribe = null;
         let teachersUnsubscribe = null;
+        let studentsUnsubscribe = null; // ✅ الاستماع اللحظي للطلاب
         let isFirstLessonsSnapshot = true;
         let isFirstTeachersSnapshot = true;
 
@@ -1517,6 +1528,19 @@
                 (error) => {
                     console.error("❌ خطأ في الاستماع للمعلمين:", error);
                     showToast("⚠️ تعذر المزامنة اللحظية للمعلمين", true);
+                }
+            );
+
+            // ✅ الاستماع اللحظي لعدد الطلاب
+            if (studentsUnsubscribe) studentsUnsubscribe();
+            studentsUnsubscribe = window.fsOnSnapshot(
+                window.fsCollection(window.db, "talep_data"),
+                (snapshot) => {
+                    const countEl = document.getElementById('statStudentsCount');
+                    if (countEl) countEl.textContent = snapshot.size;
+                },
+                (error) => {
+                    console.error("❌ خطأ في الاستماع للطلاب:", error);
                 }
             );
 
