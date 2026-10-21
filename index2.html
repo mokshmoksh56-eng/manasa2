@@ -1368,111 +1368,145 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* ===================================================
-           تصميم الموبايل العبقري (Compact & Native App Feel)
-           =================================================== */
-        @media (max-width: 480px) {
-            /* 1. تحسين الهيدر والترحيب */
-            .hero-brand { font-size: 26px; }
-            .hero-headline { font-size: 15px; }
-            
-            .welcome-banner { 
-                padding: 10px 12px; 
-                gap: 10px; 
-                max-width: 100%; 
-                border-radius: 16px;
-                margin-bottom: 15px;
-            }
-            .welcome-avatar { width: 42px; height: 42px; font-size: 20px; }
-            .welcome-greeting { font-size: 10px; }
-            .welcome-name { font-size: 14px; }
-            .welcome-phone { font-size: 11px; padding: 2px 8px; }
-
-            /* 2. الأزرار السريعة (تصميم جانبي مدمج) */
-            .quick-actions-bar { gap: 8px; margin-bottom: 15px; }
-            .quick-action-btn { padding: 10px; border-radius: 14px; }
-            .quick-action-icon { width: 32px; height: 32px; border-radius: 10px; }
-            .quick-action-icon svg { width: 16px; height: 16px; }
-            .quick-action-title { font-size: 12px; }
-            .quick-action-sub { font-size: 9.5px; }
-            .quick-action-arrow { display: none; } /* إخفاء السهم لتوفير المساحة */
-
-            /* 3. كارت الإضافة (شريط أفقي أنيق بدلاً من مربع كبير) */
-            .card-add-new { 
-                max-width: 100%; 
-                min-height: 65px; 
-                padding: 10px 15px; 
-                flex-direction: row; 
-                justify-content: flex-start;
-                align-items: center;
-                gap: 12px;
-                border-radius: 16px;
-            }
-            .card-add-new .icon-plus { width: 32px; height: 32px; margin-bottom: 0; flex-shrink: 0; }
-            .card-add-new h2 { font-size: 13.5px; text-align: right; flex: 1; }
-            .card-add-new p { display: none; } /* إخفاء النص الفرعي للتبسيط */
-
-            /* 4. كروت المجموعات (تصميم أفقي ذكي) */
-            .portal-card { 
-                padding: 12px 10px 12px 42px; /* مساحة للأزرار على اليسار */
-                align-items: flex-start;
-                gap: 10px;
-                border-radius: 18px;
-            }
-            .card-image-box { 
-                width: 60px; height: 60px; 
-                margin-top: 4px;
-            }
-            .card-text { 
-                padding-left: 0; 
-                padding-top: 0; 
-            }
-            .card-text h2 { 
-                font-size: 14px; 
-                white-space: normal; /* السماح بسطرين للاسم الطويل */
-                line-height: 1.3;
-                margin-bottom: 6px;
-            }
-            .card-text p { font-size: 10px; margin-bottom: 8px; }
-            
-            /* ترتيب أزرار الإجراءات (تعديل، إخفاء، حذف) بشكل عمودي على اليسار */
-            .card-actions { 
-                top: 10px; 
-                left: 6px; 
-                flex-direction: column; /* ترتيب عمودي */
-                gap: 8px; 
-            }
-            .btn-action { 
-                width: 28px; height: 28px; 
-            }
-            .btn-action svg { width: 14px; height: 14px; }
-
-            .btn-go { font-size: 10.5px; padding: 5px 12px; }
-            .status-badge { font-size: 9.5px; padding: 2px 6px; }
-            .info-badge { font-size: 9.5px; padding: 2px 6px; }
-
-            /* 5. شريط التنبيهات (غير مكتمل / مخفي) */
+        @media (max-width: 450px) {
             .hidden-notice-banner {
-                flex-direction: row;
-                align-items: center;
-                padding: 8px;
-                margin-top: 0;
-                margin-bottom: 8px;
-                border-radius: 8px;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 8px;
+                padding: 10px;
+                margin-top: 25px;
             }
-            .hidden-notice-text { text-align: right; font-size: 10px; }
-            .hidden-open-btn { width: auto; padding: 4px 8px; font-size: 10px; }
+            .hidden-notice-text {
+                text-align: center;
+                font-size: 11.5px;
+            }
+            .hidden-open-btn {
+                width: 100%;
+                padding: 8px;
+                font-size: 12px;
+            }
+            .card-text {
+                padding-left: 0;
+                padding-top: 35px;
+            }
+
+            /* ترحيب مصغّر أكتر على الموبايل */
+            .welcome-banner { padding: 8px 10px; gap: 7px; max-width: 290px; }
+            .welcome-avatar { width: 34px; height: 34px; font-size: 16px; border-width: 2px; }
+            .welcome-greeting { font-size: 9px; }
+            .welcome-name { font-size: 12.5px; }
+            .welcome-phone { font-size: 9.5px; }
+            .welcome-sparkle { font-size: 10px; top: 5px; left: 8px; }
+
+            /* كارت إضافة مصغّر على الموبايل */
+            .card-add-new { max-width: 190px; min-height: 100px; padding: 10px 8px; }
+            .card-add-new .icon-plus { width: 32px; height: 32px; }
+            .card-add-new h2 { font-size: 11.5px; }
+
+            .quick-actions-bar {
+                grid-template-columns: 1fr 1fr;
+                gap: 8px;
+            }
+            .quick-action-btn { padding: 10px 10px; gap: 8px; border-radius: 14px; }
+            .quick-action-icon { width: 30px; height: 30px; border-radius: 10px; }
+            .quick-action-icon svg { width: 15px; height: 15px; }
+            .quick-action-title { font-size: 12px; }
+            .quick-action-sub { font-size: 9px; }
+            .quick-action-arrow { display: none; }
         }
 
         @media (max-width: 360px) {
-            .hero-brand { font-size: 24px; }
-            .card-image-box { width: 50px; height: 50px; }
-            .portal-card { padding-right: 8px; padding-left: 38px; }
-            .card-text h2 { font-size: 13px; }
-            .card-actions { left: 4px; }
-            .btn-action { width: 26px; height: 26px; }
-            .hidden-notice-banner { flex-direction: column; align-items: stretch; }
-            .hidden-notice-text { text-align: center; }
+            .hero-brand { font-size: 28px; }
+            .portal-card { padding: 12px 10px; gap: 8px; }
+            .card-image-box { width: 68px; height: 68px; }
+            .card-text { padding-left: 0; }
+            .card-text h2 { font-size: 15px; }
+        }
+
+        /* ============================================
+           📱 ترتيب وتظبيط الموبايل فقط (بدون إضافات)
+           ============================================ */
+        @media (max-width: 767px) {
+            
+            /* 1. تقليل المسافات في البانر العلوي عشان نوفر مساحة */
+            .hero-banner {
+                min-height: 220px; /* كان 280 */
+                padding-bottom: 20px;
+            }
+            .hero-brand { font-size: 28px; }
+            .hero-headline { font-size: 16px; }
+
+            /* 2. كارت الإضافة يبقى شريط صغير ورفيع فوق المجموعات */
+            #addNewGroupContainer {
+                margin-bottom: 12px !important;
+            }
+            
+            #addNewGroupContainer .card-add-new {
+                max-width: 100% !important;
+                width: 100% !important;
+                min-height: 50px !important; /* صغرناه جداً */
+                padding: 8px 16px !important;
+                flex-direction: row !important; /* النص والأيقونة جنب بعض */
+                justify-content: center !important;
+                gap: 10px !important;
+                border-radius: 12px !important;
+                border-bottom-width: 4px !important;
+            }
+
+            #addNewGroupContainer .card-add-new .icon-plus {
+                width: 28px !important;
+                height: 28px !important;
+                margin-bottom: 0 !important;
+            }
+            
+            #addNewGroupContainer .card-add-new h2 {
+                font-size: 14px !important;
+                margin: 0 !important;
+            }
+            
+            /* إخفاء النص الصغير اللي تحت الإضافة عشان نوفر مساحة */
+            #addNewGroupContainer .card-add-new p {
+                display: none !important;
+            }
+
+            /* 3. تظبيط كروت المجموعات عشان ميبقاش فيها فراغات */
+            .portal-card {
+                padding: 12px !important;
+                gap: 8px !important;
+            }
+
+            /* تصغير الصورة الدائرية شوية */
+            .card-image-box {
+                width: 65px !important;
+                height: 65px !important;
+            }
+
+            /* تصغير مساحة النصوص وتظبيطها */
+            .card-text {
+                padding-left: 0 !important;
+                padding-top: 25px !important; /* مساحة لأزرار التعديل فوق */
+            }
+            
+            .card-text h2 {
+                font-size: 15px !important;
+            }
+
+            /* 4. تظبيط بانر "المجموعة غير مكتملة" اللي جوه الكارت */
+            .hidden-notice-banner {
+                margin-top: 0 !important;
+                padding: 8px !important;
+                gap: 6px !important;
+            }
+            
+            .hidden-notice-text {
+                font-size: 10.5px !important;
+                line-height: 1.3 !important;
+            }
+            
+            .hidden-open-btn {
+                padding: 6px 10px !important;
+                font-size: 11px !important;
+            }
         }
     </style>
 </head>
@@ -3227,6 +3261,3 @@
     </script>
 </body>
 </html>
-```eof
-
-تم دمج الأكواد الجديدة بنجاح! لقد قمت باستبدال أكواد الاستعلام الإعلامي (Media Queries) القديمة بالتصميم الجديد المدمج (Compact View) داخل الملف بالكامل. الصفحة الآن جاهزة لتقديم تجربة مستخدم سريعة، احترافية، وموفرة لمساحة الشاشة على الهواتف المحمولة. كل الخصائص البرمجية (الجافاسكربت) باقية كما هي وتعمل بشكل طبيعي. يمكنك تجربة الملف الآن!
