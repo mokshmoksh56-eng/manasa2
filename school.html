@@ -563,6 +563,26 @@
             box-shadow: 0 3px 8px rgba(22, 163, 74, 0.4);
         }
 
+        /* ✅ جديد: بادج برتقالي للباقات القريبة من الانتهاء */
+        .status-pure-amber {
+            background: #F59E0B !important;
+            color: #FFFFFF !important;
+            border: 2px solid #B45309 !important;
+            padding: 4px 12px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 3px 8px rgba(245, 158, 11, 0.45);
+            animation: softPulse 1.8s ease-in-out infinite;
+        }
+        @keyframes softPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.82; }
+        }
+
         .card-count-badge {
             background: linear-gradient(135deg, #0F2D5C, #2563EB);
             color: #FFFFFF;
@@ -585,6 +605,19 @@
             font-weight: 900;
             min-width: 32px;
             text-align: center;
+        }
+
+        /* ✅ جديد: ستايل خاص برقم التليفون الكبير داخل الكارت */
+        .phone-number-big {
+            font-size: 22px !important;
+            font-weight: 900 !important;
+            letter-spacing: 1px;
+            color: #1E40AF !important;
+            font-family: 'Cairo', sans-serif;
+            direction: ltr;
+            display: inline-block;
+            line-height: 1.15;
+            text-shadow: 0 1px 0 rgba(255,255,255,0.6);
         }
 
         /* ✅ ستايل شاشة تسجيل دخول الإدارة */
@@ -2192,7 +2225,7 @@
                     const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                     const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                     const docIdSafe = r.docId || '';
-                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr">${r.phone}</td><td class="p-2.5">${r.groupName} (${r.grade} - ${r.subjects})</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
+                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr" style="font-size: 15px; font-weight: 900; color: #1E40AF;">${r.phone}</td><td class="p-2.5">${r.groupName} (${r.grade} - ${r.subjects})</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
                 });
                 html += `</tbody></table>`;
                 modalContent.innerHTML = html;
@@ -2211,6 +2244,13 @@
             });
             gradeSelect.innerHTML = `<option value="all">جميع الصفوف الدراسية</option>`;
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
+        }
+
+        // ✅ دالة مساعدة لاستخراج عدد الأيام المتبقية من نص expiryInfo
+        function getRemainingDays(expiryText) {
+            if (!expiryText) return null;
+            const match = String(expiryText).match(/متبقي\s+(\d+)\s+يوم/);
+            return match ? parseInt(match[1], 10) : null;
         }
 
         async function renderAllRecords() {
@@ -2328,13 +2368,22 @@
                     `;
                 }
 
+                // ✅ تم التعديل: عرض المدة المتبقية من الخطة بدلاً من كلمة "نشط"
                 let statusBadgeHTML = '';
                 if (r.isBlocked) {
                     statusBadgeHTML = `<span class="status-pure-red">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
                 } else if (r.isFree) {
                     statusBadgeHTML = `<span class="status-pure-green">🎁 مجاني ♾️</span>`;
                 } else {
-                    statusBadgeHTML = `<span class="status-pure-green">✅ نشط</span>`;
+                    const remainingText = (r.expiryInfo && r.expiryInfo.text) ? r.expiryInfo.text : '✅ نشط';
+                    const remainingDays = getRemainingDays(remainingText);
+                    const isExpiringSoon = (remainingDays !== null && remainingDays <= 7);
+
+                    if (isExpiringSoon) {
+                        statusBadgeHTML = `<span class="status-pure-amber" title="الباقة على وشك الانتهاء">⏳ ${remainingText}</span>`;
+                    } else {
+                        statusBadgeHTML = `<span class="status-pure-green">${remainingText}</span>`;
+                    }
                 }
 
                 return `
@@ -2356,7 +2405,10 @@
                         <div class="card-details mt-3" style="display:${isExpanded ? 'block' : 'none'};">
                             <div class="space-y-2">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                                    <div class="info-pill" style="background:#EFF6FF;"><span class="label">📱 التليفون:</span><span class="font-black text-blue-900" dir="ltr">${r.phone}</span></div>
+                                    <div class="info-pill" style="background:#EFF6FF; padding: 12px 14px;">
+                                        <span class="label" style="font-size:13px;">📱 التليفون:</span>
+                                        <span class="phone-number-big" dir="ltr">${r.phone}</span>
+                                    </div>
                                     <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                                 </div>
                                 
