@@ -194,7 +194,7 @@
             flex: 1;
         }
 
-        /* ===== كارت الترحيب (مصغّر ومتوسّط) ===== */
+        /* ===== كارت الترحيب ===== */
         .welcome-banner {
             position: relative;
             display: flex;
@@ -737,11 +737,13 @@
             line-height: 1.2;
         }
 
+        /* ✅ الأيقونات فوق بعضها (عمودية) */
         .card-actions {
             position: absolute;
             top: 10px;
             left: 10px;
             display: flex;
+            flex-direction: column; /* بقيت عمودية */
             gap: 6px;
             z-index: 20;
         }
@@ -771,7 +773,7 @@
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
-        /* ===== كارت إنشاء مجموعة جديدة (مصغّر ومتوسّط) ===== */
+        /* ===== كارت إنشاء مجموعة جديدة ===== */
         .card-add-new {
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
             border: 2px dashed #10B981;
@@ -1428,15 +1430,13 @@
            ============================================ */
         @media (max-width: 767px) {
             
-            /* 1. تقليل المسافات في البانر العلوي عشان نوفر مساحة */
             .hero-banner {
-                min-height: 220px; /* كان 280 */
+                min-height: 220px;
                 padding-bottom: 20px;
             }
             .hero-brand { font-size: 28px; }
             .hero-headline { font-size: 16px; }
 
-            /* 2. كارت الإضافة يبقى شريط صغير ورفيع فوق المجموعات */
             #addNewGroupContainer {
                 margin-bottom: 12px !important;
             }
@@ -1444,9 +1444,9 @@
             #addNewGroupContainer .card-add-new {
                 max-width: 100% !important;
                 width: 100% !important;
-                min-height: 50px !important; /* صغرناه جداً */
+                min-height: 50px !important;
                 padding: 8px 16px !important;
-                flex-direction: row !important; /* النص والأيقونة جنب بعض */
+                flex-direction: row !important;
                 justify-content: center !important;
                 gap: 10px !important;
                 border-radius: 12px !important;
@@ -1464,34 +1464,29 @@
                 margin: 0 !important;
             }
             
-            /* إخفاء النص الصغير اللي تحت الإضافة عشان نوفر مساحة */
             #addNewGroupContainer .card-add-new p {
                 display: none !important;
             }
 
-            /* 3. تظبيط كروت المجموعات عشان ميبقاش فيها فراغات */
             .portal-card {
                 padding: 12px !important;
                 gap: 8px !important;
             }
 
-            /* تصغير الصورة الدائرية شوية */
             .card-image-box {
                 width: 65px !important;
                 height: 65px !important;
             }
 
-            /* تصغير مساحة النصوص وتظبيطها */
             .card-text {
                 padding-left: 0 !important;
-                padding-top: 25px !important; /* مساحة لأزرار التعديل فوق */
+                padding-top: 25px !important;
             }
             
             .card-text h2 {
                 font-size: 15px !important;
             }
 
-            /* 4. تظبيط بانر "المجموعة غير مكتملة" اللي جوه الكارت */
             .hidden-notice-banner {
                 margin-top: 0 !important;
                 padding: 8px !important;
@@ -1614,7 +1609,7 @@
                 </button>
             </div>
 
-            <!-- كارت إضافة مجموعة جديدة — متوسّط فوق الشبكة -->
+            <!-- كارت إضافة مجموعة جديدة -->
             <div id="addNewGroupContainer" class="flex justify-center mb-3.5 w-full"></div>
 
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
@@ -2587,6 +2582,9 @@
             if (el) el.classList.remove('active');
         }
 
+        // ==========================================
+        // ✅ إنشاء مجموعة جديدة + النزول التلقائي للكارت
+        // ==========================================
         function createNewLesson(saveToStorage = true) {
             if (teacherIsBlocked) {
                 showToast('🔒 الحساب محظور — لا يمكن إنشاء مجموعات جديدة', true);
@@ -2610,6 +2608,18 @@
             lessons.push(lessonData);
             if (saveToStorage) saveLessonsToStorage();
             renderLessons();
+
+            // ✅ النزول التلقائي للكارت الجديد
+            setTimeout(() => {
+                const cards = document.querySelectorAll('#lessonsContainer .portal-card');
+                const targetCard = Array.from(cards).find(card => card.querySelector('a')?.getAttribute('href')?.includes(newId));
+                if (targetCard) {
+                    targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    targetCard.style.transition = 'box-shadow 0.4s ease';
+                    targetCard.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.4)';
+                    setTimeout(() => { targetCard.style.boxShadow = ''; }, 1500);
+                }
+            }, 100);
 
             (async () => {
                 try {
@@ -2770,10 +2780,8 @@
                 </div>
             `;
 
-            // كارت الإضافة يروح للكونتينر المخصص (متوسّط)
             if (addContainer) addContainer.innerHTML = addCardHTML;
 
-            // المجموعات بس في الـ grid
             container.innerHTML = '';
 
             lessons.forEach((lesson, index) => {
