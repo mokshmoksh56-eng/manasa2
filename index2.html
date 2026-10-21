@@ -194,21 +194,18 @@
             flex: 1;
         }
 
-        /* ===== كارت الترحيب (مصغّر ومتوسّط) ===== */
         .welcome-banner {
             position: relative;
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 9px 12px;
-            margin: 0 auto 10px auto;
-            max-width: 320px;
-            width: 100%;
+            gap: 12px;
+            padding: 14px 16px;
+            margin-bottom: 12px;
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
             border: 2px solid #86EFAC;
-            border-bottom: 4px solid #16A34A;
-            border-radius: 14px;
-            box-shadow: 0 6px 18px -8px rgba(16, 185, 129, 0.3);
+            border-bottom: 5px solid #16A34A;
+            border-radius: 18px;
+            box-shadow: 0 8px 22px -10px rgba(16, 185, 129, 0.35);
             overflow: hidden;
             animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -234,7 +231,7 @@
             background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
             border-color: #F9A8D4;
             border-bottom-color: #DB2777;
-            box-shadow: 0 6px 18px -8px rgba(236, 72, 153, 0.3);
+            box-shadow: 0 8px 22px -10px rgba(236, 72, 153, 0.35);
         }
 
         .welcome-banner.is-miss::before {
@@ -243,23 +240,23 @@
 
         .welcome-avatar {
             flex-shrink: 0;
-            width: 38px;
-            height: 38px;
+            width: 52px;
+            height: 52px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 26px;
             background: #FFFFFF;
-            border: 2px solid #10B981;
-            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.22);
+            border: 2.5px solid #10B981;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
             z-index: 2;
             animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .welcome-banner.is-miss .welcome-avatar {
             border-color: #EC4899;
-            box-shadow: 0 3px 10px rgba(236, 72, 153, 0.22);
+            box-shadow: 0 4px 12px rgba(236, 72, 153, 0.25);
         }
 
         @keyframes avatarPop {
@@ -279,11 +276,11 @@
         }
 
         .welcome-greeting {
-            font-size: 9.5px;
+            font-size: 11px;
             font-weight: 800;
             color: #059669;
             line-height: 1.2;
-            margin-bottom: 1px;
+            margin-bottom: 2px;
         }
 
         .welcome-banner.is-miss .welcome-greeting {
@@ -291,15 +288,15 @@
         }
 
         .welcome-name {
-            font-size: 13px;
+            font-size: 16px;
             font-weight: 900;
             color: #064E3B;
-            line-height: 1.2;
+            line-height: 1.25;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .welcome-banner.is-miss .welcome-name {
@@ -309,12 +306,12 @@
         .welcome-phone {
             display: inline-flex;
             align-items: center;
-            gap: 3px;
-            font-size: 10px;
+            gap: 4px;
+            font-size: 11.5px;
             font-weight: 900;
             color: #047857;
             background: rgba(255, 255, 255, 0.7);
-            padding: 1px 7px;
+            padding: 2px 8px;
             border-radius: 99px;
             border: 1px solid #A7F3D0;
             direction: ltr;
@@ -327,9 +324,9 @@
 
         .welcome-sparkle {
             position: absolute;
-            top: 6px;
-            left: 10px;
-            font-size: 11px;
+            top: 8px;
+            left: 12px;
+            font-size: 14px;
             animation: sparkleTwinkle 2s ease-in-out infinite;
             z-index: 1;
             opacity: 0.7;
@@ -340,6 +337,7 @@
             50% { transform: scale(1.2) rotate(20deg); opacity: 1; }
         }
 
+        /* ✅ بانر الحظر */
         .blocked-banner {
             margin: 12px 0;
             padding: 20px 16px;
@@ -549,6 +547,7 @@
             box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
         }
 
+        /* ✅ كارت غير مكتمل الإعداد */
         .portal-card.incomplete-card {
             border-color: #FCD34D;
             border-bottom-color: #D97706;
@@ -617,6 +616,7 @@
             animation: hiddenPulse 2.5s ease-in-out infinite;
         }
 
+        /* ✅ بانر "أكمل الإعداد" */
         .hidden-notice-banner.incomplete-banner {
             background: linear-gradient(135deg, #FEF3C7, #FDE68A);
             border-color: #FCD34D;
@@ -771,22 +771,18 @@
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
-        /* ===== كارت إنشاء مجموعة جديدة (مصغّر ومتوسّط) ===== */
+        /* ✅ كارت إضافة مجموعة جديدة — أخضر */
         .card-add-new {
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
-            border: 2px dashed #10B981;
+            border: 2.5px dashed #10B981;
             justify-content: center;
             flex-direction: column;
             text-align: center;
-            padding: 12px 10px;
+            padding: 24px 16px;
             cursor: pointer;
-            border-bottom: 4px solid #059669;
-            box-shadow: 0 4px 14px -6px rgba(16, 185, 129, 0.25);
+            border-bottom: 6px solid #059669;
+            box-shadow: 0 6px 20px -8px rgba(16, 185, 129, 0.25);
             transition: all 0.25s ease;
-            min-height: 110px;
-            max-width: 220px;
-            width: 100%;
-            border-radius: 18px;
         }
         .card-add-new:hover {
             background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
@@ -804,42 +800,40 @@
             filter: grayscale(1);
         }
 
+        /* ✅ دائرة + الخضراء */
         .card-add-new .icon-plus {
-            width: 36px;
-            height: 36px;
+            width: 56px;
+            height: 56px;
             background: linear-gradient(135deg, #10B981, #059669);
             color: #FFFFFF;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 6px;
-            border: 2.5px solid #FFFFFF;
-            box-shadow: 0 4px 14px -3px rgba(16, 185, 129, 0.5);
+            margin-bottom: 10px;
+            border: 3px solid #FFFFFF;
+            box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5);
             transition: all 0.25s ease;
             animation: plusPulse 2.5s ease-in-out infinite;
         }
         .card-add-new:hover .icon-plus {
             transform: scale(1.08) rotate(90deg);
-            box-shadow: 0 6px 18px -3px rgba(16, 185, 129, 0.7);
+            box-shadow: 0 8px 22px -4px rgba(16, 185, 129, 0.7);
         }
         .card-add-new .icon-plus svg {
-            width: 18px;
-            height: 18px;
             stroke: #FFFFFF;
             stroke-width: 3;
         }
 
         @keyframes plusPulse {
-            0%, 100% { box-shadow: 0 4px 14px -3px rgba(16, 185, 129, 0.5); }
-            50%      { box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.8); }
+            0%, 100% { box-shadow: 0 6px 18px -4px rgba(16, 185, 129, 0.5); }
+            50%      { box-shadow: 0 6px 24px -2px rgba(16, 185, 129, 0.8); }
         }
 
         .card-add-new h2 {
             color: #065F46;
-            font-size: 12.5px;
+            font-size: 16.5px;
             font-weight: 900;
-            line-height: 1.3;
         }
 
         .card-image-box {
@@ -1248,126 +1242,6 @@
             width: 100%;
         }
 
-        /* ===== زر حذف الحساب ===== */
-        .delete-account-row {
-            display: flex;
-            justify-content: center;
-            margin: 24px 0 8px;
-            padding: 0 12px;
-        }
-
-        .btn-delete-account {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            background: transparent;
-            color: #94A3B8;
-            border: 1px solid #E2E8F0;
-            padding: 5px 14px;
-            border-radius: 99px;
-            font-family: 'Cairo', sans-serif;
-            font-size: 10.5px;
-            font-weight: 800;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            line-height: 1.4;
-        }
-        .btn-delete-account:hover {
-            color: #DC2626;
-            border-color: #FCA5A5;
-            background: #FEF2F2;
-        }
-        .btn-delete-account:active { transform: scale(0.95); }
-        .btn-delete-account svg {
-            width: 11px; height: 11px;
-            stroke: currentColor; stroke-width: 2.5;
-        }
-
-        .delete-account-modal-box {
-            border-bottom: 5px solid #DC2626 !important;
-        }
-        .delete-account-emoji {
-            font-size: 52px;
-            margin-bottom: 8px;
-            display: inline-block;
-            animation: lockBounce 1.6s ease-in-out infinite;
-        }
-        .delete-account-title {
-            font-size: 19px;
-            font-weight: 900;
-            color: #991B1B;
-            margin-bottom: 8px;
-        }
-        .delete-account-desc {
-            font-size: 12.5px;
-            font-weight: 800;
-            color: #475569;
-            line-height: 1.7;
-            margin-bottom: 14px;
-            padding: 0 4px;
-        }
-        .delete-account-desc .highlight {
-            color: #DC2626;
-            font-weight: 900;
-        }
-        .delete-account-list {
-            background: #FEF2F2;
-            border: 1px dashed #FCA5A5;
-            border-radius: 10px;
-            padding: 8px 12px;
-            margin-bottom: 14px;
-            text-align: right;
-            font-size: 11px;
-            font-weight: 800;
-            color: #7F1D1D;
-            line-height: 1.7;
-        }
-        .delete-account-list div {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        .delete-account-list div::before {
-            content: '✕';
-            color: #DC2626;
-            font-weight: 900;
-            font-size: 9px;
-        }
-        .btn-delete-account-confirm {
-            flex: 1;
-            padding: 11px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 900;
-            cursor: pointer;
-            border: none;
-            background: linear-gradient(135deg, #F87171, #DC2626);
-            color: #fff;
-            border-bottom: 3px solid #991B1B;
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
-        .btn-delete-account-confirm:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-        }
-        .btn-delete-account-confirm:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-        .btn-delete-account-cancel {
-            flex: 1;
-            padding: 11px;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 900;
-            cursor: pointer;
-            border: none;
-            background: #E2E8F0;
-            color: #475569;
-            font-family: 'Cairo', sans-serif;
-        }
-
         @media (max-width: 450px) {
             .hidden-notice-banner {
                 flex-direction: column;
@@ -1389,19 +1263,11 @@
                 padding-left: 0;
                 padding-top: 35px;
             }
-
-            /* ترحيب مصغّر أكتر على الموبايل */
-            .welcome-banner { padding: 8px 10px; gap: 7px; max-width: 290px; }
-            .welcome-avatar { width: 34px; height: 34px; font-size: 16px; border-width: 2px; }
-            .welcome-greeting { font-size: 9px; }
-            .welcome-name { font-size: 12.5px; }
-            .welcome-phone { font-size: 9.5px; }
-            .welcome-sparkle { font-size: 10px; top: 5px; left: 8px; }
-
-            /* كارت إضافة مصغّر على الموبايل */
-            .card-add-new { max-width: 190px; min-height: 100px; padding: 10px 8px; }
-            .card-add-new .icon-plus { width: 32px; height: 32px; }
-            .card-add-new h2 { font-size: 11.5px; }
+            .welcome-banner { padding: 12px 12px; gap: 10px; }
+            .welcome-avatar { width: 44px; height: 44px; font-size: 22px; border-width: 2px; }
+            .welcome-greeting { font-size: 10px; }
+            .welcome-name { font-size: 14px; }
+            .welcome-phone { font-size: 10.5px; }
 
             .quick-actions-bar {
                 grid-template-columns: 1fr 1fr;
@@ -1421,6 +1287,99 @@
             .card-image-box { width: 68px; height: 68px; }
             .card-text { padding-left: 0; }
             .card-text h2 { font-size: 15px; }
+        }
+
+        /* ✅ تنسيق الجداول الذكية - Smart Tables */
+        .smart-table-wrapper {
+            background: #FFFFFF;
+            border: 2px solid #E2E8F0;
+            border-radius: 22px; 
+            box-shadow: 0 6px 20px -8px rgba(0,0,0,0.07);
+            overflow: hidden; 
+            margin-bottom: 24px;
+            width: 100%;
+        }
+
+        .smart-table-scroll {
+            overflow-x: auto; 
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .smart-table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: right;
+            font-family: 'Cairo', sans-serif;
+        }
+
+        .smart-table thead {
+            background: linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+            border-bottom: 4px solid var(--primary-600); 
+        }
+
+        .smart-table th {
+            padding: 16px 14px;
+            font-size: 13.5px;
+            font-weight: 900;
+            color: #0F2D5C;
+            white-space: nowrap;
+        }
+
+        .smart-table tbody tr {
+            border-bottom: 1.5px dashed #E2E8F0;
+            transition: all 0.2s ease;
+        }
+
+        .smart-table tbody tr:last-child {
+            border-bottom: none;
+        }
+
+        .smart-table tbody tr:hover {
+            background: #F8FAFC;
+            transform: scale(0.998);
+        }
+
+        .smart-table td {
+            padding: 14px 14px;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #334155;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+
+        .table-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 99px;
+            font-size: 11px;
+            font-weight: 900;
+        }
+        .table-badge.success {
+            background: #D1FAE5; color: #064E3B; border: 1px solid #10B981;
+        }
+        .table-badge.danger {
+            background: #FEE2E2; color: #991B1B; border: 1px solid #EF4444;
+        }
+        .table-badge.warning {
+            background: #FEF3C7; color: #92400E; border: 1px solid #F59E0B;
+        }
+
+        .table-action-btn {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 900;
+            color: white;
+            background: linear-gradient(135deg, var(--primary-600), var(--primary-900));
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .table-action-btn:active {
+            transform: scale(0.9);
         }
     </style>
 </head>
@@ -1528,19 +1487,45 @@
                 </button>
             </div>
 
-            <!-- كارت إضافة مجموعة جديدة — متوسّط فوق الشبكة -->
-            <div id="addNewGroupContainer" class="flex justify-center mb-3.5 w-full"></div>
-
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
 
-            <div class="delete-account-row">
-                <button type="button" id="deleteAccountBtn" class="btn-delete-account">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" />
-                    </svg>
-                    حذف الحساب نهائياً
-                </button>
+            <!-- ✅ بداية الجدول الذكي التجريبي -->
+            <div class="smart-table-wrapper" style="margin-top: 30px;">
+                <div class="smart-table-scroll">
+                    <table class="smart-table">
+                        <thead>
+                            <tr>
+                                <th>م</th>
+                                <th>اسم الطالب</th>
+                                <th>رقم الهاتف</th>
+                                <th>حالة الدفع</th>
+                                <th>حضور الحصة</th>
+                                <th>إجراءات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>أحمد محمود</td>
+                                <td dir="ltr">01012345678</td>
+                                <td><span class="table-badge success">تم الدفع ✔</span></td>
+                                <td><span class="table-badge success">حاضر</span></td>
+                                <td><button class="table-action-btn">التفاصيل</button></td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>سارة السيد</td>
+                                <td dir="ltr">01198765432</td>
+                                <td><span class="table-badge danger">لم يدفع ✖</span></td>
+                                <td><span class="table-badge warning">غائب</span></td>
+                                <td><button class="table-action-btn">التفاصيل</button></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
+            <!-- ✅ نهاية الجدول الذكي التجريبي -->
+
         </div>
     </section>
 
@@ -1603,61 +1588,23 @@
         </div>
     </div>
 
-    <div id="deleteAccountModal" class="modal-overlay" onclick="closeModal('deleteAccountModal')">
-        <div class="custom-modal delete-account-modal-box" onclick="event.stopPropagation()">
-            <div class="delete-account-emoji">🔐</div>
-            <h3 class="delete-account-title">حذف الحساب نهائياً</h3>
-            <p class="delete-account-desc">
-                هذا الإجراء <span class="highlight">لا يمكن التراجع عنه</span>.<br>
-                سيتم حذف جميع بياناتك من السحابة:
-            </p>
-            <div class="delete-account-list">
-                <div>جميع المجموعات والحصص</div>
-                <div>بيانات المعلم والمركز</div>
-                <div>ربط الجهاز بالحساب</div>
-                <div>حساب الدخول نفسه</div>
-            </div>
-            <p class="delete-account-desc" style="margin-bottom:10px;">
-                للتأكيد، اكتب <b style="color:#DC2626;">الرقم السري</b> الخاص بحسابك:
-            </p>
-
-            <div style="position: relative; margin-bottom: 8px;">
-                <input type="password" id="deleteAccountPasswordInput" class="custom-input"
-                       placeholder="••••••••" autocomplete="new-password"
-                       style="padding-left: 42px; direction: rtl; text-align: right; letter-spacing: 3px;">
-                <button type="button" id="toggleDeleteAccPw"
-                        style="position:absolute; left:8px; top:50%; transform:translateY(-50%);
-                               background:transparent; border:none; cursor:pointer;
-                               font-size:16px; color:#64748B; padding:4px; line-height:1;">
-                    👁️
-                </button>
-            </div>
-
-            <p id="deleteAccountErrorMsg"
-               style="display:none; font-size:11.5px; font-weight:900; color:#DC2626;
-                      background:#FEF2F2; border:1px solid #FCA5A5; border-radius:8px;
-                      padding:6px 10px; margin: 0 0 10px; text-align:center;">
-                ❌ الرقم السري غير صحيح
-            </p>
-
-            <div class="modal-actions">
-                <button type="button" class="btn-delete-account-cancel" onclick="closeModal('deleteAccountModal')">تراجع</button>
-                <button type="button" class="btn-delete-account-confirm" id="confirmDeleteAccountBtn" disabled>احذف نهائياً</button>
-            </div>
-        </div>
-    </div>
-
     <footer class="py-5 text-center text-slate-400 font-bold text-xs">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
 
+    <!-- 🌟 Firebase Module -->
     <script type="module">
-      import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
-          getFirestore, doc, getDoc, setDoc, deleteDoc, collection, getDocs, onSnapshot
+          getFirestore,
+          doc,
+          getDoc,
+          setDoc,
+          deleteDoc,
+          collection,
+          getDocs,
+          onSnapshot
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-      
-      import { getAuth, onAuthStateChanged, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
         apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
@@ -1668,12 +1615,10 @@
         appId: "1:472216348338:web:db726630ef6781301e0bab"
       };
 
-      const app = getApps().length > 0 ? getApps()[0] : initializeApp(firebaseConfig);
+      const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      const auth = getAuth(app);
 
       window.db = db;
-      window.auth = auth;
       window.fsDoc = doc;
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
@@ -1681,17 +1626,8 @@
       window.fsCollection = collection;
       window.fsGetDocs = getDocs;
       window.fsOnSnapshot = onSnapshot;
-      window.fbSignIn = signInWithEmailAndPassword;
 
-      onAuthStateChanged(auth, (user) => {
-          if (user) {
-              console.log("✅ المستخدم مسجل دخول بأمان:", user.email);
-          } else {
-              console.warn("⚠️ لا يوجد مستخدم مسجل في Firebase Auth");
-          }
-      });
-
-      console.log("✅ Firebase + Auth + Firestore جاهزين");
+      console.log("✅ Firebase + Firestore جاهز");
     </script>
 
     <script>
@@ -1711,7 +1647,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .btn-delete-account, .btn-delete-account-confirm, .btn-delete-account-cancel');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn');
             if (clickableElement) { playHighPitchSound(); }
         });
 
@@ -1723,15 +1659,16 @@
         let autoSyncInterval = null;
         let teacherIsBlocked = false;
 
+        // منع تكرار محاولات الـ force-unpublish على نفس المجموعة
         const forceUnpublishingIds = new Set();
 
         // ==========================================
-        // ✅ إدارة الجهاز
+        // 📱 Device ID Management
         // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
-                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substring(2, 14);
+                deviceId = 'dev_' + Date.now() + '_' + Math.random().toString(36).substr(2, 12);
                 localStorage.setItem('device_id', deviceId);
             }
             return deviceId;
@@ -1833,6 +1770,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ عرض شريط الترحيب
+        // ==========================================
         function renderWelcomeBanner() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -1897,6 +1837,9 @@
             }
         }
 
+        // ==========================================
+        // 🛡️ فحص حالة الحظر من السحابة
+        // ==========================================
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
             if (!teacherPhone || !window.db || !window.fsGetDoc) return false;
@@ -1916,7 +1859,6 @@
                                : data.verification === '3 شهور' ? 90
                                : data.verification === '6 شهور' ? 180
                                : data.verification === 'سنة واحدة' ? 365
-                               : data.verification === '5 سنوات' ? 1825
                                : 30;
                     const expiry = new Date(created.getTime() + days * 24 * 60 * 60 * 1000);
                     if (expiry < new Date()) {
@@ -1953,6 +1895,9 @@
             }
         }
 
+        // ==========================================
+        // 🔒 عرض بانر الحظر
+        // ==========================================
         function showBlockedBanner() {
             const container = document.getElementById('blockedBannerContainer');
             if (!container) return;
@@ -1996,6 +1941,9 @@
             if (banner) banner.remove();
         }
 
+        // ==========================================
+        // ✅ Logout
+        // ==========================================
         function openLogoutModal() {
             const modal = document.getElementById('logoutModal');
             if (modal) modal.classList.add('active');
@@ -2021,6 +1969,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ Helpers
+        // ==========================================
         function showFbSyncBadge(message, isError = false) {
             const badge = document.getElementById('fbSyncBadge');
             if (!badge) return;
@@ -2099,6 +2050,10 @@
             return false;
         }
 
+        // ==========================================
+        // ✅ هل الإعداد مكتمل؟ (فحص صارم)
+        // لازم: المرحلة + الصف + المواد + الأيام + وقت البداية + وقت النهاية
+        // ==========================================
         function isSetupComplete(data) {
             if (!data || typeof data !== 'object') return false;
 
@@ -2114,6 +2069,9 @@
             return hasStage && hasGrade && hasSubjects && hasDays && hasStart && hasEnd;
         }
 
+        // ==========================================
+        // ✅ محاولة إلغاء نشر قسري (محمية ضد التكرار)
+        // ==========================================
         function tryForceUnpublish(lessonId) {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return;
             if (forceUnpublishingIds.has(lessonId)) return;
@@ -2130,6 +2088,9 @@
             });
         }
 
+        // ==========================================
+        // ✅ ترقيم المجموعات
+        // ==========================================
         function getNextGroupNumber() {
             if (!lessons || lessons.length === 0) return 1;
 
@@ -2150,6 +2111,9 @@
             return nextNumber;
         }
 
+        // ==========================================
+        // ✅ Migration
+        // ==========================================
         async function migrateLocalLessonsToFirebase() {
             if (!window.db || !window.fsDoc || !window.fsSetDoc) return { migrated: 0, repaired: 0 };
 
@@ -2218,6 +2182,7 @@
                         if (!existingData.g_phone && teacherPhone) updateObj.g_phone = teacherPhone;
                         if (!existingData.g_teacher && teacherName) updateObj.g_teacher = teacherName;
 
+                        // لو الإعداد ناقص بس منشور → نفرض إخفاء
                         if (!isSetupComplete(existingData) && existingData.g_publish_map === true) {
                             updateObj.g_publish_map = false;
                         }
@@ -2235,6 +2200,9 @@
             return { migrated: migratedCount, repaired: repairedCount };
         }
 
+        // ==========================================
+        // ✅ Sync Lessons
+        // ==========================================
         async function syncLessonsFromFirebase(showLoader = false) {
             if (!window.db || !window.fsCollection || !window.fsGetDocs) {
                 return { success: false };
@@ -2265,12 +2233,14 @@
 
                     const setupComplete = isSetupComplete(stateToSave);
 
+                    // ✅ نحفظ lessonState فقط لو الإعداد مكتمل
                     if (setupComplete) {
                         localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
                     } else {
                         localStorage.removeItem('lessonState_' + lessonId);
                     }
 
+                    // ✅ لو الإعداد ناقص بس منشور في Firebase → force unpublish
                     if (!setupComplete && data.g_publish_map === true) {
                         localStorage.setItem('publishState_' + lessonId, 'false');
                         tryForceUnpublish(lessonId);
@@ -2345,6 +2315,7 @@
                             return String(a.id).localeCompare(String(b.id));
                         });
 
+                        // نحدّث الكروت دايماً عشان تعكس أحدث حالة
                         lessons = firebaseLessons;
                         saveLessonsToStorage();
                         renderLessons();
@@ -2356,6 +2327,9 @@
             }
         }
 
+        // ==========================================
+        // ✅ Auto Sync
+        // ==========================================
         function startAutoSync() {
             if (autoSyncInterval) { try { clearInterval(autoSyncInterval); } catch(e) {} }
 
@@ -2387,6 +2361,9 @@
             });
         }
 
+        // ==========================================
+        // ✅ DOMContentLoaded
+        // ==========================================
         document.addEventListener('DOMContentLoaded', async () => {
             const isDeviceValid = await verifyCurrentDevice();
             if (!isDeviceValid) return;
@@ -2451,6 +2428,9 @@
             hideInitialLoader();
         });
 
+        // ==========================================
+        // 🛡️ مراقبة حالة الحظر لحظياً
+        // ==========================================
         let blockWatchUnsub = null;
         function startBlockStatusWatch() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
@@ -2501,6 +2481,9 @@
             if (el) el.classList.remove('active');
         }
 
+        // ==========================================
+        // ✅ Create Lesson
+        // ==========================================
         function createNewLesson(saveToStorage = true) {
             if (teacherIsBlocked) {
                 showToast('🔒 الحساب محظور — لا يمكن إنشاء مجموعات جديدة', true);
@@ -2515,7 +2498,7 @@
 
             const nextNumber = getNextGroupNumber();
 
-            const newId = String(Date.now()) + '_' + Math.random().toString(36).substring(2, 8);
+            const newId = String(Date.now()) + '_' + Math.random().toString(36).substr(2, 6);
             
             const lessonData = { 
                 id: newId, 
@@ -2612,6 +2595,9 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
+        // ==========================================
+        // ✅ Toggle Visibility (مع منع النشر لو الإعداد ناقص)
+        // ==========================================
         async function toggleVisibility(id, event) {
             if (event) event.stopPropagation();
 
@@ -2620,12 +2606,13 @@
                 return;
             }
 
+            // ✅ فحص صارم: ما ينفعش تنشر قبل ما الإعداد يكتمل
             const raw = localStorage.getItem('lessonState_' + id);
             let data = null;
             try { data = raw ? JSON.parse(raw) : null; } catch(e) {}
 
             if (!isSetupComplete(data)) {
-                showToast('⚠️ أكمل إعدادات المجموعة أولاً قبل النشر', true);
+                showToast('⚠️ لازم تكمل إعدادات المجموعة الأول قبل ما تنشرها', true);
                 return;
             }
 
@@ -2670,31 +2657,27 @@
 
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
-            const addContainer = document.getElementById('addNewGroupContainer');
-
+            
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
                     <div class="icon-plus">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" style="width: 28px; height: 28px;">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
                         </svg>
                     </div>
-                    <h2>${teacherIsBlocked ? '🔒 الحساب محظور' : '➕ مجموعة جديدة'}</h2>
-                    ${!teacherIsBlocked ? '<p style="font-size:9.5px;color:#64748B;font-weight:700;margin:2px 0 0;">اضغط للإضافة</p>' : ''}
+                    <h2>${teacherIsBlocked ? '🔒 الحساب محظور' : 'إنشاء مجموعة جديدة'}</h2>
+                    ${!teacherIsBlocked ? '<p style="font-size:11px;color:#64748B;font-weight:700;margin-top:2px;">اضغط لإضافة مجموعة جديدة</p>' : ''}
                 </div>
             `;
-
-            // كارت الإضافة يروح للكونتينر المخصص (متوسّط)
-            if (addContainer) addContainer.innerHTML = addCardHTML;
-
-            // المجموعات بس في الـ grid
-            container.innerHTML = '';
+            
+            container.innerHTML = addCardHTML;
 
             lessons.forEach((lesson, index) => {
                 const isBlue = (index + 1) % 2 !== 0;
                 const cardStyle = isBlue ? 'card-teacher' : 'card-student';
                 const imgName = isBlue ? 'teacher.png' : 'student.png';
 
+                // ✅ فحص: هل الإعداد مكتمل فعلاً؟
                 const savedStateRaw = localStorage.getItem('lessonState_' + lesson.id);
                 let savedStateObj = null;
                 try { savedStateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
@@ -2702,6 +2685,7 @@
                 const hasReport = isSetupComplete(savedStateObj);
                 const savedState = hasReport ? JSON.stringify(savedStateObj) : null;
 
+                // ✅ لو الإعداد ناقص، ما ينفعش تكون منشورة
                 const rawPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
                 const isPublished = rawPublished && hasReport;
 
@@ -2718,6 +2702,10 @@
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
+                // ✅ بانر الحالة:
+                // - لو الإعداد ناقص → "أكمل الإعداد" (لينك لـ group.html)
+                // - لو الإعداد مكتمل + مخفي → "مخفية عن الطلاب" + زرار فتح
+                // - لو منشور → لا بانر
                 let noticeBannerHTML = '';
                 if (!teacherIsBlocked) {
                     if (!hasReport) {
@@ -2754,6 +2742,7 @@
                     </div>
                 ` : '';
 
+                // ✅ أيقونة العين: لو الإعداد ناقص → قفل
                 let visibilityIcon;
                 let visibilityClass = '';
                 let visibilityTitle;
@@ -2888,6 +2877,7 @@
                 return;
             }
 
+            // ✅ فحص: هل الإعداد مكتمل؟
             const savedStateRaw = localStorage.getItem('lessonState_' + lessonId);
             let stateObj = null;
             try { stateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
@@ -2965,6 +2955,7 @@
                     <p>📍 <b>العنوان:</b> ${data.m_address || 'لم يتم تحديد الموقع'}</p>
                 `;
             } else {
+                // ✅ إعداد ناقص — شارة "غير مكتمل" + رسالة توجيهية
                 const incompleteBadge = `<span style="font-size: 9.5px; background: #FEF3C7; color: #92400E; padding: 2px 6px; border-radius: 99px; border: 1px solid #FCD34D; display: inline-flex; align-items: center; gap: 4px; font-weight: 800;"><span style="width: 5px; height: 5px; background: #D97706; border-radius: 50%; display: inline-block;"></span>غير مكتمل</span>`;
                 nameEl.innerHTML = `<span>${lessonTitle}</span> ${incompleteBadge}`;
                 contentEl.innerHTML = `
@@ -2982,10 +2973,39 @@
         function saveLessonsToStorage() {
             try { localStorage.setItem('teacher_lessons', JSON.stringify(lessons)); } catch(e) {}
         }
+    </script>
 
-        // ==========================================
-        // 🗑️ حذف الحساب نهائياً — بالرقم السري
-        // ==========================================
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./sw.js').then((reg) => {
+                    setInterval(() => { reg.update(); }, 60000);
+
+                    reg.onupdatefound = () => {
+                        const installingWorker = reg.installing;
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('🔄 تم اكتشاف تحديث جديد، جاري التحديث...');
+                                installingWorker.postMessage({ type: 'SKIP_WAITING' });
+                                setTimeout(() => window.location.reload(), 500);
+                            }
+                        };
+                    };
+                }).catch(e => console.log('SW failed:', e));
+            });
+
+            let refreshing = false;
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                if (!refreshing) {
+                    refreshing = true;
+                    window.location.reload();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+==================
         function openDeleteAccountModal() {
             const input = document.getElementById('deleteAccountPasswordInput');
             const btn = document.getElementById('confirmDeleteAccountBtn');
