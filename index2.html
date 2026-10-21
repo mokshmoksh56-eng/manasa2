@@ -743,7 +743,7 @@
             top: 10px;
             left: 10px;
             display: flex;
-            flex-direction: column; /* بقيت عمودية */
+            flex-direction: column;
             gap: 6px;
             z-index: 20;
         }
@@ -772,6 +772,44 @@
         .btn-visibility { background: #F1F5F9; color: #64748B; }
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
+
+        /* ✅ نقطة الحالة الصغيرة جداً */
+        .status-dot {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            border: 2px solid #FFFFFF;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+            z-index: 25;
+        }
+        .status-dot.dot-green {
+            background: #10B981;
+            animation: dotPulseGreen 2s ease-in-out infinite;
+        }
+        .status-dot.dot-red {
+            background: #EF4444;
+            animation: dotPulseRed 2s ease-in-out infinite;
+        }
+        .status-dot.dot-yellow {
+            background: #F59E0B;
+            animation: dotPulseYellow 2s ease-in-out infinite;
+        }
+
+        @keyframes dotPulseGreen {
+            0%, 100% { box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3), 0 0 0 0 rgba(16, 185, 129, 0.4); }
+            50% { box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3), 0 0 0 5px rgba(16, 185, 129, 0); }
+        }
+        @keyframes dotPulseRed {
+            0%, 100% { box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3), 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3), 0 0 0 5px rgba(239, 68, 68, 0); }
+        }
+        @keyframes dotPulseYellow {
+            0%, 100% { box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3), 0 0 0 0 rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3), 0 0 0 5px rgba(245, 158, 11, 0); }
+        }
 
         /* ===== كارت إنشاء مجموعة جديدة ===== */
         .card-add-new {
@@ -1426,7 +1464,7 @@
         }
 
         /* ============================================
-           📱 ترتيب وتظبيط الموبايل فقط (بدون إضافات)
+           📱 ترتيب وتظبيط الموبايل فقط
            ============================================ */
         @media (max-width: 767px) {
             
@@ -1501,6 +1539,15 @@
             .hidden-open-btn {
                 padding: 6px 10px !important;
                 font-size: 11px !important;
+            }
+
+            /* ✅ تصغير النقطة على الموبايل */
+            .status-dot {
+                width: 8px !important;
+                height: 8px !important;
+                top: 10px !important;
+                right: 10px !important;
+                border-width: 1.5px !important;
             }
         }
     </style>
@@ -2731,10 +2778,11 @@
 
             renderLessons();
 
+            // ✅ رسالة واضحة حسب الحالة الجديدة
             if (newState) {
                 showToast('👁️ المجموعة ظاهرة للطلاب الآن');
             } else {
-                showToast('🔒 تم إخفاء المجموعة — اضغط "فتح" لإظهارها');
+                showToast('🔒 المجموعة مخفية عن الطلاب الآن', true);
             }
 
             try {
@@ -2812,6 +2860,16 @@
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
 
+                // ✅ نقطة الحالة الصغيرة
+                let statusDotHTML = '';
+                if (!hasReport) {
+                    statusDotHTML = `<span class="status-dot dot-yellow" title="الإعداد غير مكتمل"></span>`;
+                } else if (isPublished) {
+                    statusDotHTML = `<span class="status-dot dot-green" title="ظاهرة للطلاب"></span>`;
+                } else {
+                    statusDotHTML = `<span class="status-dot dot-red" title="مخفية عن الطلاب"></span>`;
+                }
+
                 let noticeBannerHTML = '';
                 if (!teacherIsBlocked) {
                     if (!hasReport) {
@@ -2872,6 +2930,7 @@
                 
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
+                    ${statusDotHTML}
                     <div class="card-actions">
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
