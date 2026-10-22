@@ -519,58 +519,188 @@
             transform: translateX(-3px);
         }
 
+        /* ===== الكارت الأساسي - خيال قوي من برة ===== */
         .portal-card {
             position: relative;
             border-radius: 22px;
             padding: 16px 14px;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 20px -8px rgba(0,0,0,0.07);
+            transition: all 0.3s ease;
             display: flex;
             flex-direction: row;
             align-items: center;
             justify-content: space-between;
             gap: 12px;
-            overflow: hidden;
+            overflow: visible;
             background: #FFFFFF;
-            border: 2px solid #E2E8F0;
+            box-shadow: 
+                0 12px 28px -8px rgba(0, 0, 0, 0.22),
+                0 4px 10px -4px rgba(0, 0, 0, 0.12);
         }
+
+        .portal-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 
+                0 18px 36px -10px rgba(0, 0, 0, 0.28),
+                0 6px 14px -4px rgba(0, 0, 0, 0.15);
+        }
+
         .portal-card:active {
-            transform: scale(0.985);
+            transform: translateY(-1px) scale(0.99);
+            box-shadow: 
+                0 8px 20px -8px rgba(0, 0, 0, 0.2),
+                0 3px 8px -3px rgba(0, 0, 0, 0.1);
         }
 
+        /* ===== ألوان الكروت المختلفة ===== */
+        .portal-card.card-color-0 {
+            background: linear-gradient(145deg, #DBEAFE 0%, #EFF6FF 55%, #FFFFFF 100%);
+            border: 2px solid #60A5FA;
+            border-right: 8px solid #2563EB;
+            box-shadow: 
+                0 12px 28px -8px rgba(37, 99, 235, 0.35),
+                0 4px 10px -4px rgba(37, 99, 235, 0.18);
+        }
+        .portal-card.card-color-0:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(37, 99, 235, 0.45),
+                0 6px 14px -4px rgba(37, 99, 235, 0.22);
+        }
+        .portal-card.card-color-0 h2 { color: #0F2D5C; }
+
+        .portal-card.card-color-1 {
+            background: linear-gradient(145deg, #D1FAE5 0%, #ECFDF5 55%, #FFFFFF 100%);
+            border: 2px solid #34D399;
+            border-right: 8px solid #059669;
+            box-shadow: 
+                0 12px 28px -8px rgba(5, 150, 105, 0.35),
+                0 4px 10px -4px rgba(5, 150, 105, 0.18);
+        }
+        .portal-card.card-color-1:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(5, 150, 105, 0.45),
+                0 6px 14px -4px rgba(5, 150, 105, 0.22);
+        }
+        .portal-card.card-color-1 h2 { color: #064E3B; }
+
+        .portal-card.card-color-2 {
+            background: linear-gradient(145deg, #F3E8FF 0%, #FAF5FF 55%, #FFFFFF 100%);
+            border: 2px solid #C084FC;
+            border-right: 8px solid #7C3AED;
+            box-shadow: 
+                0 12px 28px -8px rgba(124, 58, 237, 0.35),
+                0 4px 10px -4px rgba(124, 58, 237, 0.18);
+        }
+        .portal-card.card-color-2:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(124, 58, 237, 0.45),
+                0 6px 14px -4px rgba(124, 58, 237, 0.22);
+        }
+        .portal-card.card-color-2 h2 { color: #4C1D95; }
+
+        .portal-card.card-color-3 {
+            background: linear-gradient(145deg, #FFEDD5 0%, #FFF7ED 55%, #FFFFFF 100%);
+            border: 2px solid #FB923C;
+            border-right: 8px solid #EA580C;
+            box-shadow: 
+                0 12px 28px -8px rgba(234, 88, 12, 0.35),
+                0 4px 10px -4px rgba(234, 88, 12, 0.18);
+        }
+        .portal-card.card-color-3:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(234, 88, 12, 0.45),
+                0 6px 14px -4px rgba(234, 88, 12, 0.22);
+        }
+        .portal-card.card-color-3 h2 { color: #7C2D12; }
+
+        .portal-card.card-color-4 {
+            background: linear-gradient(145deg, #FCE7F3 0%, #FDF2F8 55%, #FFFFFF 100%);
+            border: 2px solid #F472B6;
+            border-right: 8px solid #DB2777;
+            box-shadow: 
+                0 12px 28px -8px rgba(219, 39, 119, 0.35),
+                0 4px 10px -4px rgba(219, 39, 119, 0.18);
+        }
+        .portal-card.card-color-4:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(219, 39, 119, 0.45),
+                0 6px 14px -4px rgba(219, 39, 119, 0.22);
+        }
+        .portal-card.card-color-4 h2 { color: #831843; }
+
+        .portal-card.card-color-5 {
+            background: linear-gradient(145deg, #CFFAFE 0%, #ECFEFF 55%, #FFFFFF 100%);
+            border: 2px solid #22D3EE;
+            border-right: 8px solid #0891B2;
+            box-shadow: 
+                0 12px 28px -8px rgba(8, 145, 178, 0.35),
+                0 4px 10px -4px rgba(8, 145, 178, 0.18);
+        }
+        .portal-card.card-color-5:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(8, 145, 178, 0.45),
+                0 6px 14px -4px rgba(8, 145, 178, 0.22);
+        }
+        .portal-card.card-color-5 h2 { color: #164E63; }
+
+        .portal-card.card-color-6 {
+            background: linear-gradient(145deg, #FEF3C7 0%, #FFFBEB 55%, #FFFFFF 100%);
+            border: 2px solid #FBBF24;
+            border-right: 8px solid #D97706;
+            box-shadow: 
+                0 12px 28px -8px rgba(217, 119, 6, 0.35),
+                0 4px 10px -4px rgba(217, 119, 6, 0.18);
+        }
+        .portal-card.card-color-6:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(217, 119, 6, 0.45),
+                0 6px 14px -4px rgba(217, 119, 6, 0.22);
+        }
+        .portal-card.card-color-6 h2 { color: #78350F; }
+
+        .portal-card.card-color-7 {
+            background: linear-gradient(145deg, #FEE2E2 0%, #FEF2F2 55%, #FFFFFF 100%);
+            border: 2px solid #F87171;
+            border-right: 8px solid #DC2626;
+            box-shadow: 
+                0 12px 28px -8px rgba(220, 38, 38, 0.35),
+                0 4px 10px -4px rgba(220, 38, 38, 0.18);
+        }
+        .portal-card.card-color-7:hover {
+            box-shadow: 
+                0 18px 36px -10px rgba(220, 38, 38, 0.45),
+                0 6px 14px -4px rgba(220, 38, 38, 0.22);
+        }
+        .portal-card.card-color-7 h2 { color: #7F1D1D; }
+
+        /* حالة الكارت المخفي */
         .portal-card.hidden-card {
-            border-color: #EF4444;
-            border-bottom-color: #B91C1C;
-            background: #FEF2F2;
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.15);
+            filter: grayscale(0.35);
+            opacity: 0.9;
         }
-
         .portal-card.hidden-card .btn-go {
-            background: #475569;
-            box-shadow: 0 4px 10px rgba(71, 85, 105, 0.3);
+            background: linear-gradient(135deg, #94A3B8, #475569);
+            box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
         }
 
+        /* حالة الكارت غير المكتمل */
         .portal-card.incomplete-card {
-            border-color: #F59E0B;
-            border-bottom-color: #B45309;
-            background: #FFFBEB;
-            box-shadow: 0 6px 16px rgba(245, 158, 11, 0.15);
+            border-color: #FCD34D;
+            border-bottom-color: #D97706;
         }
         .portal-card.incomplete-card .btn-go {
-            background: #F59E0B;
-            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
         }
 
+        /* حالة الكارت المحظور */
         .portal-card.locked-card {
             opacity: 0.85;
-            border-color: #EF4444;
-            border-bottom-color: #B91C1C;
-            background: #FEF2F2;
-            box-shadow: 0 6px 16px rgba(239, 68, 68, 0.15);
+            border-color: #FCA5A5;
+            border-bottom-color: #DC2626;
         }
         .portal-card.locked-card .btn-go {
-            background: #64748B;
-            box-shadow: 0 4px 10px rgba(100, 116, 139, 0.3);
+            background: linear-gradient(135deg, #94A3B8, #475569);
+            box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
             pointer-events: none;
         }
 
@@ -730,8 +860,8 @@
             margin-bottom: 6px;
         }
         .info-badge {
-            background: #F1F5F9;
-            border: 1px solid #CBD5E1;
+            background: rgba(255,255,255,0.7);
+            border: 1px solid rgba(0,0,0,0.08);
             color: #334155;
             padding: 2px 7px;
             border-radius: 6px;
@@ -816,54 +946,66 @@
 
         /* ===== كارت إنشاء مجموعة جديدة ===== */
         .card-add-new {
-            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-            border: 2px dashed #34d399;
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+            border: 2px dashed #10B981;
             justify-content: center;
             flex-direction: column;
             text-align: center;
             padding: 12px 10px;
             cursor: pointer;
-            border-bottom: 5px solid #059669;
-            box-shadow: 0 6px 16px rgba(16, 185, 129, 0.1);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border-bottom: 4px solid #059669;
+            box-shadow: 0 4px 14px -6px rgba(16, 185, 129, 0.25);
+            transition: all 0.25s ease;
             min-height: 110px;
             max-width: 220px;
             width: 100%;
             border-radius: 18px;
-            position: relative;
-            overflow: hidden;
         }
-        .card-add-new::before {
-            content: ''; position: absolute; inset: 0; 
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); 
-            opacity: 0; transition: opacity 0.3s; z-index: 0;
-        }
-        .card-add-new:hover::before { opacity: 1; }
         .card-add-new:hover {
+            background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
             border-color: #059669;
-            transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.2);
+            transform: translateY(-2px);
         }
         .card-add-new:active {
-            transform: scale(0.96);
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
+            background: #BBF7D0;
+            border-color: #047857;
+            transform: scale(0.98);
         }
-        .card-add-new h2, .card-add-new p, .card-add-new .icon-plus { position: relative; z-index: 2; }
+        .card-add-new.disabled-add {
+            opacity: 0.5;
+            pointer-events: none;
+            filter: grayscale(1);
+        }
 
         .card-add-new .icon-plus {
             width: 36px;
             height: 36px;
-            background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+            background: linear-gradient(135deg, #10B981, #059669);
             color: #FFFFFF;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             margin-bottom: 6px;
-            border: 2px solid #FFFFFF;
-            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            border: 2.5px solid #FFFFFF;
+            box-shadow: 0 4px 14px -3px rgba(16, 185, 129, 0.5);
+            transition: all 0.25s ease;
             animation: plusPulse 2.5s ease-in-out infinite;
+        }
+        .card-add-new:hover .icon-plus {
+            transform: scale(1.08) rotate(90deg);
+            box-shadow: 0 6px 18px -3px rgba(16, 185, 129, 0.7);
+        }
+        .card-add-new .icon-plus svg {
+            width: 18px;
+            height: 18px;
+            stroke: #FFFFFF;
+            stroke-width: 3;
+        }
+
+        @keyframes plusPulse {
+            0%, 100% { box-shadow: 0 4px 14px -3px rgba(16, 185, 129, 0.5); }
+            50%      { box-shadow: 0 4px 20px -2px rgba(16, 185, 129, 0.8); }
         }
 
         .card-add-new h2 {
@@ -894,32 +1036,16 @@
             display: block;
             border-radius: 50%;
         }
-        .card-teacher {
-            background: linear-gradient(135deg, #ffffff 0%, #f4f7ff 100%);
-            border: 2px solid #bfdbfe;
-            border-bottom: 6px solid #2563eb;
-            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
-            position: relative;
-            overflow: hidden;
-        }
-        .card-teacher::before {
-            content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px;
-            background: radial-gradient(circle, rgba(37,99,235,0.12) 0%, transparent 70%);
-            border-radius: 50%; z-index: 1; pointer-events: none;
-        }
-        .card-student {
-            background: linear-gradient(135deg, #ffffff 0%, #f0fdf4 100%);
-            border: 2px solid #a7f3d0;
-            border-bottom: 6px solid #10b981;
-            box-shadow: 0 8px 24px rgba(16, 185, 129, 0.12);
-            position: relative;
-            overflow: hidden;
-        }
-        .card-student::before {
-            content: ''; position: absolute; top: -30px; right: -30px; width: 120px; height: 120px;
-            background: radial-gradient(circle, rgba(16,185,129,0.15) 0%, transparent 70%);
-            border-radius: 50%; z-index: 1; pointer-events: none;
-        }
+
+        /* ألوان صناديق الصور حسب لون الكارت */
+        .portal-card.card-color-0 .card-image-box { background: #DBEAFE; border: 3px solid #60A5FA; }
+        .portal-card.card-color-1 .card-image-box { background: #D1FAE5; border: 3px solid #34D399; }
+        .portal-card.card-color-2 .card-image-box { background: #F3E8FF; border: 3px solid #C084FC; }
+        .portal-card.card-color-3 .card-image-box { background: #FFEDD5; border: 3px solid #FB923C; }
+        .portal-card.card-color-4 .card-image-box { background: #FCE7F3; border: 3px solid #F472B6; }
+        .portal-card.card-color-5 .card-image-box { background: #CFFAFE; border: 3px solid #22D3EE; }
+        .portal-card.card-color-6 .card-image-box { background: #FEF3C7; border: 3px solid #FBBF24; }
+        .portal-card.card-color-7 .card-image-box { background: #FEE2E2; border: 3px solid #F87171; }
 
         .card-text {
             display: flex;
@@ -950,33 +1076,6 @@
             color: #64748B;
         }
 
-        .card-teacher h2 { color: #1E3A8A; position: relative; z-index: 5; }
-        .card-teacher .btn-go { 
-            background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); 
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
-            position: relative; z-index: 5;
-        }
-
-        .card-teacher .card-image-box {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            border: 3px solid #bfdbfe;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.2);
-            position: relative; z-index: 5;
-        }
-        .card-student h2 { color: #064E3B; position: relative; z-index: 5; }
-        .card-student .btn-go { 
-            background: linear-gradient(135deg, #10b981 0%, #047857 100%); 
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
-            position: relative; z-index: 5;
-        }
-
-        .card-student .card-image-box {
-            background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-            border: 3px solid #a7f3d0;
-            box-shadow: 0 4px 14px rgba(16, 185, 129, 0.2);
-            position: relative; z-index: 5;
-        }
-
         .btn-go {
             padding: 6px 16px;
             border-radius: 999px;
@@ -992,6 +1091,16 @@
         .btn-go:active {
             transform: scale(0.95);
         }
+
+        /* ألوان btn-go حسب لون الكارت */
+        .portal-card.card-color-0 .btn-go { background: linear-gradient(135deg, #3B82F6, #1D4ED8); box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
+        .portal-card.card-color-1 .btn-go { background: linear-gradient(135deg, #10B981, #047857); box-shadow: 0 4px 12px rgba(5,150,105,0.4); }
+        .portal-card.card-color-2 .btn-go { background: linear-gradient(135deg, #A855F7, #6D28D9); box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
+        .portal-card.card-color-3 .btn-go { background: linear-gradient(135deg, #F97316, #C2410C); box-shadow: 0 4px 12px rgba(234,88,12,0.4); }
+        .portal-card.card-color-4 .btn-go { background: linear-gradient(135deg, #EC4899, #BE185D); box-shadow: 0 4px 12px rgba(219,39,119,0.4); }
+        .portal-card.card-color-5 .btn-go { background: linear-gradient(135deg, #06B6D4, #0E7490); box-shadow: 0 4px 12px rgba(8,145,178,0.4); }
+        .portal-card.card-color-6 .btn-go { background: linear-gradient(135deg, #F59E0B, #B45309); box-shadow: 0 4px 12px rgba(217,119,6,0.4); }
+        .portal-card.card-color-7 .btn-go { background: linear-gradient(135deg, #EF4444, #991B1B); box-shadow: 0 4px 12px rgba(220,38,38,0.4); }
 
         .modal-overlay {
             position: fixed; inset: 0;
@@ -1564,7 +1673,7 @@
                 border-width: 1.5px !important;
             }
 
-            /* ✅ الحل الجديد: الأيقونات محمية ومش بتتداخل مع زر الفتح */
+            /* ✅ الأيقونات محمية ومش بتتداخل مع زر الفتح */
             .card-actions {
                 top: 8px !important;
                 left: 8px !important;
@@ -1575,7 +1684,7 @@
                 height: 28px !important;
             }
             .card-text {
-                padding-top: 38px !important; /* مساحة كافية للأيقونات */
+                padding-top: 38px !important;
             }
             .hidden-notice-banner {
                 margin-top: 6px !important;
@@ -2825,7 +2934,6 @@
 
             renderLessons();
 
-            // ✅ رسالة واضحة حسب الحالة الجديدة
             if (newState) {
                 showToast('👁️ المجموعة ظاهرة للطلاب الآن');
             } else {
@@ -2880,9 +2988,10 @@
             container.innerHTML = '';
 
             lessons.forEach((lesson, index) => {
-                const isBlue = (index + 1) % 2 !== 0;
-                const cardStyle = isBlue ? 'card-teacher' : 'card-student';
-                const imgName = isBlue ? 'teacher.png' : 'student.png';
+                // ✅ كل كارت بلون مختلف بالتناوب (8 ألوان)
+                const colorIndex = index % 8;
+                const cardStyle = `card-color-${colorIndex}`;
+                const imgName = (index % 2 === 0) ? 'teacher.png' : 'student.png';
 
                 const savedStateRaw = localStorage.getItem('lessonState_' + lesson.id);
                 let savedStateObj = null;
@@ -2975,7 +3084,6 @@
                 const newCard = document.createElement('div');
                 newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
                 
-                // ✅ وضعنا noticeBannerHTML تحت زر التقرير لتجنب التداخل
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
                     ${statusDotHTML}
@@ -2999,7 +3107,7 @@
                         ${infoBadgesHTML}
                         <p>${descText}</p>
                         <a href="${targetUrl}" class="btn-go">${btnText}</a>
-                        ${noticeBannerHTML} <!-- ✅ تحت الزر مباشرة -->
+                        ${noticeBannerHTML}
                     </div>
                 `;
                 
