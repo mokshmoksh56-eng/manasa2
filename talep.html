@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     
-    <!-- ✅ إضافة مكتبة تجميع الدبابيس (MarkerCluster) لحل مشكلة تداخل المعلمين في نفس النقطة -->
+    <!-- ✅ مكتبة تجميع الدبابيس (MarkerCluster) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
@@ -649,6 +649,9 @@
         let isFirstTeachersSnapshot = true;
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
+
+        // ✅ متغير عام لتخزين أعمار المعلمين لمنع القراءة المتكررة من الفايربيز
+        let globalTeacherAgeCache = {};
 
         // ✅ معرّف الطالب الفريد (لكي لا يتداخل مع الباقين)
         function getStudentId() {
@@ -2116,7 +2119,6 @@
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
-            const teacherAgeCache = {}; // ✅ كاش لمنع التكرار وقراءة العمر أكثر من مرة
 
             if (!window.db) {
                 console.warn("⚠️ Firebase لم يتصل بعد");
@@ -2142,7 +2144,6 @@
                 const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
                 const querySnapshot = await mod.getDocs(q);
                 
-                // ✅ استخدام for...of بدلاً من forEach لتشغيل await بداخلها
                 for (const docSnap of querySnapshot.docs) {
                     const state = docSnap.data();
                     const lessonId = docSnap.id;
@@ -2152,18 +2153,18 @@
                         continue;
                     }
 
-                    // ✅ جلب العمر إذا لم يكن مسجلاً في الحصة نفسها نقرأه من جدول المعلمين
+                    // ✅ قراءة العمر من الـ Cache العام أو جلبه من الفايربيز مرة واحدة فقط
                     let teacherAge = state.t_age || state.age || 'غير محدد';
                     if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
-                        if (teacherAgeCache[state.g_phone]) {
-                            teacherAge = teacherAgeCache[state.g_phone];
+                        if (globalTeacherAgeCache[state.g_phone]) {
+                            teacherAge = globalTeacherAgeCache[state.g_phone];
                         } else {
                             try {
                                 const tRef = mod.doc(mod.db, "teachers", state.g_phone);
                                 const tSnap = await mod.getDoc(tRef);
                                 if (tSnap.exists() && tSnap.data().age) {
                                     teacherAge = tSnap.data().age;
-                                    teacherAgeCache[state.g_phone] = teacherAge;
+                                    globalTeacherAgeCache[state.g_phone] = teacherAge;
                                 }
                             } catch(e) {}
                         }
@@ -2197,7 +2198,7 @@
                         lessonId: lessonId,
                         groupName: state.g_name || `مجموعة ${lessonId}`,
                         teacherName: state.g_teacher || 'المعلم',
-                        age: teacherAge, // ✅ تمرير العمر إلى الكارت
+                        age: teacherAge, 
                         count: state.g_count || '--',
                         grade: (state.s_grade || '').trim(),
                         stageKey: (state.s_stage || '').trim(),
@@ -2236,15 +2237,15 @@
 
                         let teacherAge = state.t_age || state.age || 'غير محدد';
                         if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
-                            if (teacherAgeCache[state.g_phone]) {
-                                teacherAge = teacherAgeCache[state.g_phone];
+                            if (globalTeacherAgeCache[state.g_phone]) {
+                                teacherAge = globalTeacherAgeCache[state.g_phone];
                             } else {
                                 try {
                                     const tRef = mod.doc(mod.db, "teachers", state.g_phone);
                                     const tSnap = await mod.getDoc(tRef);
                                     if (tSnap.exists() && tSnap.data().age) {
                                         teacherAge = tSnap.data().age;
-                                        teacherAgeCache[state.g_phone] = teacherAge;
+                                        globalTeacherAgeCache[state.g_phone] = teacherAge;
                                     }
                                 } catch(e) {}
                             }
@@ -2278,7 +2279,7 @@
                             lessonId: lessonId,
                             groupName: state.g_name || `مجموعة ${lessonId}`,
                             teacherName: state.g_teacher || 'المعلم',
-                            age: teacherAge, // ✅ تمرير العمر إلى الكارت
+                            age: teacherAge,
                             count: state.g_count || '--',
                             grade: (state.s_grade || '').trim(),
                             stageKey: (state.s_stage || '').trim(),
@@ -2324,16 +2325,18 @@
         // ==========================================
         function initMap() {
             if (!map) {
-                map = L.map('map', { zoomControl: false });
+                // ✅ إضافة maxZoom لمنع مشاكل التفرع عند التقريب اللانهائي
+                map = L.map('map', { zoomControl: false, maxZoom: 18 });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
-                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
                 
-                // ✅ استخدام MarkerClusterGroup بدلاً من layerGroup العادي لمنع التداخل
                 teachersLayer = L.markerClusterGroup({
                     maxClusterRadius: 40,
                     spiderfyOnMaxZoom: true,
                     showCoverageOnHover: false,
-                    zoomToBoundsOnClick: true
+                    zoomToBoundsOnClick: true,
+                    spiderfyDistanceMultiplier: 1.5,
+                    disableClusteringAtZoom: 18 // ✅ إجبار فك التجميع عند التقريب الأقصى
                 }).addTo(map);
             }
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
@@ -2390,7 +2393,6 @@
         }
 
         function buildRadarMap(lat, lng) {
-            // ✅ حماية إضافية: لا تعرض الخريطة إلا إذا اكتملت البيانات
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
@@ -2418,7 +2420,6 @@
             initMap();
             if (studentMarker) map.removeLayer(studentMarker);
             if (searchCircle) map.removeLayer(searchCircle);
-            teachersLayer.clearLayers();
 
             const searchRadius = parseInt(document.getElementById('search_radius').value);
             
@@ -2443,7 +2444,6 @@
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
 
-            // ✅ إظهار مؤشر المزامنة اللحظية
             const liveIndicator = document.getElementById('liveIndicator');
             if (liveIndicator) liveIndicator.classList.add('show');
 
@@ -2526,7 +2526,6 @@
             return normTeacher.includes(normStudent) || normStudent.includes(normTeacher);
         }
 
-        // ✅ دالة التحقق من تطابق الفئة (ولد/بنت)
         function isTeacherGenderMatches(teacherGenderAllowed, studentGender) {
             if (!teacherGenderAllowed) return true;
             if (teacherGenderAllowed === 'ولاد وبنات' || teacherGenderAllowed === 'g_mix') return true;
@@ -2536,9 +2535,6 @@
         }
 
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
-            teachersLayer.clearLayers();
-
-            // ✅ حماية نهائية: لا تعرض أي معلم بدون اختيار كامل
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
@@ -2557,10 +2553,13 @@
             let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
             if (prefTeacher === 'أيهم') prefTeacher = 'مستر او مس';
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
-            
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
+            // ✅ جلب البيانات من الفايربيز أولاً قبل مسح الخريطة
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
+
+            // ✅ الآن فقط نقوم بمسح الدبابيس القديمة، لتجنب اختفاء الكارت المفتوح بلا داعٍ
+            teachersLayer.clearLayers();
 
             if (registeredList.length === 0) {
                 showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم مسجل حالياً في النظام!", true);
@@ -2620,7 +2619,6 @@
                         popupAnchor: [0, -16]
                     });
 
-                    // ✅ إضافة العمر (age) إلى الكارت بلمسة جمالية هنا
                     const popupContent = `
                         <div class="teacher-popup-title">${emoji} ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
@@ -2640,7 +2638,13 @@
                     `;
 
                     const marker = L.marker([t.lat, t.lng], { icon: customIcon });
-                    marker.bindPopup(popupContent);
+                    
+                    // ✅ إيقاف الـ autoPan ليظل الكارت ثابتاً ولا تغلق خاصية التجميع (MarkerCluster) الكارت فوراً
+                    marker.bindPopup(popupContent, { 
+                        autoPan: false,
+                        minWidth: 220 
+                    });
+                    
                     teachersLayer.addLayer(marker);
                 } else {
                     outOfRange.push({ ...t, distance });
