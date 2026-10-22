@@ -372,6 +372,12 @@
             display: flex; justify-content: space-between; font-size: 10px; color: #64748B;
             margin-top: 4px; font-weight: 800;
         }
+        
+        /* ✅ رفع أزرار التقريب (+ و -) لأعلى في وضع ملء الشاشة حتى لا تتداخل مع شريط المسافة */
+        .map-container.is-fullscreen .leaflet-bottom.leaflet-right {
+            bottom: 130px !important;
+            transition: bottom 0.3s ease;
+        }
 
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
