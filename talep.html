@@ -179,21 +179,21 @@
         }
 
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
-        .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
-        #map { width: 100%; height: 300px; } 
+        .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: visible; z-index: 1; transition: all 0.3s; }
+        #map { width: 100%; height: 300px; border-radius: 12px; }
 
         /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
         .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
         .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
         .fullscreen-btn {
-            position: absolute; top: 10px; left: 10px; z-index: 1000; background: #ffffff; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #94A3B8;
+            position: absolute; top: 10px; left: 10px; z-index: 100001; background: #ffffff; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #94A3B8;
             border-radius: 8px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; cursor: pointer; color: #0F2D5C; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         .fullscreen-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
         .relocate-btn {
-            position: absolute; top: 10px; right: 10px; z-index: 1000; background: #ffffff; border: 1.5px solid #10B981; border-bottom: 3px solid #059669;
+            position: absolute; top: 10px; right: 10px; z-index: 100001; background: #ffffff; border: 1.5px solid #10B981; border-bottom: 3px solid #059669;
             border-radius: 8px; padding: 0 10px; height: 36px; display: flex; align-items: center; justify-content: center; gap: 4px; cursor: pointer; color: #065F46; font-size: 11px; font-weight: 900; box-shadow: 0 2px 8px rgba(0,0,0,0.12);
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
@@ -214,7 +214,7 @@
             align-items: center;
             gap: 5px;
             box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
-            z-index: 1000;
+            z-index: 100001;
             border: 1.5px solid white;
             opacity: 0;
             transition: opacity 0.3s;
@@ -245,7 +245,7 @@
             position: fixed !important; top: 0 !important; left: 0 !important; right: 0 !important; bottom: 0 !important;
             width: 100vw !important; height: 100vh !important; max-width: none !important; z-index: 999999 !important; border-radius: 0 !important; border: none !important; margin: 0 !important;
         }
-        .map-container.is-fullscreen #map { height: 100% !important; }
+        .map-container.is-fullscreen #map { height: 100% !important; border-radius: 0 !important; }
 
         .student-radar {
             position: relative; width: 18px; height: 18px; background-color: #3B82F6; border-radius: 50%; border: 2.5px solid white; cursor: grab; box-shadow: 0 3px 8px rgba(0,0,0,0.3);
@@ -254,8 +254,28 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        .leaflet-popup-content-wrapper { border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15); border-bottom: 3px solid #0F2D5C;}
-        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 11px; margin: 10px 8px; min-width: 215px;}
+        /* ✅ تنسيق popup المعلم - يظهر كامل بدون قطع */
+        .leaflet-popup-content-wrapper {
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-bottom: 3px solid #0F2D5C;
+            max-height: 340px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .leaflet-popup-content {
+            font-family: 'Cairo', sans-serif;
+            text-align: center;
+            line-height: 1.5;
+            font-size: 11px;
+            margin: 10px 8px;
+            min-width: 215px;
+            max-width: 260px;
+        }
+        /* ✅ التأكد من ظهور الـ popup فوق كل عناصر الخريطة */
+        .leaflet-popup { z-index: 100000 !important; }
+        .leaflet-control-zoom { z-index: 100001 !important; }
+
         .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
         .teacher-popup-detail { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #475569; font-size: 10.5px; margin-bottom: 4px; background: #F8FAFC; padding: 4px 6px; border-radius: 5px; gap: 6px;}
         
@@ -340,7 +360,7 @@
 
         /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
-            display: none; /* مخفي في الوضع العادي */
+            display: none;
             position: absolute;
             bottom: 30px;
             left: 50%;
@@ -351,11 +371,10 @@
             padding: 12px;
             border-radius: 12px;
             box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            z-index: 1000;
+            z-index: 99999;
             border: 2px solid #10B981;
         }
 
-        /* إظهار الشريط فقط عندما تأخذ الخريطة كلاس is-fullscreen */
         .map-container.is-fullscreen .fullscreen-radius-container {
             display: block;
         }
@@ -373,10 +392,15 @@
             margin-top: 4px; font-weight: 800;
         }
         
-        /* ✅ رفع أزرار التقريب (+ و -) لأعلى في وضع ملء الشاشة حتى لا تتداخل مع شريط المسافة */
+        /* ✅ رفع أزرار التقريب لأعلى في وضع ملء الشاشة */
         .map-container.is-fullscreen .leaflet-bottom.leaflet-right {
             bottom: 130px !important;
             transition: bottom 0.3s ease;
+        }
+
+        /* ✅ في وضع ملء الشاشة: خلي الكارت يبان كامل */
+        .map-container.is-fullscreen .leaflet-popup-content-wrapper {
+            max-height: 50vh;
         }
 
         @media (max-width: 380px) {
@@ -581,7 +605,6 @@
                 <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
-                    <!-- ✅ مؤشر المزامنة اللحظية -->
                     <div id="liveIndicator" class="live-indicator">
                         <span class="dot"></span>
                         <span>مباشر</span>
@@ -596,7 +619,6 @@
                         🎯 موقعي الحالي
                     </button>
 
-                    <!-- ✅ الكود الجديد: شريط النطاق الخاص بملء الشاشة -->
                     <div id="fullscreenRadiusContainer" class="fullscreen-radius-container">
                         <div class="radius-label-row">
                             <span>🎯 نطاق البحث:</span>
@@ -608,7 +630,6 @@
                             <span>5 كيلو</span>
                         </div>
                     </div>
-                    <!-- نهاية الكود الجديد -->
 
                     <div id="map"></div>
                 </div>
@@ -699,16 +720,13 @@
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
 
-        // ✅ مستمع لحظي للمعلمين على الخريطة
         let teachersRealtimeUnsub = null;
         let isFirstTeachersSnapshot = true;
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
-        // ✅ متغير عام لتخزين أعمار المعلمين لمنع القراءة المتكررة من الفايربيز
         let globalTeacherAgeCache = {};
 
-        // ✅ معرّف الطالب الفريد (لكي لا يتداخل مع الباقين)
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
             if (!stId) {
@@ -718,7 +736,6 @@
             return stId;
         }
 
-        // ✅ معرّف المعلم الحالي (يستخدم فقط لتنظيف حصص المعلم القديمة إذا كان الطالب معلم أيضاً)
         function getCurrentTeacherKey() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -735,7 +752,6 @@
             return 'guest';
         }
 
-        // ✅ إدارة الجهاز
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
@@ -745,7 +761,6 @@
             return deviceId;
         }
 
-        // ✅ التحقق من الجهاز
         async function verifyDeviceOnLoad() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -786,7 +801,6 @@
             }, 2500);
         }
 
-        // ✅ Watch listener
         function startDeviceWatch() {
             const loggedStr = localStorage.getItem('loggedInTeacher');
             if (!loggedStr) return;
@@ -819,7 +833,6 @@
             }
         }
 
-        // 🔊 الصوت
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playHighPitchSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -831,7 +844,6 @@
             osc.start(); osc.stop(audioCtx.currentTime + 0.05);
         }
 
-        // ✅ صوت تنبيه خطأ (Beep-Beep)
         function playErrorSound() {
             try {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -854,21 +866,18 @@
             }
         }
 
-        // ✅ اهتزاز الهاتف عند الخطأ
         function vibrateError() {
             if (navigator.vibrate) {
                 navigator.vibrate([200, 100, 200]);
             }
         }
 
-        // ✅ اهتزاز النجاح
         function vibrateSuccess() {
             if (navigator.vibrate) {
                 navigator.vibrate([80, 50, 80]);
             }
         }
 
-        // ✅ التنبيه الكامل (صوت + اهتزاز + رسالة)
         function alertMissingData(missingList) {
             playErrorSound();
             vibrateError();
@@ -889,7 +898,6 @@
             setTimeout(() => { toast.classList.remove('show'); }, 4000);
         }
 
-        // ✅ تمييز الحقول الناقصة باللون الأحمر
         function highlightMissingField(fieldId, isMissing) {
             const el = document.getElementById(fieldId);
             if (!el) return;
@@ -905,7 +913,6 @@
             }
         }
 
-        // ✅ WhatsApp + Share
         window.openTeacherWhatsApp = function(rawPhone, teacherName = '', subject = '', grade = '', groupName = '') {
             let cleanPhone = String(rawPhone || '').replace(/\D/g, '');
             if (!cleanPhone) {
@@ -940,9 +947,6 @@
             }
         };
 
-        // ==========================================
-        // ✅ Firebase Module Loader (مرة واحدة)
-        // ==========================================
         let firebaseSyncModule = null;
 
         async function loadFirebaseModule() {
@@ -986,9 +990,6 @@
             }
         }
 
-        // ==========================================
-        // ✅ Talep Firestore: حفظ / تحميل
-        // ==========================================
         let _talepSaveTimer = null;
         let _talepSavePending = false;
 
@@ -1132,14 +1133,10 @@
             });
         }
 
-        // ==========================================
-        // ✅ المزامنة اللحظية للمعلمين على الخريطة (محسنة)
-        // ==========================================
         async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
 
-            // لا تقم بتشغيل المستمع اللحظي إذا لم يحدد الطالب المرحلة والصف
             if (!stage || !grade) {
                 if (teachersRealtimeUnsub) { teachersRealtimeUnsub(); teachersRealtimeUnsub = null; }
                 return;
@@ -1205,9 +1202,6 @@
             });
         }
 
-        // ==========================================
-        // 1. Fullscreen Map
-        // ==========================================
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
                 openMapFullscreen();
@@ -1260,9 +1254,6 @@
             }
         }
 
-        // ==========================================
-        // 2. Age check
-        // ==========================================
         function checkAge() {
             const ageInput = document.getElementById('st_age').value;
             const phoneLabel = document.getElementById('phone_label');
@@ -1280,7 +1271,6 @@
             }
         }
 
-        // ✅ تحديث نص زر البحث حسب حالة الاختيار
         function updateSearchBtnHint() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
@@ -1295,9 +1285,6 @@
             }
         }
 
-        // ==========================================
-        // 🌟 المنهج الافتراضي
-        // ==========================================
         const defaultCurriculum = {
             main_order: ['primary', 'prep', 'secondary'],
             primary: {
@@ -1581,7 +1568,6 @@
                 sSelect.disabled = true;
             }
             
-            // ✅ تشغيل الاستماع اللحظي الجديد المفلتر
             startTeachersRealtimeListener();
 
             renderStudentGradeSubjectsBar();
@@ -1646,9 +1632,6 @@
             }
         }
 
-        // ==========================================
-        // Curriculum Sync
-        // ==========================================
         async function fetchCurriculumOnceFromFirebase() {
             const mod = await loadFirebaseModule();
             if (!mod) return false;
@@ -1728,9 +1711,6 @@
             };
         }
 
-        // ==========================================
-        // Radius + Summary
-        // ==========================================
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
             const display = document.getElementById('radius_val_display');
@@ -1745,25 +1725,22 @@
             
             display.innerText = text;
 
-            // -- مزامنة القيم مع شريط ملء الشاشة --
             const fsSlider = document.getElementById('fs_search_radius');
             const fsDisplay = document.getElementById('fs_radius_val_display');
             if (fsSlider && fsSlider.value !== val) { fsSlider.value = val; }
             if (fsDisplay) { fsDisplay.innerText = text; }
-            // -------------------------------------
 
             updateStudentSummary(); 
             saveStudentData();
             if (searchCircle) { searchCircle.setRadius(val); }
         }
 
-        // دالة جديدة تعمل عند تحريك الشريط الداخلي (أثناء وضع ملء الشاشة)
         function updateRadiusDisplayFS() {
             const fsVal = document.getElementById('fs_search_radius').value;
             const mainSlider = document.getElementById('search_radius');
             if (mainSlider) {
                 mainSlider.value = fsVal;
-                updateRadiusDisplay(); // نقوم بتمرير القيمة للدالة الأصلية لتحديث كل شيء
+                updateRadiusDisplay();
             }
         }
 
@@ -1835,18 +1812,12 @@
             updateStudentSummary(); updateSearchBtnHint(); renderSavedLocationsList(); renderSavedTeachersList();
         }
 
-        // ==========================================
-        // ✅ onload المحسّن
-        // ==========================================
         window.onload = async () => {
-            // 1) التحقق من الجهاز (يظل يعمل إذا كان الطالب معلماً أيضاً بنفس المتصفح)
             const isDeviceValid = await verifyDeviceOnLoad();
             if (!isDeviceValid) return;
 
-            // 2) بدء المراقبة اللحظية للجهاز
             startDeviceWatch();
 
-            // 3) تنظيف حصص المعلم القديم
             const currentKey_talep = getCurrentTeacherKey();
             const lessonsOwnerKey_talep = 'lessons_owner_phone';
             const savedLessonsOwner_talep = localStorage.getItem(lessonsOwnerKey_talep);
@@ -1869,7 +1840,6 @@
                 localStorage.setItem(lessonsOwnerKey_talep, currentKey_talep);
             }
 
-            // 4) عزل بيانات talep باستخدام المعرف الفريد للطالب
             const ownerKey = 'talep_data_owner';
             const currentStudentKey = getStudentId();
             const savedOwner = localStorage.getItem(ownerKey);
@@ -1879,7 +1849,6 @@
             }
             localStorage.setItem(ownerKey, currentStudentKey);
 
-            // 5) جلب المنهج
             try { await fetchCurriculumOnceFromFirebase(); } catch (e) {}
 
             if (!curriculumCache) {
@@ -1896,10 +1865,8 @@
                 }
             }
 
-            // 6) تحميل بيانات talep
             await loadTalepFromFirebase();
 
-            // 7) بناء الواجهة
             populateStagesDropdown(false);
             loadStudentData();
 
@@ -1926,7 +1893,6 @@
                 });
             });
 
-            // ✅ إعادة البحث عند تغيير جنس الطالب
             document.querySelectorAll('input[name="st_gender"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (currentCenter && map) {
@@ -1966,9 +1932,6 @@
             startTeachersRealtimeListener();
         };
 
-        // ==========================================
-        // Location flow (محسنة)
-        // ==========================================
         function triggerLocationFlow() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
@@ -2013,9 +1976,6 @@
             startSmartSearch();
         }
 
-        // ==========================================
-        // Saved locations & teachers
-        // ==========================================
         function openSaveLocModal() {
             if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
             editingLocationIndex = -1;
@@ -2191,9 +2151,6 @@
             closeDeleteModal();
         }
 
-        // ==========================================
-        // 4. جلب الحصص من Firebase 
-        // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
@@ -2231,7 +2188,6 @@
                         continue;
                     }
 
-                    // ✅ قراءة العمر من الـ Cache العام أو جلبه من الفايربيز مرة واحدة فقط
                     let teacherAge = state.t_age || state.age || 'غير محدد';
                     if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
                         if (globalTeacherAgeCache[state.g_phone]) {
@@ -2398,12 +2354,8 @@
             return stageKey;
         }
 
-        // ==========================================
-        // 5. Map + Radar
-        // ==========================================
         function initMap() {
             if (!map) {
-                // ✅ إضافة maxZoom لمنع مشاكل التفرع عند التقريب اللانهائي
                 map = L.map('map', { zoomControl: false, maxZoom: 18 });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
@@ -2414,7 +2366,7 @@
                     showCoverageOnHover: false,
                     zoomToBoundsOnClick: true,
                     spiderfyDistanceMultiplier: 1.5,
-                    disableClusteringAtZoom: 18 // ✅ إجبار فك التجميع عند التقريب الأقصى
+                    disableClusteringAtZoom: 18
                 }).addTo(map);
             }
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
@@ -2532,9 +2484,6 @@
             }, 300);
         }
 
-        // ==========================================
-        // Text normalization
-        // ==========================================
         function normalizeArabicText(str) {
             if (!str) return '';
             return String(str)
@@ -2633,10 +2582,8 @@
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
-            // ✅ جلب البيانات من الفايربيز أولاً قبل مسح الخريطة
             const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
-            // ✅ الآن فقط نقوم بمسح الدبابيس القديمة، لتجنب اختفاء الكارت المفتوح بلا داعٍ
             teachersLayer.clearLayers();
 
             if (registeredList.length === 0) {
@@ -2717,10 +2664,13 @@
 
                     const marker = L.marker([t.lat, t.lng], { icon: customIcon });
                     
-                    // ✅ إيقاف الـ autoPan ليظل الكارت ثابتاً ولا تغلق خاصية التجميع (MarkerCluster) الكارت فوراً
                     marker.bindPopup(popupContent, { 
-                        autoPan: false,
-                        minWidth: 220 
+                        autoPan: true,
+                        autoPanPadding: [40, 40],
+                        maxWidth: 260,
+                        minWidth: 220,
+                        closeButton: true,
+                        keepInView: true
                     });
                     
                     teachersLayer.addLayer(marker);
