@@ -338,6 +338,41 @@
             margin-top: 4px; font-weight: 800;
         }
 
+        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
+        .fullscreen-radius-container {
+            display: none; /* مخفي في الوضع العادي */
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 1000;
+            border: 2px solid #10B981;
+        }
+
+        /* إظهار الشريط فقط عندما تأخذ الخريطة كلاس is-fullscreen */
+        .map-container.is-fullscreen .fullscreen-radius-container {
+            display: block;
+        }
+
+        .fullscreen-radius-container .radius-label-row {
+            display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
+        }
+        .fullscreen-radius-container .radius-label-row span:first-child { font-size: 13px; font-weight: 900; color: #1E293B; }
+        .fullscreen-radius-container .radius-value-badge-display {
+            color: #10B981; font-weight: 900; font-size: 13px; background: #D1FAE5;
+            padding: 2px 10px; border-radius: 20px;
+        }
+        .fullscreen-radius-container .radius-limits-row {
+            display: flex; justify-content: space-between; font-size: 10px; color: #64748B;
+            margin-top: 4px; font-weight: 800;
+        }
+
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
             .hero-brand { font-size: 20px; }
@@ -554,6 +589,20 @@
                     <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
                         🎯 موقعي الحالي
                     </button>
+
+                    <!-- ✅ الكود الجديد: شريط النطاق الخاص بملء الشاشة -->
+                    <div id="fullscreenRadiusContainer" class="fullscreen-radius-container">
+                        <div class="radius-label-row">
+                            <span>🎯 نطاق البحث:</span>
+                            <span id="fs_radius_val_display" class="radius-value-badge-display">3 كيلومتر</span>
+                        </div>
+                        <input type="range" id="fs_search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplayFS()" onchange="onRadiusChangeEnd()">
+                        <div class="radius-limits-row">
+                            <span>500 متر</span>
+                            <span>5 كيلو</span>
+                        </div>
+                    </div>
+                    <!-- نهاية الكود الجديد -->
 
                     <div id="map"></div>
                 </div>
@@ -1679,14 +1728,37 @@
         function updateRadiusDisplay() {
             const val = document.getElementById('search_radius').value;
             const display = document.getElementById('radius_val_display');
-            if (val < 1000) { display.innerText = val + " متر"; }
+            
+            let text = "";
+            if (val < 1000) { text = val + " متر"; }
             else {
                 let kmVal = (val / 1000).toFixed(1);
                 if (kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
-                display.innerText = kmVal + " كم";
+                text = kmVal + " كم";
             }
-            updateStudentSummary(); saveStudentData();
+            
+            display.innerText = text;
+
+            // -- مزامنة القيم مع شريط ملء الشاشة --
+            const fsSlider = document.getElementById('fs_search_radius');
+            const fsDisplay = document.getElementById('fs_radius_val_display');
+            if (fsSlider && fsSlider.value !== val) { fsSlider.value = val; }
+            if (fsDisplay) { fsDisplay.innerText = text; }
+            // -------------------------------------
+
+            updateStudentSummary(); 
+            saveStudentData();
             if (searchCircle) { searchCircle.setRadius(val); }
+        }
+
+        // دالة جديدة تعمل عند تحريك الشريط الداخلي (أثناء وضع ملء الشاشة)
+        function updateRadiusDisplayFS() {
+            const fsVal = document.getElementById('fs_search_radius').value;
+            const mainSlider = document.getElementById('search_radius');
+            if (mainSlider) {
+                mainSlider.value = fsVal;
+                updateRadiusDisplay(); // نقوم بتمرير القيمة للدالة الأصلية لتحديث كل شيء
+            }
         }
 
         function onRadiusChangeEnd() {
@@ -1826,7 +1898,7 @@
             loadStudentData();
 
             document.querySelectorAll('input, select').forEach(el => {
-                if (el.id !== 'search_radius') {
+                if (el.id !== 'search_radius' && el.id !== 'fs_search_radius') {
                     el.addEventListener('input', saveStudentData);
                     el.addEventListener('change', saveStudentData);
                 }
