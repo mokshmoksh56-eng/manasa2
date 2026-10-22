@@ -209,7 +209,7 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* ✅ ستايل شارة آخر ظهور في الهيدر */
+        /* ✅ ستايل شارة آخر ظهور */
         .badge-last-seen {
             background: #F8FAFC;
             color: #475569;
@@ -2069,7 +2069,6 @@
                 let verifRaw = t.verification || '30 يوم تجريبي';
                 if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
 
-                // ✅ جلب آخر ظهور
                 const lastSeenTs = t.lastSeen || t.updatedAt || (t.createdAt ? new Date(t.createdAt).getTime() : null);
 
                 unifiedMap.set(targetKey, {
@@ -2113,7 +2112,6 @@
                 if (entry.phone === 'غير مسجل' && phone !== 'غير مسجل') entry.phone = phone;
                 if (!entry.phoneType && state.phoneType) entry.phoneType = state.phoneType;
                 
-                // تحديث آخر ظهور إذا كان الدرس معدل مؤخراً
                 if (lsTs && (!entry.lastSeen || lsTs > entry.lastSeen)) {
                     entry.lastSeen = lsTs;
                 }
@@ -2295,7 +2293,6 @@
                     iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
 
-                // ✅ تجهيز شارة آخر ظهور
                 const lastSeenObj = formatLastSeen(r.lastSeen);
                 const lastSeenBadgeHTML = `
                     <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}">
@@ -2391,24 +2388,35 @@
                     }
                 }
 
-                // ✅ تم إضافة lastSeenBadgeHTML هنا بجوار الأيقونات الأخرى
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
-                        <div class="card-header flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                ${badgeHTML}
-                                <h3 class="text-lg font-black text-slate-800">${r.teacherName}</h3>
-                                <span class="text-xs font-bold text-slate-500">(${r.groupName})</span>
+                        <!-- الهيدر الموحد: سطر واحد، مع رقم التليفون تحت الاسم -->
+                        <div class="card-header flex items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
+                            
+                            <!-- الجزء الأيمن: اللقب، الاسم، ورقم التليفون، والمجموعة -->
+                            <div class="flex items-center gap-2 min-w-0 flex-1">
+                                <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
+                                
+                                <div class="flex flex-col min-w-0">
+                                    <div class="flex items-center gap-1.5 min-w-0">
+                                        <h3 class="text-base sm:text-lg font-black text-slate-800 shrink-0 whitespace-nowrap leading-tight">${r.teacherName}</h3>
+                                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 truncate leading-tight" title="${r.groupName}">(${r.groupName})</span>
+                                    </div>
+                                    <div class="text-xs font-black text-blue-700 mt-0.5 tracking-wider" dir="ltr" style="text-align: right;">${r.phone}</div>
+                                </div>
                             </div>
-                            <div class="flex items-center gap-1.5 flex-wrap">
+                            
+                            <!-- الجزء الأيسر: الشارات (لا تنزل لسطر جديد) -->
+                            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
                                 ${lastSeenBadgeHTML}
                                 ${iconOnlyPhoneBadge}
                                 ${statusBadgeHTML}
-                                <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
-                                <span class="expand-arrow" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
+                                <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
+                                <span class="expand-arrow shrink-0" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
                             </div>
                         </div>
 
+                        <!-- تفاصيل الكارت -->
                         <div class="card-details mt-3" style="display:${isExpanded ? 'block' : 'none'};">
                             <div class="space-y-2">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
