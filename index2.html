@@ -194,7 +194,7 @@
             flex: 1;
         }
 
-        /* ===== كارت الترحيب ===== */
+        /* ===== كارت الترحيب - أزرق زي الرئيسية ===== */
         .welcome-banner {
             position: relative;
             display: flex;
@@ -202,13 +202,13 @@
             gap: 8px;
             padding: 9px 12px;
             margin: 0 auto 10px auto;
-            max-width: 320px;
+            max-width: 340px;
             width: 100%;
-            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 50%, #BBF7D0 100%);
-            border: 2px solid #86EFAC;
-            border-bottom: 4px solid #16A34A;
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
+            border: 2px solid #60A5FA;
+            border-bottom: 4px solid #2563EB;
             border-radius: 14px;
-            box-shadow: 0 6px 18px -8px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 6px 18px -8px rgba(37, 99, 235, 0.3);
             overflow: hidden;
             animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
@@ -225,41 +225,41 @@
             left: -30px;
             width: 100px;
             height: 100px;
-            background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);
+            background: radial-gradient(circle, rgba(37,99,235,0.18), transparent 70%);
             border-radius: 50%;
             pointer-events: none;
         }
 
         .welcome-banner.is-miss {
-            background: linear-gradient(135deg, #FDF2F8 0%, #FCE7F3 50%, #FBCFE8 100%);
-            border-color: #F9A8D4;
-            border-bottom-color: #DB2777;
-            box-shadow: 0 6px 18px -8px rgba(236, 72, 153, 0.3);
+            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 50%, #BFDBFE 100%);
+            border-color: #60A5FA;
+            border-bottom-color: #2563EB;
+            box-shadow: 0 6px 18px -8px rgba(37, 99, 235, 0.3);
         }
 
         .welcome-banner.is-miss::before {
-            background: radial-gradient(circle, rgba(236,72,153,0.15), transparent 70%);
+            background: radial-gradient(circle, rgba(37,99,235,0.18), transparent 70%);
         }
 
         .welcome-avatar {
             flex-shrink: 0;
-            width: 38px;
-            height: 38px;
+            width: 42px;
+            height: 42px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 18px;
+            font-size: 20px;
             background: #FFFFFF;
-            border: 2px solid #10B981;
-            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.22);
+            border: 2px solid #2563EB;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
             z-index: 2;
             animation: avatarPop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         .welcome-banner.is-miss .welcome-avatar {
-            border-color: #EC4899;
-            box-shadow: 0 3px 10px rgba(236, 72, 153, 0.22);
+            border-color: #2563EB;
+            box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
         }
 
         @keyframes avatarPop {
@@ -268,61 +268,66 @@
             100% { transform: scale(1) rotate(0deg); }
         }
 
+        /* ✅ الكلام في نص الكارت */
         .welcome-text {
             flex: 1;
             min-width: 0;
             display: flex;
             flex-direction: column;
-            align-items: flex-start;
-            text-align: right;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             z-index: 2;
         }
 
         .welcome-greeting {
-            font-size: 9.5px;
+            font-size: 10px;
             font-weight: 800;
-            color: #059669;
-            line-height: 1.2;
-            margin-bottom: 1px;
+            color: #1E40AF;
+            line-height: 1.3;
+            margin-bottom: 2px;
+            text-align: center;
         }
 
         .welcome-banner.is-miss .welcome-greeting {
-            color: #DB2777;
+            color: #1E40AF;
         }
 
         .welcome-name {
-            font-size: 13px;
+            font-size: 14px;
             font-weight: 900;
-            color: #064E3B;
-            line-height: 1.2;
+            color: #0F2D5C;
+            line-height: 1.3;
+            text-align: center;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
-            margin-bottom: 2px;
+            margin-bottom: 3px;
         }
 
         .welcome-banner.is-miss .welcome-name {
-            color: #831843;
+            color: #0F2D5C;
         }
 
         .welcome-phone {
             display: inline-flex;
             align-items: center;
+            justify-content: center;
             gap: 3px;
             font-size: 10px;
             font-weight: 900;
-            color: #047857;
-            background: rgba(255, 255, 255, 0.7);
-            padding: 1px 7px;
+            color: #1E40AF;
+            background: rgba(255, 255, 255, 0.85);
+            padding: 2px 9px;
             border-radius: 99px;
-            border: 1px solid #A7F3D0;
+            border: 1px solid #93C5FD;
             direction: ltr;
         }
 
         .welcome-banner.is-miss .welcome-phone {
-            color: #BE185D;
-            border-color: #FBCFE8;
+            color: #1E40AF;
+            border-color: #93C5FD;
         }
 
         .welcome-sparkle {
@@ -409,114 +414,66 @@
             border: 1px dashed #FCA5A5;
         }
 
-        .quick-actions-bar {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 18px;
-            padding: 0;
-        }
-
-        .quick-action-btn {
-            position: relative;
+        /* ===== زرار الرئيسية والخروج تحت الجداول ===== */
+        .bottom-actions-bar {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            gap: 10px;
-            padding: 12px 14px;
-            border-radius: 16px;
-            font-family: 'Cairo', sans-serif;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
-            transition: all 0.25s ease;
-            box-shadow: 0 6px 18px -6px rgba(0,0,0,0.15);
-            overflow: hidden;
-        }
-        .quick-action-btn::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 100%);
-            pointer-events: none;
-        }
-        .quick-action-btn:active {
-            transform: scale(0.96);
+            gap: 12px;
+            margin: 18px 0 6px;
+            padding: 0 4px;
+            width: 100%;
         }
 
-        .quick-action-home {
-            background: linear-gradient(135deg, #2563EB, #0F2D5C);
-            color: #fff;
-            border-bottom: 3px solid #0A1E3F;
-        }
-        .quick-action-home .quick-action-icon {
-            background: rgba(255,255,255,0.18);
-            border: 1.5px solid rgba(255,255,255,0.3);
-        }
-
-        .quick-action-logout {
-            background: linear-gradient(135deg, #F87171, #DC2626);
-            color: #fff;
-            border-bottom: 3px solid #991B1B;
-        }
-        .quick-action-logout .quick-action-icon {
-            background: rgba(255,255,255,0.18);
-            border: 1.5px solid rgba(255,255,255,0.3);
-        }
-
-        .quick-action-icon {
-            flex-shrink: 0;
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
+        .bottom-action-btn {
+            flex: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            z-index: 2;
-        }
-        .quick-action-icon svg {
-            width: 18px;
-            height: 18px;
-            stroke: #fff;
-        }
-
-        .quick-action-text {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            text-align: right;
-            flex: 1;
-            z-index: 2;
-            min-width: 0;
-        }
-        .quick-action-title {
-            font-size: 13.5px;
+            gap: 7px;
+            padding: 11px 14px;
+            border-radius: 14px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px;
             font-weight: 900;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.22s ease;
             line-height: 1.2;
-            color: #fff;
             white-space: nowrap;
-        }
-        .quick-action-sub {
-            font-size: 10px;
-            font-weight: 700;
-            color: rgba(255,255,255,0.75);
-            line-height: 1.2;
-            margin-top: 2px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            max-width: 100%;
         }
 
-        .quick-action-arrow {
+        .bottom-action-btn svg {
+            width: 17px;
+            height: 17px;
             flex-shrink: 0;
-            font-size: 14px;
-            font-weight: 900;
-            color: rgba(255,255,255,0.6);
-            z-index: 2;
-            transition: transform 0.2s;
         }
-        .quick-action-btn:hover .quick-action-arrow {
-            transform: translateX(-3px);
+
+        .bottom-action-btn:active {
+            transform: scale(0.95);
+        }
+
+        /* زر الرئيسية - أزرق */
+        .bottom-action-home {
+            background: linear-gradient(135deg, #2563EB, #0F2D5C);
+            color: #fff;
+            border-bottom: 3px solid #0A1E3F;
+            box-shadow: 0 6px 16px -6px rgba(37, 99, 235, 0.55);
+        }
+        .bottom-action-home:hover {
+            box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.75);
+        }
+
+        /* زر الخروج - أحمر */
+        .bottom-action-logout {
+            background: linear-gradient(135deg, #F87171, #DC2626);
+            color: #fff;
+            border-bottom: 3px solid #991B1B;
+            box-shadow: 0 6px 16px -6px rgba(220, 38, 38, 0.55);
+        }
+        .bottom-action-logout:hover {
+            box-shadow: 0 8px 20px -6px rgba(220, 38, 38, 0.75);
         }
 
         /* ===== الكارت الأساسي - خيال قوي من برة ===== */
@@ -1717,19 +1674,8 @@
             .hero-headline { font-size: 14px; }
             .hero-subtitle { font-size: 11px; }
 
-            .quick-actions-bar {
-                gap: 8px;
-                margin-bottom: 14px;
-            }
-            .quick-action-btn { padding: 10px; gap: 8px; border-radius: 14px; }
-            .quick-action-icon { width: 30px; height: 30px; border-radius: 10px; }
-            .quick-action-icon svg { width: 15px; height: 15px; }
-            .quick-action-title { font-size: 12px; }
-            .quick-action-sub { font-size: 9px; }
-            .quick-action-arrow { display: none; }
-
-            .welcome-banner { padding: 8px 10px; gap: 7px; max-width: 290px; }
-            .welcome-avatar { width: 34px; height: 34px; font-size: 16px; border-width: 2px; }
+            .welcome-banner { padding: 8px 10px; gap: 7px; max-width: 300px; }
+            .welcome-avatar { width: 36px; height: 36px; font-size: 17px; border-width: 2px; }
             .welcome-greeting { font-size: 9px; }
             .welcome-name { font-size: 12.5px; }
             .welcome-phone { font-size: 9.5px; }
@@ -1766,6 +1712,22 @@
             .blocked-title { font-size: 16px; }
             .blocked-desc { font-size: 12px; }
             .blocked-email-btn { font-size: 13px; padding: 10px 20px; }
+
+            /* أزرار الأسفل على الموبايل */
+            .bottom-actions-bar {
+                gap: 8px;
+                margin: 14px 0 4px;
+            }
+            .bottom-action-btn {
+                padding: 10px 8px;
+                font-size: 12px;
+                gap: 5px;
+                border-radius: 12px;
+            }
+            .bottom-action-btn svg {
+                width: 15px;
+                height: 15px;
+            }
         }
 
         @media (max-width: 360px) {
@@ -1776,74 +1738,8 @@
             .card-text { padding-top: 36px !important; }
             .card-text h2 { font-size: 13px !important; }
             .time-range-badge { font-size: 10px !important; padding: 3px 7px !important; }
-            .quick-action-title { font-size: 11px; }
         }
     </style>
-
-    <!-- ============================================
-         🚀 تحسينات الموبايل الإضافية المتقدمة (تمت إضافتها)
-         ============================================ -->
-    <style>
-        /* 1. منع زووم الشاشة التلقائي في أجهزة الآيفون (iOS) عند الضغط على حقول الإدخال */
-        .custom-input { 
-            font-size: 16px !important; 
-        }
-        
-        /* 2. دعم المساحات الآمنة (Safe Area) للآيفون مثل الشريط السفلي للـ Home */
-        body { 
-            padding-bottom: env(safe-area-inset-bottom) !important; 
-        }
-        .cards-section { 
-            padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important; 
-        }
-        
-        /* 3. منع خروج النوافذ المنبثقة (Modals) عن الشاشة في الهواتف الصغيرة جداً (مثل iPhone SE) */
-        .custom-modal, .group-modal-box { 
-            max-width: 92vw !important; 
-            margin: 0 auto !important; 
-            width: 100% !important;
-        }
-        
-        /* 4. تكبير مساحة اللمس (Touch Targets) للأزرار لتسهيل الضغط عليها بالإصبع */
-        @media (max-width: 767px) {
-            .btn-action { 
-                width: 36px !important; 
-                height: 36px !important; 
-            }
-            .btn-action svg { 
-                width: 18px !important; 
-                height: 18px !important; 
-            }
-            
-            /* توضيح الخطوط الدقيقة لتحسين القراءة على الشاشات الصغيرة */
-            .info-badge { 
-                font-size: 11px !important; 
-                padding: 4px 8px !important; 
-            }
-            .time-range-badge { 
-                font-size: 12px !important; 
-                padding: 4px 8px !important;
-            }
-            .status-badge {
-                font-size: 11px !important;
-            }
-        }
-        
-        /* 5. ترتيب الأزرار العلوية بشكل أفضل للشاشات الضيقة جداً */
-        @media (max-width: 360px) {
-            .quick-actions-bar { 
-                grid-template-columns: 1fr !important; 
-            }
-            .quick-action-btn { 
-                justify-content: center !important; 
-            }
-            .quick-action-text {
-                align-items: center !important;
-                text-align: center !important;
-            }
-        }
-    </style>
-
 </head>
 <body>
 
@@ -1911,34 +1807,6 @@
 
             <div id="blockedBannerContainer"></div>
 
-            <div class="quick-actions-bar">
-                <a href="./index.html" class="quick-action-btn quick-action-home">
-                    <div class="quick-action-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
-                        </svg>
-                    </div>
-                    <div class="quick-action-text">
-                        <span class="quick-action-title">الرئيسية</span>
-                        <span class="quick-action-sub">الرجوع للمنصة</span>
-                    </div>
-                    <div class="quick-action-arrow">←</div>
-                </a>
-
-                <button type="button" id="logoutBtn" class="quick-action-btn quick-action-logout">
-                    <div class="quick-action-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
-                        </svg>
-                    </div>
-                    <div class="quick-action-text">
-                        <span class="quick-action-title">تسجيل الخروج</span>
-                        <span class="quick-action-sub">إنهاء الجلسة</span>
-                    </div>
-                    <div class="quick-action-arrow">←</div>
-                </button>
-            </div>
-
             <div id="welcomeBanner" class="welcome-banner" style="display: none;">
                 <div class="welcome-sparkle">✨</div>
                 <div class="welcome-avatar" id="welcomeAvatar">👨‍🏫</div>
@@ -1953,6 +1821,23 @@
             <div id="addNewGroupContainer" class="flex justify-center mb-3.5 w-full"></div>
 
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
+
+            <!-- ✅ زرار الرئيسية والخروج تحت الجداول -->
+            <div class="bottom-actions-bar">
+                <a href="./index.html" class="bottom-action-btn bottom-action-home">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+                    </svg>
+                    <span>الرئيسية</span>
+                </a>
+
+                <button type="button" id="logoutBtn" class="bottom-action-btn bottom-action-logout">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+                    </svg>
+                    <span>تسجيل الخروج</span>
+                </button>
+            </div>
 
             <div class="delete-account-row">
                 <button type="button" id="deleteAccountBtn" class="btn-delete-account">
@@ -2132,7 +2017,7 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .btn-delete-account, .btn-delete-account-confirm, .btn-delete-account-cancel');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .bottom-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .btn-delete-account, .btn-delete-account-confirm, .btn-delete-account-cancel');
             if (clickableElement) { playHighPitchSound(); }
         });
 
