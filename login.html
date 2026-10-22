@@ -678,7 +678,8 @@
                     waClicks: 0,
                     phoneType: '',
                     createdAt: new Date().toISOString().split('T')[0],
-                    updatedAt: Date.now()
+                    updatedAt: Date.now(),
+                    lastSeen: Date.now() // ✅ تسجيل آخر ظهور عند إنشاء الحساب
                 }, { merge: true });
 
                 const accountData = { title, name, age, phone, createdAt: new Date().toISOString().split('T')[0] };
@@ -759,6 +760,11 @@
                 } else {
                     savedData = { title: 'مستر', name: 'معلم', phone: phone };
                 }
+
+                // ✅ تحديث وقت آخر ظهور للمعلم في قاعدة البيانات عند تسجيل الدخول
+                await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
+                    lastSeen: Date.now()
+                }, { merge: true });
 
                 btn.innerText = '⏳ جاري التحقق من الجهاز...';
 
