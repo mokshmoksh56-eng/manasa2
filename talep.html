@@ -2567,8 +2567,9 @@
                         popupAnchor: [0, -16]
                     });
 
+                    // 🛠️ تم إزالة الكلمة الثابتة "مستر/" أو "مس/" لعدم التكرار
                     const popupContent = `
-                        <div class="teacher-popup-title">${emoji} ${isMs ? 'مس' : 'مستر'}/ ${t.teacherName}</div>
+                        <div class="teacher-popup-title">${emoji} ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
                         <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${t.subject} (${t.grade})</span></div>
                         <div class="teacher-popup-detail"><span>📅 الأيام:</span> <span style="color:#2563EB;">${t.days}</span></div>
