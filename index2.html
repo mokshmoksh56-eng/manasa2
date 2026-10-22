@@ -1779,6 +1779,71 @@
             .quick-action-title { font-size: 11px; }
         }
     </style>
+
+    <!-- ============================================
+         🚀 تحسينات الموبايل الإضافية المتقدمة (تمت إضافتها)
+         ============================================ -->
+    <style>
+        /* 1. منع زووم الشاشة التلقائي في أجهزة الآيفون (iOS) عند الضغط على حقول الإدخال */
+        .custom-input { 
+            font-size: 16px !important; 
+        }
+        
+        /* 2. دعم المساحات الآمنة (Safe Area) للآيفون مثل الشريط السفلي للـ Home */
+        body { 
+            padding-bottom: env(safe-area-inset-bottom) !important; 
+        }
+        .cards-section { 
+            padding-bottom: calc(40px + env(safe-area-inset-bottom)) !important; 
+        }
+        
+        /* 3. منع خروج النوافذ المنبثقة (Modals) عن الشاشة في الهواتف الصغيرة جداً (مثل iPhone SE) */
+        .custom-modal, .group-modal-box { 
+            max-width: 92vw !important; 
+            margin: 0 auto !important; 
+            width: 100% !important;
+        }
+        
+        /* 4. تكبير مساحة اللمس (Touch Targets) للأزرار لتسهيل الضغط عليها بالإصبع */
+        @media (max-width: 767px) {
+            .btn-action { 
+                width: 36px !important; 
+                height: 36px !important; 
+            }
+            .btn-action svg { 
+                width: 18px !important; 
+                height: 18px !important; 
+            }
+            
+            /* توضيح الخطوط الدقيقة لتحسين القراءة على الشاشات الصغيرة */
+            .info-badge { 
+                font-size: 11px !important; 
+                padding: 4px 8px !important; 
+            }
+            .time-range-badge { 
+                font-size: 12px !important; 
+                padding: 4px 8px !important;
+            }
+            .status-badge {
+                font-size: 11px !important;
+            }
+        }
+        
+        /* 5. ترتيب الأزرار العلوية بشكل أفضل للشاشات الضيقة جداً */
+        @media (max-width: 360px) {
+            .quick-actions-bar { 
+                grid-template-columns: 1fr !important; 
+            }
+            .quick-action-btn { 
+                justify-content: center !important; 
+            }
+            .quick-action-text {
+                align-items: center !important;
+                text-align: center !important;
+            }
+        }
+    </style>
+
 </head>
 <body>
 
