@@ -209,6 +209,27 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
+        /* ✅ ستايل شارة آخر ظهور في الهيدر */
+        .badge-last-seen {
+            background: #F8FAFC;
+            color: #475569;
+            border: 1.5px solid #CBD5E1;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 11px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+        }
+        .badge-last-seen.online-now {
+            background: #DCFCE7;
+            color: #15803D;
+            border-color: #86EFAC;
+            animation: softPulse 1.8s ease-in-out infinite;
+        }
+
         .record-card {
             background: #FFFFFF;
             border-radius: 22px;
@@ -316,7 +337,6 @@
             white-space: nowrap;
         }
 
-        /* ✅ تصميم smart-card مطابق لـ group.html */
         .smart-card {
             background: #fff;
             border: 1.5px solid #E2E8F0;
@@ -387,7 +407,6 @@
             border-bottom-color: #F59E0B;
         }
 
-        /* ✅ تنسيق المرحلة الجديد كقائمة منسدلة (Select) */
         .stage-select-container {
             display: flex;
             gap: 10px;
@@ -395,7 +414,6 @@
             width: 100%;
         }
 
-        /* ✅ تنسيق أزرار التحكم للمرحلة */
         .stage-controls {
             display: flex;
             align-items: center;
@@ -406,7 +424,6 @@
             border: 1.5px solid #E2E8F0;
         }
 
-        /* ✅ تنسيق الصف والمادة ليكونان قوائم منسدلة (Select) للتحكم في الترتيب مثل الصورة */
         .grade-select-container, .subject-select-container {
             display: flex;
             gap: 10px;
@@ -439,7 +456,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* ✅ أزرار الترتيب ⬆️⬇️ */
         .order-btn {
             width: 24px;
             height: 24px;
@@ -474,29 +490,6 @@
             color: #94A3B8;
             border-color: #CBD5E1;
             transform: none;
-        }
-        .order-btn:disabled:hover {
-            background: #F1F5F9;
-            color: #94A3B8;
-            border-color: #CBD5E1;
-            transform: none;
-        }
-
-        /* ✅ عرض رقم الترتيب */
-        .order-index {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 24px;
-            height: 24px;
-            padding: 0 6px;
-            border-radius: 8px;
-            background: #0F2D5C;
-            color: #fff;
-            font-size: 11px;
-            font-weight: 900;
-            font-family: 'Cairo', sans-serif;
-            flex-shrink: 0;
         }
 
         .custom-toast {
@@ -563,7 +556,6 @@
             box-shadow: 0 3px 8px rgba(22, 163, 74, 0.4);
         }
 
-        /* ✅ جديد: بادج برتقالي للباقات القريبة من الانتهاء */
         .status-pure-amber {
             background: #F59E0B !important;
             color: #FFFFFF !important;
@@ -607,7 +599,6 @@
             text-align: center;
         }
 
-        /* ✅ جديد: ستايل خاص برقم التليفون الكبير داخل الكارت */
         .phone-number-big {
             font-size: 22px !important;
             font-weight: 900 !important;
@@ -620,7 +611,6 @@
             text-shadow: 0 1px 0 rgba(255,255,255,0.6);
         }
 
-        /* ✅ ستايل شاشة تسجيل دخول الإدارة */
         #adminLoginModal {
             background: #0A1E3F !important;
             z-index: 9999999;
@@ -634,7 +624,6 @@
 </head>
 <body>
 
-    <!-- ✅ شاشة تسجيل دخول الإدارة (تظهر تلقائياً إذا لم يكن مسجلاً) -->
     <div id="adminLoginModal" class="modal-overlay active">
         <div class="modal-box" style="max-width: 360px; text-align: center;">
             <div class="text-5xl mb-3 drop-shadow-md">🛡️</div>
@@ -675,7 +664,6 @@
                 <button onclick="openCurriculumModal()" class="btn-nav highlight-btn">
                     📚 المناهج والصفوف
                 </button>
-                <!-- ✅ زر تسجيل الخروج للإدارة -->
                 <button onclick="adminLogout()" class="btn-nav" style="background: rgba(220, 38, 38, 0.15); border-color: rgba(220, 38, 38, 0.3); color: #fff;">
                     🚪 خروج
                 </button>
@@ -685,8 +673,6 @@
 
     <section class="stats-container">
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-            
-            <!-- كارت الطلاب الجديد -->
             <div class="stat-card" style="border-bottom-color: #8B5CF6;" title="عدد الطلاب الذين دخلوا صفحة البحث">
                 <div class="stat-icon bg-purple-100 text-purple-700">👨‍🎓</div>
                 <div>
@@ -795,7 +781,6 @@
                 <button onclick="closeModal('curriculumModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
             </div>
 
-            <!-- ✅ المرحلة كقائمة منسدلة مثل group.html مع أزرار التحكم بجانبها -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4">
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="flex-1">
@@ -809,10 +794,8 @@
                     <div class="flex-1">
                         <label class="block text-xs font-black text-slate-600 mb-1">➕ إضافة مرحلة جديدة (مع أيقونة اختياري)</label>
                         <div class="flex gap-2">
-                            <!-- قائمة اختيار الأيقونة -->
                             <select id="newStageIconSelect" class="form-input py-1.5 text-xs w-20 cursor-pointer text-center" title="اختر أيقونة (اختياري)">
                                 <option value="">بدون</option>
-                                
                                 <optgroup label="التعليم الأساسي والمدارس">
                                     <option value="🎒">🎒</option>
                                     <option value="🏫">🏫</option>
@@ -822,7 +805,6 @@
                                     <option value="📝">📝</option>
                                     <option value="🚌">🚌</option>
                                 </optgroup>
-
                                 <optgroup label="الثانوي والجامعات">
                                     <option value="🎓">🎓</option>
                                     <option value="🏛️">🏛️</option>
@@ -832,7 +814,6 @@
                                     <option value="🥇">🥇</option>
                                     <option value="🧩">🧩</option>
                                 </optgroup>
-
                                 <optgroup label="دور العبادة والثقافة">
                                     <option value="🕌">🕌</option>
                                     <option value="🕋">🕋</option>
@@ -840,7 +821,6 @@
                                     <option value="🌙">🌙</option>
                                     <option value="📿">📿</option>
                                 </optgroup>
-
                                 <optgroup label="مراكز وأماكن أخرى">
                                     <option value="🏢">🏢</option>
                                     <option value="🏠">🏠</option>
@@ -856,7 +836,6 @@
                 </div>
             </div>
 
-            <!-- ✅ الصف كقائمة منسدلة مثل group.html مع أزرار التحكم بجانبها -->
             <div class="bg-slate-50 p-3.5 rounded-2xl border border-slate-200 mb-4" id="gradesSection">
                 <div class="flex flex-col md:flex-row gap-3">
                     <div class="flex-1">
@@ -876,7 +855,6 @@
                 </div>
             </div>
 
-            <!-- ✅ المادة كقائمة منسدلة مثل group.html مع أزرار التحكم بجانبها -->
             <div id="gradeSubjectsPanel" class="grade-subjects-panel hidden">
                  <div class="flex flex-col md:flex-row gap-3">
                     <div class="flex-1">
@@ -932,7 +910,6 @@
         </div>
     </div>
 
-    <!-- ✅ نافذة تعديل الأسماء (Prompt Modal) -->
     <div id="customPromptModal" class="modal-overlay" onclick="closeModal('customPromptModal')" style="z-index: 999999;">
         <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 420px; border-bottom-color: #2563EB; text-align: center;">
             <div class="text-5xl mb-3">✏️</div>
@@ -946,14 +923,11 @@
         </div>
     </div>
 
-    <!-- 🌟 Firebase Module مع Auth للمشرف 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
           getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc, updateDoc, increment
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
-      
-      // ✅ استدعاء مكتبة Auth لحماية اللوحة
       import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
       const firebaseConfig = {
@@ -967,7 +941,7 @@
 
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      const auth = getAuth(app); // ✅ تفعيل Auth
+      const auth = getAuth(app); 
 
       window.db = db;
       window.auth = auth;
@@ -986,14 +960,10 @@
 
       let isAppInitialized = false;
 
-      // ✅ مراقبة حالة الدخول (إذا كان الإدمن مسجل دخول تفتح اللوحة، وإلا تظهر شاشة الدخول)
       onAuthStateChanged(auth, (user) => {
           const loginModal = document.getElementById('adminLoginModal');
           if (user) {
-              console.log("✅ إدمن مسجل الدخول:", user.email);
               if (loginModal) loginModal.classList.remove('active');
-              
-              // تحميل بيانات التطبيق فقط بعد التأكد من تسجيل الدخول
               if (!isAppInitialized) {
                   if (typeof populateGradeFilter === 'function') populateGradeFilter();
                   if (typeof loadCurriculumFromFirebase === 'function') loadCurriculumFromFirebase();
@@ -1001,18 +971,12 @@
                   isAppInitialized = true;
               }
           } else {
-              console.warn("🔒 يجب تسجيل الدخول كإدمن");
               if (loginModal) loginModal.classList.add('active');
           }
       });
-
-      console.log("✅ Firebase + Auth + Firestore جاهزين في لوحة الإدارة");
     </script>
 
     <script>
-        // ==========================================
-        // 🛡️ دوال تسجيل دخول الإدارة (Admin Login)
-        // ==========================================
         function adminLogin() {
             const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
@@ -1029,9 +993,7 @@
             btn.disabled = true;
             err.classList.add('hidden');
 
-            // استخدام دالة signIn التي تم تصديرها في module
             window.fsSignIn(window.auth, email, pass).then((userCredential) => {
-                // النجاح: ستختفي الشاشة تلقائياً عبر onAuthStateChanged
                 btn.innerText = 'دخول آمن 🔒';
                 btn.disabled = false;
             }).catch((error) => {
@@ -1052,9 +1014,6 @@
             });
         }
 
-        // ==========================================
-        // 0. المتغيرات الأساسية والتأثيرات
-        // ==========================================
         let touchStartY = 0;
         let pullDistance = 0;
         const ptrIndicator = document.getElementById('pullToRefreshIndicator');
@@ -1126,9 +1085,6 @@
             }
         });
 
-        // ==========================================
-        // ✏️ Prompt Modal — نافذة إدخال نص مخصصة
-        // ==========================================
         let promptActionCallback = null;
         function showCustomPrompt(title, message, currentValue, callback) {
             document.getElementById('promptModalTitle').textContent = title;
@@ -1168,9 +1124,6 @@
             }
         });
 
-        // ==========================================
-        // 🎯 إدارة حالة طي/فتح الكروت
-        // ==========================================
         const expandedCards = new Set();
 
         function getCardKey(r) {
@@ -1218,9 +1171,6 @@
             showToast('📕 تم إغلاق جميع الكروت');
         }
 
-        // ==========================================
-        // 🌟 المنهج الافتراضي (مع الترتيب)
-        // ==========================================
         const defaultCurriculum = {
             main_order: ['primary', 'prep', 'secondary'], 
             primary: {
@@ -1279,7 +1229,6 @@
             }
         };
 
-        // ✅ تم تعديل هذه الدالة لمنع إعادة إضافة العناصر الافتراضية بعد حذفها
         function normalizeCurriculum(currObj) {
             if (!currObj || typeof currObj !== 'object' || Array.isArray(currObj) || Object.keys(currObj).length === 0) {
                 return JSON.parse(JSON.stringify(defaultCurriculum));
@@ -1364,7 +1313,7 @@
         let teachersCache = [];
         let lessonsUnsubscribe = null;
         let teachersUnsubscribe = null;
-        let studentsUnsubscribe = null; // ✅ الاستماع اللحظي للطلاب
+        let studentsUnsubscribe = null; 
         let isFirstLessonsSnapshot = true;
         let isFirstTeachersSnapshot = true;
 
@@ -1426,7 +1375,7 @@
                     const bc = new BroadcastChannel('ehgezly_curriculum_sync');
                     bc.postMessage({ type: 'CURRICULUM_UPDATED', curriculum: curriculumCache });
                 }
-            } catch(e) { console.warn("تعذر البث اللحظي:", e); }
+            } catch(e) {}
 
             if (window.db && window.fsDoc && window.fsSetDoc) {
                 try {
@@ -1437,7 +1386,6 @@
                     );
                     setCloudStatus('synced', '☁️ متزامن مع السحابة');
                 } catch (err) {
-                    console.error("❌ فشل حفظ المنهج في Firebase:", err);
                     setCloudStatus('offline', '⚠️ فشل الرفع للسحابة');
                     showToast("⚠️ فشل الاتصال بقاعدة البيانات", true);
                 }
@@ -1508,7 +1456,6 @@
                     scheduleRender();
                 },
                 (error) => {
-                    console.error("❌ خطأ في الاستماع للدروس:", error);
                     showToast("⚠️ تعذر المزامنة اللحظية للدروس", true);
                 }
             );
@@ -1526,12 +1473,10 @@
                     scheduleRender();
                 },
                 (error) => {
-                    console.error("❌ خطأ في الاستماع للمعلمين:", error);
                     showToast("⚠️ تعذر المزامنة اللحظية للمعلمين", true);
                 }
             );
 
-            // ✅ الاستماع اللحظي لعدد الطلاب
             if (studentsUnsubscribe) studentsUnsubscribe();
             studentsUnsubscribe = window.fsOnSnapshot(
                 window.fsCollection(window.db, "talep_data"),
@@ -1539,9 +1484,7 @@
                     const countEl = document.getElementById('statStudentsCount');
                     if (countEl) countEl.textContent = snapshot.size;
                 },
-                (error) => {
-                    console.error("❌ خطأ في الاستماع للطلاب:", error);
-                }
+                (error) => {}
             );
 
             setCloudStatus('synced', '☁️ مزامنة لحظية نشطة');
@@ -1875,9 +1818,6 @@
             renderCurriculumManager();
         }
 
-        // ==========================================
-        // ✏️ دوال تعديل الأسماء (Stage / Grade / Subject)
-        // ==========================================
         function editStageName(stageKey) {
             const curr = getCurriculum();
             const st = curr[stageKey];
@@ -1982,9 +1922,6 @@
             );
         }
 
-        // ==========================================
-        // 🔄 دوال Migration — تحديث الدروس المرتبطة
-        // ==========================================
         async function migrateLessonsForGrade(stageKey, oldGradeName, newGradeName) {
             if (!window.db || !window.fsGetDocs || !window.fsCollection || !window.fsSetDoc) return 0;
             try {
@@ -2004,7 +1941,6 @@
                 if (updates.length > 0) await Promise.all(updates);
                 return updates.length;
             } catch (e) {
-                console.warn("⚠️ فشل تحديث الدروس بالصف الجديد:", e);
                 return 0;
             }
         }
@@ -2048,7 +1984,6 @@
                 if (updates.length > 0) await Promise.all(updates);
                 return updates.length;
             } catch (e) {
-                console.warn("⚠️ فشل تحديث الدروس بالمادة الجديدة:", e);
                 return 0;
             }
         }
@@ -2094,6 +2029,32 @@
 
         function fetchLessonsFromFirebase() { return lessonsCache; }
         function fetchTeachersFromFirebase() { return teachersCache; }
+        
+        // ✅ دالة حساب وتنسيق آخر ظهور للمعلم
+        function formatLastSeen(timestamp) {
+            if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: 'لم يسجل ظهور بعد' };
+            
+            const timeMs = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
+            if (isNaN(timeMs)) return { text: 'غير محدد', isOnline: false, fullDate: '' };
+
+            const diffMs = Date.now() - timeMs;
+            const diffMin = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMin / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            const fullDate = new Date(timeMs).toLocaleString('ar-EG', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+
+            if (diffMin < 5) return { text: 'مباشر 🟢', isOnline: true, fullDate };
+            if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
+            if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
+            if (diffDays === 1) return { text: 'أمس', isOnline: false, fullDate };
+            if (diffDays < 30) return { text: `منذ ${diffDays} يوم`, isOnline: false, fullDate };
+
+            return { text: new Date(timeMs).toLocaleDateString('ar-EG'), isOnline: false, fullDate };
+        }
 
         async function collectAllAppData() {
             const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة', '5 سنوات'];
@@ -2108,9 +2069,13 @@
                 let verifRaw = t.verification || '30 يوم تجريبي';
                 if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
 
+                // ✅ جلب آخر ظهور
+                const lastSeenTs = t.lastSeen || t.updatedAt || (t.createdAt ? new Date(t.createdAt).getTime() : null);
+
                 unifiedMap.set(targetKey, {
                     type: 'account_only', docId: t.id, lessonIds: [], title: t.title || 'مستر',
                     teacherName: cleanName, phone: phone, regDate: t.createdAt || new Date().toISOString().split('T')[0],
+                    lastSeen: lastSeenTs, 
                     groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
                     locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
                     isPublished: false, waClicks: t.waClicks || 0, groups: [], phoneType: t.phoneType || '',
@@ -2128,21 +2093,31 @@
                         targetKey = k; break;
                     }
                 }
+                
+                const lsTs = state.lastSeen || state.updatedAt || (state.createdAt ? new Date(state.createdAt).getTime() : null);
+
                 if (!targetKey) {
                     targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${teacherName}`;
                     unifiedMap.set(targetKey, { 
                         type: 'lesson', docId: (phone !== 'غير مسجل') ? phone : teacherName, lessonIds: [],
                         title: state.t_gender || (teacherName.startsWith('مس') ? 'مس' : 'مستر'),
                         teacherName: teacherName || 'بدون اسم', phone: phone,
+                        lastSeen: lsTs,
                         regDate: state.createdAt || new Date().toISOString().split('T')[0],
                         waClicks: 0, groups: [], verification: '30 يوم تجريبي', isBlocked: false, isFree: false
                     });
                 }
+                
                 const entry = unifiedMap.get(targetKey);
                 entry.type = 'lesson'; entry.lessonIds.push(lesson.id);
                 if (entry.phone === 'غير مسجل' && phone !== 'غير مسجل') entry.phone = phone;
                 if (!entry.phoneType && state.phoneType) entry.phoneType = state.phoneType;
                 
+                // تحديث آخر ظهور إذا كان الدرس معدل مؤخراً
+                if (lsTs && (!entry.lastSeen || lsTs > entry.lastSeen)) {
+                    entry.lastSeen = lsTs;
+                }
+
                 const groupObj = {
                     lessonId: lesson.id, groupName: state.g_name || `مجموعة رقم ${lesson.id}`,
                     grade: state.s_grade || 'غير محدد', stageKey: state.s_stage || 'primary',
@@ -2270,7 +2245,6 @@
             allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
         }
 
-        // ✅ دالة مساعدة لاستخراج عدد الأيام المتبقية من نص expiryInfo
         function getRemainingDays(expiryText) {
             if (!expiryText) return null;
             const match = String(expiryText).match(/متبقي\s+(\d+)\s+يوم/);
@@ -2320,6 +2294,14 @@
                     const iconChar = emojiMatch ? emojiMatch[0] : '📱';
                     iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
+
+                // ✅ تجهيز شارة آخر ظهور
+                const lastSeenObj = formatLastSeen(r.lastSeen);
+                const lastSeenBadgeHTML = `
+                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}">
+                        ${lastSeenObj.isOnline ? '🟢' : '🕒'} ${lastSeenObj.text}
+                    </span>
+                `;
 
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
@@ -2392,7 +2374,6 @@
                     `;
                 }
 
-                // ✅ تم التعديل: عرض المدة المتبقية من الخطة بدلاً من كلمة "نشط"
                 let statusBadgeHTML = '';
                 if (r.isBlocked) {
                     statusBadgeHTML = `<span class="status-pure-red">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
@@ -2410,6 +2391,7 @@
                     }
                 }
 
+                // ✅ تم إضافة lastSeenBadgeHTML هنا بجوار الأيقونات الأخرى
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
                         <div class="card-header flex flex-wrap items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
@@ -2419,6 +2401,7 @@
                                 <span class="text-xs font-bold text-slate-500">(${r.groupName})</span>
                             </div>
                             <div class="flex items-center gap-1.5 flex-wrap">
+                                ${lastSeenBadgeHTML}
                                 ${iconOnlyPhoneBadge}
                                 ${statusBadgeHTML}
                                 <span class="px-2.5 py-1 rounded-full text-xs font-black ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
