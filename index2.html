@@ -853,6 +853,32 @@
             100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
+        /* ✅ شريط المواعيد الصغير أعلى الكارت */
+        .time-range-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #FFFFFF;
+            border: 1px solid #CBD5E1;
+            border-radius: 6px;
+            padding: 2px 7px;
+            font-size: 9.5px;
+            font-weight: 900;
+            color: #0F2D5C;
+            line-height: 1.2;
+            margin-bottom: 4px;
+            direction: ltr;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            max-width: 100%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .time-range-badge .tr-icon { font-size: 10px; flex-shrink: 0; }
+        .time-range-badge .tr-sep { color: #94A3B8; font-size: 10px; margin: 0 1px; }
+        .time-range-badge .tr-time { color: #0F2D5C; font-weight: 900; }
+        .time-range-badge .tr-time.tr-end { color: #059669; }
+
         .info-badges-row {
             display: flex;
             flex-wrap: wrap;
@@ -1704,6 +1730,13 @@
                 padding: 4px 8px !important;
                 font-size: 10px !important;
                 border-radius: 6px !important;
+            }
+
+            /* ✅ شريط المواعيد يصغر شوية على الموبايل */
+            .time-range-badge {
+                font-size: 9px !important;
+                padding: 2px 6px !important;
+                gap: 3px !important;
             }
         }
     </style>
@@ -2911,6 +2944,33 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
+        // ✅ شريط صغير يعرض مواعيد الحصة بالساعات (أعلى الكارت)
+        function getTimeRangeBadge(savedState) {
+            if (!savedState) return '';
+            let state;
+            try { state = JSON.parse(savedState); } catch(e) { return ''; }
+
+            // لازم يكون فيه وقت بداية ووقت نهاية
+            if (!state.start_hour || !state.end_hour) return '';
+
+            const startMin = state.start_min || '00';
+            const endMin = state.end_min || '00';
+            const startAmpm = state.start_ampm || '';
+            const endAmpm = state.end_ampm || '';
+
+            const startText = `${state.start_hour}:${String(startMin).padStart(2,'0')} ${startAmpm}`.trim();
+            const endText = `${state.end_hour}:${String(endMin).padStart(2,'0')} ${endAmpm}`.trim();
+
+            return `
+                <div class="time-range-badge" title="مواعيد الحصة">
+                    <span class="tr-icon">⏰</span>
+                    <span class="tr-time">${startText}</span>
+                    <span class="tr-sep">←</span>
+                    <span class="tr-time tr-end">${endText}</span>
+                </div>
+            `;
+        }
+
         async function toggleVisibility(id, event) {
             if (event) event.stopPropagation();
 
@@ -3015,6 +3075,8 @@
 
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
+                // ✅ المواعيد بالساعات — تظهر أعلى الكارت (فقط عند اكتمال الإعداد)
+                const timeRangeHTML = hasReport ? getTimeRangeBadge(savedState) : '';
 
                 // ✅ نقطة الحالة الصغيرة
                 let statusDotHTML = '';
@@ -3102,6 +3164,7 @@
                         <img src="./${imgName}" alt="صورة الحصة">
                     </div>
                     <div class="card-text">
+                        ${timeRangeHTML}
                         ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
