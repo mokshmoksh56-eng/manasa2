@@ -562,7 +562,7 @@
         }
         .portal-card.card-color-0:hover {
             box-shadow: 
-                0 18px 36px -10px rgba(37, 99, 235, 0.45),
+                0 18px 36px -10px rgba(37, 99, 235,0.45),
                 0 6px 14px -4px rgba(37, 99, 235, 0.22);
         }
         .portal-card.card-color-0 h2 { color: #0F2D5C; }
@@ -878,6 +878,20 @@
         .time-range-badge .tr-sep { color: #94A3B8; font-size: 10px; margin: 0 1px; }
         .time-range-badge .tr-time { color: #0F2D5C; font-weight: 900; }
         .time-range-badge .tr-time.tr-end { color: #059669; }
+        .time-range-badge .tr-day {
+            color: #B45309;
+            font-weight: 900;
+            background: #FEF3C7;
+            padding: 0 4px;
+            border-radius: 3px;
+            font-size: 9px;
+            flex-shrink: 0;
+        }
+        .time-range-badge .tr-dot {
+            color: #94A3B8;
+            font-size: 9px;
+            flex-shrink: 0;
+        }
 
         .info-badges-row {
             display: flex;
@@ -1737,6 +1751,10 @@
                 font-size: 9px !important;
                 padding: 2px 6px !important;
                 gap: 3px !important;
+            }
+            .time-range-badge .tr-day {
+                font-size: 8.5px !important;
+                padding: 0 3px !important;
             }
         }
     </style>
@@ -2944,7 +2962,7 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
-        // ✅ شريط صغير يعرض مواعيد الحصة بالساعات (أعلى الكارت)
+        // ✅ شريط صغير يعرض اليوم + مواعيد الحصة بالساعات (أعلى الكارت)
         function getTimeRangeBadge(savedState) {
             if (!savedState) return '';
             let state;
@@ -2961,14 +2979,116 @@
             const startText = `${state.start_hour}:${String(startMin).padStart(2,'0')} ${startAmpm}`.trim();
             const endText = `${state.end_hour}:${String(endMin).padStart(2,'0')} ${endAmpm}`.trim();
 
+            // ✅ اليوم أو الأيام المختارة
+            let daysText = '';
+            if (Array.isArray(state.g_days) && state.g_days.length > 0) {
+                const cleanDays = state.g_days.filter(d => d && String(d).trim());
+                if (cleanDays.length === 1) {
+                    daysText = cleanDays[0];
+                } else if (cleanDays.length === 2) {
+                    daysText = `${cleanDays[0]} و${cleanDays[1]}`;
+                } else if (cleanDays.length > 2) {
+                    // لو أكتر من 2، نعرض أول يوم وعلامة "+N"
+                    daysText = `${cleanDays[0]} +${cleanDays.length - 1}`;
+                }
+            }
+
+            const dayPart = daysText
+                ? `<span class="tr-day">${daysText}</span><span class="tr-dot">•</span>`
+                : '';
+
             return `
                 <div class="time-range-badge" title="مواعيد الحصة">
                     <span class="tr-icon">⏰</span>
+                    ${dayPart}
                     <span class="tr-time">${startText}</span>
-                    <span class="tr-sep">←</span>
+                    <span class="tr-sep">→</span>
                     <span class="tr-time tr-end">${endText}</span>
                 </div>
             `;
+        }
+
+        // ==========================================
+        // ✅ حساب timestamp أقرب موعد قادم لمجموعة
+        // ==========================================
+        const ARABIC_DAYS_INDEX = {
+            'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3,
+            'الخميس': 4, 'الجمعة': 5, 'السبت': 6
+        };
+
+        function getNextSessionTimestamp(lessonId) {
+            const raw = localStorage.getItem('lessonState_' + lessonId);
+            if (!raw) return Number.POSITIVE_INFINITY;
+
+            let state;
+            try { state = JSON.parse(raw); } catch(e) { return Number.POSITIVE_INFINITY; }
+
+            // لازم يكون فيه أيام + وقت بداية + وقت نهاية
+            if (!Array.isArray(state.g_days) || state.g_days.length === 0) {
+                return Number.POSITIVE_INFINITY;
+            }
+            if (!state.start_hour || !state.start_ampm) {
+                return Number.POSITIVE_INFINITY;
+            }
+            if (!state.end_hour || !state.end_ampm) {
+                return Number.POSITIVE_INFINITY;
+            }
+
+            // تحويل وقت البداية والنهاية لساعة 24
+            const to24 = (h, ampm) => {
+                let hh = parseInt(h, 10);
+                if (isNaN(hh)) return null;
+                if (ampm === 'م' && hh !== 12) hh += 12;
+                if (ampm === 'ص' && hh === 12) hh = 0;
+                return hh;
+            };
+
+            const startH24 = to24(state.start_hour, state.start_ampm);
+            const endH24 = to24(state.end_hour, state.end_ampm);
+            if (startH24 === null || endH24 === null) return Number.POSITIVE_INFINITY;
+
+            const startM = parseInt(state.start_min || 0, 10) || 0;
+            const endM = parseInt(state.end_min || 0, 10) || 0;
+
+            const now = new Date();
+            const currentDayIdx = now.getDay(); // 0=الأحد .. 6=السبت
+
+            let bestTs = Number.POSITIVE_INFINITY;
+
+            state.g_days.forEach(dayName => {
+                const dayIdx = ARABIC_DAYS_INDEX[dayName];
+                if (dayIdx === undefined) return;
+
+                // فرق الأيام بين اليوم الحالي وهذا اليوم (0..6)
+                let diffDays = (dayIdx - currentDayIdx + 7) % 7;
+
+                // نبني تاريخ البداية
+                const candidate = new Date(now);
+                candidate.setDate(now.getDate() + diffDays);
+                candidate.setHours(startH24, startM, 0, 0);
+
+                // تاريخ النهاية لنفس اليوم
+                const candidateEnd = new Date(now);
+                candidateEnd.setDate(now.getDate() + diffDays);
+                candidateEnd.setHours(endH24, endM, 0, 0);
+
+                // لو النهاية عدّت (الحصة انتهت) → نروح للأسبوع الجاي
+                if (candidateEnd.getTime() <= now.getTime()) {
+                    candidate.setDate(candidate.getDate() + 7);
+                }
+
+                // لو البداية عدّت بس النهاية لسه (الحصة شغالة دلوقتي) → نعتبرها "الآن"
+                let ts;
+                if (candidate.getTime() <= now.getTime() && candidateEnd.getTime() > now.getTime()) {
+                    ts = now.getTime(); // الحصة شغالة دلوقتي
+                } else {
+                    ts = candidate.getTime();
+                }
+
+                if (ts < bestTs) bestTs = ts;
+            });
+
+            return bestTs;
         }
 
         async function toggleVisibility(id, event) {
@@ -3031,6 +3151,16 @@
             const container = document.getElementById('lessonsContainer');
             const addContainer = document.getElementById('addNewGroupContainer');
 
+            // ✅ ترتيب الكروت بالمواعيد القادمة (الأقرب أولاً)
+            lessons.sort((a, b) => {
+                const ta = getNextSessionTimestamp(a.id);
+                const tb = getNextSessionTimestamp(b.id);
+                if (ta !== tb) return ta - tb;
+                const na = parseInt(a.id, 10), nb = parseInt(b.id, 10);
+                if (!isNaN(na) && !isNaN(nb)) return na - nb;
+                return String(a.id).localeCompare(String(b.id));
+            });
+
             const addCardHTML = `
                 <div onclick="createNewLesson(true)" class="portal-card card-add-new ${teacherIsBlocked ? 'disabled-add' : ''}">
                     <div class="icon-plus">
@@ -3048,7 +3178,6 @@
             container.innerHTML = '';
 
             lessons.forEach((lesson, index) => {
-                // ✅ كل كارت بلون مختلف بالتناوب (8 ألوان)
                 const colorIndex = index % 8;
                 const cardStyle = `card-color-${colorIndex}`;
                 const imgName = (index % 2 === 0) ? 'teacher.png' : 'student.png';
@@ -3075,7 +3204,7 @@
 
                 const statusBadgeHTML = calculateSessionStatus(savedState);
                 const infoBadgesHTML = getQuickInfoBadges(savedState);
-                // ✅ المواعيد بالساعات — تظهر أعلى الكارت (فقط عند اكتمال الإعداد)
+                // ✅ المواعيد بالساعات + اليوم — تظهر أعلى الكارت (فقط عند اكتمال الإعداد)
                 const timeRangeHTML = hasReport ? getTimeRangeBadge(savedState) : '';
 
                 // ✅ نقطة الحالة الصغيرة
