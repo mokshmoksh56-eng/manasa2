@@ -10,6 +10,11 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
+    
+    <!-- ✅ إضافة مكتبة تجميع الدبابيس (MarkerCluster) لحل مشكلة تداخل المعلمين في نفس النقطة -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -176,6 +181,10 @@
         .map-hint { background: #DBEAFE; color: #1E40AF; padding: 8px; border-radius: 8px; font-size: 11px; font-weight: 800; text-align: center; margin-bottom: 8px; border: 1px dashed #93C5FD; }
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: hidden; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; } 
+
+        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
+        .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
+        .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
         .fullscreen-btn {
             position: absolute; top: 10px; left: 10px; z-index: 1000; background: #ffffff; border: 1.5px solid #CBD5E1; border-bottom: 3px solid #94A3B8;
@@ -2102,11 +2111,12 @@
         }
 
         // ==========================================
-        // 4. جلب الحصص من Firebase
+        // 4. جلب الحصص من Firebase 
         // ==========================================
         async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
+            const teacherAgeCache = {}; // ✅ كاش لمنع التكرار وقراءة العمر أكثر من مرة
 
             if (!window.db) {
                 console.warn("⚠️ Firebase لم يتصل بعد");
@@ -2132,13 +2142,31 @@
                 const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
                 const querySnapshot = await mod.getDocs(q);
                 
-                querySnapshot.forEach((doc) => {
-                    const state = doc.data();
-                    const lessonId = doc.id;
+                // ✅ استخدام for...of بدلاً من forEach لتشغيل await بداخلها
+                for (const docSnap of querySnapshot.docs) {
+                    const state = docSnap.data();
+                    const lessonId = docSnap.id;
 
                     if (state.g_publish_map === false) {
                         hiddenCount++;
-                        return;
+                        continue;
+                    }
+
+                    // ✅ جلب العمر إذا لم يكن مسجلاً في الحصة نفسها نقرأه من جدول المعلمين
+                    let teacherAge = state.t_age || state.age || 'غير محدد';
+                    if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
+                        if (teacherAgeCache[state.g_phone]) {
+                            teacherAge = teacherAgeCache[state.g_phone];
+                        } else {
+                            try {
+                                const tRef = mod.doc(mod.db, "teachers", state.g_phone);
+                                const tSnap = await mod.getDoc(tRef);
+                                if (tSnap.exists() && tSnap.data().age) {
+                                    teacherAge = tSnap.data().age;
+                                    teacherAgeCache[state.g_phone] = teacherAge;
+                                }
+                            } catch(e) {}
+                        }
                     }
 
                     let subjectsText = '';
@@ -2169,6 +2197,7 @@
                         lessonId: lessonId,
                         groupName: state.g_name || `مجموعة ${lessonId}`,
                         teacherName: state.g_teacher || 'المعلم',
+                        age: teacherAge, // ✅ تمرير العمر إلى الكارت
                         count: state.g_count || '--',
                         grade: (state.s_grade || '').trim(),
                         stageKey: (state.s_stage || '').trim(),
@@ -2186,7 +2215,7 @@
                         lat: lat,
                         lng: lng
                     });
-                });
+                }
             } catch (error) {
                 console.warn("⚠️ الاستعلام المركب فشل، جاري المحاولة بدون فلترة متقدمة:", error);
                 
@@ -2198,12 +2227,28 @@
                     );
                     const snap2 = await mod.getDocs(q2);
                     
-                    snap2.forEach((doc) => {
-                        const state = doc.data();
-                        const lessonId = doc.id;
+                    for (const docSnap of snap2.docs) {
+                        const state = docSnap.data();
+                        const lessonId = docSnap.id;
                         
-                        if (selectedStageKey && state.s_stage !== selectedStageKey) return;
-                        if (selectedGrade && state.s_grade !== selectedGrade) return;
+                        if (selectedStageKey && state.s_stage !== selectedStageKey) continue;
+                        if (selectedGrade && state.s_grade !== selectedGrade) continue;
+
+                        let teacherAge = state.t_age || state.age || 'غير محدد';
+                        if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
+                            if (teacherAgeCache[state.g_phone]) {
+                                teacherAge = teacherAgeCache[state.g_phone];
+                            } else {
+                                try {
+                                    const tRef = mod.doc(mod.db, "teachers", state.g_phone);
+                                    const tSnap = await mod.getDoc(tRef);
+                                    if (tSnap.exists() && tSnap.data().age) {
+                                        teacherAge = tSnap.data().age;
+                                        teacherAgeCache[state.g_phone] = teacherAge;
+                                    }
+                                } catch(e) {}
+                            }
+                        }
 
                         let subjectsText = '';
                         if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
@@ -2233,6 +2278,7 @@
                             lessonId: lessonId,
                             groupName: state.g_name || `مجموعة ${lessonId}`,
                             teacherName: state.g_teacher || 'المعلم',
+                            age: teacherAge, // ✅ تمرير العمر إلى الكارت
                             count: state.g_count || '--',
                             grade: (state.s_grade || '').trim(),
                             stageKey: (state.s_stage || '').trim(),
@@ -2250,7 +2296,7 @@
                             lat: lat,
                             lng: lng
                         });
-                    });
+                    }
                 } catch (err2) {
                     console.error("❌ فشل الاستعلام الاحتياطي أيضاً:", err2);
                 }
@@ -2281,7 +2327,14 @@
                 map = L.map('map', { zoomControl: false });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-                teachersLayer = L.layerGroup().addTo(map);
+                
+                // ✅ استخدام MarkerClusterGroup بدلاً من layerGroup العادي لمنع التداخل
+                teachersLayer = L.markerClusterGroup({
+                    maxClusterRadius: 40,
+                    spiderfyOnMaxZoom: true,
+                    showCoverageOnHover: false,
+                    zoomToBoundsOnClick: true
+                }).addTo(map);
             }
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
         }
@@ -2567,10 +2620,11 @@
                         popupAnchor: [0, -16]
                     });
 
-                    // 🛠️ تم إزالة الكلمة الثابتة "مستر/" أو "مس/" لعدم التكرار
+                    // ✅ إضافة العمر (age) إلى الكارت بلمسة جمالية هنا
                     const popupContent = `
                         <div class="teacher-popup-title">${emoji} ${t.teacherName}</div>
                         <div class="teacher-popup-detail"><span>👥 المجموعة:</span> <span>${t.groupName}</span></div>
+                        <div class="teacher-popup-detail"><span>🎂 العمر:</span> <span style="color:#0F2D5C; font-weight:900;">${t.age} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
                         <div class="teacher-popup-detail"><span>📚 المادة:</span> <span>${t.subject} (${t.grade})</span></div>
                         <div class="teacher-popup-detail"><span>📅 الأيام:</span> <span style="color:#2563EB;">${t.days}</span></div>
                         <div class="teacher-popup-detail"><span>⏰ الموعد:</span> <span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
