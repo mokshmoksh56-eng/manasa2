@@ -342,9 +342,9 @@
     <div id="blockedAccountModal" class="custom-modal-overlay" onclick="closeCustomModal('blockedAccountModal')">
         <div class="custom-modal-box" style="border-bottom-color: #D97706;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEF3C7; color: #D97706;">🔒</div>
-            <h3 class="modal-title-text" style="color: #92400E;">تنبيه هام للإدارة</h3>
+            <h3 class="modal-title-text" style="color: #92400E;">تنبيه هام</h3>
             <p class="modal-desc-text" style="color: #78350F; font-size: 14px; margin-bottom: 12px; font-weight: 800;">
-                عذراً، هذا الحساب بانتظار تفعيل وتوثيق البيانات من قبل الإدارة لتتمكن من الدخول.
+                عذراً، تم إيقاف هذا الحساب من قِبل الإدارة. يرجى التواصل مع الإدارة لإعادة التفعيل.
             </p>
             <span style="display: block; font-size: 12px; color: #B45309; margin-bottom: 6px; font-weight: 800;">يرجى التواصل مع الإدارة عبر الإيميل:</span>
             <a href="mailto:mmoksh162@gmail.com" style="display: flex; justify-content: center; align-items: center; gap: 8px; width: 100%; background: #FFFBEB; color: #D97706; padding: 12px; border-radius: 12px; border: 2px solid #FCD34D; font-size: 14px; font-weight: 900; text-decoration: none; margin-bottom: 18px; transition: transform 0.2s;">
@@ -665,7 +665,7 @@
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
 
-                // 2️⃣ حفظ بيانات المعلم العامة في Firestore
+                // 2️⃣ حفظ بيانات المعلم العامة في Firestore (بدون أي توثيق / باقات)
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -673,13 +673,12 @@
                     name: name,
                     title: title,
                     age: age,
-                    verification: '30 يوم تجريبي',
                     isBlocked: false,
                     waClicks: 0,
                     phoneType: '',
                     createdAt: new Date().toISOString().split('T')[0],
                     updatedAt: Date.now(),
-                    lastSeen: Date.now() // ✅ تسجيل آخر ظهور عند إنشاء الحساب
+                    lastSeen: Date.now()
                 }, { merge: true });
 
                 const accountData = { title, name, age, phone, createdAt: new Date().toISOString().split('T')[0] };
@@ -743,7 +742,8 @@
                 if (snap.exists()) {
                     const d = snap.data();
                     
-                    if (d.isBlocked === true || d.verification === 'حظر') {
+                    // ✅ فحص الحظر اليدوي فقط من الإدارة
+                    if (d.isBlocked === true) {
                         btn.innerText = originalText;
                         btn.disabled = false;
                         document.getElementById('blockedAccountModal').classList.add('active');
