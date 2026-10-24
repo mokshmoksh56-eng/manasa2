@@ -557,7 +557,6 @@
     <section class="stats-container">
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
             
-            <!-- ✅ التعديل هنا: إضافة حدث النقر ونافذة التنبيه للطلاب -->
             <div class="stat-card" style="border-bottom-color: #8B5CF6;" onclick="openSuspiciousModal()" title="اضغط لعرض الطلاب المتطابقين مع المعلمين">
                 <div class="stat-icon bg-purple-100 text-purple-700 relative">
                     👨‍🎓
@@ -643,7 +642,7 @@
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </main>
 
-    <!-- ✅ نافذة عرض تطابق أجهزة الطلاب والمعلمين -->
+    <!-- ✅ نافذة عرض تطابق أجهزة الطلاب والمعلمين مع وقت آخر استخدام -->
     <div id="suspiciousStudentsModal" class="modal-overlay" onclick="closeModal('suspiciousStudentsModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -969,6 +968,32 @@
         document.addEventListener('click', e => {
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
+
+        // ✅ دالة تنسيق الوقت الموجودة بالفعل (سنستخدمها لعرض "منذ 2 يوم" وما شابه)
+        function formatLastSeen(timestamp) {
+            if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: 'لم يسجل ظهور بعد' };
+            
+            const timeMs = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
+            if (isNaN(timeMs)) return { text: 'غير محدد', isOnline: false, fullDate: '' };
+
+            const diffMs = Date.now() - timeMs;
+            const diffMin = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMin / 60);
+            const diffDays = Math.floor(diffHours / 24);
+
+            const fullDate = new Date(timeMs).toLocaleString('ar-EG', {
+                dateStyle: 'medium',
+                timeStyle: 'short'
+            });
+
+            if (diffMin < 5) return { text: 'مباشر 🟢', isOnline: true, fullDate };
+            if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
+            if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
+            if (diffDays === 1) return { text: 'أمس', isOnline: false, fullDate };
+            if (diffDays < 30) return { text: `منذ ${diffDays} يوم`, isOnline: false, fullDate };
+
+            return { text: new Date(timeMs).toLocaleDateString('ar-EG'), isOnline: false, fullDate };
+        }
 
         function showToast(msg, isError = false) {
             const t = document.getElementById('toastMsg');
@@ -1346,18 +1371,23 @@
             });
         }
 
-        // ✅ التعديل هنا: دالة لاكتشاف الطلاب الذين يستخدمون أجهزة معلمين
+        // ✅ دالة لاكتشاف الطلاب الذين يستخدمون أجهزة معلمين مع جلب وقت آخر تطابق
         function checkSuspiciousStudents() {
             suspiciousStudents = [];
             studentsCache.forEach(student => {
                 if (student.deviceId) {
                     const matchingTeacher = teacherDevicesCache.find(t => t.deviceId === student.deviceId);
                     if (matchingTeacher) {
+                        const studentTs = student.updatedAt || 0;
+                        const teacherTs = matchingTeacher.lastLogin || 0;
+                        const latestTs = Math.max(studentTs, teacherTs);
+
                         suspiciousStudents.push({
                             studentName: student.st_name || 'بدون اسم',
                             studentPhone: student.st_phone || 'غير مسجل',
                             teacherName: matchingTeacher.teacherName || 'غير مسجل',
-                            teacherPhone: matchingTeacher.phone || matchingTeacher.id
+                            teacherPhone: matchingTeacher.phone || matchingTeacher.id,
+                            lastActivity: latestTs
                         });
                     }
                 }
@@ -1370,7 +1400,7 @@
             }
         }
 
-        // ✅ التعديل هنا: دالة لفتح نافذة التنبيه
+        // ✅ دالة لفتح نافذة التنبيه مع عرض خانة (آخر تطابق)
         function openSuspiciousModal() {
             const content = document.getElementById('suspiciousStudentsContent');
             if (suspiciousStudents.length === 0) {
@@ -1383,17 +1413,22 @@
                             <th class="p-2.5 text-rose-800">تليفون الطالب</th>
                             <th class="p-2.5 text-rose-800">تطابق مع مستر / مس</th>
                             <th class="p-2.5 text-rose-800">تليفون المعلم</th>
+                            <th class="p-2.5 text-rose-800">آخر تطابق</th>
                         </tr>
                     </thead>
                     <tbody>`;
                 
                 suspiciousStudents.forEach(item => {
+                    const lastSeenInfo = formatLastSeen(item.lastActivity);
+                    const timeText = lastSeenInfo.text !== 'غير محدد' ? lastSeenInfo.text : 'غير محدد';
+
                     html += `
                         <tr class="border-b border-slate-200 hover:bg-slate-50">
                             <td class="p-2.5">${item.studentName}</td>
                             <td class="p-2.5" dir="ltr" style="text-align: right; color:#475569;">${item.studentPhone}</td>
                             <td class="p-2.5 font-black text-blue-700">${item.teacherName}</td>
                             <td class="p-2.5" dir="ltr" style="text-align: right; color:#1E40AF;">${item.teacherPhone}</td>
+                            <td class="p-2.5" style="color:#991B1B;">${timeText}</td>
                         </tr>
                     `;
                 });
@@ -1409,7 +1444,7 @@
                 return;
             }
 
-            // ✅ التعديل هنا: مراقبة أجهزة المعلمين
+            // مراقبة أجهزة المعلمين
             if (devicesUnsubscribe) devicesUnsubscribe();
             devicesUnsubscribe = window.fsOnSnapshot(
                 window.fsCollection(window.db, "teacher_devices"),
@@ -1421,7 +1456,7 @@
                 (error) => {}
             );
 
-            // ✅ التعديل هنا: مراقبة الطلاب واكتشاف التطابق
+            // مراقبة الطلاب واكتشاف التطابق
             if (studentsUnsubscribe) studentsUnsubscribe();
             studentsUnsubscribe = window.fsOnSnapshot(
                 window.fsCollection(window.db, "talep_data"),
@@ -2008,31 +2043,6 @@
         function fetchLessonsFromFirebase() { return lessonsCache; }
         function fetchTeachersFromFirebase() { return teachersCache; }
         
-        function formatLastSeen(timestamp) {
-            if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: 'لم يسجل ظهور بعد' };
-            
-            const timeMs = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
-            if (isNaN(timeMs)) return { text: 'غير محدد', isOnline: false, fullDate: '' };
-
-            const diffMs = Date.now() - timeMs;
-            const diffMin = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMin / 60);
-            const diffDays = Math.floor(diffHours / 24);
-
-            const fullDate = new Date(timeMs).toLocaleString('ar-EG', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-            });
-
-            if (diffMin < 5) return { text: 'مباشر 🟢', isOnline: true, fullDate };
-            if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
-            if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
-            if (diffDays === 1) return { text: 'أمس', isOnline: false, fullDate };
-            if (diffDays < 30) return { text: `منذ ${diffDays} يوم`, isOnline: false, fullDate };
-
-            return { text: new Date(timeMs).toLocaleDateString('ar-EG'), isOnline: false, fullDate };
-        }
-
         async function collectAllAppData() {
             const firebaseLessons = fetchLessonsFromFirebase();
             const firebaseTeachers = fetchTeachersFromFirebase();
