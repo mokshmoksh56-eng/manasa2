@@ -643,7 +643,6 @@
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </main>
 
-    <!-- ✅ نافذة عرض تطابق أجهزة الطلاب والمعلمين -->
     <div id="suspiciousStudentsModal" class="modal-overlay" onclick="closeModal('suspiciousStudentsModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -881,7 +880,6 @@
     </script>
 
     <script>
-        // ✅ المتغيرات العامة
         let teacherDevicesCache = [];
         let suspiciousStudents = [];
         let studentsCache = [];
@@ -970,7 +968,7 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
-        // ✅ دالة تنسيق الوقت نقية (مباشر أو منذ X دقيقة)
+        // ✅ التحديث اللحظي للوقت
         function formatLastSeen(timestamp) {
             if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: '' };
             
@@ -984,6 +982,7 @@
 
             const fullDate = new Date(timeMs).toLocaleString('ar-EG');
 
+            // ✅ إعادة "مباشر" كما طلبت
             if (diffMin < 5) return { text: 'مباشر', isOnline: true, fullDate };
             if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
             if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
@@ -1520,7 +1519,7 @@
 
             setCloudStatus('synced', '☁️ مزامنة لحظية نشطة');
 
-            // تحديث واجهة التطبيق كل 30 ثانية لضمان أن عداد (منذ دقيقة) يتحدث باستمرار
+            // ✅ تحديث واجهة التطبيق كل 30 ثانية لضمان أن عداد (منذ دقيقة) يتحدث باستمرار
             setInterval(() => {
                 scheduleRender(0);
             }, 30000);
@@ -2055,11 +2054,16 @@
                 const targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${cleanName}`;
 
                 const lastSeenTs = t.lastSeen || t.updatedAt || (t.createdAt ? new Date(t.createdAt).getTime() : null);
+                
+                // جلب نوع الدخول الحالي من كاش الأجهزة
+                const matchingDevice = teacherDevicesCache.find(d => d.id === phone || d.phone === phone);
+                const currentActiveTab = matchingDevice ? (matchingDevice.currentActiveTab || 'teacher') : 'teacher';
 
                 unifiedMap.set(targetKey, {
                     type: 'account_only', docId: t.id, lessonIds: [], title: t.title || 'مستر',
                     teacherName: cleanName, phone: phone, regDate: t.createdAt || new Date().toISOString().split('T')[0],
                     lastSeen: lastSeenTs, 
+                    currentActiveTab: currentActiveTab, // تسجيل الوضع الحالي
                     groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
                     locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
                     isPublished: false, waClicks: t.waClicks || 0, groups: [], phoneType: t.phoneType || '',
@@ -2081,12 +2085,18 @@
                 const lsTs = state.lastSeen || state.updatedAt || (state.createdAt ? new Date(state.createdAt).getTime() : null);
 
                 if (!targetKey) {
+                    // جلب نوع الدخول الحالي من كاش الأجهزة
+                    const cleanPhoneCheck = String(phone).replace(/\D/g, '');
+                    const matchingDevice = teacherDevicesCache.find(d => d.id === cleanPhoneCheck || d.phone === cleanPhoneCheck);
+                    const currentActiveTab = matchingDevice ? (matchingDevice.currentActiveTab || 'teacher') : 'teacher';
+
                     targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${teacherName}`;
                     unifiedMap.set(targetKey, { 
                         type: 'lesson', docId: (phone !== 'غير مسجل') ? phone : teacherName, lessonIds: [],
                         title: state.t_gender || (teacherName.startsWith('مس') ? 'مس' : 'مستر'),
                         teacherName: teacherName || 'بدون اسم', phone: phone,
                         lastSeen: lsTs,
+                        currentActiveTab: currentActiveTab, // تسجيل الوضع الحالي
                         regDate: state.createdAt || new Date().toISOString().split('T')[0],
                         waClicks: 0, groups: [], isBlocked: false
                     });
@@ -2130,6 +2140,14 @@
                 // جلب معرف الجهاز
                 const matchingDevice = teacherDevicesCache.find(d => d.id === cleanPhone || d.phone === cleanPhone);
                 r.deviceId = matchingDevice && matchingDevice.deviceId ? matchingDevice.deviceId : 'غير متاح';
+
+                // إذا كان فاتح التطبيق كطالب، نحدث الـ lastSeen بوقت الطالب لنكون دقيقين جداً
+                if (r.currentActiveTab === 'student') {
+                    const matchedStudent = studentsCache.find(s => s.deviceId === r.deviceId && r.deviceId !== 'غير متاح');
+                    if (matchedStudent && matchedStudent.updatedAt) {
+                        r.lastSeen = matchedStudent.updatedAt;
+                    }
+                }
 
                 const tRatings = ratingsCache.filter(rt => String(rt.teacherPhone || '').replace(/\D/g, '') === cleanPhone);
                 let sum = 0;
@@ -2279,32 +2297,31 @@
                     iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
 
+                // ✅ وقت الظهور
+                const lastSeenObj = formatLastSeen(r.lastSeen);
+                
                 // ✅ استخراج معرّف قصير (ID) بشكل منفصل
                 let shortDeviceId = 'غير متاح';
                 if (r.deviceId && r.deviceId !== 'غير متاح') {
                     shortDeviceId = r.deviceId.includes('_') ? r.deviceId.split('_')[2].substring(0, 6) : r.deviceId.substring(0, 6);
                 }
 
-                const lastSeenObj = formatLastSeen(r.lastSeen);
-                const matchedStudent = studentsCache.find(s => s.deviceId === r.deviceId && r.deviceId !== 'غير متاح');
-                
-                let timeBadgeHTML = '';
+                // ✅ 1. مربع الوقت والحالة بناءً على ما يفتحه المستخدم الآن
+                let lastSeenBadgeHTML = '';
                 let idOrStudentBadgeHTML = '';
 
-                if (matchedStudent) {
-                    // 🟢 المستر فاتح بوابة الطالب من جهازه الآن
-                    const studentLastSeen = formatLastSeen(matchedStudent.updatedAt || 0);
-                    idOrStudentBadgeHTML = `
-                        <span class="badge-last-seen ${studentLastSeen.isOnline ? 'online-now' : ''}" style="background:#FEF3C7; border-color:#FCD34D; color:#92400E; font-weight:900;" title="يتصفح كطالب باسم: ${matchedStudent.st_name || 'بدون اسم'}">
-                            👨‍🎓 طالب: ${studentLastSeen.isOnline ? 'مباشر 🟢' : studentLastSeen.text}
+                if (r.currentActiveTab === 'student') {
+                    // 🟢 الطالب فاتح التطبيق
+                    lastSeenBadgeHTML = `
+                        <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" style="background:#FEF3C7; border-color:#FCD34D; color:#92400E; font-weight:900;" title="يتصفح كطالب الآن">
+                            👨‍🎓 طالب: ${lastSeenObj.isOnline ? 'مباشر 🟢' : lastSeenObj.text}
                         </span>
                     `;
-                    // 👈 تم إخفاء الـ ID تماماً هنا لتجنب التداخل كما طلبت
                 } else {
                     // 🔵 المستر في وضع عادي
-                    timeBadgeHTML = `
+                    lastSeenBadgeHTML = `
                         <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر نشاط كمعلم">
-                            ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text}
+                            ${lastSeenObj.isOnline ? 'مباشر 🟢' : `🕒 ${lastSeenObj.text}`}
                         </span>
                     `;
                     
@@ -2427,7 +2444,7 @@
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
                         
-                        <!-- ✅ التعديل هنا: فصل الكارت إلى طابقين لمنع التداخل على الموبايل -->
+                        <!-- ✅ تعديل هنا لمنع تداخل الكلام واستخدام flex-wrap -->
                         <div class="card-header flex flex-col gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
                             
                             <!-- الطابق العلوي: الاسم والتليفون والصورة -->
@@ -2453,7 +2470,7 @@
                                 <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
                                 ${ratingBadgeHTML}
                                 ${idOrStudentBadgeHTML}
-                                ${timeBadgeHTML}
+                                ${lastSeenBadgeHTML}
                                 ${iconOnlyPhoneBadge}
                             </div>
                         </div>
