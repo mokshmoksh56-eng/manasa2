@@ -3066,6 +3066,8 @@
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             const addContainer = document.getElementById('addNewGroupContainer');
+            
+            if (!container) return;
 
             lessons.sort((a, b) => {
                 const ta = getNextSessionTimestamp(a.id);
