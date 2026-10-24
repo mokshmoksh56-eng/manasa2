@@ -648,6 +648,8 @@
             font-weight: 900;
             color: #0F2D5C;
             font-size: 11px;
+            display: flex;
+            align-items: center;
         }
 
         .review-item-stars {
@@ -678,6 +680,26 @@
             font-weight: 700;
             padding: 8px;
         }
+
+        /* ⭐ جـديـد: تحسينات شكل التقييمات */
+        .registered-teacher-marker { position: relative; }
+
+        @keyframes fillBar { from { width: 0; } }
+        .teacher-rating-section [style*="transition:width"] { animation: fillBar 0.8s ease-out; }
+
+        @keyframes reviewFadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .review-item { animation: reviewFadeIn 0.3s ease-out; }
+
+        @keyframes topBadgePulse {
+            0%, 100% { box-shadow: 0 3px 8px rgba(251,191,36,0.5); }
+            50% { box-shadow: 0 3px 16px rgba(251,191,36,0.9); }
+        }
+        .teacher-rating-section [style*="🏆 معلم مميز"] { animation: topBadgePulse 2s ease-in-out infinite; }
+
+        .review-item-name span:first-child { animation: reviewFadeIn 0.4s ease-out; }
 
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
@@ -1017,6 +1039,9 @@
         // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
+
+        // ✅ جـديـد: كاش التقييمات لتسريع الأداء
+        let globalRatingCache = {}; // { phone: { avg, count, sum, lastFetch } }
 
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
@@ -1460,7 +1485,6 @@
             teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
                 console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
 
-                // ✅ اعمل hash للبيانات عشان نعرف لو فيه تغيير حقيقي
                 const newHash = snapshot.docs.map(d => d.id + '_' + (d.data().updatedAt || '')).join('|');
                 if (newHash === lastRenderedTeachersHash) {
                     console.log("⏭️ لا يوجد تغيير حقيقي — تم تجاهل إعادة الرسم");
@@ -1475,7 +1499,6 @@
                     return;
                 }
 
-                // ✅ لو فيه كارت معلم مفتوح، متعملش re-render دلوقتي
                 const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
                 if (cardOpen && !isFirstTeachersSnapshot) {
                     console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
@@ -2814,7 +2837,6 @@
             setTimeout(() => {
                 map.invalidateSize();
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
-                // ✅ نخلي الشاشة تنزل للخريطة بشكل بسيط عشان البيانات فوق تفضل ظاهرة
                 const mapEl = document.getElementById('mapOuterWrapper');
                 const yOffset = mapEl.getBoundingClientRect().top + window.pageYOffset - 80;
                 window.scrollTo({ top: yOffset, behavior: 'smooth' });
@@ -2831,7 +2853,56 @@
             });
         };
 
-        window.submitTeacherRating = async function(lessonId, teacherName) {
+        // ✅ جـديـد: تحميل ملخصات تقييمات جميع المعلمين دفعة واحدة
+        async function batchLoadRatingSummaries(phones, forceRefresh = false) {
+            const mod = await loadFirebaseModule();
+            if (!mod) return {};
+
+            const now = Date.now();
+            const result = {};
+            const phonesToFetch = [];
+
+            phones.forEach(p => {
+                const clean = String(p || '').replace(/\D/g, '');
+                if (!clean) return;
+                const cached = globalRatingCache[clean];
+                if (!forceRefresh && cached && (now - cached.lastFetch < 60000)) {
+                    result[clean] = { avg: cached.avg, count: cached.count };
+                } else {
+                    phonesToFetch.push(clean);
+                }
+            });
+
+            if (phonesToFetch.length === 0) return result;
+
+            try {
+                const q = mod.query(mod.collection(mod.db, "teacher_ratings"));
+                const snap = await mod.getDocs(q);
+                const allRatings = {};
+
+                snap.forEach(d => {
+                    const data = d.data();
+                    const phone = String(data.teacherPhone || '').replace(/\D/g, '');
+                    if (!phone) return;
+                    if (!allRatings[phone]) allRatings[phone] = { sum: 0, count: 0 };
+                    allRatings[phone].sum += data.stars || 0;
+                    allRatings[phone].count++;
+                });
+
+                phonesToFetch.forEach(p => {
+                    const data = allRatings[p] || { sum: 0, count: 0 };
+                    const avg = data.count > 0 ? data.sum / data.count : 0;
+                    globalRatingCache[p] = { avg, count: data.count, sum: data.sum, lastFetch: now };
+                    result[p] = { avg, count: data.count };
+                });
+            } catch (e) {
+                console.warn("batch ratings:", e);
+            }
+
+            return result;
+        }
+
+        window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
             if (currentSelectedStars === 0) {
                 showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
                 return;
@@ -2853,10 +2924,10 @@
                 const studentId = getStudentId();
                 const studentName = document.getElementById('st_name').value.trim() || 'طالب';
                 const ratingId = `${lessonId}_${studentId}`;
+                const cleanPhone = String(teacherPhone || '').replace(/\D/g, '');
 
                 const ref = mod.doc(mod.db, "teacher_ratings", ratingId);
-                
-                // التحقق من وجود تقييم سابق
+
                 const existing = await mod.getDoc(ref);
                 if (existing.exists()) {
                     showToast("⚠️ لقد قمت بتقييم هذا المعلم مسبقاً!", true);
@@ -2870,6 +2941,7 @@
                 await mod.setDoc(ref, {
                     lessonId: lessonId,
                     teacherName: teacherName,
+                    teacherPhone: cleanPhone,
                     studentId: studentId,
                     studentName: studentName,
                     stars: currentSelectedStars,
@@ -2877,15 +2949,18 @@
                     createdAt: Date.now()
                 });
 
+                if (cleanPhone && globalRatingCache[cleanPhone]) {
+                    delete globalRatingCache[cleanPhone];
+                }
+
                 showToast("شكراً لك! تم إرسال تقييمك ⭐");
                 vibrateSuccess();
-                
+
                 currentSelectedStars = 0;
                 if (commentEl) commentEl.value = '';
-                
-                // إعادة تحميل الكارت
+
                 showTeacherInfoCard(lessonId);
-                
+
             } catch (err) {
                 console.error("❌ خطأ في حفظ التقييم:", err);
                 showToast("حدث خطأ، حاول مرة أخرى!", true);
@@ -2899,28 +2974,31 @@
         async function loadTeacherRatings(lessonId) {
             try {
                 const mod = await loadFirebaseModule();
-                if (!mod) return { avg: 0, count: 0, reviews: [], hasRated: false };
+                if (!mod) return { avg: 0, count: 0, reviews: [], hasRated: false, distribution: {} };
 
                 const q = mod.query(
                     mod.collection(mod.db, "teacher_ratings"),
                     mod.where("lessonId", "==", lessonId)
                 );
                 const snap = await mod.getDocs(q);
-                
+
                 const reviews = [];
                 let sum = 0;
                 const studentId = getStudentId();
                 let hasRated = false;
+                const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
 
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
+                    const stars = d.stars || 0;
                     reviews.push({
                         studentName: d.studentName || 'طالب',
-                        stars: d.stars || 0,
+                        stars: stars,
                         comment: d.comment || '',
                         createdAt: d.createdAt || 0
                     });
-                    sum += d.stars || 0;
+                    sum += stars;
+                    if (distribution[stars] !== undefined) distribution[stars]++;
                     if (d.studentId === studentId) hasRated = true;
                 });
 
@@ -2930,11 +3008,12 @@
                     avg: reviews.length > 0 ? (sum / reviews.length) : 0,
                     count: reviews.length,
                     reviews: reviews,
-                    hasRated: hasRated
+                    hasRated: hasRated,
+                    distribution: distribution
                 };
             } catch (err) {
                 console.warn("⚠️ فشل تحميل التقييمات:", err);
-                return { avg: 0, count: 0, reviews: [], hasRated: false };
+                return { avg: 0, count: 0, reviews: [], hasRated: false, distribution: {} };
             }
         }
 
@@ -2978,7 +3057,6 @@
             const card = document.getElementById('teacherInfoCard');
             const body = document.getElementById('teacherInfoCardBody');
 
-            // إظهار الكارت فوراً مع بيانات أساسية + تحميل التقييمات
             body.innerHTML = `
                 <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
@@ -3006,7 +3084,6 @@
 
             card.classList.add('show');
 
-            // تحميل التقييمات
             const ratings = await loadTeacherRatings(lessonId);
             currentRatingLessonId = lessonId;
             currentSelectedStars = 0;
@@ -3014,16 +3091,48 @@
             const ratingBlock = document.getElementById('ratingBlock_' + lessonId);
             if (!ratingBlock) return;
 
-            const starsDisplay = ratings.count > 0 
-                ? renderStarsDisplay(ratings.avg) 
+            const starsDisplay = ratings.count > 0
+                ? renderStarsDisplay(ratings.avg)
                 : '☆☆☆☆☆';
+
+            const isTopRated = ratings.count >= 3 && ratings.avg >= 4.5;
+            const topBadge = isTopRated ? `
+                <div style="text-align:center; margin-bottom:8px;">
+                    <span style="background:linear-gradient(135deg,#FBBF24,#F59E0B); color:#fff; padding:4px 14px; border-radius:99px; font-size:11px; font-weight:900; box-shadow:0 3px 8px rgba(251,191,36,0.5); display:inline-flex; align-items:center; gap:4px;">
+                        🏆 معلم مميز
+                    </span>
+                </div>
+            ` : '';
+
+            let distributionBars = '';
+            if (ratings.count > 0) {
+                const total = ratings.count || 1;
+                distributionBars = [5, 4, 3, 2, 1].map(star => {
+                    const pct = (ratings.distribution[star] / total) * 100;
+                    const barColor = star >= 4 ? 'linear-gradient(90deg,#FBBF24,#F59E0B)'
+                                   : star === 3 ? 'linear-gradient(90deg,#10B981,#059669)'
+                                   : 'linear-gradient(90deg,#94A3B8,#64748B)';
+                    return `
+                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:2.5px;">
+                            <span style="font-size:10px; color:#B45309; font-weight:900; min-width:22px;">${star} ★</span>
+                            <div style="flex:1; height:6px; background:#FEF3C7; border-radius:99px; overflow:hidden;">
+                                <div style="height:100%; width:${pct}%; background:${barColor}; border-radius:99px; transition:width 0.5s ease;"></div>
+                            </div>
+                            <span style="font-size:9px; color:#92400E; font-weight:800; min-width:16px; text-align:left;">${ratings.distribution[star]}</span>
+                        </div>
+                    `;
+                }).join('');
+            }
 
             let reviewsHtml = '';
             if (ratings.reviews.length > 0) {
-                reviewsHtml = ratings.reviews.slice(0, 10).map(r => `
-                    <div class="review-item">
+                reviewsHtml = ratings.reviews.slice(0, 10).map((r, i) => `
+                    <div class="review-item" style="${i === 0 ? 'border-color:#FCD34D; background:#FFFBEB;' : ''}">
                         <div class="review-item-header">
-                            <span class="review-item-name">${r.studentName}</span>
+                            <span class="review-item-name">
+                                <span style="display:inline-block; width:18px; height:18px; background:#D1FAE5; color:#059669; border-radius:50%; text-align:center; line-height:18px; font-size:10px; margin-left:3px;">✓</span>
+                                ${r.studentName}
+                            </span>
                             <span class="review-item-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
                         </div>
                         ${r.comment ? `<div class="review-item-comment">"${r.comment}"</div>` : ''}
@@ -3031,7 +3140,13 @@
                     </div>
                 `).join('');
             } else {
-                reviewsHtml = '<div class="reviews-empty">لا توجد تقييمات بعد — كن أول من يقيّم! 🌟</div>';
+                reviewsHtml = `
+                    <div style="text-align:center; padding:12px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); border-radius:10px; border:1.5px dashed #FBBF24;">
+                        <div style="font-size:24px; margin-bottom:4px;">🌟</div>
+                        <div style="font-size:11px; color:#92400E; font-weight:900;">كن أول من يقيّم هذا المعلم!</div>
+                        <div style="font-size:10px; color:#B45309; font-weight:700; margin-top:2px;">شارك تجربتك وساعد زملاءك</div>
+                    </div>
+                `;
             }
 
             const ratingFormHtml = ratings.hasRated
@@ -3041,20 +3156,32 @@
                         ${[1,2,3,4,5].map(i => `<button class="star-btn" onclick="selectStar(${i})" data-star="${i}">★</button>`).join('')}
                     </div>
                     <textarea id="ratingComment_${lessonId}" class="rating-comment-input" placeholder="اكتب تعليقك (اختياري)..."></textarea>
-                    <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${lessonId}', '${t.teacherName}')">
+                    <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${lessonId}', '${t.teacherName}', '${t.phone}')">
                         ⭐ إرسال التقييم
                     </button>
                 `;
 
             ratingBlock.innerHTML = `
                 <div class="teacher-rating-section">
-                    <div class="teacher-rating-header">
-                        <span class="teacher-rating-title">⭐ تقييمات المعلم</span>
-                        <span class="teacher-rating-summary">
-                            ${ratings.count > 0 ? `${starsDisplay} (${ratings.count})` : 'لا توجد تقييمات'}
-                        </span>
+                    ${topBadge}
+
+                    <div style="display:flex; gap:10px; align-items:center; background:linear-gradient(135deg,#FFFBEB,#FEF3C7); padding:10px; border-radius:10px; margin-bottom:10px; border:1.5px solid #FDE68A;">
+                        <div style="text-align:center; min-width:64px; padding:4px 0;">
+                            <div style="font-size:30px; font-weight:900; color:#B45309; line-height:1;">
+                                ${ratings.count > 0 ? ratings.avg.toFixed(1) : '—'}
+                            </div>
+                            <div style="font-size:11px; color:#F59E0B; direction:ltr; margin-top:3px; letter-spacing:1px;">${starsDisplay}</div>
+                            <div style="font-size:9px; color:#92400E; font-weight:800; margin-top:2px;">
+                                ${ratings.count > 0 ? `${ratings.count} تقييم` : 'لا يوجد'}
+                            </div>
+                        </div>
+                        <div style="flex:1;">
+                            ${distributionBars || '<div style="font-size:10px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات بعد</div>'}
+                        </div>
                     </div>
+
                     ${ratingFormHtml}
+
                     <div class="reviews-list">
                         ${reviewsHtml}
                     </div>
@@ -3149,7 +3276,7 @@
             const subjectCheck = document.getElementById('s_subject').value;
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
-            
+
             if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck) {
                 const liveIndicator = document.getElementById('liveIndicator');
                 if (liveIndicator) liveIndicator.classList.remove('show');
@@ -3199,12 +3326,29 @@
             });
 
             if (matched.length === 0) {
-                const noMatchMsg = prefLocValue 
-                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!` 
+                const noMatchMsg = prefLocValue
+                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
                     : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
                 showToast(noMatchMsg, true);
                 return;
             }
+
+            // ✅ تحميل تقييمات جميع المعلمين دفعة واحدة
+            const allPhones = [...new Set(matched.map(t => String(t.phone || '').replace(/\D/g, '')).filter(Boolean))];
+            const ratingSummaries = await batchLoadRatingSummaries(allPhones);
+
+            matched.forEach(t => {
+                const cleanPhone = String(t.phone || '').replace(/\D/g, '');
+                t.ratingSummary = ratingSummaries[cleanPhone] || { avg: 0, count: 0 };
+            });
+
+            // ✅ ترتيب: الأعلى تقييماً أولاً
+            matched.sort((a, b) => {
+                if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
+                if (b.ratingSummary.count === 0) return -1;
+                if (a.ratingSummary.count === 0) return 1;
+                return b.ratingSummary.avg - a.ratingSummary.avg;
+            });
 
             let shownCount = 0;
             const outOfRange = [];
@@ -3216,8 +3360,35 @@
                     shownCount++;
                     const isMs = (t.gender === 'مس');
                     const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
-                    const iconHtml = `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
-                    
+                    const rating = t.ratingSummary;
+
+                    // ✅ شارة التقييم على الدبوس
+                    let ratingBadgeHtml = '';
+                    if (rating.count > 0) {
+                        const bgColor = rating.avg >= 4.5 ? 'linear-gradient(135deg,#FBBF24,#F59E0B)'
+                                      : rating.avg >= 3.5 ? 'linear-gradient(135deg,#10B981,#059669)'
+                                      : 'linear-gradient(135deg,#94A3B8,#64748B)';
+
+                        ratingBadgeHtml = `
+                            <div style="position:absolute; top:-9px; right:-10px; background:${bgColor}; color:#fff; border-radius:99px; padding:1.5px 6px; font-size:9px; font-weight:900; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.25); z-index:10; white-space:nowrap; line-height:1.2;">
+                                ★ ${rating.avg.toFixed(1)}
+                            </div>
+                        `;
+
+                        if (rating.avg >= 4.5 && rating.count >= 3) {
+                            ratingBadgeHtml += `
+                                <div style="position:absolute; top:-14px; left:-10px; font-size:16px; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index:11;">🏆</div>
+                            `;
+                        }
+                    }
+
+                    const iconHtml = `
+                        <div style="position:relative; width:36px; height:36px;">
+                            <div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>
+                            ${ratingBadgeHtml}
+                        </div>
+                    `;
+
                     const customIcon = L.divIcon({
                         className: 'custom-leaflet-marker',
                         html: iconHtml,
@@ -3226,17 +3397,18 @@
                         popupAnchor: [0, -16]
                     });
 
-                    const marker = L.marker([t.lat, t.lng], { icon: customIcon });
-                    
-                    // ✅ نخزن بيانات المعلم على الماركر عشان الكارت العائم
+                    const marker = L.marker([t.lat, t.lng], {
+                        icon: customIcon,
+                        zIndexOffset: rating.avg >= 4.5 ? 500 : (rating.avg >= 3.5 ? 200 : 0)
+                    });
+
                     marker._teacherData = t;
-                    
-                    // ✅ بدل الـ popup، نفتح الكارت العائم فوق الخريطة
+
                     marker.on('click', function(e) {
                         L.DomEvent.stopPropagation(e);
                         showTeacherInfoCard(t.lessonId);
                     });
-                    
+
                     teachersLayer.addLayer(marker);
                 } else {
                     outOfRange.push({ ...t, distance });
@@ -3249,8 +3421,8 @@
                     const km = (nearest.distance / 1000).toFixed(1);
                     showToast(`فيه ${outOfRange.length} مدرس مطابق لكن خارج النطاق (أقربهم على ${km} كم) — وسّع نطاق البحث!`, true);
                 } else {
-                    const noMatchMsg = prefLocValue 
-                        ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!` 
+                    const noMatchMsg = prefLocValue
+                        ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
                         : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
                     showToast(noMatchMsg, true);
                 }
