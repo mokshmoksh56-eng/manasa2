@@ -411,7 +411,7 @@
             border: 2px solid #10B981;
             border-bottom: 5px solid #059669;
             z-index: 100002;
-            max-height: 55vh;
+            max-height: 60vh; /* تكبير بسيط للارتفاع */
             overflow-y: auto;
             padding: 14px 12px 12px;
             animation: cardSlideIn 0.25s ease-out;
@@ -464,9 +464,9 @@
             font-weight: 800;
             color: #334155;
             background: #F8FAFC;
-            padding: 7px 10px;
+            padding: 6px 10px;
             border-radius: 8px;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             gap: 8px;
         }
         .teacher-info-row span:first-child { color: #64748B; font-size: 11px; }
@@ -479,9 +479,9 @@
         }
         .teacher-info-actions button {
             flex: 1;
-            padding: 10px;
+            padding: 8px; /* تصغير */
             border-radius: 8px;
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 900;
             color: #fff;
             border: none;
@@ -491,55 +491,28 @@
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 3px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ تنسيقات نظام التقييمات */
+        /* ✅ تنسيقات نظام التقييمات (أصغر وأكثر إحكاماً) */
         .teacher-rating-section {
-            margin-top: 12px;
-            padding: 10px;
+            margin-top: 8px;
+            padding: 8px;
             background: #FFFBEB;
             border: 1.5px solid #FDE68A;
             border-bottom: 3px solid #F59E0B;
             border-radius: 10px;
         }
 
-        .teacher-rating-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 8px;
-            padding-bottom: 6px;
-            border-bottom: 1px dashed #FDE68A;
-        }
-
-        .teacher-rating-title {
-            font-size: 12px;
-            font-weight: 900;
-            color: #92400E;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .teacher-rating-summary {
-            font-size: 11px;
-            font-weight: 900;
-            color: #B45309;
-            background: #FEF3C7;
-            padding: 2px 8px;
-            border-radius: 20px;
-        }
-
         .stars-input {
             display: flex;
             justify-content: center;
-            gap: 6px;
-            margin-bottom: 8px;
+            gap: 4px;
+            margin-bottom: 4px;
             direction: ltr;
         }
 
         .star-btn {
             background: none;
             border: none;
-            font-size: 28px;
+            font-size: 20px; /* أصغر من السابق 28 */
             cursor: pointer;
             color: #D1D5DB;
             transition: all 0.15s;
@@ -547,49 +520,38 @@
             line-height: 1;
         }
 
-        .star-btn:hover,
-        .star-btn.active {
+        .star-btn:hover, .star-btn.active {
             color: #FBBF24;
-            transform: scale(1.15);
-            text-shadow: 0 2px 6px rgba(251, 191, 36, 0.5);
-        }
-
-        .star-btn:active {
-            transform: scale(1.3);
+            transform: scale(1.1);
+            text-shadow: 0 2px 4px rgba(251, 191, 36, 0.4);
         }
 
         .rating-comment-input {
             width: 100%;
-            padding: 8px 10px;
+            padding: 6px 8px;
             border: 1.5px solid #FDE68A;
-            border-bottom: 2.5px solid #F59E0B;
-            border-radius: 8px;
-            font-size: 12px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 700;
             font-family: 'Cairo', sans-serif;
             outline: none;
             resize: none;
-            min-height: 50px;
+            min-height: 35px; /* أصغر */
             color: #1E293B;
             background: #FFFFFF;
-        }
-
-        .rating-comment-input:focus {
-            border-color: #F59E0B;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+            margin-bottom: 4px;
         }
 
         .rating-submit-btn {
             width: 100%;
-            padding: 8px;
-            margin-top: 6px;
-            border-radius: 8px;
-            font-size: 12px;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 11px;
             font-weight: 900;
             color: white;
             background: linear-gradient(135deg, #F59E0B, #D97706);
             border: none;
-            border-bottom: 3px solid #B45309;
+            border-bottom: 2.5px solid #B45309;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -597,109 +559,70 @@
             gap: 4px;
         }
 
-        .rating-submit-btn:active {
-            transform: translateY(2px);
-            border-bottom-width: 1px;
-        }
-
-        .rating-submit-btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .rating-already-rated {
-            text-align: center;
-            font-size: 11px;
-            font-weight: 900;
-            color: #059669;
-            background: #D1FAE5;
-            padding: 8px;
-            border-radius: 8px;
-            margin-top: 6px;
-        }
+        .rating-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
 
         .reviews-list {
-            max-height: 180px;
+            max-height: 110px; /* تقليل الارتفاع */
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 6px;
-            margin-top: 8px;
-            padding-top: 8px;
+            gap: 4px;
+            margin-top: 6px;
+            padding-top: 6px;
             border-top: 1px dashed #FDE68A;
         }
 
         .review-item {
             background: #FFFFFF;
             border: 1px solid #FEF3C7;
-            border-radius: 8px;
-            padding: 7px 9px;
-            font-size: 11px;
+            border-radius: 6px;
+            padding: 5px 8px;
+            font-size: 10px;
         }
 
         .review-item-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .review-item-name {
             font-weight: 900;
             color: #0F2D5C;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
+            font-size: 10px;
         }
 
         .review-item-stars {
             color: #FBBF24;
-            font-size: 12px;
+            font-size: 10px;
             direction: ltr;
-            letter-spacing: 1px;
         }
 
         .review-item-comment {
             color: #475569;
             font-weight: 700;
-            line-height: 1.4;
+            line-height: 1.3;
             word-break: break-word;
         }
 
         .review-item-date {
-            font-size: 9px;
+            font-size: 8px;
             color: #94A3B8;
             font-weight: 600;
-            margin-top: 3px;
+            margin-top: 2px;
         }
 
-        .reviews-empty {
+        .rating-already-rated {
             text-align: center;
-            font-size: 11px;
-            color: #92400E;
-            font-weight: 700;
-            padding: 8px;
+            font-size: 10px;
+            font-weight: 900;
+            color: #059669;
+            background: #D1FAE5;
+            padding: 6px;
+            border-radius: 6px;
+            margin-top: 4px;
         }
-
-        /* ⭐ جـديـد: تحسينات شكل التقييمات */
-        .registered-teacher-marker { position: relative; }
-
-        @keyframes fillBar { from { width: 0; } }
-        .teacher-rating-section [style*="transition:width"] { animation: fillBar 0.8s ease-out; }
-
-        @keyframes reviewFadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .review-item { animation: reviewFadeIn 0.3s ease-out; }
-
-        @keyframes topBadgePulse {
-            0%, 100% { box-shadow: 0 3px 8px rgba(251,191,36,0.5); }
-            50% { box-shadow: 0 3px 16px rgba(251,191,36,0.9); }
-        }
-        .teacher-rating-section [style*="🏆 معلم مميز"] { animation: topBadgePulse 2s ease-in-out infinite; }
-
-        .review-item-name span:first-child { animation: reviewFadeIn 0.4s ease-out; }
 
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
@@ -712,7 +635,7 @@
             .radio-grid label i { font-size: 18px; margin-bottom: 2px;}
             .btn-search { padding: 10px; font-size: 13px; }
             #map { height: 260px; }
-            .teacher-info-card { max-height: 50vh; padding: 12px 10px 10px; }
+            .teacher-info-card { max-height: 65vh; padding: 10px; }
         }
     </style>
 </head>
@@ -3052,7 +2975,7 @@
             return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
         }
 
-        // ✅ عرض كارت بيانات المعلم مع التقييمات
+        // ✅ عرض كارت بيانات المعلم مع التقييمات (مضغوط)
         window.showTeacherInfoCard = async function(lessonId) {
             let targetTeacher = null;
             teachersLayer.eachLayer(layer => {
@@ -3072,11 +2995,12 @@
             body.innerHTML = `
                 <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
+                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${t.grade || 'غير محدد'}</span></div>
+                <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
                 <div class="teacher-info-row"><span>🎂 العمر</span><span>${t.age} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
-                <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject} (${t.grade})</span></div>
                 <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
-                <div class="teacher-info-row"><span>📍 المكان</span><span style="color:#059669;">${t.locType} (${t.address})</span></div>
+                <div class="teacher-info-row"><span>📍 المكان</span><span style="color:#059669;">${t.locType}</span></div>
                 <div class="teacher-info-row" style="background:#ECFDF5; border:1px solid #A7F3D0;">
                     <span>📱 التليفون</span>
                     ${t.phone 
@@ -3109,8 +3033,8 @@
 
             const isTopRated = ratings.count >= 3 && ratings.avg >= 4.5;
             const topBadge = isTopRated ? `
-                <div style="text-align:center; margin-bottom:8px;">
-                    <span style="background:linear-gradient(135deg,#FBBF24,#F59E0B); color:#fff; padding:4px 14px; border-radius:99px; font-size:11px; font-weight:900; box-shadow:0 3px 8px rgba(251,191,36,0.5); display:inline-flex; align-items:center; gap:4px;">
+                <div style="text-align:center; margin-bottom:4px;">
+                    <span style="background:linear-gradient(135deg,#FBBF24,#F59E0B); color:#fff; padding:2px 10px; border-radius:99px; font-size:10px; font-weight:900; box-shadow:0 2px 6px rgba(251,191,36,0.4); display:inline-flex; align-items:center; gap:4px;">
                         🏆 معلم مميز
                     </span>
                 </div>
@@ -3125,12 +3049,12 @@
                                    : star === 3 ? 'linear-gradient(90deg,#10B981,#059669)'
                                    : 'linear-gradient(90deg,#94A3B8,#64748B)';
                     return `
-                        <div style="display:flex; align-items:center; gap:6px; margin-bottom:2.5px;">
-                            <span style="font-size:10px; color:#B45309; font-weight:900; min-width:22px;">${star} ★</span>
-                            <div style="flex:1; height:6px; background:#FEF3C7; border-radius:99px; overflow:hidden;">
-                                <div style="height:100%; width:${pct}%; background:${barColor}; border-radius:99px; transition:width 0.5s ease;"></div>
+                        <div style="display:flex; align-items:center; gap:4px; margin-bottom:2px;">
+                            <span style="font-size:9px; color:#B45309; font-weight:900; min-width:16px;">${star} ★</span>
+                            <div style="flex:1; height:4px; background:#FEF3C7; border-radius:99px; overflow:hidden;">
+                                <div style="height:100%; width:${pct}%; background:${barColor}; border-radius:99px; transition:width 0.4s ease;"></div>
                             </div>
-                            <span style="font-size:9px; color:#92400E; font-weight:800; min-width:16px; text-align:left;">${ratings.distribution[star]}</span>
+                            <span style="font-size:8px; color:#92400E; font-weight:800; min-width:12px; text-align:left;">${ratings.distribution[star]}</span>
                         </div>
                     `;
                 }).join('');
@@ -3138,11 +3062,11 @@
 
             let reviewsHtml = '';
             if (ratings.reviews.length > 0) {
-                reviewsHtml = ratings.reviews.slice(0, 10).map((r, i) => `
+                reviewsHtml = ratings.reviews.slice(0, 5).map((r, i) => `
                     <div class="review-item" style="${i === 0 ? 'border-color:#FCD34D; background:#FFFBEB;' : ''}">
                         <div class="review-item-header">
                             <span class="review-item-name">
-                                <span style="display:inline-block; width:18px; height:18px; background:#D1FAE5; color:#059669; border-radius:50%; text-align:center; line-height:18px; font-size:10px; margin-left:3px;">✓</span>
+                                <span style="display:inline-block; width:14px; height:14px; background:#D1FAE5; color:#059669; border-radius:50%; text-align:center; line-height:14px; font-size:8px; margin-left:2px;">✓</span>
                                 ${r.studentName}
                             </span>
                             <span class="review-item-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
@@ -3153,10 +3077,9 @@
                 `).join('');
             } else {
                 reviewsHtml = `
-                    <div style="text-align:center; padding:12px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); border-radius:10px; border:1.5px dashed #FBBF24;">
-                        <div style="font-size:24px; margin-bottom:4px;">🌟</div>
-                        <div style="font-size:11px; color:#92400E; font-weight:900;">كن أول من يقيّم هذا المعلم!</div>
-                        <div style="font-size:10px; color:#B45309; font-weight:700; margin-top:2px;">شارك تجربتك وساعد زملاءك</div>
+                    <div style="text-align:center; padding:6px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); border-radius:6px; border:1px dashed #FBBF24;">
+                        <div style="font-size:16px; margin-bottom:2px;">🌟</div>
+                        <div style="font-size:10px; color:#92400E; font-weight:900;">كن أول من يقيّم!</div>
                     </div>
                 `;
             }
@@ -3177,18 +3100,15 @@
                 <div class="teacher-rating-section">
                     ${topBadge}
 
-                    <div style="display:flex; gap:10px; align-items:center; background:linear-gradient(135deg,#FFFBEB,#FEF3C7); padding:10px; border-radius:10px; margin-bottom:10px; border:1.5px solid #FDE68A;">
-                        <div style="text-align:center; min-width:64px; padding:4px 0;">
-                            <div style="font-size:30px; font-weight:900; color:#B45309; line-height:1;">
+                    <div style="display:flex; gap:8px; align-items:center; background:linear-gradient(135deg,#FFFBEB,#FEF3C7); padding:6px; border-radius:8px; margin-bottom:6px; border:1px solid #FDE68A;">
+                        <div style="text-align:center; min-width:45px;">
+                            <div style="font-size:20px; font-weight:900; color:#B45309; line-height:1;">
                                 ${ratings.count > 0 ? ratings.avg.toFixed(1) : '—'}
                             </div>
-                            <div style="font-size:11px; color:#F59E0B; direction:ltr; margin-top:3px; letter-spacing:1px;">${starsDisplay}</div>
-                            <div style="font-size:9px; color:#92400E; font-weight:800; margin-top:2px;">
-                                ${ratings.count > 0 ? `${ratings.count} تقييم` : 'لا يوجد'}
-                            </div>
+                            <div style="font-size:9px; color:#F59E0B; direction:ltr; margin-top:2px;">${starsDisplay}</div>
                         </div>
                         <div style="flex:1;">
-                            ${distributionBars || '<div style="font-size:10px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات بعد</div>'}
+                            ${distributionBars || '<div style="font-size:9px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات</div>'}
                         </div>
                     </div>
 
