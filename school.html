@@ -881,6 +881,7 @@
     </script>
 
     <script>
+        // ✅ المتغيرات العامة
         let teacherDevicesCache = [];
         let suspiciousStudents = [];
         let studentsCache = [];
@@ -969,6 +970,7 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
+        // ✅ دالة تنسيق الوقت نقية (مباشر أو منذ X دقيقة)
         function formatLastSeen(timestamp) {
             if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: '' };
             
@@ -982,7 +984,7 @@
 
             const fullDate = new Date(timeMs).toLocaleString('ar-EG');
 
-            if (diffMin < 5) return { text: 'مباشر 🟢', isOnline: true, fullDate };
+            if (diffMin < 5) return { text: 'مباشر', isOnline: true, fullDate };
             if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
             if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
             if (diffDays === 1) return { text: 'منذ يوم', isOnline: false, fullDate };
@@ -1517,6 +1519,11 @@
             );
 
             setCloudStatus('synced', '☁️ مزامنة لحظية نشطة');
+
+            // تحديث واجهة التطبيق كل 30 ثانية لضمان أن عداد (منذ دقيقة) يتحدث باستمرار
+            setInterval(() => {
+                scheduleRender(0);
+            }, 30000);
         }
 
         let activeStageKey = null;
@@ -2285,15 +2292,16 @@
                 let idOrStudentBadgeHTML = '';
 
                 if (matchedStudent) {
-                    // 🟢 الطالب فاتح التطبيق
+                    // 🟢 المستر فاتح بوابة الطالب من جهازه الآن
                     const studentLastSeen = formatLastSeen(matchedStudent.updatedAt || 0);
                     idOrStudentBadgeHTML = `
                         <span class="badge-last-seen ${studentLastSeen.isOnline ? 'online-now' : ''}" style="background:#FEF3C7; border-color:#FCD34D; color:#92400E; font-weight:900;" title="يتصفح كطالب باسم: ${matchedStudent.st_name || 'بدون اسم'}">
                             👨‍🎓 طالب: ${studentLastSeen.isOnline ? 'مباشر 🟢' : studentLastSeen.text}
                         </span>
                     `;
+                    // 👈 تم إخفاء الـ ID تماماً هنا لتجنب التداخل كما طلبت
                 } else {
-                    // 🔵 المعلم فقط 
+                    // 🔵 المستر في وضع عادي
                     timeBadgeHTML = `
                         <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر نشاط كمعلم">
                             ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text}
@@ -2419,9 +2427,10 @@
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
                         
-                        <!-- ✅ تعديل هنا لمنع تداخل الكلام واستخدام flex-wrap -->
+                        <!-- ✅ التعديل هنا: فصل الكارت إلى طابقين لمنع التداخل على الموبايل -->
                         <div class="card-header flex flex-col gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
                             
+                            <!-- الطابق العلوي: الاسم والتليفون والصورة -->
                             <div class="flex items-start justify-between gap-2 w-full">
                                 <div class="flex items-center gap-2 min-w-0 flex-1">
                                     <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
@@ -2438,6 +2447,7 @@
                                 </div>
                             </div>
                             
+                            <!-- الطابق السفلي: البادجات فقط وتلتف للسطر التالي إذا زادت -->
                             <div class="flex flex-wrap items-center justify-start gap-1.5 w-full">
                                 ${statusBadgeHTML}
                                 <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
