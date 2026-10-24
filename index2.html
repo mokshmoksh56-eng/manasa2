@@ -194,7 +194,6 @@
             flex: 1;
         }
 
-        /* ===== كارت الترحيب - أزرق زي الرئيسية ===== */
         .welcome-banner {
             position: relative;
             display: flex;
@@ -268,7 +267,6 @@
             100% { transform: scale(1) rotate(0deg); }
         }
 
-        /* ✅ الكلام في نص الكارت */
         .welcome-text {
             flex: 1;
             min-width: 0;
@@ -414,7 +412,6 @@
             border: 1px dashed #FCA5A5;
         }
 
-        /* ===== زرار الرئيسية والخروج تحت الجداول ===== */
         .bottom-actions-bar {
             display: flex;
             justify-content: space-between;
@@ -454,7 +451,6 @@
             transform: scale(0.95);
         }
 
-        /* زر الرئيسية - أزرق */
         .bottom-action-home {
             background: linear-gradient(135deg, #2563EB, #0F2D5C);
             color: #fff;
@@ -465,7 +461,6 @@
             box-shadow: 0 8px 20px -6px rgba(37, 99, 235, 0.75);
         }
 
-        /* زر الخروج - أحمر */
         .bottom-action-logout {
             background: linear-gradient(135deg, #F87171, #DC2626);
             color: #fff;
@@ -476,7 +471,6 @@
             box-shadow: 0 8px 20px -6px rgba(220, 38, 38, 0.75);
         }
 
-        /* ===== الكارت الأساسي ===== */
         .portal-card {
             position: relative;
             border-radius: 22px;
@@ -508,7 +502,6 @@
                 0 3px 8px -3px rgba(0, 0, 0, 0.1);
         }
 
-        /* ===== ألوان الكروت المختلفة ===== */
         .portal-card.card-color-0 {
             background: linear-gradient(145deg, #DBEAFE 0%, #EFF6FF 55%, #FFFFFF 100%);
             border: 2px solid #60A5FA;
@@ -629,7 +622,6 @@
         }
         .portal-card.card-color-7 h2 { color: #7F1D1D; }
 
-        /* حالة الكارت المخفي */
         .portal-card.hidden-card {
             filter: grayscale(0.35);
             opacity: 0.9;
@@ -639,7 +631,6 @@
             box-shadow: 0 4px 12px rgba(148, 163, 184, 0.35);
         }
 
-        /* حالة الكارت غير المكتمل */
         .portal-card.incomplete-card {
             border-color: #FCD34D;
             border-bottom-color: #D97706;
@@ -649,7 +640,6 @@
             box-shadow: 0 4px 12px rgba(245, 158, 11, 0.35);
         }
 
-        /* حالة الكارت المحظور */
         .portal-card.locked-card {
             opacity: 0.85;
             border-color: #FCA5A5;
@@ -810,7 +800,6 @@
             100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
         }
 
-        /* ✅ شريط المواعيد - مكبّر وواضح */
         .time-range-badge {
             display: inline-flex;
             align-items: center;
@@ -868,7 +857,6 @@
             line-height: 1.2;
         }
 
-        /* ✅ الأيقونات فوق بعضها (عمودية) */
         .card-actions {
             position: absolute;
             top: 10px;
@@ -904,7 +892,6 @@
         .btn-visibility.published { background: #DBEAFE; color: #2563EB; }
         .btn-visibility.blocked { background: #FEF3C7; color: #B45309; opacity: 0.65; }
 
-        /* ✅ نقطة الحالة الصغيرة جداً */
         .status-dot {
             position: absolute;
             top: 14px;
@@ -942,7 +929,6 @@
             50% { box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3), 0 0 0 5px rgba(245, 158, 11, 0); }
         }
 
-        /* ===== كارت إنشاء مجموعة جديدة ===== */
         .card-add-new {
             background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
             border: 2px dashed #10B981;
@@ -1035,7 +1021,6 @@
             border-radius: 50%;
         }
 
-        /* ألوان صناديق الصور حسب لون الكارت */
         .portal-card.card-color-0 .card-image-box { background: #DBEAFE; border: 3px solid #60A5FA; }
         .portal-card.card-color-1 .card-image-box { background: #D1FAE5; border: 3px solid #34D399; }
         .portal-card.card-color-2 .card-image-box { background: #F3E8FF; border: 3px solid #C084FC; }
@@ -1090,7 +1075,6 @@
             transform: scale(0.95);
         }
 
-        /* ألوان btn-go حسب لون الكارت */
         .portal-card.card-color-0 .btn-go { background: linear-gradient(135deg, #3B82F6, #1D4ED8); box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
         .portal-card.card-color-1 .btn-go { background: linear-gradient(135deg, #10B981, #047857); box-shadow: 0 4px 12px rgba(5,150,105,0.4); }
         .portal-card.card-color-2 .btn-go { background: linear-gradient(135deg, #A855F7, #6D28D9); box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
@@ -1409,7 +1393,6 @@
             width: 100%;
         }
 
-        /* ===== زر حذف الحساب ===== */
         .delete-account-row {
             display: flex;
             justify-content: center;
@@ -1529,9 +1512,6 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* ============================================
-           📱 تحسينات الموبايل الشاملة
-           ============================================ */
         @media (max-width: 767px) {
             .hero-banner {
                 min-height: 220px;
@@ -1543,7 +1523,6 @@
 
             .cards-section { padding: 8px 10px 32px; }
 
-            /* كارت الإضافة - عرض كامل على الموبايل */
             #addNewGroupContainer {
                 margin-bottom: 12px !important;
             }
@@ -1571,7 +1550,6 @@
                 display: none !important;
             }
 
-            /* الكروت - تحسين التخطيط */
             .portal-card {
                 padding: 12px !important;
                 gap: 8px !important;
@@ -1597,7 +1575,6 @@
                 margin-bottom: 6px !important;
             }
 
-            /* شريط المواعيد - مكبّر وواضح */
             .time-range-badge {
                 font-size: 13.5px !important;
                 padding: 7px 12px !important;
@@ -1625,7 +1602,6 @@
                 padding: 2px 6px !important;
             }
 
-            /* أزرار الأكشن - أصغر شوية */
             .card-actions {
                 top: 8px !important;
                 left: 8px !important;
@@ -1650,7 +1626,6 @@
                 font-size: 11px !important;
             }
 
-            /* بانر الإخفاء - ترتيب عمودي مناسب */
             .hidden-notice-banner {
                 margin-top: 6px !important;
                 margin-bottom: 0 !important;
@@ -1684,7 +1659,6 @@
             .welcome-phone { font-size: 9.5px; }
             .welcome-sparkle { font-size: 10px; top: 5px; left: 8px; }
 
-            /* الكروت على الشاشات الصغيرة جداً */
             .portal-card { padding: 10px !important; gap: 6px !important; }
             .card-image-box { width: 56px !important; height: 56px !important; }
             .card-text { padding-top: 34px !important; }
@@ -1719,7 +1693,6 @@
             .blocked-desc { font-size: 12px; }
             .blocked-email-btn { font-size: 13px; padding: 10px 20px; }
 
-            /* أزرار الأسفل على الموبايل */
             .bottom-actions-bar {
                 gap: 8px;
                 margin: 14px 0 4px;
@@ -1825,12 +1798,10 @@
                 </div>
             </div>
 
-            <!-- كارت إضافة مجموعة جديدة -->
             <div id="addNewGroupContainer" class="flex justify-center mb-3.5 w-full"></div>
 
             <div id="lessonsContainer" class="grid grid-cols-1 md:grid-cols-2 gap-3.5 w-full"></div>
 
-            <!-- ✅ زرار الرئيسية والخروج تحت الجداول -->
             <div class="bottom-actions-bar">
                 <a href="./index.html" class="bottom-action-btn bottom-action-home">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor">
@@ -2039,9 +2010,6 @@
 
         const forceUnpublishingIds = new Set();
 
-        // ==========================================
-        // ✅ إدارة الجهاز
-        // ==========================================
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
             if (!deviceId) {
@@ -2210,6 +2178,7 @@
             }
         }
 
+        // ✅ فحص الحظر اليدوي فقط من الإدارة
         async function checkTeacherBlockStatus() {
             const { phone: teacherPhone } = getCurrentTeacherInfo();
             if (!teacherPhone || !window.db || !window.fsGetDoc) return false;
@@ -2221,45 +2190,7 @@
                 if (!snap.exists()) return false;
                 const data = snap.data() || {};
                 
-                let isBlocked = data.isBlocked === true || data.verification === 'حظر';
-                
-                if (!isBlocked && data.verification && data.createdAt) {
-                    const created = new Date(data.createdAt);
-                    const days = data.verification === '30 يوم تجريبي' ? 30
-                               : data.verification === '3 شهور' ? 90
-                               : data.verification === '6 شهور' ? 180
-                               : data.verification === 'سنة واحدة' ? 365
-                               : data.verification === '5 سنوات' ? 1825
-                               : 30;
-                    const expiry = new Date(created.getTime() + days * 24 * 60 * 60 * 1000);
-                    if (expiry < new Date()) {
-                        isBlocked = true;
-                        try {
-                            await window.fsSetDoc(window.fsDoc(window.db, "teachers", teacherKey),
-                                { isBlocked: true, verification: 'حظر', blockedAt: Date.now(), blockReason: 'expired' },
-                                { merge: true });
-                            
-                            if (window.fsGetDocs && window.fsCollection) {
-                                const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                                const updates = [];
-                                lessonsSnap.forEach((lessonDoc) => {
-                                    const d = lessonDoc.data() || {};
-                                    const lp = String(d.g_phone || '').replace(/\D/g, '');
-                                    if (lp && lp === teacherKey) {
-                                        updates.push(window.fsSetDoc(
-                                            window.fsDoc(window.db, "lessons", lessonDoc.id),
-                                            { g_publish_map: false, blockedByAdmin: true },
-                                            { merge: true }
-                                        ));
-                                    }
-                                });
-                                await Promise.all(updates);
-                            }
-                        } catch(e) { console.warn("فشل تحديث الحظر التلقائي:", e); }
-                    }
-                }
-                
-                return isBlocked;
+                return data.isBlocked === true;
             } catch (e) {
                 console.warn("⚠️ فشل فحص الحظر:", e);
                 return false;
@@ -2273,10 +2204,10 @@
             if (document.getElementById('blockedBanner')) return;
             
             const phone = getCurrentTeacherInfo().phone || '';
-            const emailSubject = encodeURIComponent('طلب توثيق حساب - منصة احجزلى');
+            const emailSubject = encodeURIComponent('طلب إعادة تفعيل حساب - منصة احجزلى');
             const emailBody = encodeURIComponent(
                 `مرحباً إدارة منصة احجزلى،\n\n` +
-                `أرغب في توثيق حسابي وإعادة تفعيل مجموعاتي.\n\n` +
+                `أرغب في إعادة تفعيل حسابي ومجموعاتي.\n\n` +
                 `📱 رقم التليفون: ${phone}\n` +
                 `📅 التاريخ: ${new Date().toLocaleDateString('ar-EG')}\n\n` +
                 `شكراً لكم.`
@@ -2289,15 +2220,15 @@
                 <div class="blocked-icon">🔒</div>
                 <h3 class="blocked-title">الحساب محظور — المجموعات مخفية</h3>
                 <p class="blocked-desc">
-                    لقد انتهت صلاحية باقتك الحالية.<br>
-                    لتوثيق حسابك وإعادة تفعيل مجموعاتك، تواصل مع الإدارة:
+                    تم إيقاف حسابك من قِبل الإدارة.<br>
+                    لإعادة تفعيل مجموعاتك، تواصل مع الإدارة:
                 </p>
                 <a href="mailto:mmoksh162@gmail.com?subject=${emailSubject}&body=${emailBody}"
                    class="blocked-email-btn">
                     📧 mmoksh162@gmail.com
                 </a>
                 <div class="blocked-note">
-                    ⚠️ سيتم إعادة تفعيل حسابك خلال 24 ساعة من استلام طلبك
+                    ⚠️ سيتم الرد على طلبك في أقرب وقت ممكن
                 </div>
             `;
             
@@ -2785,7 +2716,7 @@
                         (snap) => {
                             if (!snap.exists()) return;
                             const data = snap.data() || {};
-                            const newBlockStatus = data.isBlocked === true || data.verification === 'حظر';
+                            const newBlockStatus = data.isBlocked === true;
                             
                             if (newBlockStatus !== teacherIsBlocked) {
                                 teacherIsBlocked = newBlockStatus;
@@ -2814,9 +2745,6 @@
             if (el) el.classList.remove('active');
         }
 
-        // ==========================================
-        // ✅ إنشاء مجموعة جديدة + النزول التلقائي للكارت
-        // ==========================================
         function createNewLesson(saveToStorage = true) {
             if (teacherIsBlocked) {
                 showToast('🔒 الحساب محظور — لا يمكن إنشاء مجموعات جديدة', true);
@@ -2841,7 +2769,6 @@
             if (saveToStorage) saveLessonsToStorage();
             renderLessons();
 
-            // ✅ النزول التلقائي للكارت الجديد
             setTimeout(() => {
                 const cards = document.querySelectorAll('#lessonsContainer .portal-card');
                 const targetCard = Array.from(cards).find(card => card.querySelector('a')?.getAttribute('href')?.includes(newId));
@@ -2940,7 +2867,6 @@
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
-        // ✅ شريط صغير يعرض اليوم + مواعيد الحصة بالساعات (أعلى الكارت)
         function getTimeRangeBadge(savedState) {
             if (!savedState) return '';
             let state;
@@ -3060,7 +2986,7 @@
             if (event) event.stopPropagation();
 
             if (teacherIsBlocked) {
-                showToast('🔒 الحساب محظور — تواصل مع الإدارة للتوثيق', true);
+                showToast('🔒 الحساب محظور — تواصل مع الإدارة', true);
                 return;
             }
 
@@ -3446,9 +3372,6 @@
             try { localStorage.setItem('teacher_lessons', JSON.stringify(lessons)); } catch(e) {}
         }
 
-        // ==========================================
-        // 🗑️ حذف الحساب نهائياً — بالرقم السري
-        // ==========================================
         function openDeleteAccountModal() {
             const input = document.getElementById('deleteAccountPasswordInput');
             const btn = document.getElementById('confirmDeleteAccountBtn');
@@ -3553,7 +3476,7 @@
                     ['loggedInTeacher', 'rememberedPhone', 'teacher_location_consent',
                      'mokshmoksh', 'mokshmoksh_logged', 'loggedIn', 'user',
                      'teacher_lessons', 'lessons_owner_phone', 'device_id',
-                     'teacherAccount_' + teacherKey, 'teacherVerification_' + teacherKey,
+                     'teacherAccount_' + teacherKey,
                      'teacherBlocked_' + teacherKey, 'talep_data', 'talep_data_owner',
                      'location_consent_given'].forEach(k => localStorage.removeItem(k));
                     sessionStorage.clear();
