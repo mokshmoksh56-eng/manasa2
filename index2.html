@@ -972,6 +972,9 @@
             gap: 6px;
             text-decoration: none;
             transition: all 0.2s ease;
+            border: none;
+            cursor: pointer;
+            font-family: 'Cairo', sans-serif;
         }
         .btn-go:active {
             transform: scale(0.95);
@@ -2710,7 +2713,7 @@
 
             setTimeout(() => {
                 const cards = document.querySelectorAll('#lessonsContainer .portal-card');
-                const targetCard = Array.from(cards).find(card => card.querySelector('a')?.getAttribute('href')?.includes(newId));
+                const targetCard = Array.from(cards).find(card => card.querySelector('a')?.getAttribute('href')?.includes(newId) || card.querySelector('button.btn-go')?.getAttribute('onclick')?.includes(newId));
                 if (targetCard) {
                     targetCard.scrollIntoView({ behavior: 'smooth', block: 'center' });
                     targetCard.style.transition = 'box-shadow 0.4s ease';
@@ -3136,7 +3139,13 @@
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
                         <p>${descText}</p>
-                        <a href="${targetUrl}" class="btn-go">${btnText}</a>
+                        ${
+                            teacherIsBlocked 
+                            ? `<button type="button" class="btn-go" onclick="showToast('🔒 الحساب محظور — لا يمكن فتح التقرير', true)">مغلق</button>`
+                            : (hasReport && !isPublished) 
+                                ? `<button type="button" class="btn-go" onclick="showToast('🔒 المجموعة مخفية! اضغط على فتح أولاً للدخول للتقرير', true)">${btnText}</button>`
+                                : `<a href="${targetUrl}" class="btn-go">${btnText}</a>`
+                        }
                         ${noticeBannerHTML}
                     </div>
                 `;
