@@ -166,6 +166,22 @@
             font-weight: 900;
         }
 
+        .hero-subtitle {
+            font-size: 12.5px;
+            font-weight: 700;
+            color: #475569;
+            margin-top: 10px;
+            max-width: 440px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.5;
+            padding: 0 10px;
+        }
+        .hero-subtitle .highlight {
+            color: #10B981;
+            font-weight: 900;
+        }
+
         .hero-welcome {
             display: inline-flex;
             align-items: center;
@@ -173,19 +189,19 @@
             gap: 6px;
             margin-top: 10px;
             padding: 5px 14px;
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(8px);
             border: 1.5px solid #93C5FD;
             border-radius: 999px;
             box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
-            font-size: 12.5px;
+            font-size: 12px;
             font-weight: 800;
             color: #0F2D5C;
             animation: welcomeSlideIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
         @keyframes welcomeSlideIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(-8px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
@@ -200,7 +216,7 @@
         }
 
         .hero-welcome .hw-phone {
-            font-size: 10.5px;
+            font-size: 10px;
             color: #2563EB;
             font-weight: 900;
             background: rgba(239, 246, 255, 0.9);
@@ -221,22 +237,6 @@
             color: #DB2777;
             background: rgba(253, 242, 248, 0.9);
             border-color: #FBCFE8;
-        }
-
-        .hero-subtitle {
-            font-size: 12.5px;
-            font-weight: 700;
-            color: #475569;
-            margin-top: 10px;
-            max-width: 440px;
-            margin-left: auto;
-            margin-right: auto;
-            line-height: 1.5;
-            padding: 0 10px;
-        }
-        .hero-subtitle .highlight {
-            color: #10B981;
-            font-weight: 900;
         }
 
         .cards-section {
@@ -1671,6 +1671,10 @@
                 <span class="dots">...</span>
                 <span class="part-2">تابع طلابك باحترافية</span>
             </h1>
+            
+            <p class="hero-subtitle">
+                نظّم جداولك ومحتواك التعليمي بكل سهولة، <span class="highlight">لضمان أفضل تجربة لطلابك</span>
+            </p>
 
             <div id="heroWelcome" class="hero-welcome" style="display: none;">
                 <span id="welcomeAvatar">👨‍🏫</span>
@@ -1678,10 +1682,6 @@
                 <span class="hw-name" id="welcomeName">--</span>
                 <span class="hw-phone" id="welcomePhone">--</span>
             </div>
-            
-            <p class="hero-subtitle">
-                نظّم جداولك ومحتواك التعليمي بكل سهولة، <span class="highlight">لضمان أفضل تجربة لطلابك</span>
-            </p>
         </div>
     </section>
 
