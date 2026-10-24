@@ -1997,42 +1997,48 @@
             const cleanName = cleanTeacherName(teacherName);
             const newState = !isBlocked;
 
-            if (!window.db || !window.fsDoc || !window.fsSetDoc) {
-                showToast("⚠️ Firebase غير جاهز", true); return;
-            }
+            const actionMessage = newState 
+                ? `هل أنت متأكد من حظر المعلم (${teacherName}) وإخفاء جميع مجموعاته عن الطلاب؟` 
+                : `هل أنت متأكد من إلغاء حظر المعلم (${teacherName}) وإظهار مجموعاته مجدداً؟`;
 
-            try {
-                setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
-                const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
-                const teacherKey = String(phone || '').replace(/\D/g, '');
-
-                await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
-                    phone: phone, teacherName: cleanName,
-                    isBlocked: newState,
-                    updatedAt: Date.now()
-                }, { merge: true });
-
-                if (teacherKey && window.fsGetDocs && window.fsCollection) {
-                    const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                    const updates = [];
-                    lessonsSnap.forEach((lessonDoc) => {
-                        const data = lessonDoc.data() || {};
-                        const lessonPhone = String(data.g_phone || '').replace(/\D/g, '');
-                        const lessonTeacher = cleanTeacherName(data.g_teacher || '');
-                        if ((teacherKey && lessonPhone && lessonPhone === teacherKey) || (cleanName && lessonTeacher && lessonTeacher === cleanName)) {
-                            updates.push(window.fsSetDoc(window.fsDoc(window.db, "lessons", lessonDoc.id), { g_publish_map: !newState }, { merge: true }));
-                        }
-                    });
-                    await Promise.all(updates);
+            showCustomConfirm(actionMessage, async () => {
+                if (!window.db || !window.fsDoc || !window.fsSetDoc) {
+                    showToast("⚠️ Firebase غير جاهز", true); return;
                 }
 
-                setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                await renderAllRecords();
-                showToast(newState ? '🚫 تم حظر الحساب وإخفاء مجموعاته' : '✅ تم إلغاء الحظر وإظهار المجموعات');
-            } catch (error) {
-                setCloudStatus('offline', '⚠️ فشل التحديث');
-                showToast("⚠️ فشل الاتصال بالسحابة", true);
-            }
+                try {
+                    setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
+                    const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
+                    const teacherKey = String(phone || '').replace(/\D/g, '');
+
+                    await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
+                        phone: phone, teacherName: cleanName,
+                        isBlocked: newState,
+                        updatedAt: Date.now()
+                    }, { merge: true });
+
+                    if (teacherKey && window.fsGetDocs && window.fsCollection) {
+                        const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
+                        const updates = [];
+                        lessonsSnap.forEach((lessonDoc) => {
+                            const data = lessonDoc.data() || {};
+                            const lessonPhone = String(data.g_phone || '').replace(/\D/g, '');
+                            const lessonTeacher = cleanTeacherName(data.g_teacher || '');
+                            if ((teacherKey && lessonPhone && lessonPhone === teacherKey) || (cleanName && lessonTeacher && lessonTeacher === cleanName)) {
+                                updates.push(window.fsSetDoc(window.fsDoc(window.db, "lessons", lessonDoc.id), { g_publish_map: !newState }, { merge: true }));
+                            }
+                        });
+                        await Promise.all(updates);
+                    }
+
+                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                    await renderAllRecords();
+                    showToast(newState ? '🚫 تم حظر الحساب وإخفاء مجموعاته' : '✅ تم إلغاء الحظر وإظهار المجموعات');
+                } catch (error) {
+                    setCloudStatus('offline', '⚠️ فشل التحديث');
+                    showToast("⚠️ فشل الاتصال بالسحابة", true);
+                }
+            });
         }
 
         async function recordWaClick(docId, phone, teacherName) {
@@ -2265,7 +2271,9 @@
         }
 
         function deleteRecord(lessonsStr, phone, teacherName, docId) {
-            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً من قاعدة البيانات السحابية؟`, async () => {
+            const confirmMessage = `هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً من قاعدة البيانات السحابية؟ لا يمكن التراجع عن هذا الإجراء!`;
+            
+            showCustomConfirm(confirmMessage, async () => {
                 if (!window.db || !window.fsDeleteDoc) return;
                 
                 setCloudStatus('syncing', '⏳ جاري الحذف من السحابة...');
