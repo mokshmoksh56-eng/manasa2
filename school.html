@@ -1190,11 +1190,14 @@
 
         let lessonsCache = [];
         let teachersCache = [];
+        let ratingsCache = [];
         let lessonsUnsubscribe = null;
         let teachersUnsubscribe = null;
+        let ratingsUnsubscribe = null;
         let studentsUnsubscribe = null; 
         let isFirstLessonsSnapshot = true;
         let isFirstTeachersSnapshot = true;
+        let isFirstRatingsSnapshot = true;
 
         let renderTimeout = null;
         function scheduleRender(delay = 200) {
@@ -1352,6 +1355,23 @@
                 },
                 (error) => {
                     showToast("⚠️ تعذر المزامنة اللحظية للمعلمين", true);
+                }
+            );
+
+            // جلب التقييمات بشكل لحظي
+            if (ratingsUnsubscribe) ratingsUnsubscribe();
+            ratingsUnsubscribe = window.fsOnSnapshot(
+                window.fsCollection(window.db, "teacher_ratings"),
+                (snapshot) => {
+                    ratingsCache = [];
+                    snapshot.forEach((docSnap) => {
+                        ratingsCache.push({ id: docSnap.id, ...docSnap.data() });
+                    });
+                    if (isFirstRatingsSnapshot) isFirstRatingsSnapshot = false;
+                    scheduleRender();
+                },
+                (error) => {
+                    console.warn("⚠️ تعذر جلب التقييمات اللحظية:", error);
                 }
             );
 
@@ -1990,6 +2010,18 @@
             });
 
             const unifiedRecords = Array.from(unifiedMap.values());
+            
+            // إضافة التقييمات اللحظية لكل معلم
+            unifiedRecords.forEach(r => {
+                const cleanPhone = String(r.phone || '').replace(/\D/g, '');
+                const tRatings = ratingsCache.filter(rt => String(rt.teacherPhone || '').replace(/\D/g, '') === cleanPhone);
+                let sum = 0;
+                tRatings.forEach(rt => sum += (rt.stars || 0));
+                r.ratingCount = tRatings.length;
+                r.ratingAvg = r.ratingCount > 0 ? (sum / r.ratingCount) : 0;
+                r.reviews = tRatings.sort((a,b) => b.createdAt - a.createdAt);
+            });
+
             return { records: unifiedRecords, totalLessonsCount: firebaseLessons.length };
         }
 
@@ -2137,12 +2169,44 @@
                     </span>
                 `;
 
+                // شريط التقييمات في الأعلى بجوار آخر ظهور
+                const ratingBadgeHTML = r.ratingCount > 0 
+                    ? `<span class="badge-last-seen" style="background:#FFFBEB; border-color:#FDE68A; color:#B45309;" title="${r.ratingCount} تقييمات">⭐ ${r.ratingAvg.toFixed(1)}</span>` 
+                    : `<span class="badge-last-seen" style="background:#F8FAFC; border-color:#E2E8F0; color:#94A3B8;">⭐ جديد</span>`;
+
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                 const stateClass = r.isBlocked ? 'is-blocked' : 'is-allowed';
                 const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
+
+                // تقييمات الطلاب التفصيلية
+                let reviewsHtml = '';
+                if (r.ratingCount > 0) {
+                    const topReviews = r.reviews.slice(0, 3).map(rev => `
+                        <div style="background: #FFFFFF; border: 1px solid #FDE68A; border-radius: 8px; padding: 8px; margin-bottom: 6px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+                            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 4px;">
+                                <span style="font-size:11.5px; font-weight:900; color:#92400E;"><span style="color:#10B981; font-size:10px;">✓</span> ${rev.studentName || 'طالب'}</span>
+                                <span style="color:#F59E0B; font-size:11px; direction:ltr;">${'★'.repeat(rev.stars)}${'☆'.repeat(5-rev.stars)}</span>
+                            </div>
+                            ${rev.comment ? `<div style="font-size:11.5px; color:#475569; font-weight:800; line-height: 1.4;">"${rev.comment}"</div>` : ''}
+                            <div style="font-size:10px; color:#94A3B8; font-weight:700; margin-top:4px;">${new Date(rev.createdAt).toLocaleDateString('ar-EG')}</div>
+                        </div>
+                    `).join('');
+                    
+                    reviewsHtml = `
+                        <div class="info-pill flex flex-col gap-2" style="background:#FFFBEB; border-color:#FDE68A; margin-top: 8px;">
+                            <div class="flex items-center justify-between w-full mb-1">
+                                <span class="label" style="color:#B45309; font-size: 13px;">⭐ تقييمات الطلاب (${r.ratingCount}):</span>
+                                <span class="font-black text-amber-600 bg-amber-100 px-2 py-0.5 rounded-full border border-amber-300 shadow-sm">${r.ratingAvg.toFixed(1)} / 5</span>
+                            </div>
+                            <div style="max-height: 150px; overflow-y: auto; padding-right: 4px;">
+                                ${topReviews}
+                            </div>
+                        </div>
+                    `;
+                }
 
                 let unifiedScheduleHTML = '';
                 if (r.groups && r.groups.length > 0) {
@@ -2229,6 +2293,7 @@
                             </div>
                             
                             <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
+                                ${ratingBadgeHTML}
                                 ${lastSeenBadgeHTML}
                                 ${iconOnlyPhoneBadge}
                                 ${statusBadgeHTML}
@@ -2257,7 +2322,8 @@
                                         ${r.isBlocked ? '✅ إلغاء الحظر (إظهار للمعلم)' : '🚫 حظر الحساب (إخفاء عن الطلاب)'}
                                     </button>
                                 </div>
-
+                                
+                                ${reviewsHtml}
                                 ${unifiedScheduleHTML}
                             </div>
                             <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
