@@ -2578,7 +2578,7 @@
                             }
                         });
 
-                        // إعادة بناء قائمة المجموعات بالكامل
+                        // إعادة بناء قائمة المجموعات بالكامل في المصفوفة
                         snap.forEach(docSnap => {
                             const data = docSnap.data();
                             const lessonId = docSnap.id;
@@ -3079,11 +3079,14 @@
                 </div>
             `;
 
-            if (addContainer) addContainer.innerHTML = addCardHTML;
+            if (addContainer && addContainer.innerHTML.trim() !== addCardHTML.trim()) {
+                addContainer.innerHTML = addCardHTML.trim();
+            }
 
-            container.innerHTML = '';
+            const validIds = new Set();
 
             lessons.forEach((lesson, index) => {
+                validIds.add(lesson.id);
                 const colorIndex = index % 8;
                 const cardStyle = `card-color-${colorIndex}`;
                 const imgName = (index % 2 === 0) ? 'teacher.png' : 'student.png';
@@ -3179,10 +3182,7 @@
                     visibilityTitle = 'إظهار للطلاب';
                 }
 
-                const newCard = document.createElement('div');
-                newCard.className = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
-                
-                newCard.innerHTML = `
+                const cardInnerContent = `
                     ${lockedOverlayHTML}
                     ${hiddenOverlayGlassHTML}
                     ${statusDotHTML}
@@ -3216,8 +3216,35 @@
                         ${noticeBannerHTML}
                     </div>
                 `;
-                
-                container.appendChild(newCard);
+
+                let existingCard = document.getElementById('lesson-card-' + lesson.id);
+                const fullClassName = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
+
+                if (existingCard) {
+                    if (existingCard.innerHTML !== cardInnerContent) {
+                        existingCard.innerHTML = cardInnerContent;
+                    }
+                    if (existingCard.className !== fullClassName) {
+                        existingCard.className = fullClassName;
+                    }
+                    container.appendChild(existingCard); // يعيد ترتيب الكارت بدون حذفه (يمنع الرمش)
+                } else {
+                    const newCard = document.createElement('div');
+                    newCard.id = 'lesson-card-' + lesson.id;
+                    newCard.className = fullClassName;
+                    newCard.innerHTML = cardInnerContent;
+                    container.appendChild(newCard);
+                }
+            });
+
+            // مسح الكروت التي تم حذفها
+            Array.from(container.children).forEach(child => {
+                if (child.id && child.id.startsWith('lesson-card-')) {
+                    const childId = child.id.replace('lesson-card-', '');
+                    if (!validIds.has(childId)) {
+                        container.removeChild(child);
+                    }
+                }
             });
         }
 
