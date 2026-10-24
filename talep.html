@@ -2721,7 +2721,6 @@
                     disableClusteringAtZoom: 18
                 }).addTo(map);
 
-                // ✅ إغلاق كارت المعلم عند الضغط على الخريطة
                 map.on('click', function() {
                     closeTeacherInfoCard();
                 });
@@ -2853,7 +2852,7 @@
             });
         };
 
-        // ✅ جـديـد: تحميل ملخصات تقييمات جميع المعلمين دفعة واحدة
+        // ✅ دالة تحميل ملخصات التقييمات دفعة واحدة
         async function batchLoadRatingSummaries(phones, forceRefresh = false) {
             const mod = await loadFirebaseModule();
             if (!mod) return {};
@@ -2902,6 +2901,7 @@
             return result;
         }
 
+        // ✅ حفظ التقييم مع معالجة الأخطاء وتنظيف البيانات
         window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
             if (currentSelectedStars === 0) {
                 showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
@@ -2923,8 +2923,12 @@
 
                 const studentId = getStudentId();
                 const studentName = document.getElementById('st_name').value.trim() || 'طالب';
-                const ratingId = `${lessonId}_${studentId}`;
+                
+                // تنظيف البيانات عشان نمنع أي أخطاء
                 const cleanPhone = String(teacherPhone || '').replace(/\D/g, '');
+                const safeLessonId = String(lessonId).replace(/[\/\s]+/g, '_');
+                const safeTeacherName = String(teacherName || 'معلم').replace(/undefined/g, 'معلم');
+                const ratingId = `${safeLessonId}_${studentId}`;
 
                 const ref = mod.doc(mod.db, "teacher_ratings", ratingId);
 
@@ -2938,16 +2942,18 @@
                     return;
                 }
 
-                await mod.setDoc(ref, {
-                    lessonId: lessonId,
-                    teacherName: teacherName,
+                const payload = {
+                    lessonId: safeLessonId,
+                    teacherName: safeTeacherName,
                     teacherPhone: cleanPhone,
                     studentId: studentId,
                     studentName: studentName,
-                    stars: currentSelectedStars,
-                    comment: comment,
+                    stars: Number(currentSelectedStars) || 1,
+                    comment: comment || '',
                     createdAt: Date.now()
-                });
+                };
+
+                await mod.setDoc(ref, payload);
 
                 if (cleanPhone && globalRatingCache[cleanPhone]) {
                     delete globalRatingCache[cleanPhone];
@@ -2963,7 +2969,13 @@
 
             } catch (err) {
                 console.error("❌ خطأ في حفظ التقييم:", err);
-                showToast("حدث خطأ، حاول مرة أخرى!", true);
+                
+                let errMsg = "حدث خطأ، حاول مرة أخرى!";
+                if (err.code === 'permission-denied' || String(err).includes('permissions')) {
+                    errMsg = "صلاحيات الحفظ غير كافية! يرجى تعديل قواعد Firestore.";
+                }
+                
+                showToast(errMsg, true);
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '⭐ إرسال التقييم';
@@ -3040,7 +3052,7 @@
             return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
         }
 
-        // ✅ عرض كارت بيانات المعلم فوق الخريطة (مع التقييمات)
+        // ✅ عرض كارت بيانات المعلم مع التقييمات
         window.showTeacherInfoCard = async function(lessonId) {
             let targetTeacher = null;
             teachersLayer.eachLayer(layer => {
@@ -3156,7 +3168,7 @@
                         ${[1,2,3,4,5].map(i => `<button class="star-btn" onclick="selectStar(${i})" data-star="${i}">★</button>`).join('')}
                     </div>
                     <textarea id="ratingComment_${lessonId}" class="rating-comment-input" placeholder="اكتب تعليقك (اختياري)..."></textarea>
-                    <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${lessonId}', '${t.teacherName}', '${t.phone}')">
+                    <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${String(lessonId).replace(/'/g, "\\'")}', '${String(t.teacherName).replace(/'/g, "\\'")}', '${String(t.phone || '').replace(/'/g, "\\'")}')">
                         ⭐ إرسال التقييم
                     </button>
                 `;
@@ -3333,7 +3345,6 @@
                 return;
             }
 
-            // ✅ تحميل تقييمات جميع المعلمين دفعة واحدة
             const allPhones = [...new Set(matched.map(t => String(t.phone || '').replace(/\D/g, '')).filter(Boolean))];
             const ratingSummaries = await batchLoadRatingSummaries(allPhones);
 
@@ -3342,7 +3353,6 @@
                 t.ratingSummary = ratingSummaries[cleanPhone] || { avg: 0, count: 0 };
             });
 
-            // ✅ ترتيب: الأعلى تقييماً أولاً
             matched.sort((a, b) => {
                 if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
                 if (b.ratingSummary.count === 0) return -1;
@@ -3362,7 +3372,6 @@
                     const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
                     const rating = t.ratingSummary;
 
-                    // ✅ شارة التقييم على الدبوس
                     let ratingBadgeHtml = '';
                     if (rating.count > 0) {
                         const bgColor = rating.avg >= 4.5 ? 'linear-gradient(135deg,#FBBF24,#F59E0B)'
