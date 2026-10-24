@@ -1414,6 +1414,54 @@
             font-family: 'Cairo', sans-serif;
         }
 
+        /* تصميم غطاء الإخفاء الاحترافي */
+        .hidden-overlay-glass {
+            position: absolute;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 15; 
+            border-radius: 22px;
+            pointer-events: none; 
+            opacity: 0;
+            animation: fadeInOverlay 0.4s ease forwards;
+        }
+
+        @keyframes fadeInOverlay {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .hidden-overlay-icon-glass {
+            font-size: 48px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 8px 16px rgba(0,0,0,0.4));
+            animation: floatingLock 2.5s ease-in-out infinite; 
+        }
+
+        .hidden-overlay-text-glass {
+            font-size: 13.5px;
+            font-weight: 900;
+            color: #FFFFFF;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 6px 18px;
+            border-radius: 99px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            backdrop-filter: blur(4px);
+            letter-spacing: 0.5px;
+        }
+
+        @keyframes floatingLock {
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.05); }
+        }
+
         @media (max-width: 767px) {
             .hero-banner {
                 min-height: 220px;
@@ -3032,6 +3080,16 @@
                     </div>
                 ` : '';
 
+                let hiddenOverlayGlassHTML = '';
+                if (hasReport && !isPublished && !teacherIsBlocked) {
+                    hiddenOverlayGlassHTML = `
+                        <div class="hidden-overlay-glass">
+                            <div class="hidden-overlay-icon-glass">🔏</div>
+                            <div class="hidden-overlay-text-glass">المجموعة مخفية</div>
+                        </div>
+                    `;
+                }
+
                 let visibilityIcon;
                 let visibilityClass = '';
                 let visibilityTitle;
@@ -3056,6 +3114,7 @@
                 
                 newCard.innerHTML = `
                     ${lockedOverlayHTML}
+                    ${hiddenOverlayGlassHTML}
                     ${statusDotHTML}
                     <div class="card-actions">
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
