@@ -1417,7 +1417,7 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* تصميم غطاء الإخفاء الاحترافي */
+        /* تصميم غطاء الإخفاء الاحترافي — ثابت بدون أنيميشن لمنع الرمشة */
         .hidden-overlay-glass {
             position: absolute;
             inset: 0;
@@ -1431,13 +1431,7 @@
             z-index: 15; 
             border-radius: 22px;
             pointer-events: none; 
-            opacity: 0;
-            animation: fadeInOverlay 0.4s ease forwards;
-        }
-
-        @keyframes fadeInOverlay {
-            from { opacity: 0; }
-            to { opacity: 1; }
+            opacity: 1;
         }
 
         .hidden-overlay-icon-glass {
@@ -3235,7 +3229,7 @@
                     if (existingCard.className !== fullClassName) {
                         existingCard.className = fullClassName;
                     }
-                    container.appendChild(existingCard); 
+                    // ✅ ملاحظة: تم إزالة appendChild هنا لمنع الرمشة عند إعادة الترتيب
                 } else {
                     const newCard = document.createElement('div');
                     newCard.id = 'lesson-card-' + lesson.id;
@@ -3254,6 +3248,21 @@
                     }
                 }
             });
+
+            // ✅ الترتيب الذكي — يتحرك بس لو الترتيب فعلاً مختلف (يمنع الرمشة نهائياً)
+            const desiredOrder = lessons.map(l => 'lesson-card-' + l.id);
+            const currentOrder = Array.from(container.children)
+                .filter(c => c.id && c.id.startsWith('lesson-card-'))
+                .map(c => c.id);
+
+            if (currentOrder.join(',') !== desiredOrder.join(',')) {
+                desiredOrder.forEach((id, index) => {
+                    const el = document.getElementById(id);
+                    if (el && container.children[index] !== el) {
+                        container.insertBefore(el, container.children[index] || null);
+                    }
+                });
+            }
         }
 
         function openDeleteModal(id, event) {
