@@ -982,7 +982,7 @@
 
             const fullDate = new Date(timeMs).toLocaleString('ar-EG');
 
-            if (diffMin < 5) return { text: 'مباشر', isOnline: true, fullDate };
+            if (diffMin < 5) return { text: 'مباشر 🟢', isOnline: true, fullDate };
             if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
             if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
             if (diffDays === 1) return { text: 'منذ يوم', isOnline: false, fullDate };
@@ -1461,7 +1461,7 @@
                     if (countEl) countEl.textContent = studentsCache.length;
                     
                     checkSuspiciousStudents();
-                    scheduleRender(); // ✅ تحديث كروت الإدارة لتغيير الحالة فوراً
+                    scheduleRender(); 
                 },
                 (error) => {}
             );
@@ -2272,37 +2272,41 @@
                     iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
 
-                // ✅ استخراج معرّف قصير (ID) لعرضه في لوحة التحكم
+                // ✅ استخراج معرّف قصير (ID) بشكل منفصل
                 let shortDeviceId = 'غير متاح';
                 if (r.deviceId && r.deviceId !== 'غير متاح') {
                     shortDeviceId = r.deviceId.includes('_') ? r.deviceId.split('_')[2].substring(0, 6) : r.deviceId.substring(0, 6);
                 }
 
-                // ✅ بادج وقت الظهور للمعلم
                 const lastSeenObj = formatLastSeen(r.lastSeen);
-                const lastSeenBadgeHTML = `
-                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور كمعلم">
-                        ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text}
-                    </span>
-                `;
-
-                // ✅ بادج الـ ID أو حالة دخول الطالب
                 const matchedStudent = studentsCache.find(s => s.deviceId === r.deviceId && r.deviceId !== 'غير متاح');
-                let idBadgeHTML = '';
                 
+                let timeBadgeHTML = '';
+                let idOrStudentBadgeHTML = '';
+
                 if (matchedStudent) {
+                    // 🟢 الطالب فاتح التطبيق
                     const studentLastSeen = formatLastSeen(matchedStudent.updatedAt || 0);
-                    idBadgeHTML = `
+                    idOrStudentBadgeHTML = `
                         <span class="badge-last-seen ${studentLastSeen.isOnline ? 'online-now' : ''}" style="background:#FEF3C7; border-color:#FCD34D; color:#92400E; font-weight:900;" title="يتصفح كطالب باسم: ${matchedStudent.st_name || 'بدون اسم'}">
                             👨‍🎓 طالب: ${studentLastSeen.isOnline ? 'مباشر 🟢' : studentLastSeen.text}
                         </span>
                     `;
-                } else if (r.deviceId !== 'غير متاح') {
-                    idBadgeHTML = `
-                        <span class="badge-last-seen" style="background:#F3E8FF; border-color:#E9D5FF; color:#7E22CE; letter-spacing:1px; font-weight:900;" dir="ltr" title="معرف الجهاز">
-                            📱 ${shortDeviceId}
+                } else {
+                    // 🔵 المعلم فقط 
+                    timeBadgeHTML = `
+                        <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر نشاط كمعلم">
+                            ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text}
                         </span>
                     `;
+                    
+                    if (r.deviceId !== 'غير متاح') {
+                        idOrStudentBadgeHTML = `
+                            <span class="badge-last-seen" style="background:#F3E8FF; border-color:#E9D5FF; color:#7E22CE; letter-spacing:1px; font-weight:900;" dir="ltr" title="معرف الجهاز">
+                                📱 ${shortDeviceId}
+                            </span>
+                        `;
+                    }
                 }
 
                 // شريط التقييمات في الأعلى بجوار آخر ظهور
@@ -2416,27 +2420,31 @@
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
                         
                         <!-- ✅ تعديل هنا لمنع تداخل الكلام واستخدام flex-wrap -->
-                        <div class="card-header flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
+                        <div class="card-header flex flex-col gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
                             
-                            <div class="flex items-center gap-2 min-w-0 flex-1">
-                                <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
-                                <div class="flex flex-col min-w-0">
-                                    <div class="flex items-center gap-1.5 min-w-0">
-                                        <h3 class="text-base sm:text-lg font-black text-slate-800 shrink-0 whitespace-nowrap leading-tight">${r.teacherName}</h3>
-                                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 truncate leading-tight" title="${r.groupName}">(${r.groupName})</span>
+                            <div class="flex items-start justify-between gap-2 w-full">
+                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                    <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <h3 class="text-base sm:text-lg font-black text-slate-800 shrink-0 whitespace-nowrap leading-tight">${r.teacherName}</h3>
+                                            <span class="text-[10px] sm:text-xs font-bold text-slate-500 truncate leading-tight" title="${r.groupName}">(${r.groupName})</span>
+                                        </div>
+                                        <div class="text-xs font-black text-blue-700 mt-0.5 tracking-wider" dir="ltr" style="text-align: right;">${r.phone}</div>
                                     </div>
-                                    <div class="text-xs font-black text-blue-700 mt-0.5 tracking-wider" dir="ltr" style="text-align: right;">${r.phone}</div>
+                                </div>
+                                <div class="shrink-0 pl-1">
+                                    <span class="expand-arrow shrink-0" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
                                 </div>
                             </div>
                             
-                            <div class="flex flex-wrap items-center justify-end gap-1.5 shrink-0 w-full sm:w-auto">
-                                ${ratingBadgeHTML}
-                                ${idBadgeHTML}
-                                ${lastSeenBadgeHTML}
-                                ${iconOnlyPhoneBadge}
+                            <div class="flex flex-wrap items-center justify-start gap-1.5 w-full">
                                 ${statusBadgeHTML}
                                 <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
-                                <span class="expand-arrow shrink-0" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
+                                ${ratingBadgeHTML}
+                                ${idOrStudentBadgeHTML}
+                                ${timeBadgeHTML}
+                                ${iconOnlyPhoneBadge}
                             </div>
                         </div>
 
