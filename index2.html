@@ -2785,7 +2785,14 @@
             let state;
             try { state = JSON.parse(savedState); } catch(e) { return ''; }
             const grade = state.s_grade || '';
-            const subj = (state.selectedSubjects && state.selectedSubjects.length > 0) ? state.selectedSubjects[0].split(' - ')[1] || state.selectedSubjects[0] : '';
+            
+            let subjectsBadges = '';
+            if (state.selectedSubjects && state.selectedSubjects.length > 0) {
+                state.selectedSubjects.forEach(sub => {
+                    const cleanSub = sub.split(' - ')[1] || sub;
+                    subjectsBadges += `<span class="info-badge">📚 ${cleanSub}</span>`;
+                });
+            }
             
             let stageStr = '';
             if(state.s_stage) {
@@ -2805,7 +2812,8 @@
             let badges = '';
             if (stageStr) badges += `<span class="info-badge">🎓 ${stageStr}</span>`;
             if (grade) badges += `<span class="info-badge">👑 ${grade}</span>`;
-            if (subj) badges += `<span class="info-badge">📚 ${subj}</span>`;
+            badges += subjectsBadges;
+            
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
