@@ -2127,7 +2127,7 @@
             unifiedRecords.forEach(r => {
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 
-                // ✅ جلب معرف الجهاز (ID) وربطه بالمعلم
+                // جلب معرف الجهاز
                 const matchingDevice = teacherDevicesCache.find(d => d.id === cleanPhone || d.phone === cleanPhone);
                 r.deviceId = matchingDevice && matchingDevice.deviceId ? matchingDevice.deviceId : 'غير متاح';
 
@@ -2287,12 +2287,19 @@
                     shortDeviceId = r.deviceId.includes('_') ? r.deviceId.split('_')[2].substring(0, 6) : r.deviceId.substring(0, 6);
                 }
 
-                // ✅ إضافة الـ ID بجوار وقت "آخر ظهور / مباشر"
+                // ✅ بادج وقت الظهور منفصل تماماً
                 const lastSeenBadgeHTML = `
-                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}&#10;معرف الجهاز كاملاً: ${r.deviceId}">
-                        ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text} <span style="opacity:0.4; margin:0 3px;">|</span> 🆔 ${shortDeviceId}
+                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}">
+                        ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text}
                     </span>
                 `;
+
+                // ✅ بادج الـ ID منفصل تماماً بلون مميز
+                const idBadgeHTML = r.deviceId !== 'غير متاح' ? `
+                    <span class="badge-last-seen" style="background:#F3E8FF; border-color:#E9D5FF; color:#7E22CE; letter-spacing:0.5px;" dir="ltr" title="معرف الجهاز كاملاً: ${r.deviceId}">
+                        ID: ${shortDeviceId}
+                    </span>
+                ` : '';
 
                 // شريط التقييمات في الأعلى بجوار آخر ظهور
                 const ratingBadgeHTML = r.ratingCount > 0 
@@ -2419,6 +2426,7 @@
                             
                             <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
                                 ${ratingBadgeHTML}
+                                ${idBadgeHTML}
                                 ${lastSeenBadgeHTML}
                                 ${iconOnlyPhoneBadge}
                                 ${statusBadgeHTML}
