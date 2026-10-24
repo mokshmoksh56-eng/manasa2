@@ -969,7 +969,7 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
-        // ✅ دالة تنسيق الوقت الموجودة بالفعل (سنستخدمها لعرض "منذ 2 يوم" وما شابه)
+        // ✅ دالة تنسيق الوقت (تعرض مباشر أو منذ يوم / ساعات إلخ)
         function formatLastSeen(timestamp) {
             if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: 'لم يسجل ظهور بعد' };
             
@@ -1452,6 +1452,7 @@
                     teacherDevicesCache = [];
                     snapshot.forEach(docSnap => teacherDevicesCache.push({ id: docSnap.id, ...docSnap.data() }));
                     checkSuspiciousStudents();
+                    scheduleRender();
                 },
                 (error) => {}
             );
@@ -2123,9 +2124,13 @@
 
             const unifiedRecords = Array.from(unifiedMap.values());
             
-            // إضافة التقييمات اللحظية لكل معلم
             unifiedRecords.forEach(r => {
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
+                
+                // ✅ جلب معرف الجهاز (ID) وربطه بالمعلم
+                const matchingDevice = teacherDevicesCache.find(d => d.id === cleanPhone || d.phone === cleanPhone);
+                r.deviceId = matchingDevice && matchingDevice.deviceId ? matchingDevice.deviceId : 'غير متاح';
+
                 const tRatings = ratingsCache.filter(rt => String(rt.teacherPhone || '').replace(/\D/g, '') === cleanPhone);
                 let sum = 0;
                 tRatings.forEach(rt => sum += (rt.stars || 0));
@@ -2275,9 +2280,17 @@
                 }
 
                 const lastSeenObj = formatLastSeen(r.lastSeen);
+                
+                // ✅ استخراج معرّف قصير (ID) لعرضه في لوحة التحكم
+                let shortDeviceId = 'غير متاح';
+                if (r.deviceId && r.deviceId !== 'غير متاح') {
+                    shortDeviceId = r.deviceId.includes('_') ? r.deviceId.split('_')[2].substring(0, 6) : r.deviceId.substring(0, 6);
+                }
+
+                // ✅ إضافة الـ ID بجوار وقت "آخر ظهور / مباشر"
                 const lastSeenBadgeHTML = `
-                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}">
-                        ${lastSeenObj.isOnline ? '🟢' : '🕒'} ${lastSeenObj.text}
+                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}&#10;معرف الجهاز كاملاً: ${r.deviceId}">
+                        ${lastSeenObj.isOnline ? '' : '🕒'} ${lastSeenObj.text} <span style="opacity:0.4; margin:0 3px;">|</span> 🆔 ${shortDeviceId}
                     </span>
                 `;
 
