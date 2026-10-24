@@ -1269,7 +1269,8 @@
                         location_consent: consent,
                         saved_locations: Array.isArray(raw.saved_locations) ? raw.saved_locations : [],
                         saved_teachers: Array.isArray(raw.saved_teachers) ? raw.saved_teachers : [],
-                        updatedAt: Date.now()
+                        updatedAt: Date.now(),
+                        deviceId: getOrCreateDeviceId() // ✅ التعديل هنا: إضافة معرّف الجهاز (التليفون)
                     };
 
                     await mod.setDoc(ref, payload, { merge: true });
