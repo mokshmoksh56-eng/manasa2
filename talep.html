@@ -491,6 +491,194 @@
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 3px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
+        /* ✅ تنسيقات نظام التقييمات */
+        .teacher-rating-section {
+            margin-top: 12px;
+            padding: 10px;
+            background: #FFFBEB;
+            border: 1.5px solid #FDE68A;
+            border-bottom: 3px solid #F59E0B;
+            border-radius: 10px;
+        }
+
+        .teacher-rating-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px dashed #FDE68A;
+        }
+
+        .teacher-rating-title {
+            font-size: 12px;
+            font-weight: 900;
+            color: #92400E;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .teacher-rating-summary {
+            font-size: 11px;
+            font-weight: 900;
+            color: #B45309;
+            background: #FEF3C7;
+            padding: 2px 8px;
+            border-radius: 20px;
+        }
+
+        .stars-input {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            direction: ltr;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 28px;
+            cursor: pointer;
+            color: #D1D5DB;
+            transition: all 0.15s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .star-btn:hover,
+        .star-btn.active {
+            color: #FBBF24;
+            transform: scale(1.15);
+            text-shadow: 0 2px 6px rgba(251, 191, 36, 0.5);
+        }
+
+        .star-btn:active {
+            transform: scale(1.3);
+        }
+
+        .rating-comment-input {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1.5px solid #FDE68A;
+            border-bottom: 2.5px solid #F59E0B;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            outline: none;
+            resize: none;
+            min-height: 50px;
+            color: #1E293B;
+            background: #FFFFFF;
+        }
+
+        .rating-comment-input:focus {
+            border-color: #F59E0B;
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
+        }
+
+        .rating-submit-btn {
+            width: 100%;
+            padding: 8px;
+            margin-top: 6px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 900;
+            color: white;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            border: none;
+            border-bottom: 3px solid #B45309;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
+        .rating-submit-btn:active {
+            transform: translateY(2px);
+            border-bottom-width: 1px;
+        }
+
+        .rating-submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .rating-already-rated {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 900;
+            color: #059669;
+            background: #D1FAE5;
+            padding: 8px;
+            border-radius: 8px;
+            margin-top: 6px;
+        }
+
+        .reviews-list {
+            max-height: 180px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #FDE68A;
+        }
+
+        .review-item {
+            background: #FFFFFF;
+            border: 1px solid #FEF3C7;
+            border-radius: 8px;
+            padding: 7px 9px;
+            font-size: 11px;
+        }
+
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3px;
+        }
+
+        .review-item-name {
+            font-weight: 900;
+            color: #0F2D5C;
+            font-size: 11px;
+        }
+
+        .review-item-stars {
+            color: #FBBF24;
+            font-size: 12px;
+            direction: ltr;
+            letter-spacing: 1px;
+        }
+
+        .review-item-comment {
+            color: #475569;
+            font-weight: 700;
+            line-height: 1.4;
+            word-break: break-word;
+        }
+
+        .review-item-date {
+            font-size: 9px;
+            color: #94A3B8;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        .reviews-empty {
+            text-align: center;
+            font-size: 11px;
+            color: #92400E;
+            font-weight: 700;
+            padding: 8px;
+        }
+
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
             .hero-brand { font-size: 20px; }
@@ -825,6 +1013,10 @@
         // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
+
+        // ⭐ متغيرات نظام التقييمات
+        let currentRatingLessonId = null;
+        let currentSelectedStars = 0;
 
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
@@ -2629,8 +2821,148 @@
             }, 300);
         }
 
-        // ✅ عرض كارت بيانات المعلم فوق الخريطة
-        window.showTeacherInfoCard = function(lessonId) {
+        // ⭐ ==========================================
+        // ⭐ نظام تقييمات المعلمين
+        // ⭐ ==========================================
+        window.selectStar = function(stars) {
+            currentSelectedStars = stars;
+            document.querySelectorAll('.star-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx < stars);
+            });
+        };
+
+        window.submitTeacherRating = async function(lessonId, teacherName) {
+            if (currentSelectedStars === 0) {
+                showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
+                return;
+            }
+
+            const commentEl = document.getElementById('ratingComment_' + lessonId);
+            const comment = commentEl ? commentEl.value.trim() : '';
+            const submitBtn = document.getElementById('ratingSubmitBtn_' + lessonId);
+
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '⏳ جاري الحفظ...';
+            }
+
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) throw new Error("Firebase غير جاهز");
+
+                const studentId = getStudentId();
+                const studentName = document.getElementById('st_name').value.trim() || 'طالب';
+                const ratingId = `${lessonId}_${studentId}`;
+
+                const ref = mod.doc(mod.db, "teacher_ratings", ratingId);
+                
+                // التحقق من وجود تقييم سابق
+                const existing = await mod.getDoc(ref);
+                if (existing.exists()) {
+                    showToast("⚠️ لقد قمت بتقييم هذا المعلم مسبقاً!", true);
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = '⭐ إرسال التقييم';
+                    }
+                    return;
+                }
+
+                await mod.setDoc(ref, {
+                    lessonId: lessonId,
+                    teacherName: teacherName,
+                    studentId: studentId,
+                    studentName: studentName,
+                    stars: currentSelectedStars,
+                    comment: comment,
+                    createdAt: Date.now()
+                });
+
+                showToast("شكراً لك! تم إرسال تقييمك ⭐");
+                vibrateSuccess();
+                
+                currentSelectedStars = 0;
+                if (commentEl) commentEl.value = '';
+                
+                // إعادة تحميل الكارت
+                showTeacherInfoCard(lessonId);
+                
+            } catch (err) {
+                console.error("❌ خطأ في حفظ التقييم:", err);
+                showToast("حدث خطأ، حاول مرة أخرى!", true);
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = '⭐ إرسال التقييم';
+                }
+            }
+        };
+
+        async function loadTeacherRatings(lessonId) {
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) return { avg: 0, count: 0, reviews: [], hasRated: false };
+
+                const q = mod.query(
+                    mod.collection(mod.db, "teacher_ratings"),
+                    mod.where("lessonId", "==", lessonId)
+                );
+                const snap = await mod.getDocs(q);
+                
+                const reviews = [];
+                let sum = 0;
+                const studentId = getStudentId();
+                let hasRated = false;
+
+                snap.forEach(docSnap => {
+                    const d = docSnap.data();
+                    reviews.push({
+                        studentName: d.studentName || 'طالب',
+                        stars: d.stars || 0,
+                        comment: d.comment || '',
+                        createdAt: d.createdAt || 0
+                    });
+                    sum += d.stars || 0;
+                    if (d.studentId === studentId) hasRated = true;
+                });
+
+                reviews.sort((a, b) => b.createdAt - a.createdAt);
+
+                return {
+                    avg: reviews.length > 0 ? (sum / reviews.length) : 0,
+                    count: reviews.length,
+                    reviews: reviews,
+                    hasRated: hasRated
+                };
+            } catch (err) {
+                console.warn("⚠️ فشل تحميل التقييمات:", err);
+                return { avg: 0, count: 0, reviews: [], hasRated: false };
+            }
+        }
+
+        function renderStarsDisplay(avg) {
+            const full = Math.floor(avg);
+            const half = (avg - full) >= 0.5;
+            let html = '';
+            for (let i = 0; i < full; i++) html += '★';
+            if (half) html += '⯨';
+            for (let i = full + (half ? 1 : 0); i < 5; i++) html += '☆';
+            return html;
+        }
+
+        function formatDate(ts) {
+            if (!ts) return '';
+            const d = new Date(ts);
+            const now = new Date();
+            const diffMs = now - d;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            if (diffDays === 0) return 'اليوم';
+            if (diffDays === 1) return 'أمس';
+            if (diffDays < 7) return `منذ ${diffDays} أيام`;
+            return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
+        }
+
+        // ✅ عرض كارت بيانات المعلم فوق الخريطة (مع التقييمات)
+        window.showTeacherInfoCard = async function(lessonId) {
             let targetTeacher = null;
             teachersLayer.eachLayer(layer => {
                 if (layer._teacherData && layer._teacherData.lessonId === lessonId) {
@@ -2646,6 +2978,7 @@
             const card = document.getElementById('teacherInfoCard');
             const body = document.getElementById('teacherInfoCardBody');
 
+            // إظهار الكارت فوراً مع بيانات أساسية + تحميل التقييمات
             body.innerHTML = `
                 <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
@@ -2660,6 +2993,11 @@
                         ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:12px;" dir="ltr">📞 ${t.phone}</a>` 
                         : `<span style="color:#EF4444;">غير مسجل</span>`}
                 </div>
+                
+                <div id="ratingBlock_${lessonId}">
+                    <div class="reviews-empty">⏳ جاري تحميل التقييمات...</div>
+                </div>
+
                 <div class="teacher-info-actions">
                     <button class="teacher-info-btn-save" onclick="saveTeacher('${t.teacherName}', '${t.subject}', '${t.grade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')">⭐ حفظ</button>
                     <button class="teacher-info-btn-wa" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${t.subject}', '${t.grade}', '${t.groupName}')">💬 واتساب</button>
@@ -2667,6 +3005,61 @@
             `;
 
             card.classList.add('show');
+
+            // تحميل التقييمات
+            const ratings = await loadTeacherRatings(lessonId);
+            currentRatingLessonId = lessonId;
+            currentSelectedStars = 0;
+
+            const ratingBlock = document.getElementById('ratingBlock_' + lessonId);
+            if (!ratingBlock) return;
+
+            const starsDisplay = ratings.count > 0 
+                ? renderStarsDisplay(ratings.avg) 
+                : '☆☆☆☆☆';
+
+            let reviewsHtml = '';
+            if (ratings.reviews.length > 0) {
+                reviewsHtml = ratings.reviews.slice(0, 10).map(r => `
+                    <div class="review-item">
+                        <div class="review-item-header">
+                            <span class="review-item-name">${r.studentName}</span>
+                            <span class="review-item-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
+                        </div>
+                        ${r.comment ? `<div class="review-item-comment">"${r.comment}"</div>` : ''}
+                        <div class="review-item-date">${formatDate(r.createdAt)}</div>
+                    </div>
+                `).join('');
+            } else {
+                reviewsHtml = '<div class="reviews-empty">لا توجد تقييمات بعد — كن أول من يقيّم! 🌟</div>';
+            }
+
+            const ratingFormHtml = ratings.hasRated
+                ? `<div class="rating-already-rated">✅ لقد قمت بتقييم هذا المعلم مسبقاً</div>`
+                : `
+                    <div class="stars-input" id="starsInput_${lessonId}">
+                        ${[1,2,3,4,5].map(i => `<button class="star-btn" onclick="selectStar(${i})" data-star="${i}">★</button>`).join('')}
+                    </div>
+                    <textarea id="ratingComment_${lessonId}" class="rating-comment-input" placeholder="اكتب تعليقك (اختياري)..."></textarea>
+                    <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${lessonId}', '${t.teacherName}')">
+                        ⭐ إرسال التقييم
+                    </button>
+                `;
+
+            ratingBlock.innerHTML = `
+                <div class="teacher-rating-section">
+                    <div class="teacher-rating-header">
+                        <span class="teacher-rating-title">⭐ تقييمات المعلم</span>
+                        <span class="teacher-rating-summary">
+                            ${ratings.count > 0 ? `${starsDisplay} (${ratings.count})` : 'لا توجد تقييمات'}
+                        </span>
+                    </div>
+                    ${ratingFormHtml}
+                    <div class="reviews-list">
+                        ${reviewsHtml}
+                    </div>
+                </div>
+            `;
         };
 
         window.closeTeacherInfoCard = function() {
