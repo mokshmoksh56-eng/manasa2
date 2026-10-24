@@ -2496,7 +2496,8 @@
 
                     firebaseLessons.push({
                         id: lessonId,
-                        title: data.g_name || `مجموعة ${lessonId}`
+                        title: data.g_name || `مجموعة ${lessonId}`,
+                        data: data
                     });
 
                     const stateToSave = { ...data };
@@ -2578,14 +2579,15 @@
                             }
                         });
 
-                        // إعادة بناء قائمة المجموعات بالكامل في المصفوفة
+                        // إعادة بناء قائمة المجموعات بالكامل
                         snap.forEach(docSnap => {
                             const data = docSnap.data();
                             const lessonId = docSnap.id;
                             if (isLessonForCurrentTeacher(data, teacherPhone, teacherName)) {
                                 firebaseLessons.push({
                                     id: lessonId,
-                                    title: data.g_name || `مجموعة ${lessonId}`
+                                    title: data.g_name || `مجموعة ${lessonId}`,
+                                    data: data
                                 });
                             }
                         });
@@ -2930,11 +2932,10 @@
         };
 
         function getNextSessionTimestamp(lessonId) {
-            const raw = localStorage.getItem('lessonState_' + lessonId);
-            if (!raw) return Number.POSITIVE_INFINITY;
-
-            let state;
-            try { state = JSON.parse(raw); } catch(e) { return Number.POSITIVE_INFINITY; }
+            const lesson = lessons.find(l => l.id === lessonId);
+            if (!lesson || !lesson.data) return Number.POSITIVE_INFINITY;
+            
+            const state = lesson.data;
 
             if (!Array.isArray(state.g_days) || state.g_days.length === 0) {
                 return Number.POSITIVE_INFINITY;
@@ -3006,19 +3007,24 @@
                 return;
             }
 
-            const raw = localStorage.getItem('lessonState_' + id);
-            let data = null;
-            try { data = raw ? JSON.parse(raw) : null; } catch(e) {}
+            const lessonIndex = lessons.findIndex(l => l.id === id);
+            if (lessonIndex === -1) return;
+
+            const data = lessons[lessonIndex].data || {};
 
             if (!isSetupComplete(data)) {
                 showToast('⚠️ أكمل إعدادات المجموعة أولاً قبل النشر', true);
                 return;
             }
 
-            const currentState = localStorage.getItem('publishState_' + id) === 'true';
+            const currentState = data.g_publish_map === true;
             const newState = !currentState;
+            
+            // تحديث فوري في الذاكرة لمنع الرمش والاعتماد على اللوكال ستوريدج
+            lessons[lessonIndex].data.g_publish_map = newState;
             localStorage.setItem('publishState_' + id, newState);
-
+            
+            // تحديث الكارت مباشرة في الواجهة
             renderLessons();
 
             if (newState) {
@@ -3031,10 +3037,13 @@
                 if (window.db && window.fsDoc && window.fsSetDoc) {
                     showFbSyncBadge('☁️ جاري الحفظ...');
                     const ref = window.fsDoc(window.db, "lessons", String(id));
-                    await window.fsSetDoc(ref, { g_publish_map: newState }, { merge: true });
+                    await window.fsSetDoc(ref, { g_publish_map: newState, updatedAt: Date.now() }, { merge: true });
                     showFbSyncBadge(newState ? '✅ ظاهرة للطلاب' : '🔒 مخفية عن الطلاب');
                 }
             } catch (err) {
+                // استرجاع في حال الفشل
+                lessons[lessonIndex].data.g_publish_map = currentState;
+                renderLessons();
                 showFbSyncBadge('❌ فشل الحفظ', true);
             }
         }
@@ -3091,15 +3100,11 @@
                 const cardStyle = `card-color-${colorIndex}`;
                 const imgName = (index % 2 === 0) ? 'teacher.png' : 'student.png';
 
-                const savedStateRaw = localStorage.getItem('lessonState_' + lesson.id);
-                let savedStateObj = null;
-                try { savedStateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
-
-                const hasReport = isSetupComplete(savedStateObj);
-                const savedState = hasReport ? JSON.stringify(savedStateObj) : null;
-
-                const rawPublished = localStorage.getItem('publishState_' + lesson.id) === 'true';
-                const isPublished = rawPublished && hasReport;
+                // الاعتماد الكامل على الذاكرة وليس اللوكال ستوريدج لمنع التضارب
+                const data = lesson.data || {};
+                const hasReport = isSetupComplete(data);
+                const savedState = hasReport ? JSON.stringify(data) : null;
+                const isPublished = data.g_publish_map === true && hasReport;
 
                 const hiddenClass = (hasReport && !isPublished) ? 'hidden-card' : '';
                 const incompleteClass = !hasReport ? 'incomplete-card' : '';
@@ -3220,6 +3225,7 @@
                 let existingCard = document.getElementById('lesson-card-' + lesson.id);
                 const fullClassName = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
 
+                // التحديث الذكي لعناصر الـ DOM لمنع الرمش بالكامل
                 if (existingCard) {
                     if (existingCard.innerHTML !== cardInnerContent) {
                         existingCard.innerHTML = cardInnerContent;
@@ -3227,7 +3233,7 @@
                     if (existingCard.className !== fullClassName) {
                         existingCard.className = fullClassName;
                     }
-                    container.appendChild(existingCard); // يعيد ترتيب الكارت بدون حذفه (يمنع الرمش)
+                    container.appendChild(existingCard); 
                 } else {
                     const newCard = document.createElement('div');
                     newCard.id = 'lesson-card-' + lesson.id;
@@ -3237,7 +3243,7 @@
                 }
             });
 
-            // مسح الكروت التي تم حذفها
+            // مسح الكروت المحذوفة بصمت
             Array.from(container.children).forEach(child => {
                 if (child.id && child.id.startsWith('lesson-card-')) {
                     const childId = child.id.replace('lesson-card-', '');
@@ -3332,16 +3338,13 @@
                 return;
             }
 
-            const savedStateRaw = localStorage.getItem('lessonState_' + lessonId);
-            let stateObj = null;
-            try { stateObj = savedStateRaw ? JSON.parse(savedStateRaw) : null; } catch(e) {}
-
-            const hasRealData = isSetupComplete(stateObj);
-            const rawPublished = localStorage.getItem('publishState_' + lessonId) === 'true';
-            const isPublished = rawPublished && hasRealData;
-
             const lesson = lessons.find(l => l.id === lessonId);
-            const lessonTitle = lesson ? lesson.title : `مجموعة`;
+            if (!lesson) return;
+            const data = lesson.data || {};
+
+            const hasRealData = isSetupComplete(data);
+            const isPublished = data.g_publish_map === true && hasRealData;
+            const lessonTitle = lesson.title || `مجموعة`;
 
             const modal = document.getElementById('groupModal');
             const nameEl = document.getElementById('modalGroupName');
@@ -3353,7 +3356,6 @@
             nameEl.style.gap = '5px';
 
             if (hasRealData) {
-                const data = stateObj;
                 const groupName = data.g_name || lessonTitle;
                 
                 let statusBadge = isPublished ? 
