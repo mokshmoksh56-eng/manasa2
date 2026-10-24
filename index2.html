@@ -1656,7 +1656,7 @@
         }
 
         @media (max-width: 360px) {
-            .hero-brand { font-size: 24px; }
+            .hero-banner { font-size: 24px; }
             .hero-headline { font-size: 13px; }
             .portal-card { padding: 9px !important; }
             .card-image-box { width: 50px !important; height: 50px !important; }
@@ -2506,15 +2506,14 @@
 
                     if (setupComplete) {
                         localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+                        // تحديث حالة النشر المحلية لتطابق السحابة
+                        localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
                     } else {
                         localStorage.removeItem('lessonState_' + lessonId);
-                    }
-
-                    if (!setupComplete && data.g_publish_map === true) {
                         localStorage.setItem('publishState_' + lessonId, 'false');
-                        tryForceUnpublish(lessonId);
-                    } else if (!forceUnpublishingIds.has(lessonId)) {
-                        localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+                        if (data.g_publish_map === true) {
+                            tryForceUnpublish(lessonId);
+                        }
                     }
                 });
 
@@ -2549,32 +2548,45 @@
                     window.fsCollection(window.db, "lessons"),
                     (snap) => {
                         const firebaseLessons = [];
-                        snap.forEach(docSnap => {
-                            const data = docSnap.data();
-                            const lessonId = docSnap.id;
+                        
+                        snap.docChanges().forEach(change => {
+                            const data = change.doc.data();
+                            const lessonId = change.doc.id;
+                            
                             if (!isLessonForCurrentTeacher(data, teacherPhone, teacherName)) return;
-
-                            firebaseLessons.push({
-                                id: lessonId,
-                                title: data.g_name || `مجموعة ${lessonId}`
-                            });
 
                             const stateToSave = { ...data };
                             delete stateToSave.updatedAt;
-
                             const setupComplete = isSetupComplete(stateToSave);
 
-                            if (setupComplete) {
-                                localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
-                            } else {
+                            if (change.type === "removed") {
                                 localStorage.removeItem('lessonState_' + lessonId);
+                                localStorage.removeItem('publishState_' + lessonId);
+                            } else {
+                                if (setupComplete) {
+                                    localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
+                                    // اعتماد حالة النشر من السحابة مباشرة
+                                    const isPublished = data.g_publish_map === true;
+                                    localStorage.setItem('publishState_' + lessonId, isPublished);
+                                } else {
+                                    localStorage.removeItem('lessonState_' + lessonId);
+                                    localStorage.setItem('publishState_' + lessonId, 'false');
+                                    if (data.g_publish_map === true) {
+                                        tryForceUnpublish(lessonId);
+                                    }
+                                }
                             }
+                        });
 
-                            if (!setupComplete && data.g_publish_map === true) {
-                                localStorage.setItem('publishState_' + lessonId, 'false');
-                                tryForceUnpublish(lessonId);
-                            } else if (!forceUnpublishingIds.has(lessonId)) {
-                                localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
+                        // إعادة بناء قائمة المجموعات بالكامل
+                        snap.forEach(docSnap => {
+                            const data = docSnap.data();
+                            const lessonId = docSnap.id;
+                            if (isLessonForCurrentTeacher(data, teacherPhone, teacherName)) {
+                                firebaseLessons.push({
+                                    id: lessonId,
+                                    title: data.g_name || `مجموعة ${lessonId}`
+                                });
                             }
                         });
 
