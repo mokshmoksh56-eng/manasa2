@@ -380,7 +380,7 @@
             transition: all 0.3s ease;
             display: flex;
             flex-direction: row;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
             gap: 12px;
             overflow: visible;
@@ -846,6 +846,7 @@
             max-width: 220px;
             width: 100%;
             border-radius: 18px;
+            align-items: center;
         }
         .card-add-new:hover {
             background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
@@ -914,6 +915,7 @@
             overflow: hidden;
             padding: 5px;
             cursor: pointer;
+            align-self: center;
         }
         .card-image-box img {
             width: 100%;
@@ -1417,7 +1419,6 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* تصميم غطاء الإخفاء الاحترافي — ثابت بدون أنيميشن لمنع الرمشة */
         .hidden-overlay-glass {
             position: absolute;
             inset: 0;
@@ -1498,7 +1499,7 @@
             50%      { transform: scale(1.25); }
         }
 
-        /* ========== معاينة الملاحظات على الكارت — التمدد التلقائي ========== */
+        /* ========== معاينة الملاحظات على الكارت — تمدد تلقائي كامل بدون اختفاء ========== */
         .notes-preview {
             display: flex;
             align-items: flex-start;
@@ -1516,16 +1517,9 @@
             box-sizing: border-box;
             text-align: right;
             box-shadow: 0 2px 6px -3px rgba(245, 158, 11, 0.3);
-            max-height: 220px;
-            overflow-y: auto;
-            overflow-x: hidden;
-            transition: max-height 0.3s ease;
-            scrollbar-width: thin;
-            scrollbar-color: #FBBF24 #FEF3C7;
+            /* ✅ بدون max-height — يتمدد تلقائياً بحرية كاملة */
+            overflow: visible;
         }
-        .notes-preview::-webkit-scrollbar { width: 5px; }
-        .notes-preview::-webkit-scrollbar-track { background: #FEF3C7; border-radius: 99px; }
-        .notes-preview::-webkit-scrollbar-thumb { background: #FBBF24; border-radius: 99px; }
         .notes-preview .np-icon {
             flex-shrink: 0;
             font-size: 12px;
@@ -1537,6 +1531,7 @@
             word-break: break-word;
             white-space: pre-wrap;
             min-width: 0;
+            overflow: visible;
         }
 
         /* ========== نافذة الملاحظات ========== */
@@ -1855,7 +1850,6 @@
             .notes-preview { 
                 font-size: 10px !important; 
                 padding: 5px 8px !important; 
-                max-height: 160px !important;
             }
             .notes-modal-box { max-height: 92vh; padding: 14px !important; }
             .notes-textarea { min-height: 110px; font-size: 12.5px; }
@@ -1917,8 +1911,6 @@
                 width: 15px;
                 height: 15px;
             }
-
-            .notes-preview { max-height: 140px !important; }
         }
 
         @media (max-width: 360px) {
@@ -3544,7 +3536,7 @@
                 const savedState = hasReport ? JSON.stringify(data) : null;
                 const isPublished = data.g_publish_map === true && hasReport;
 
-                // بيانات الملاحظات — النص كامل بدون قص للتمدد التلقائي
+                // بيانات الملاحظات — النص كامل بدون قص — يتمدد تلقائياً
                 const notesRaw = String(data.g_notes || '').trim();
                 const hasNotes = notesRaw.length > 0;
                 const notesPreviewText = notesRaw;
@@ -4048,7 +4040,6 @@
                 });
             }
 
-            // ربط أزرار نافذة الملاحظات
             const notesTextareaEl = document.getElementById('notesTextarea');
             const saveNotesBtnEl = document.getElementById('saveNotesBtn');
             const deleteNotesBtnEl = document.getElementById('deleteNotesBtn');
