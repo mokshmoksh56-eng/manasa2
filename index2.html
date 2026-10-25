@@ -1498,7 +1498,7 @@
             50%      { transform: scale(1.25); }
         }
 
-        /* ========== معاينة الملاحظات على الكارت ========== */
+        /* ========== معاينة الملاحظات على الكارت — التمدد التلقائي ========== */
         .notes-preview {
             display: flex;
             align-items: flex-start;
@@ -1511,24 +1511,31 @@
             font-size: 10.5px;
             font-weight: 800;
             color: #92400E;
-            line-height: 1.45;
+            line-height: 1.55;
             width: 100%;
             box-sizing: border-box;
             text-align: right;
             box-shadow: 0 2px 6px -3px rgba(245, 158, 11, 0.3);
+            max-height: 220px;
+            overflow-y: auto;
+            overflow-x: hidden;
+            transition: max-height 0.3s ease;
+            scrollbar-width: thin;
+            scrollbar-color: #FBBF24 #FEF3C7;
         }
+        .notes-preview::-webkit-scrollbar { width: 5px; }
+        .notes-preview::-webkit-scrollbar-track { background: #FEF3C7; border-radius: 99px; }
+        .notes-preview::-webkit-scrollbar-thumb { background: #FBBF24; border-radius: 99px; }
         .notes-preview .np-icon {
             flex-shrink: 0;
             font-size: 12px;
             line-height: 1.3;
+            margin-top: 1px;
         }
         .notes-preview .np-text {
             flex: 1;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
             word-break: break-word;
+            white-space: pre-wrap;
             min-width: 0;
         }
 
@@ -1845,7 +1852,11 @@
                 border-radius: 6px !important;
             }
 
-            .notes-preview { font-size: 10px !important; padding: 5px 8px !important; }
+            .notes-preview { 
+                font-size: 10px !important; 
+                padding: 5px 8px !important; 
+                max-height: 160px !important;
+            }
             .notes-modal-box { max-height: 92vh; padding: 14px !important; }
             .notes-textarea { min-height: 110px; font-size: 12.5px; }
             .btn-save-notes { font-size: 12px; padding: 10px; }
@@ -1906,6 +1917,8 @@
                 width: 15px;
                 height: 15px;
             }
+
+            .notes-preview { max-height: 140px !important; }
         }
 
         @media (max-width: 360px) {
@@ -2210,7 +2223,6 @@
             if (audioCtx.state === 'suspended') { audioCtx.resume(); }
         }
 
-        // الصوت العام للأزرار
         function playHighPitchSound() {
             try {
                 resumeAudioCtx();
@@ -2224,7 +2236,6 @@
             } catch(e) {}
         }
 
-        // صوت التعديل (نغمتين سريعتين متتاليتين)
         function playEditSound() {
             try {
                 resumeAudioCtx();
@@ -2240,7 +2251,6 @@
             } catch(e) {}
         }
 
-        // صوت الإخفاء/الإظهار (نغمة منخفضة مثل زر التبديل)
         function playVisibilitySound() {
             try {
                 resumeAudioCtx();
@@ -2256,7 +2266,6 @@
             } catch(e) {}
         }
 
-        // صوت الحذف أو فتح مودال الحذف (نغمة تحذيرية)
         function playDeleteSound() {
             try {
                 resumeAudioCtx();
@@ -3535,12 +3544,10 @@
                 const savedState = hasReport ? JSON.stringify(data) : null;
                 const isPublished = data.g_publish_map === true && hasReport;
 
-                // بيانات الملاحظات
+                // بيانات الملاحظات — النص كامل بدون قص للتمدد التلقائي
                 const notesRaw = String(data.g_notes || '').trim();
                 const hasNotes = notesRaw.length > 0;
-                const notesPreviewText = hasNotes
-                    ? (notesRaw.length > 80 ? notesRaw.substring(0, 80) + '...' : notesRaw)
-                    : '';
+                const notesPreviewText = notesRaw;
 
                 const hiddenClass = (hasReport && !isPublished) ? 'hidden-card' : '';
                 const incompleteClass = !hasReport ? 'incomplete-card' : '';
