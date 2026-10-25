@@ -450,7 +450,6 @@
                 <input type="number" id="regAge" class="custom-input" placeholder="30">
             </div>
             
-            <!-- تعديل رقم الهاتف لإضافة زر إرسال الكود -->
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
                 <div class="input-with-btn">
@@ -460,7 +459,6 @@
                 </div>
             </div>
 
-            <!-- حقل إدخال كود التحقق OTP -->
             <div class="input-group" id="otpGroup" style="display: none;">
                 <label class="input-label">كود التحقق (6 أرقام)</label>
                 <div class="input-with-btn">
@@ -488,8 +486,8 @@
         <button class="btn-logout" onclick="handleLogout()">الرئيسية</button>
     </div>
 
-    <!-- حاوية reCAPTCHA المخفية المطلوبة من Firebase -->
-    <div id="recaptcha-container"></div>
+    <!-- حاوية reCAPTCHA -->
+    <div id="recaptcha-container" style="margin: 10px auto; display: flex; justify-content: center;"></div>
 
     <script>
         // ==========================================
@@ -696,8 +694,18 @@
             if (window._recaptchaVerifier) return window._recaptchaVerifier;
             const fb = await getFbModule();
             if (!fb) throw new Error('no-firebase');
+            
+            // ⚠️ تم تغييرها إلى normal لإظهار مربع التحقق وتجنب فشل العملية على التابلت
             window._recaptchaVerifier = new fb.RecaptchaVerifier(fb.auth, 'recaptcha-container', {
-                size: 'invisible'
+                size: 'normal',
+                callback: (response) => {
+                    console.log("reCAPTCHA solved");
+                },
+                'expired-callback': () => {
+                    console.log("reCAPTCHA expired");
+                    window._recaptchaVerifier.clear();
+                    window._recaptchaVerifier = null;
+                }
             });
             return window._recaptchaVerifier;
         }
@@ -717,7 +725,6 @@
                 if (!fb) throw new Error('no-firebase');
 
                 const verifier = await initRecaptcha();
-                // تحويل 01xxxxxxxxx إلى +201xxxxxxxxx
                 const e164 = '+20' + phone.substring(1);
 
                 _confirmationResult = await fb.signInWithPhoneNumber(fb.auth, e164, verifier);
@@ -738,15 +745,19 @@
                     try { window._recaptchaVerifier.clear(); } catch(e) {}
                     window._recaptchaVerifier = null;
                 }
+                
+                // 💡 عرض كود الخطأ الحقيقي لمعرفة السبب بالضبط
+                let errorMsg = 'تعذر إرسال الكود. ';
                 if (err.code === 'auth/too-many-requests') {
-                    showAlert('محاولات كثيرة، حاول لاحقاً.');
+                    errorMsg += 'محاولات كثيرة، حاول لاحقاً.';
                 } else if (err.code === 'auth/invalid-phone-number') {
-                    showAlert('رقم التليفون غير صحيح.');
+                    errorMsg += 'رقم التليفون غير صحيح.';
                 } else if (err.code === 'auth/unauthorized-domain') {
-                    showAlert('هذا الدومين غير مصرّح به في Firebase.');
+                    errorMsg += 'هذا الدومين غير مصرّح به في Firebase.';
                 } else {
-                    showAlert('تعذر إرسال الكود. تأكد من الرقم والاتصال بالإنترنت.');
+                    errorMsg += `(كود الخطأ: ${err.code || err.message})`;
                 }
+                showAlert(errorMsg);
             }
         }
 
@@ -783,14 +794,12 @@
             try {
                 await _confirmationResult.confirm(code);
                 const fb = await getFbModule();
-                // نُنهي جلسة الهاتف — نحن نستخدمها فقط للتحقق
                 if (fb && fb.signOut) {
                     try { await fb.signOut(fb.auth); } catch(e) {}
                 }
 
                 _verifiedPhone = document.getElementById('regPhone').value.trim();
 
-                // قفل حقل الهاتف بعد التحقق
                 const phoneInput = document.getElementById('regPhone');
                 phoneInput.readOnly = true;
                 phoneInput.style.background = '#ECFDF5';
@@ -803,7 +812,6 @@
                 sendBtn.disabled = true;
                 sendBtn.classList.add('verified');
 
-                // إضافة رابط تغيير الرقم
                 if (!document.getElementById('changePhoneLink')) {
                     const a = document.createElement('div');
                     a.id = 'changePhoneLink';
@@ -822,7 +830,7 @@
                 } else if (err.code === 'auth/code-expired') {
                     showAlert('انتهت صلاحية الكود، أرسل كوداً جديداً.');
                 } else {
-                    showAlert('تعذر التحقق. حاول مرة أخرى.');
+                    showAlert(`تعذر التحقق. (كود الخطأ: ${err.code})`);
                 }
             }
         }
@@ -888,11 +896,9 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ إنشاء حساب Auth آمن
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
 
-                // 2️⃣ حفظ بيانات المعلم العامة في Firestore
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -959,17 +965,14 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ التحقق من الحساب وكلمة المرور
                 const userCredential = await fb.signIn(fb.auth, fakeEmail, pass);
                 
-                // 2️⃣ جلب بيانات المعلم من Firestore
                 const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
                 let savedData = {};
                 
                 if (snap.exists()) {
                     const d = snap.data();
                     
-                    // ✅ فحص الحظر اليدوي فقط من الإدارة
                     if (d.isBlocked === true) {
                         btn.innerText = originalText;
                         btn.disabled = false;
@@ -988,7 +991,6 @@
                     savedData = { title: 'مستر', name: 'معلم', phone: phone };
                 }
 
-                // ✅ تحديث وقت آخر ظهور للمعلم في قاعدة البيانات عند تسجيل الدخول
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     lastSeen: Date.now()
                 }, { merge: true });
