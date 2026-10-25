@@ -431,10 +431,64 @@
         .custom-btn-cancel { background: #F43F5E; border-bottom: 2.5px solid #E11D48; }
         .custom-btn-save { background: #10B981; border-bottom: 2.5px solid #059669; }
 
+        /* ✅ صف الخريطة + التفضيلات جنب بعض */
+        .map-prefs-row {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+            align-items: start;
+        }
+        .map-prefs-row .form-group { margin-bottom: 0; }
+
+        .prefs-side {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .pref-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: #F0FDF8;
+            border: 1.5px solid #A7F3D0;
+            border-bottom: 4px solid #059669;
+        }
+        .pref-toggle:active { transform: translateY(2px); border-bottom-width: 2px; }
+
+        .pref-toggle input[type="checkbox"] {
+            width: 22px; height: 22px;
+            accent-color: var(--c-main);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        .pref-toggle label {
+            margin: 0;
+            cursor: pointer;
+            font-size: 12.5px;
+            font-weight: 900;
+            color: #064E3B;
+            line-height: 1.35;
+        }
+
+        .pref-toggle-blue {
+            background: #F0F9FF;
+            border-color: #BAE6FD;
+            border-bottom-color: #0284C7;
+        }
+        .pref-toggle-blue input[type="checkbox"] { accent-color: #0284C7; }
+        .pref-toggle-blue label { color: #075985; }
+
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 18px; }
             .smart-card { padding: 15px; }
+            .map-prefs-row { grid-template-columns: 1fr; gap: 12px; }
         }
 
         @media (max-width: 480px) {
@@ -710,7 +764,7 @@
     <div id="step3" class="step-content theme-teal">
         <div class="smart-card">
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي وجدول المواعيد</h3>
-            
+
             <div class="form-group">
                 <label>📅 أيام الحصص (اختر أيام الأسبوع)</label>
                 <div class="days-grid">
@@ -769,34 +823,38 @@
                 </div>
             </div>
 
-            <div class="form-group" style="background: #F0FDF8; padding: 12px; border-radius: 10px; border: 1.5px solid #A7F3D0; border-bottom: 4px solid #059669; display: flex; align-items: center; gap: 12px; transition: transform 0.2s; cursor: pointer;">
-                <input type="checkbox" id="g_repeat_weekly" style="width: 22px; height: 22px; accent-color: var(--c-main); cursor: pointer;">
-                <label for="g_repeat_weekly" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #064E3B;">
-                    🔄 تكرار الحصة تلقائياً كل أسبوع
-                </label>
-            </div>
+            <!-- ✅ الخريطة + التفضيلات جنب بعض -->
+            <div class="map-prefs-row">
+                <div class="form-group">
+                    <label>🗺️ حدد موقعك على الخريطة</label>
+                    <div class="map-container">
+                        <div id="map"></div>
+                        <button type="button" class="locate-btn" onclick="triggerLocationFlow()" title="انتقل إلى موقعي الحالي">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+                            </svg>
+                        </button>
+                        <div id="locateSuccessMsg" class="locate-success-msg">تم تحديد المكان ✔</div>
+                    </div>
+                </div>
 
-            <div class="map-container" style="margin-top: 15px;">
-                <div id="map"></div>
-                <button type="button" class="locate-btn" onclick="triggerLocationFlow()" title="انتقل إلى موقعي الحالي">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 22px; height: 22px;">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
-                    </svg>
-                </button>
-                <div id="locateSuccessMsg" class="locate-success-msg">تم تحديد المكان ✔</div>
-            </div>
-            
-            <div class="form-group" style="margin-top: 15px;">
-                <label>🏠 العنوان التفصيلي (للتسهيل على الطالب)</label>
-                <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
-            </div>
+                <div class="prefs-side">
+                    <div class="form-group">
+                        <label>🏠 العنوان التفصيلي</label>
+                        <input type="text" id="m_address" class="form-control" placeholder="سيتم تحديد موقعك تلقائياً هنا...">
+                    </div>
 
-            <div class="form-group" style="background: #F0F9FF; padding: 12px; border-radius: 10px; border: 1.5px solid #BAE6FD; border-bottom: 4px solid #0284C7; display: flex; align-items: center; gap: 12px; transition: transform 0.2s; cursor: pointer; margin-top: 15px;">
-                <input type="checkbox" id="g_publish_map" checked style="width: 22px; height: 22px; accent-color: #0284C7; cursor: pointer;">
-                <label for="g_publish_map" style="margin: 0; cursor: pointer; font-size: 14px; font-weight: 900; color: #075985;">
-                    👁️ إظهار موقع الدرس للطلاب على الخريطة
-                </label>
+                    <div class="pref-toggle">
+                        <input type="checkbox" id="g_repeat_weekly">
+                        <label for="g_repeat_weekly">🔄 تكرار الحصة تلقائياً كل أسبوع</label>
+                    </div>
+
+                    <div class="pref-toggle pref-toggle-blue">
+                        <input type="checkbox" id="g_publish_map" checked>
+                        <label for="g_publish_map">👁️ إظهار موقع الدرس للطلاب على الخريطة</label>
+                    </div>
+                </div>
             </div>
 
             <div class="nav-buttons">
