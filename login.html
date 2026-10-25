@@ -160,37 +160,6 @@
             box-shadow: 0 0 0 4px #DBEAFE;
         }
 
-        /* ================= تنسيقات التحقق من الهاتف ================= */
-        .btn-verify {
-            padding: 12px 16px;
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            font-size: 13px;
-            font-weight: 900;
-            cursor: pointer;
-            font-family: 'Cairo', sans-serif;
-            white-space: nowrap;
-            transition: all 0.3s;
-            box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);
-        }
-        .btn-verify:disabled { opacity: 0.6; cursor: not-allowed; }
-        .btn-verify.verified { background: linear-gradient(135deg, #10B981, #047857); }
-
-        .input-with-btn { display: flex; gap: 8px; align-items: stretch; }
-        .input-with-btn .custom-input { flex: 1; width: auto; }
-
-        #otpTimer {
-            font-size: 12px;
-            color: #64748B;
-            font-weight: 800;
-            margin-top: 6px;
-            text-align: center;
-            min-height: 16px;
-        }
-        /* ========================================================= */
-
         .radio-group {
             display: flex;
             gap: 12px;
@@ -449,26 +418,10 @@
                 <label class="input-label">العمر</label>
                 <input type="number" id="regAge" class="custom-input" placeholder="30">
             </div>
-            
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
-                <div class="input-with-btn">
-                    <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    <button type="button" id="sendOtpBtn" class="btn-verify" onclick="sendOtp()">إرسال كود</button>
-                </div>
+                <input type="tel" id="regPhone" class="custom-input" placeholder="01012345678" maxlength="11" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
             </div>
-
-            <div class="input-group" id="otpGroup" style="display: none;">
-                <label class="input-label">كود التحقق (6 أرقام)</label>
-                <div class="input-with-btn">
-                    <input type="tel" id="otpCode" class="custom-input" placeholder="123456" maxlength="6"
-                           oninput="this.value = this.value.replace(/[^0-9]/g, '')">
-                    <button type="button" id="verifyOtpBtn" class="btn-verify" onclick="verifyOtp()">تأكيد</button>
-                </div>
-                <div id="otpTimer"></div>
-            </div>
-
             <div class="input-group">
                 <label class="input-label">الرقم السري (6 أرقام على الأقل)</label>
                 <input type="password" id="regPassword1" class="custom-input" placeholder="أدخل 6 أرقام على الأقل" maxlength="20" oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -485,9 +438,6 @@
     <div id="actionButtonsContainer" class="action-buttons-container" style="display: flex;">
         <button class="btn-logout" onclick="handleLogout()">الرئيسية</button>
     </div>
-
-    <!-- حاوية reCAPTCHA -->
-    <div id="recaptcha-container" style="margin: 10px auto; display: flex; justify-content: center;"></div>
 
     <script>
         // ==========================================
@@ -581,9 +531,6 @@
                     auth,
                     createUser: authModule.createUserWithEmailAndPassword,
                     signIn: authModule.signInWithEmailAndPassword,
-                    signOut: authModule.signOut,
-                    signInWithPhoneNumber: authModule.signInWithPhoneNumber,
-                    RecaptchaVerifier: authModule.RecaptchaVerifier,
                     doc: fs.doc,
                     getDoc: fs.getDoc,
                     setDoc: fs.setDoc,
@@ -684,180 +631,6 @@
         }
 
         // ==========================================
-        // 📲 دوال التحقق من الهاتف (OTP)
-        // ==========================================
-        let _confirmationResult = null;
-        let _verifiedPhone = null;
-        let _otpTimerInterval = null;
-
-        async function initRecaptcha() {
-            if (window._recaptchaVerifier) return window._recaptchaVerifier;
-            const fb = await getFbModule();
-            if (!fb) throw new Error('no-firebase');
-            
-            // ⚠️ تم تغييرها إلى normal لإظهار مربع التحقق وتجنب فشل العملية على التابلت
-            window._recaptchaVerifier = new fb.RecaptchaVerifier(fb.auth, 'recaptcha-container', {
-                size: 'normal',
-                callback: (response) => {
-                    console.log("reCAPTCHA solved");
-                },
-                'expired-callback': () => {
-                    console.log("reCAPTCHA expired");
-                    window._recaptchaVerifier.clear();
-                    window._recaptchaVerifier = null;
-                }
-            });
-            return window._recaptchaVerifier;
-        }
-
-        async function sendOtp() {
-            const phone = document.getElementById('regPhone').value.trim();
-            if (phone.length !== 11) return showAlert('رقم التليفون يجب أن يكون 11 رقماً.');
-            if (!phone.startsWith('01')) return showAlert('رقم التليفون يجب أن يبدأ بـ 01.');
-
-            const btn = document.getElementById('sendOtpBtn');
-            const orig = btn.innerText;
-            btn.innerText = '⏳ جاري الإرسال...';
-            btn.disabled = true;
-
-            try {
-                const fb = await getFbModule();
-                if (!fb) throw new Error('no-firebase');
-
-                const verifier = await initRecaptcha();
-                const e164 = '+20' + phone.substring(1);
-
-                _confirmationResult = await fb.signInWithPhoneNumber(fb.auth, e164, verifier);
-
-                document.getElementById('otpGroup').style.display = 'block';
-                document.getElementById('otpCode').value = '';
-                document.getElementById('otpCode').focus();
-
-                btn.innerText = 'إعادة الإرسال';
-                startOtpTimer(60);
-                showAlert('✅ تم إرسال كود التحقق على رقمك.', false);
-            } catch (err) {
-                console.error('sendOtp error:', err);
-                btn.innerText = orig;
-                btn.disabled = false;
-                // إعادة تهيئة reCAPTCHA عند الفشل
-                if (window._recaptchaVerifier) {
-                    try { window._recaptchaVerifier.clear(); } catch(e) {}
-                    window._recaptchaVerifier = null;
-                }
-                
-                // 💡 عرض كود الخطأ الحقيقي لمعرفة السبب بالضبط
-                let errorMsg = 'تعذر إرسال الكود. ';
-                if (err.code === 'auth/too-many-requests') {
-                    errorMsg += 'محاولات كثيرة، حاول لاحقاً.';
-                } else if (err.code === 'auth/invalid-phone-number') {
-                    errorMsg += 'رقم التليفون غير صحيح.';
-                } else if (err.code === 'auth/unauthorized-domain') {
-                    errorMsg += 'هذا الدومين غير مصرّح به في Firebase.';
-                } else {
-                    errorMsg += `(كود الخطأ: ${err.code || err.message})`;
-                }
-                showAlert(errorMsg);
-            }
-        }
-
-        function startOtpTimer(seconds) {
-            const el = document.getElementById('otpTimer');
-            const btn = document.getElementById('sendOtpBtn');
-            let remaining = seconds;
-            if (_otpTimerInterval) clearInterval(_otpTimerInterval);
-
-            function update() {
-                if (remaining <= 0) {
-                    clearInterval(_otpTimerInterval);
-                    el.innerText = '';
-                    btn.disabled = false;
-                    return;
-                }
-                el.innerText = `يمكنك إعادة الإرسال بعد ${remaining} ثانية`;
-                remaining--;
-            }
-            update();
-            _otpTimerInterval = setInterval(update, 1000);
-        }
-
-        async function verifyOtp() {
-            const code = document.getElementById('otpCode').value.trim();
-            if (code.length !== 6) return showAlert('أدخل 6 أرقام.');
-            if (!_confirmationResult) return showAlert('اضغط إرسال الكود أولاً.');
-
-            const btn = document.getElementById('verifyOtpBtn');
-            const orig = btn.innerText;
-            btn.innerText = '⏳...';
-            btn.disabled = true;
-
-            try {
-                await _confirmationResult.confirm(code);
-                const fb = await getFbModule();
-                if (fb && fb.signOut) {
-                    try { await fb.signOut(fb.auth); } catch(e) {}
-                }
-
-                _verifiedPhone = document.getElementById('regPhone').value.trim();
-
-                const phoneInput = document.getElementById('regPhone');
-                phoneInput.readOnly = true;
-                phoneInput.style.background = '#ECFDF5';
-                phoneInput.style.borderColor = '#10B981';
-                phoneInput.style.color = '#065F46';
-
-                document.getElementById('otpGroup').style.display = 'none';
-                const sendBtn = document.getElementById('sendOtpBtn');
-                sendBtn.innerText = '✅ تم التحقق';
-                sendBtn.disabled = true;
-                sendBtn.classList.add('verified');
-
-                if (!document.getElementById('changePhoneLink')) {
-                    const a = document.createElement('div');
-                    a.id = 'changePhoneLink';
-                    a.style.cssText = 'margin-top:6px; text-align:center; font-size:12px; font-weight:800;';
-                    a.innerHTML = '<a href="#" onclick="resetPhoneVerification(); return false;" style="color:#2563EB;">تغيير الرقم</a>';
-                    phoneInput.parentElement.parentElement.appendChild(a);
-                }
-
-                showAlert('✅ تم التحقق من رقم الهاتف بنجاح.', false);
-            } catch (err) {
-                console.error('verifyOtp error:', err);
-                btn.innerText = orig;
-                btn.disabled = false;
-                if (err.code === 'auth/invalid-verification-code') {
-                    showAlert('الكود غير صحيح.');
-                } else if (err.code === 'auth/code-expired') {
-                    showAlert('انتهت صلاحية الكود، أرسل كوداً جديداً.');
-                } else {
-                    showAlert(`تعذر التحقق. (كود الخطأ: ${err.code})`);
-                }
-            }
-        }
-
-        function resetPhoneVerification() {
-            _verifiedPhone = null;
-            _confirmationResult = null;
-            const phoneInput = document.getElementById('regPhone');
-            phoneInput.readOnly = false;
-            phoneInput.style.background = '';
-            phoneInput.style.borderColor = '';
-            phoneInput.style.color = '';
-            phoneInput.value = '';
-
-            const sendBtn = document.getElementById('sendOtpBtn');
-            sendBtn.innerText = 'إرسال كود';
-            sendBtn.disabled = false;
-            sendBtn.classList.remove('verified');
-
-            document.getElementById('otpGroup').style.display = 'none';
-            document.getElementById('otpTimer').innerText = '';
-            const link = document.getElementById('changePhoneLink');
-            if (link) link.remove();
-            if (_otpTimerInterval) clearInterval(_otpTimerInterval);
-        }
-
-        // ==========================================
         // 📝 Register — حساب جديد
         // ==========================================
         async function handleRegister(event) {
@@ -867,14 +640,6 @@
             const phone = document.getElementById('regPhone').value.trim();
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
-
-            // ✅ فحص التحقق من رقم الهاتف
-            if (!_verifiedPhone) {
-                return showAlert('يجب التحقق من رقم الهاتف أولاً — اضغط "إرسال كود".');
-            }
-            if (_verifiedPhone !== phone) {
-                return showAlert('رقم الهاتف تغيّر بعد التحقق. أعد التحقق من جديد.');
-            }
 
             if (!name || !age || !phone || !pass1 || !pass2) return showAlert('الرجاء إكمال جميع البيانات.');
             if (phone.length !== 11) return showAlert('رقم التليفون يجب أن يكون 11 رقماً.');
@@ -896,9 +661,11 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
+                // 1️⃣ إنشاء حساب Auth آمن
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
 
+                // 2️⃣ حفظ بيانات المعلم العامة في Firestore (بدون أي توثيق / باقات)
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -965,14 +732,17 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
+                // 1️⃣ التحقق من الحساب وكلمة المرور
                 const userCredential = await fb.signIn(fb.auth, fakeEmail, pass);
                 
+                // 2️⃣ جلب بيانات المعلم من Firestore
                 const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
                 let savedData = {};
                 
                 if (snap.exists()) {
                     const d = snap.data();
                     
+                    // ✅ فحص الحظر اليدوي فقط من الإدارة
                     if (d.isBlocked === true) {
                         btn.innerText = originalText;
                         btn.disabled = false;
@@ -991,6 +761,7 @@
                     savedData = { title: 'مستر', name: 'معلم', phone: phone };
                 }
 
+                // ✅ تحديث وقت آخر ظهور للمعلم في قاعدة البيانات عند تسجيل الدخول
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     lastSeen: Date.now()
                 }, { merge: true });
