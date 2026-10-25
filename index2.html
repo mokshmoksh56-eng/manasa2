@@ -381,7 +381,6 @@
         .btn-notes:hover { 
             background: #FDE68A; 
         }
-        /* --- نهاية التعديل --- */
 
         .portal-card {
             position: relative;
@@ -1016,6 +1015,12 @@
             transform: translateY(15px) scale(0.97); transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .modal-overlay.active .custom-modal { transform: translateY(0) scale(1); }
+
+        /* لضمان إمكانية التمرير إذا كبرت الملاحظات جداً */
+        .notes-modal-box {
+            max-height: 85vh;
+            overflow-y: auto;
+        }
 
         .group-modal-box {
             position: relative; width: 100% !important; max-width: 320px !important;
@@ -1680,7 +1685,7 @@
             background: #FDE68A; 
         }
 
-        /* تصميم الـ Textarea داخل المودال الجديد */
+        /* تصميم المربع المتمدد داخل المودال */
         .notes-textarea {
             width: 100%;
             min-height: 120px;
@@ -1691,11 +1696,12 @@
             font-weight: 800;
             color: #92400E;
             background: #FFFBEB;
-            resize: none;
+            resize: none; 
             outline: none;
             font-family: 'Cairo', sans-serif;
-            transition: all 0.3s ease;
+            transition: border-color 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease;
             margin-bottom: 12px;
+            overflow-y: hidden; /* إخفاء شريط التمرير الداخلي لمنع الرمشة */
         }
         .notes-textarea:focus {
             border-color: #F59E0B;
@@ -1808,9 +1814,9 @@
         </div>
     </section>
 
-    <!-- مودال الملاحظات الجديد -->
+    <!-- مودال الملاحظات (قابل للتمرير ويتمدد داخله المربع تلقائياً) -->
     <div id="notesModal" class="modal-overlay" onclick="closeModal('notesModal')">
-        <div class="custom-modal" onclick="event.stopPropagation()" style="border-bottom: 5px solid #F59E0B;">
+        <div class="custom-modal notes-modal-box" onclick="event.stopPropagation()" style="border-bottom: 5px solid #F59E0B;">
             <div class="modal-icon" style="background: #FEF3C7; color: #D97706; margin-bottom: 8px;">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 28px; height: 28px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
@@ -1819,7 +1825,9 @@
             <h3 class="modal-title" style="color: #92400E; font-size: 16px;">ملاحظات المجموعة</h3>
             <p class="modal-desc" style="margin-bottom: 12px;">اكتب ملاحظاتك الخاصة هنا (تنبيهات، مكان التجمع، الخ..)</p>
             
-            <textarea id="modalNotesTextarea" class="notes-textarea" spellcheck="false"></textarea>
+            <!-- كود التمدد التلقائي المباشر (oninput) -->
+            <textarea id="modalNotesTextarea" class="notes-textarea" spellcheck="false" 
+                      oninput="this.style.height = 'auto'; this.style.height = this.scrollHeight + 'px';"></textarea>
             
             <div class="modal-actions">
                 <button class="btn-modal btn-cancel" onclick="closeModal('notesModal')">إلغاء</button>
@@ -2055,7 +2063,7 @@
         let lessons = [];
         let itemToDelete = null;
         let itemToRename = null;
-        let itemToNotes = null; // متغير لحفظ الـ ID عند فتح نافذة الملاحظات
+        let itemToNotes = null; 
         let realtimeUnsubscribe = null;
         let deviceWatchUnsub = null;
         let autoSyncInterval = null;
@@ -3290,7 +3298,6 @@
                 let existingCard = document.getElementById('lesson-card-' + lesson.id);
                 const fullClassName = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
 
-                // التحديث الذكي لعناصر الـ DOM لمنع الرمش بالكامل
                 if (existingCard) {
                     if (existingCard.innerHTML !== cardInnerContent) {
                         existingCard.innerHTML = cardInnerContent;
@@ -3307,7 +3314,6 @@
                 }
             });
 
-            // مسح الكروت المحذوفة بصمت
             Array.from(container.children).forEach(child => {
                 if (child.id && child.id.startsWith('lesson-card-')) {
                     const childId = child.id.replace('lesson-card-', '');
@@ -3317,7 +3323,6 @@
                 }
             });
 
-            // ✅ الترتيب الذكي — يتحرك بس لو الترتيب فعلاً مختلف (يمنع الرمشة نهائياً)
             const desiredOrder = lessons.map(l => 'lesson-card-' + l.id);
             const currentOrder = Array.from(container.children)
                 .filter(c => c.id && c.id.startsWith('lesson-card-'))
@@ -3333,7 +3338,7 @@
             }
         }
 
-        // --- دوال مودال الملاحظات الجديد ---
+        // --- دوال مودال الملاحظات الجديد بتمتد تلقائي ---
         function openNotesModal(id, event) {
             if (event) event.stopPropagation();
             playEditSound();
@@ -3351,9 +3356,17 @@
                 const savedNotes = (lesson.data && lesson.data.g_notes) ? lesson.data.g_notes : '';
                 
                 textarea.value = savedNotes;
+                
+                // ضبط الطول المبدئي ليكون مساوياً للنص المحفوظ
+                textarea.style.height = 'auto';
+                
                 document.getElementById('notesModal').classList.add('active');
                 
-                setTimeout(() => textarea.focus(), 150);
+                // تأخير بسيط جداً للتأكد من عرض النافذة قبل حساب الارتفاع وعمل فوكس
+                setTimeout(() => {
+                    textarea.style.height = textarea.scrollHeight + 'px';
+                    textarea.focus();
+                }, 150);
             }
         }
 
