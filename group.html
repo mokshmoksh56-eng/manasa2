@@ -321,6 +321,19 @@
         }
         .locate-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 
+        /* ✅ نبض زر الموقع لجذب الانتباه */
+        @keyframes pulse {
+            0%, 100% { 
+                transform: scale(1); 
+                box-shadow: 0 4px 10px rgba(0,0,0,0.15); 
+            }
+            50% { 
+                transform: scale(1.15); 
+                box-shadow: 0 0 0 12px rgba(37, 150, 139, 0.15); 
+            }
+        }
+        .locate-btn.pulse { animation: pulse 1.8s infinite; }
+
         .locate-success-msg {
             position: absolute; bottom: 20px; left: 70px; z-index: 400;
             background: #10B981; color: #fff; padding: 6px 14px; border-radius: 8px; border-bottom: 3px solid #065F46;
@@ -356,6 +369,7 @@
             border-radius: 24px; padding: 30px 20px; text-align: center;
             box-shadow: 0 20px 40px rgba(0,0,0,0.2);
             transform: translateY(20px) scale(0.95); transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            max-height: 90vh; overflow-y: auto;
         }
         .modal-overlay.active .success-modal { transform: translateY(0) scale(1); }
 
@@ -523,7 +537,6 @@
         </div>
     </div>
 
-    <!-- ✅ مودال طرد المعلم عند الدخول من جهاز آخر -->
     <div id="deviceKickedModal" class="modal-overlay">
         <div class="success-modal error-modal" style="max-width: 360px;">
             <div class="success-icon error-icon" style="background: #FEE2E2; color: #EF4444; border-bottom-color: #B91C1C;">
@@ -1233,7 +1246,6 @@
             return copy;
         }
 
-        // ✅ ترتيب المراحل مع الإصلاح الجديد
         function getSortedStages() {
             const curr = getCurriculum();
             if (curr.main_order && Array.isArray(curr.main_order) && curr.main_order.length > 0) {
@@ -1428,9 +1440,6 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
-        // ==========================================
-        // BroadcastChannel — مزامنة عبر التبويبات
-        // ==========================================
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
         if (curriculumChannel) {
             curriculumChannel.onmessage = function(ev) {
@@ -1446,9 +1455,6 @@
             };
         }
 
-        // ==========================================
-        // 🌟 مزامنة المنهج من Firebase
-        // ==========================================
         function startCurriculumFirebaseSync() {
             if (!window.db || !window.fsOnSnapshot || !window.doc) {
                 setTimeout(startCurriculumFirebaseSync, 800);
@@ -1578,9 +1584,6 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
-        // ==========================================
-        // ✅ حفظ الحالة مع debounce لتقليل كتابات Firestore
-        // ==========================================
         let saveStateTimer = null;
         let saveStatePending = false;
 
@@ -1643,7 +1646,7 @@
                         lat: (mapInitialized && marker) ? marker.getLatLng().lat : savedLat,
                         lng: (mapInitialized && marker) ? marker.getLatLng().lng : savedLng,
                         createdAt: new Date().toISOString().split('T')[0],
-                        updatedAt: Date.now() // ✅ إضافة وقت التحديث الدقيق للمزامنة
+                        updatedAt: Date.now()
                     };
                     
                     localStorage.setItem('lessonState_' + currentLessonId, JSON.stringify(state));
@@ -1765,11 +1768,7 @@
                 : `${titlePrefix} المجموعة`;
         }
 
-        // ==========================================
-        // ✅ onload المحسّن (async)
-        // ==========================================
         window.onload = async () => {
-            // ✅ التحقق من الجهاز ومراقبته (نظام الأمان)
             const isDeviceValid = await verifyDeviceOnLoad();
             if (!isDeviceValid) return;
             startDeviceWatch();
@@ -1782,7 +1781,6 @@
                 document.getElementById('editAlert').style.display = 'flex';
             }
             
-            // ✅ محاولة جلب أحدث بيانات المجموعة من Firestore
             if (window.fsGetDoc && window.doc && window.db) {
                 try {
                     const ref = window.doc(window.db, "lessons", currentLessonId);
@@ -1792,7 +1790,6 @@
                         const localRaw = localStorage.getItem('lessonState_' + currentLessonId);
                         const localData = localRaw ? JSON.parse(localRaw) : null;
                         
-                        // ✅ إصلاح دالة المقارنة باستخدام updatedAt
                         const fbTimestamp = firebaseData.updatedAt || 0;
                         const localTimestamp = localData?.updatedAt || 0;
                         
@@ -1924,8 +1921,16 @@
             mapInitialized = true;
             map.invalidateSize();
 
+            // ✅ لا نشغل GPS تلقائياً — بدلاً من ذلك نلفت الانتباه لزر الموقع
             if (!savedLat) {
-                triggerLocationFlow();
+                const addressInput = document.getElementById('m_address');
+                if (addressInput) {
+                    addressInput.placeholder = "📍 اضغط على زر الموقع (أسفل الخريطة) لجلب موقعك تلقائياً";
+                }
+                const locateBtn = document.querySelector('.locate-btn');
+                if (locateBtn) {
+                    locateBtn.classList.add('pulse');
+                }
             }
 
             marker.on('dragend', function() {
@@ -1935,13 +1940,44 @@
             });
         }
 
-        function triggerLocationFlow() {
+        // ==========================================
+        // 🌍 نظام تحديد الموقع الشامل — يعمل على كل الأجهزة
+        // ==========================================
+
+        let isLocating = false;
+        let geoAttempts = 0;
+        const MAX_ATTEMPTS = 3;
+
+        function detectGeoEnvironment() {
+            const ua = navigator.userAgent || '';
+            return {
+                isIOS: /iPhone|iPad|iPod/i.test(ua),
+                isAndroid: /Android/i.test(ua),
+                isSamsungBrowser: /SamsungBrowser/i.test(ua),
+                isFirefox: /Firefox/i.test(ua),
+                isChrome: /Chrome/i.test(ua) && !/Edg|OPR/i.test(ua),
+                isInAppBrowser: /FBAN|FBAV|Instagram|Line\/|WhatsApp|Twitter|Snapchat|MicroMessenger|WebView|wv\)/i.test(ua),
+                isHuawei: /Huawei|HUAWEI|HONOR/i.test(ua),
+                isXiaomi: /Xiaomi|Redmi|Mi \d|MIUI/i.test(ua),
+                isOppo: /Oppo|OPPO|realme|Realme/i.test(ua),
+                isVivo: /Vivo|vivo/i.test(ua),
+                isSecure: window.isSecureContext === true,
+                hasGeo: !!navigator.geolocation,
+                hasPermissionsAPI: !!(navigator.permissions && navigator.permissions.query)
+            };
+        }
+
+        // 🚀 نقطة الدخول الموحدة
+        async function triggerLocationFlow() {
+            if (isLocating) return;
+            
             const hasConsented = localStorage.getItem('teacher_location_consent');
-            if (hasConsented === 'true') {
-                requestCurrentLocation();
-            } else {
+            if (hasConsented !== 'true') {
                 document.getElementById('locationDisclosureModal').classList.add('active');
+                return;
             }
+            
+            startLocationProcess();
         }
 
         function declineLocation() {
@@ -1953,57 +1989,294 @@
         function acceptLocation() {
             document.getElementById('locationDisclosureModal').classList.remove('active');
             localStorage.setItem('teacher_location_consent', 'true');
-            requestCurrentLocation();
+            startLocationProcess();
         }
 
-        let isLocating = false;
-        function requestCurrentLocation() {
+        async function startLocationProcess() {
             if (isLocating) return;
+            
+            const env = detectGeoEnvironment();
+            console.log("🌍 بيئة الموقع:", env);
+            
+            if (!env.isSecure) {
+                showError(getHttpsErrorMsg());
+                return;
+            }
+            
+            if (!env.hasGeo) {
+                showError(getNoSupportMsg(env));
+                return;
+            }
+            
+            if (env.isInAppBrowser) {
+                showError(getInAppBrowserMsg(env));
+                return;
+            }
+            
+            if (env.hasPermissionsAPI) {
+                try {
+                    const perm = await navigator.permissions.query({ name: 'geolocation' });
+                    if (perm.state === 'denied') {
+                        showError(getPermissionDeniedMsg(env));
+                        return;
+                    }
+                } catch (e) {}
+            }
+            
+            // إزالة نبض الزر بعد الضغط
+            const locateBtn = document.querySelector('.locate-btn');
+            if (locateBtn) locateBtn.classList.remove('pulse');
+            
+            startGeoCountdown(env);
+        }
+
+        function startGeoCountdown(env) {
             isLocating = true;
+            geoAttempts = 0;
             
             const addressInput = document.getElementById('m_address');
             let count = 3;
             
             addressInput.value = `جاري تحديد الموقع في ${count}...`;
-            playTickSound();
-
+            try { playTickSound(); } catch(e) {}
+            
             const countdownInterval = setInterval(() => {
                 count--;
                 if (count > 0) {
                     addressInput.value = `جاري تحديد الموقع في ${count}...`;
-                    playTickSound();
+                    try { playTickSound(); } catch(e) {}
                 } else {
                     clearInterval(countdownInterval);
                     addressInput.value = "جاري الاتصال بالأقمار الصناعية 📡...";
-                    
-                    if (navigator.geolocation) {
-                        navigator.geolocation.getCurrentPosition(
-                            function(position) {
-                                const lat = position.coords.latitude;
-                                const lng = position.coords.longitude;
-                                const newLatLng = new L.LatLng(lat, lng);
-                                
-                                map.setView(newLatLng, 16);
-                                marker.setLatLng(newLatLng);
-                                
-                                fetchAddress(lat, lng);
-                                isLocating = false;
-                            },
-                            function() {
-                                showError("تعذر تحديد موقعك. يرجى التأكد من تفعيل خدمة الـ GPS في جهازك.");
-                                addressInput.value = "";
-                                isLocating = false;
-                            },
-                            { enableHighAccuracy: true }
-                        );
-                    } else {
-                        showError("متصفحك لا يدعم خاصية تحديد الموقع.");
-                        isLocating = false;
-                    }
+                    attemptGeoChain(env);
                 }
             }, 800);
         }
 
+        function attemptGeoChain(env) {
+            geoAttempts++;
+            console.log(`📍 محاولة ${geoAttempts} من ${MAX_ATTEMPTS}`);
+            
+            if (geoAttempts === 1) {
+                getPositionOnce(
+                    { enableHighAccuracy: true, timeout: 12000, maximumAge: 0 },
+                    env,
+                    () => attemptGeoChain(env)
+                );
+            } else if (geoAttempts === 2) {
+                document.getElementById('m_address').value = "جاري محاولة بديلة (شبكة)...";
+                getPositionOnce(
+                    { enableHighAccuracy: false, timeout: 15000, maximumAge: 60000 },
+                    env,
+                    () => attemptGeoChain(env)
+                );
+            } else if (geoAttempts === 3) {
+                document.getElementById('m_address').value = "جاري المحاولة الأخيرة...";
+                watchPositionFallback(env);
+            } else {
+                finalGeoFailure(env);
+            }
+        }
+
+        function getPositionOnce(options, env, onFail) {
+            navigator.geolocation.getCurrentPosition(
+                onGeoSuccess,
+                function(error) {
+                    console.warn(`GPS محاولة ${geoAttempts} فشلت:`, error.code, error.message);
+                    
+                    if (error.code === 1) {
+                        isLocating = false;
+                        document.getElementById('m_address').value = "";
+                        showError(getPermissionDeniedMsg(env));
+                        return;
+                    }
+                    
+                    if (onFail) onFail();
+                },
+                options
+            );
+        }
+
+        function watchPositionFallback(env) {
+            let watchId = null;
+            let resolved = false;
+            
+            const timeoutId = setTimeout(() => {
+                if (!resolved) {
+                    resolved = true;
+                    if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+                    finalGeoFailure(env);
+                }
+            }, 20000);
+            
+            watchId = navigator.geolocation.watchPosition(
+                function(position) {
+                    if (resolved) return;
+                    resolved = true;
+                    clearTimeout(timeoutId);
+                    navigator.geolocation.clearWatch(watchId);
+                    onGeoSuccess(position);
+                },
+                function(error) {
+                    console.warn("watchPosition خطأ:", error.code);
+                },
+                { enableHighAccuracy: false, timeout: 15000, maximumAge: 30000 }
+            );
+        }
+
+        function onGeoSuccess(position) {
+            const lat = position.coords.latitude;
+            const lng = position.coords.longitude;
+            const accuracy = position.coords.accuracy;
+            
+            console.log(`✅ الموقع: ${lat}, ${lng} (دقة: ${accuracy}م)`);
+            
+            if (map && marker) {
+                const newLatLng = new L.LatLng(lat, lng);
+                map.setView(newLatLng, 16);
+                marker.setLatLng(newLatLng);
+            }
+            
+            fetchAddress(lat, lng);
+            isLocating = false;
+            geoAttempts = 0;
+        }
+
+        function finalGeoFailure(env) {
+            isLocating = false;
+            geoAttempts = 0;
+            document.getElementById('m_address').value = "";
+            attemptIPGeolocation(env);
+        }
+
+        async function attemptIPGeolocation(env) {
+            try {
+                document.getElementById('m_address').value = "جاري تحديد موقع تقريبي...";
+                
+                const response = await fetch('https://ipapi.co/json/');
+                const data = await response.json();
+                
+                if (data && data.latitude && data.longitude) {
+                    const lat = data.latitude;
+                    const lng = data.longitude;
+                    
+                    console.log(`🌐 موقع تقريبي عبر IP: ${lat}, ${lng} (${data.city || ''})`);
+                    
+                    if (map && marker) {
+                        map.setView([lat, lng], 12);
+                        marker.setLatLng([lat, lng]);
+                    }
+                    
+                    const cityInfo = data.city && data.country_name 
+                        ? ` (${data.city}، ${data.country_name})` 
+                        : '';
+                    
+                    document.getElementById('m_address').value = `موقع تقريبي${cityInfo} — يرجى تعديل العنوان يدوياً للدقة`;
+                    
+                    showError(
+                        `<b>⚠️ تم استخدام موقع تقريبي</b><br><br>
+                        لم نتمكن من الوصول لـ GPS، فاستخدمنا موقعك عبر الإنترنت (تقريبي).<br><br>
+                        <b>يرجى تحريك الدبوس على الخريطة يدوياً</b> لتحديد موقعك بدقة، أو كتابة العنوان يدوياً.<br><br>
+                        ${getDeviceSpecificHelp(env)}`
+                    );
+                } else {
+                    throw new Error("لا توجد إحداثيات");
+                }
+            } catch (err) {
+                console.warn("IP Geolocation فشل:", err);
+                showError(getFinalErrorMsg(env));
+            }
+        }
+
+        // 💬 رسائل الأخطاء المخصصة لكل حالة وجهاز
+
+        function getHttpsErrorMsg() {
+            return `<b>⚠️ الموقع لا يعمل عبر HTTP</b><br><br>
+            خدمة تحديد الموقع تتطلب اتصالاً آمناً (HTTPS).<br>
+            يرجى فتح الموقع من خلال رابط يبدأ بـ <b>https://</b><br><br>
+            <i>يمكنك كتابة العنوان يدوياً في حقل "العنوان التفصيلي".</i>`;
+        }
+
+        function getNoSupportMsg(env) {
+            return `<b>⚠️ المتصفح لا يدعم تحديد الموقع</b><br><br>
+            يرجى تحديث المتصفح أو استخدام:<br>
+            ${env.isIOS ? '• Safari (iOS 14+)' : '• Google Chrome'}<br><br>
+            <i>يمكنك كتابة العنوان يدوياً.</i>`;
+        }
+
+        function getInAppBrowserMsg(env) {
+            return `<b>📱 أنت داخل متصفح تطبيق (فيسبوك/واتساب/انستجرام)</b><br><br>
+            متصفحات التطبيقات <b>تحظر خدمة تحديد الموقع</b> لأسباب أمنية.<br><br>
+            <b>الحل:</b><br>
+            1. اضغط على القائمة (⋮) أو النقاط الثلاث بالأعلى<br>
+            2. اختر <b>"فتح في المتصفح"</b> أو "Open in Chrome/Safari"<br>
+            3. أعد المحاولة من المتصفح<br><br>
+            <i>أو اكتب العنوان يدوياً الآن.</i>`;
+        }
+
+        function getPermissionDeniedMsg(env) {
+            let steps = '';
+            
+            if (env.isIOS) {
+                steps = `<b>📱 على iPhone/iPad:</b><br>
+                1. الإعدادات ← Safari ← الموقع ← <b>"سؤال"</b> أو "السماح"<br>
+                2. أو: الإعدادات ← الخصوصية ← خدمة الموقع ← فعّلها<br>
+                3. أعد تحميل الصفحة`;
+            } else if (env.isSamsungBrowser) {
+                steps = `<b>📱 على سامسونج Internet:</b><br>
+                1. اضغط على أيقونة 🔒 بجانب رابط الموقع بالأعلى<br>
+                2. الأذونات ← الموقع ← <b>السماح</b><br>
+                3. أعد تحميل الصفحة`;
+            } else if (env.isHuawei) {
+                steps = `<b>📱 على هواوي:</b><br>
+                1. الإعدادات ← التطبيقات ← المتصفح ← الأذونات ← الموقع ← السماح<br>
+                2. الإعدادات ← الأمان ← الموقع ← فعّل<br>
+                3. أعد تحميل الصفحة`;
+            } else if (env.isXiaomi) {
+                steps = `<b>📱 على شاومي (MIUI):</b><br>
+                1. الإعدادات ← التطبيقات ← المتصفح ← الأذونات ← الموقع ← <b>السماح دائماً</b><br>
+                2. الإعدادات ← الموقع ← فعّل + دقة عالية<br>
+                3. عطّل "توفير الطاقة" مؤقتاً للمتصفح`;
+            } else if (env.isOppo || env.isVivo) {
+                steps = `<b>📱 على Oppo/Vivo/Realme:</b><br>
+                1. الإعدادات ← التطبيقات ← المتصفح ← الأذونات ← الموقع ← السماح<br>
+                2. الإعدادات ← الموقع ← فعّل<br>
+                3. اسمح للمتصفح بالعمل في الخلفية`;
+            } else if (env.isChrome) {
+                steps = `<b>📱 على Chrome:</b><br>
+                1. اضغط على أيقونة 🔒/ⓘ بجانب الرابط<br>
+                2. الأذونات ← الموقع ← <b>السماح</b><br>
+                3. أعد تحميل الصفحة`;
+            } else {
+                steps = `<b>الإعدادات ← المتصفح ← الأذونات ← الموقع ← السماح</b>`;
+            }
+            
+            return `<b>🚫 تم رفض إذن الموقع</b><br><br>
+            ${steps}<br><br>
+            <i>يمكنك أيضاً كتابة العنوان يدوياً في الحقل أدناه.</i>`;
+        }
+
+        function getFinalErrorMsg(env) {
+            return `<b>❌ تعذر تحديد الموقع</b><br><br>
+            <b>تأكد من:</b><br>
+            • تشغيل GPS من شريط الإشعارات<br>
+            • السماح للمتصفح بالوصول للموقع<br>
+            • اتصال إنترنت مستقر<br>
+            • الخروج لمكان مفتوح بعيداً عن المباني<br><br>
+            ${getDeviceSpecificHelp(env)}<br><br>
+            <i>يمكنك كتابة العنوان يدوياً في الحقل أدناه.</i>`;
+        }
+
+        function getDeviceSpecificHelp(env) {
+            if (env.isXiaomi) return `<b>💡 نصيحة شاومي:</b> الإعدادات ← البطارية ← توفير الطاقة ← أوقفه مؤقتاً للمتصفح`;
+            if (env.isHuawei) return `<b>💡 نصيحة هواوي:</b> الإعدادات ← البطارية ← تشغيل التطبيقات في الخلفية ← اسمح للمتصفح`;
+            if (env.isOppo || env.isVivo) return `<b>💡 نصيحة Oppo/Vivo:</b> الإعدادات ← البطارية ← استهلاك الخلفية ← اسمح للمتصفح`;
+            if (env.isIOS) return `<b>💡 نصيحة iOS:</b> الإعدادات ← الخصوصية ← خدمة الموقع ← فعّلها`;
+            if (env.isSamsungBrowser) return `<b>💡 نصيحة سامسونج:</b> فعّل "دقة الموقع من Google" في إعدادات الموقع`;
+            return `<b>💡 نصيحة:</b> جرّب فتح الموقع في Chrome بدلاً من المتصفح الحالي`;
+        }
+
+        // دالة جلب العنوان من الإحداثيات
         function fetchAddress(lat, lng) {
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar`;
             fetch(url)
