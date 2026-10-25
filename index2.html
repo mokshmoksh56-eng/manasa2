@@ -765,12 +765,12 @@
             left: 10px;
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 4px;
             z-index: 20;
         }
         .btn-action {
-            width: 32px;
-            height: 32px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -1459,6 +1459,259 @@
             50% { transform: translateY(-8px) scale(1.05); }
         }
 
+        /* ========== زر الملاحظات ========== */
+        .btn-action.btn-notes {
+            background: #FEF3C7;
+            color: #D97706;
+            position: relative;
+            transition: all 0.25s ease;
+        }
+        .btn-action.btn-notes:hover {
+            background: #FDE68A;
+            transform: scale(1.08);
+        }
+        .btn-action.btn-notes.has-notes {
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45);
+            animation: notesPulse 2.2s ease-in-out infinite;
+        }
+        .btn-action.btn-notes.has-notes::after {
+            content: '';
+            position: absolute;
+            top: -3px;
+            right: -3px;
+            width: 9px;
+            height: 9px;
+            background: #EF4444;
+            border-radius: 50%;
+            border: 1.5px solid #FFFFFF;
+            box-shadow: 0 1px 4px rgba(239, 68, 68, 0.6);
+            animation: notesDotPulse 2s ease-in-out infinite;
+        }
+        @keyframes notesPulse {
+            0%, 100% { box-shadow: 0 4px 12px rgba(245, 158, 11, 0.45); }
+            50%      { box-shadow: 0 4px 18px rgba(245, 158, 11, 0.75); }
+        }
+        @keyframes notesDotPulse {
+            0%, 100% { transform: scale(1); }
+            50%      { transform: scale(1.25); }
+        }
+
+        /* ========== معاينة الملاحظات على الكارت ========== */
+        .notes-preview {
+            display: flex;
+            align-items: flex-start;
+            gap: 5px;
+            margin-top: 6px;
+            padding: 6px 9px;
+            background: linear-gradient(135deg, #FEF3C7, #FFFBEB);
+            border: 1px solid #FCD34D;
+            border-radius: 9px;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #92400E;
+            line-height: 1.45;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: right;
+            box-shadow: 0 2px 6px -3px rgba(245, 158, 11, 0.3);
+        }
+        .notes-preview .np-icon {
+            flex-shrink: 0;
+            font-size: 12px;
+            line-height: 1.3;
+        }
+        .notes-preview .np-text {
+            flex: 1;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            word-break: break-word;
+            min-width: 0;
+        }
+
+        /* ========== نافذة الملاحظات ========== */
+        .notes-modal-box {
+            width: 100% !important;
+            max-width: 400px !important;
+            padding: 16px !important;
+            border-radius: 20px !important;
+            border-bottom: 5px solid #F59E0B !important;
+            text-align: right;
+            display: flex;
+            flex-direction: column;
+            max-height: 88vh;
+        }
+        .notes-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1.5px dashed #E2E8F0;
+        }
+        .notes-modal-title {
+            font-size: 15px;
+            font-weight: 900;
+            color: #92400E;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin: 0;
+            line-height: 1.3;
+        }
+        .notes-modal-title .nm-icon {
+            font-size: 20px;
+            animation: floatingLock 2.5s ease-in-out infinite;
+        }
+        .notes-group-name {
+            font-size: 12px;
+            font-weight: 800;
+            color: #475569;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            padding: 5px 10px;
+            border-radius: 8px;
+            margin: 0 0 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .notes-group-name b {
+            color: #0F2D5C;
+        }
+        .notes-textarea {
+            width: 100%;
+            min-height: 130px;
+            max-height: 40vh;
+            padding: 11px 13px;
+            border: 2px solid #FCD34D;
+            border-radius: 12px;
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1E293B;
+            resize: vertical;
+            outline: none;
+            background: #FFFBEB;
+            line-height: 1.7;
+            box-sizing: border-box;
+            transition: all 0.2s ease;
+        }
+        .notes-textarea:focus {
+            border-color: #F59E0B;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.12);
+        }
+        .notes-textarea:disabled {
+            background: #F1F5F9;
+            color: #94A3B8;
+            cursor: not-allowed;
+            border-color: #E2E8F0;
+        }
+        .notes-textarea::placeholder {
+            color: #94A3B8;
+            font-weight: 700;
+            font-size: 12px;
+        }
+        .notes-meta-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            gap: 8px;
+            font-size: 10.5px;
+            font-weight: 800;
+            color: #64748B;
+        }
+        .notes-char-count {
+            background: #F1F5F9;
+            padding: 3px 10px;
+            border-radius: 99px;
+            flex-shrink: 0;
+            border: 1px solid #E2E8F0;
+            transition: all 0.2s;
+        }
+        .notes-char-count.warn {
+            background: #FEF3C7;
+            color: #92400E;
+            border-color: #FCD34D;
+        }
+        .notes-char-count.danger {
+            background: #FEE2E2;
+            color: #991B1B;
+            border-color: #FCA5A5;
+        }
+        .notes-last-update {
+            opacity: 0.75;
+            font-size: 10px;
+            text-align: right;
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .notes-actions-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+        .btn-save-notes {
+            flex: 1.6;
+            padding: 11px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: #FFFFFF;
+            border: none;
+            border-bottom: 3px solid #92400E;
+            font-family: 'Cairo', sans-serif;
+            font-size: 13px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-save-notes:active { transform: translateY(2px); border-bottom-width: 1px; }
+        .btn-save-notes:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            background: #CBD5E1;
+            border-bottom-color: #94A3B8;
+        }
+        .btn-delete-notes {
+            flex: 1;
+            padding: 11px;
+            border-radius: 12px;
+            background: #FEE2E2;
+            color: #DC2626;
+            border: 1.5px solid #FECACA;
+            font-family: 'Cairo', sans-serif;
+            font-size: 12.5px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-delete-notes:active { transform: scale(0.95); background: #FECACA; }
+        .btn-delete-notes:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .notes-blocked-notice {
+            background: #FEF2F2;
+            border: 1px dashed #FCA5A5;
+            color: #991B1B;
+            font-size: 11px;
+            font-weight: 800;
+            padding: 8px 10px;
+            border-radius: 9px;
+            text-align: center;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
         @media (max-width: 767px) {
             .hero-banner {
                 min-height: 220px;
@@ -1552,11 +1805,11 @@
             .card-actions {
                 top: 8px !important;
                 left: 8px !important;
-                gap: 5px !important;
+                gap: 4px !important;
             }
             .btn-action {
-                width: 28px !important;
-                height: 28px !important;
+                width: 26px !important;
+                height: 26px !important;
             }
             .btn-action svg { width: 13px !important; height: 13px !important; }
 
@@ -1591,6 +1844,12 @@
                 font-size: 10.5px !important;
                 border-radius: 6px !important;
             }
+
+            .notes-preview { font-size: 10px !important; padding: 5px 8px !important; }
+            .notes-modal-box { max-height: 92vh; padding: 14px !important; }
+            .notes-textarea { min-height: 110px; font-size: 12.5px; }
+            .btn-save-notes { font-size: 12px; padding: 10px; }
+            .btn-delete-notes { font-size: 11.5px; padding: 10px; }
         }
 
         @media (max-width: 450px) {
@@ -1869,6 +2128,34 @@
         </div>
     </div>
 
+    <!-- ========== نافذة الملاحظات ========== -->
+    <div id="notesModal" class="modal-overlay" onclick="closeModal('notesModal')">
+        <div class="custom-modal notes-modal-box" onclick="event.stopPropagation()">
+            <div class="notes-modal-header">
+                <h3 class="notes-modal-title">
+                    <span class="nm-icon">📝</span>
+                    ملاحظات المجموعة
+                </h3>
+                <button type="button" class="btn-close-modal" onclick="closeModal('notesModal')" title="إغلاق">✕</button>
+            </div>
+            <p class="notes-group-name">📚 <b id="notesGroupName">—</b></p>
+            <div id="notesBlockedNotice" class="notes-blocked-notice" style="display:none;">
+                🔒 الحساب محظور — يمكنك عرض الملاحظات فقط
+            </div>
+            <textarea id="notesTextarea" class="notes-textarea"
+                      maxlength="2000"
+                      placeholder="اكتب ملاحظاتك عن المجموعة هنا... (تظهر لك فقط)"></textarea>
+            <div class="notes-meta-row">
+                <span id="notesLastUpdate" class="notes-last-update">—</span>
+                <span id="notesCharCount" class="notes-char-count">0 / 2000</span>
+            </div>
+            <div class="notes-actions-row">
+                <button type="button" class="btn-delete-notes" id="deleteNotesBtn">🗑️ حذف</button>
+                <button type="button" class="btn-save-notes" id="saveNotesBtn">💾 حفظ الملاحظات</button>
+            </div>
+        </div>
+    </div>
+
     <footer class="py-5 text-center text-slate-400 font-bold text-xs">
         <p>جميع الحقوق محفوظة &copy; 2026 - منصة احجزلى</p>
     </footer>
@@ -1986,19 +2273,26 @@
         }
 
         document.addEventListener('click', function(e) {
-            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .bottom-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .btn-delete-account, .btn-delete-account-confirm, .btn-delete-account-cancel');
+            const clickableElement = e.target.closest('button, .portal-card, .card-image-box, .btn-action, .btn-go, .btn-modal, .quick-action-btn, .bottom-action-btn, .btn-close-modal, .btn-close-bottom, .logout-btn-stay, .logout-btn-leave, .hidden-open-btn, .blocked-email-btn, .btn-delete-account, .btn-delete-account-confirm, .btn-delete-account-cancel, .btn-save-notes, .btn-delete-notes');
             if (clickableElement) { playHighPitchSound(); }
         });
 
         let lessons = [];
         let itemToDelete = null;
         let itemToRename = null;
+        let currentNotesLessonId = null;
         let realtimeUnsubscribe = null;
         let deviceWatchUnsub = null;
         let autoSyncInterval = null;
         let teacherIsBlocked = false;
 
         const forceUnpublishingIds = new Set();
+
+        function escapeHtml(str) {
+            return String(str || '').replace(/[&<>"']/g, c => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[c]));
+        }
 
         function getOrCreateDeviceId() {
             let deviceId = localStorage.getItem('device_id');
@@ -2501,7 +2795,6 @@
 
                     if (setupComplete) {
                         localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
-                        // تحديث حالة النشر المحلية لتطابق السحابة
                         localStorage.setItem('publishState_' + lessonId, data.g_publish_map === true);
                     } else {
                         localStorage.removeItem('lessonState_' + lessonId);
@@ -2560,7 +2853,6 @@
                             } else {
                                 if (setupComplete) {
                                     localStorage.setItem('lessonState_' + lessonId, JSON.stringify(stateToSave));
-                                    // اعتماد حالة النشر من السحابة مباشرة
                                     const isPublished = data.g_publish_map === true;
                                     localStorage.setItem('publishState_' + lessonId, isPublished);
                                 } else {
@@ -2573,7 +2865,6 @@
                             }
                         });
 
-                        // إعادة بناء قائمة المجموعات بالكامل
                         snap.forEach(docSnap => {
                             const data = docSnap.data();
                             const lessonId = docSnap.id;
@@ -2920,6 +3211,152 @@
             `;
         }
 
+        /* ================== نظام ملاحظات المجموعة ================== */
+        function updateNotesCharCount() {
+            const ta = document.getElementById('notesTextarea');
+            const counter = document.getElementById('notesCharCount');
+            if (!ta || !counter) return;
+            const len = ta.value.length;
+            counter.textContent = `${len} / 2000`;
+            counter.classList.remove('warn', 'danger');
+            if (len > 1800) counter.classList.add('danger');
+            else if (len > 1500) counter.classList.add('warn');
+        }
+
+        function updateNotesLastUpdate(ts, notes) {
+            const el = document.getElementById('notesLastUpdate');
+            if (!el) return;
+            if (!notes || !ts) { el.textContent = notes ? '' : 'لا توجد ملاحظات بعد'; return; }
+            try {
+                const d = new Date(ts);
+                el.textContent = '🕒 آخر تحديث: ' + d.toLocaleString('ar-EG', { dateStyle: 'short', timeStyle: 'short' });
+            } catch(e) { el.textContent = ''; }
+        }
+
+        function openNotesModal(lessonId, event) {
+            if (event) event.stopPropagation();
+            playEditSound();
+
+            const lesson = lessons.find(l => l.id === lessonId);
+            if (!lesson) return;
+
+            currentNotesLessonId = lessonId;
+            const data = lesson.data || {};
+            const notes = String(data.g_notes || '');
+            const lastUpdate = data.g_notes_updatedAt || null;
+
+            document.getElementById('notesGroupName').textContent = lesson.title || 'مجموعة';
+
+            const ta = document.getElementById('notesTextarea');
+            ta.value = notes;
+            ta.disabled = teacherIsBlocked;
+
+            const blockedNotice = document.getElementById('notesBlockedNotice');
+            blockedNotice.style.display = teacherIsBlocked ? 'block' : 'none';
+
+            const saveBtn = document.getElementById('saveNotesBtn');
+            const deleteBtn = document.getElementById('deleteNotesBtn');
+
+            saveBtn.disabled = teacherIsBlocked;
+            saveBtn.innerText = teacherIsBlocked ? '🔒 الحساب محظور' : '💾 حفظ الملاحظات';
+            deleteBtn.style.display = (notes && !teacherIsBlocked) ? '' : 'none';
+
+            updateNotesCharCount();
+            updateNotesLastUpdate(lastUpdate, notes);
+
+            document.getElementById('notesModal').classList.add('active');
+
+            if (!teacherIsBlocked) {
+                setTimeout(() => { try { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } catch(e) {} }, 200);
+            }
+        }
+
+        async function saveNotes() {
+            if (!currentNotesLessonId) return;
+            if (teacherIsBlocked) { showToast('🔒 الحساب محظور', true); return; }
+
+            const ta = document.getElementById('notesTextarea');
+            const notes = ta.value.trim();
+            if (notes.length > 2000) { showToast('⚠️ تجاوزت 2000 حرف', true); return; }
+
+            const lessonIndex = lessons.findIndex(l => l.id === currentNotesLessonId);
+            if (lessonIndex === -1) return;
+
+            const saveBtn = document.getElementById('saveNotesBtn');
+            saveBtn.disabled = true;
+            saveBtn.innerText = '⏳ جاري الحفظ...';
+
+            const nowTs = Date.now();
+            if (!lessons[lessonIndex].data) lessons[lessonIndex].data = {};
+            const oldNotes = lessons[lessonIndex].data.g_notes || '';
+            const oldTs = lessons[lessonIndex].data.g_notes_updatedAt || null;
+            lessons[lessonIndex].data.g_notes = notes;
+            lessons[lessonIndex].data.g_notes_updatedAt = nowTs;
+
+            try {
+                if (window.db && window.fsDoc && window.fsSetDoc) {
+                    await window.fsSetDoc(
+                        window.fsDoc(window.db, "lessons", String(currentNotesLessonId)),
+                        { g_notes: notes, g_notes_updatedAt: nowTs },
+                        { merge: true }
+                    );
+                    showFbSyncBadge('✅ تم حفظ الملاحظات');
+                    showToast(notes ? '📝 تم حفظ ملاحظاتك' : '🗑️ تم مسح الملاحظات');
+                } else {
+                    showToast('💾 تم الحفظ محلياً');
+                }
+            } catch (err) {
+                lessons[lessonIndex].data.g_notes = oldNotes;
+                lessons[lessonIndex].data.g_notes_updatedAt = oldTs;
+                showFbSyncBadge('⚠️ حفظ محلي فقط', true);
+                showToast('💾 تم الحفظ محلياً', true);
+            }
+
+            renderLessons();
+            saveBtn.innerText = '💾 حفظ الملاحظات';
+            saveBtn.disabled = false;
+            closeModal('notesModal');
+            currentNotesLessonId = null;
+        }
+
+        async function deleteNotes() {
+            if (!currentNotesLessonId) return;
+            if (teacherIsBlocked) { showToast('🔒 الحساب محظور', true); return; }
+
+            const lessonIndex = lessons.findIndex(l => l.id === currentNotesLessonId);
+            if (lessonIndex === -1) return;
+
+            const deleteBtn = document.getElementById('deleteNotesBtn');
+            deleteBtn.disabled = true;
+            deleteBtn.innerText = '⏳';
+
+            const nowTs = Date.now();
+            if (!lessons[lessonIndex].data) lessons[lessonIndex].data = {};
+            lessons[lessonIndex].data.g_notes = '';
+            lessons[lessonIndex].data.g_notes_updatedAt = nowTs;
+
+            try {
+                if (window.db && window.fsDoc && window.fsSetDoc) {
+                    await window.fsSetDoc(
+                        window.fsDoc(window.db, "lessons", String(currentNotesLessonId)),
+                        { g_notes: '', g_notes_updatedAt: nowTs },
+                        { merge: true }
+                    );
+                    showFbSyncBadge('🗑️ تم مسح الملاحظات');
+                }
+            } catch (e) { showFbSyncBadge('⚠️ حفظ محلي فقط', true); }
+
+            document.getElementById('notesTextarea').value = '';
+            updateNotesCharCount();
+            updateNotesLastUpdate(null, '');
+            renderLessons();
+            showToast('🗑️ تم حذف الملاحظات');
+            closeModal('notesModal');
+            currentNotesLessonId = null;
+            deleteBtn.disabled = false;
+            deleteBtn.innerText = '🗑️ حذف';
+        }
+
         const ARABIC_DAYS_INDEX = {
             'الأحد': 0, 'الإثنين': 1, 'الثلاثاء': 2, 'الأربعاء': 3,
             'الخميس': 4, 'الجمعة': 5, 'السبت': 6
@@ -3014,11 +3451,9 @@
             const currentState = data.g_publish_map === true;
             const newState = !currentState;
             
-            // تحديث فوري في الذاكرة لمنع الرمش والاعتماد على اللوكال ستوريدج
             lessons[lessonIndex].data.g_publish_map = newState;
             localStorage.setItem('publishState_' + id, newState);
             
-            // تحديث الكارت مباشرة في الواجهة
             renderLessons();
 
             if (newState) {
@@ -3035,7 +3470,6 @@
                     showFbSyncBadge(newState ? '✅ ظاهرة للطلاب' : '🔒 مخفية عن الطلاب');
                 }
             } catch (err) {
-                // استرجاع في حال الفشل
                 lessons[lessonIndex].data.g_publish_map = currentState;
                 renderLessons();
                 showFbSyncBadge('❌ فشل الحفظ', true);
@@ -3096,11 +3530,17 @@
                 const cardStyle = `card-color-${colorIndex}`;
                 const imgName = (index % 2 === 0) ? 'teacher.png' : 'student.png';
 
-                // الاعتماد الكامل على الذاكرة وليس اللوكال ستوريدج لمنع التضارب
                 const data = lesson.data || {};
                 const hasReport = isSetupComplete(data);
                 const savedState = hasReport ? JSON.stringify(data) : null;
                 const isPublished = data.g_publish_map === true && hasReport;
+
+                // بيانات الملاحظات
+                const notesRaw = String(data.g_notes || '').trim();
+                const hasNotes = notesRaw.length > 0;
+                const notesPreviewText = hasNotes
+                    ? (notesRaw.length > 80 ? notesRaw.substring(0, 80) + '...' : notesRaw)
+                    : '';
 
                 const hiddenClass = (hasReport && !isPublished) ? 'hidden-card' : '';
                 const incompleteClass = !hasReport ? 'incomplete-card' : '';
@@ -3188,6 +3628,13 @@
                     ${hiddenOverlayGlassHTML}
                     ${statusDotHTML}
                     <div class="card-actions">
+                        <button class="btn-action btn-notes ${hasNotes ? 'has-notes' : ''}"
+                                title="${hasNotes ? 'عرض/تعديل الملاحظات (موجودة)' : 'إضافة ملاحظات'}"
+                                onclick="openNotesModal('${lesson.id}', event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L10.582 16.07a4.5 4.5 0 01-1.897 1.13L6 18l.8-2.685a4.5 4.5 0 011.13-1.897l8.932-8.931zm0 0L19.5 7.125M18 14v4.75A2.25 2.25 0 0115.75 21H5.25A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+                            </svg>
+                        </button>
                         <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
                         </button>
@@ -3206,6 +3653,7 @@
                         ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
                         ${infoBadgesHTML}
+                        ${hasNotes ? `<div class="notes-preview"><span class="np-icon">📝</span><span class="np-text">${escapeHtml(notesPreviewText)}</span></div>` : ''}
                         <p>${descText}</p>
                         ${
                             teacherIsBlocked 
@@ -3221,7 +3669,6 @@
                 let existingCard = document.getElementById('lesson-card-' + lesson.id);
                 const fullClassName = `portal-card ${cardStyle} ${hiddenClass} ${incompleteClass} ${lockedClass}`;
 
-                // التحديث الذكي لعناصر الـ DOM لمنع الرمش بالكامل
                 if (existingCard) {
                     if (existingCard.innerHTML !== cardInnerContent) {
                         existingCard.innerHTML = cardInnerContent;
@@ -3229,7 +3676,6 @@
                     if (existingCard.className !== fullClassName) {
                         existingCard.className = fullClassName;
                     }
-                    // ✅ ملاحظة: تم إزالة appendChild هنا لمنع الرمشة عند إعادة الترتيب
                 } else {
                     const newCard = document.createElement('div');
                     newCard.id = 'lesson-card-' + lesson.id;
@@ -3239,7 +3685,6 @@
                 }
             });
 
-            // مسح الكروت المحذوفة بصمت
             Array.from(container.children).forEach(child => {
                 if (child.id && child.id.startsWith('lesson-card-')) {
                     const childId = child.id.replace('lesson-card-', '');
@@ -3249,7 +3694,6 @@
                 }
             });
 
-            // ✅ الترتيب الذكي — يتحرك بس لو الترتيب فعلاً مختلف (يمنع الرمشة نهائياً)
             const desiredOrder = lessons.map(l => 'lesson-card-' + l.id);
             const currentOrder = Array.from(container.children)
                 .filter(c => c.id && c.id.startsWith('lesson-card-'))
@@ -3596,6 +4040,22 @@
                     }
                 });
             }
+
+            // ربط أزرار نافذة الملاحظات
+            const notesTextareaEl = document.getElementById('notesTextarea');
+            const saveNotesBtnEl = document.getElementById('saveNotesBtn');
+            const deleteNotesBtnEl = document.getElementById('deleteNotesBtn');
+
+            if (notesTextareaEl) {
+                notesTextareaEl.addEventListener('input', updateNotesCharCount);
+                notesTextareaEl.addEventListener('keydown', (e) => {
+                    if (e.ctrlKey && e.key === 'Enter' && saveNotesBtnEl && !saveNotesBtnEl.disabled) {
+                        saveNotesBtnEl.click();
+                    }
+                });
+            }
+            if (saveNotesBtnEl) saveNotesBtnEl.addEventListener('click', saveNotes);
+            if (deleteNotesBtnEl) deleteNotesBtnEl.addEventListener('click', deleteNotes);
         });
     </script>
 
