@@ -373,35 +373,7 @@
             box-shadow: 0 8px 20px -6px rgba(220, 38, 38, 0.75);
         }
 
-        /* --- تعديلات صندوق الملاحظات والكارت الجديد --- */
-        .portal-card {
-            position: relative;
-            border-radius: 22px;
-            padding: 16px 14px;
-            transition: all 0.3s ease;
-            display: flex;
-            flex-direction: column !important; /* لدعم تمدد الكارت */
-            align-items: stretch !important;
-            justify-content: flex-start !important;
-            gap: 12px;
-            overflow: visible;
-            background: #FFFFFF;
-            box-shadow: 
-                0 12px 28px -8px rgba(0, 0, 0, 0.22),
-                0 4px 10px -4px rgba(0, 0, 0, 0.12);
-        }
-        
-        .card-main-row {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 12px;
-            width: 100%;
-            position: relative;
-        }
-
-        /* زر الملاحظات في الكارت */
+        /* --- تعديل زر الملاحظات --- */
         .btn-notes { 
             background: #FEF3C7; 
             color: #D97706; 
@@ -409,74 +381,24 @@
         .btn-notes:hover { 
             background: #FDE68A; 
         }
+        /* --- نهاية التعديل --- */
 
-        /* صندوق الملاحظات المتمدد (الأنيميشن) */
-        .notes-wrapper {
-            max-height: 0;
-            overflow: hidden;
-            opacity: 0;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            margin-top: 0;
-        }
-        .notes-wrapper.open {
-            max-height: 250px;
-            opacity: 1;
-            margin-top: 12px;
-            border-top: 1.5px dashed #E2E8F0;
-            padding-top: 12px;
-        }
-
-        /* تصميم الملاحظات الداخلي */
-        .notes-content {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            background: #FFFBEB;
-            border: 1px solid #FDE68A;
-            border-radius: 12px;
-            padding: 10px;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-
-        .notes-textarea {
-            width: 100%;
-            min-height: 60px;
-            border: 1px solid #FCD34D;
-            border-radius: 8px;
-            padding: 8px 10px;
-            font-size: 11.5px;
-            font-weight: 700;
-            color: #92400E;
-            background: #FFFFFF;
-            resize: none;
-            outline: none;
-            font-family: 'Cairo', sans-serif;
+        .portal-card {
+            position: relative;
+            border-radius: 22px;
+            padding: 16px 14px;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            overflow: visible;
+            background: #FFFFFF;
+            box-shadow: 
+                0 12px 28px -8px rgba(0, 0, 0, 0.22),
+                0 4px 10px -4px rgba(0, 0, 0, 0.12);
         }
-        .notes-textarea:focus {
-            min-height: 110px;
-            border-color: #F59E0B;
-            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.15);
-        }
-
-        .btn-save-notes {
-            align-self: flex-end;
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-            color: white;
-            border: none;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 11.5px;
-            font-weight: 900;
-            cursor: pointer;
-            box-shadow: 0 4px 10px rgba(217, 119, 6, 0.3);
-            transition: all 0.2s;
-            font-family: 'Cairo', sans-serif;
-        }
-        .btn-save-notes:active {
-            transform: scale(0.94);
-        }
-        /* --- نهاية تعديلات صندوق الملاحظات --- */
 
         .portal-card:hover {
             transform: translateY(-4px);
@@ -1748,6 +1670,38 @@
             .time-range-badge .tr-time { font-size: 12px !important; }
             .time-range-badge .tr-day { font-size: 11px !important; }
         }
+
+        /* تصميم أيقونة الملاحظات */
+        .btn-notes { 
+            background: #FEF3C7; 
+            color: #D97706; 
+        }
+        .btn-notes:hover { 
+            background: #FDE68A; 
+        }
+
+        /* تصميم الـ Textarea داخل المودال الجديد */
+        .notes-textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 2px solid #FCD34D;
+            border-radius: 12px;
+            padding: 12px;
+            font-size: 13px;
+            font-weight: 800;
+            color: #92400E;
+            background: #FFFBEB;
+            resize: none;
+            outline: none;
+            font-family: 'Cairo', sans-serif;
+            transition: all 0.3s ease;
+            margin-bottom: 12px;
+        }
+        .notes-textarea:focus {
+            border-color: #F59E0B;
+            background: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.15);
+        }
     </style>
 </head>
 <body>
@@ -1853,6 +1807,26 @@
             </div>
         </div>
     </section>
+
+    <!-- مودال الملاحظات الجديد -->
+    <div id="notesModal" class="modal-overlay" onclick="closeModal('notesModal')">
+        <div class="custom-modal" onclick="event.stopPropagation()" style="border-bottom: 5px solid #F59E0B;">
+            <div class="modal-icon" style="background: #FEF3C7; color: #D97706; margin-bottom: 8px;">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 28px; height: 28px;">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                </svg>
+            </div>
+            <h3 class="modal-title" style="color: #92400E; font-size: 16px;">ملاحظات المجموعة</h3>
+            <p class="modal-desc" style="margin-bottom: 12px;">اكتب ملاحظاتك الخاصة هنا (تنبيهات، مكان التجمع، الخ..)</p>
+            
+            <textarea id="modalNotesTextarea" class="notes-textarea" spellcheck="false"></textarea>
+            
+            <div class="modal-actions">
+                <button class="btn-modal btn-cancel" onclick="closeModal('notesModal')">إلغاء</button>
+                <button class="btn-modal" style="background: linear-gradient(135deg, #F59E0B, #D97706); color: white;" id="confirmSaveNotesBtn">حفظ الملاحظات ✔</button>
+            </div>
+        </div>
+    </div>
 
     <div id="groupModal" class="modal-overlay" onclick="closeModal('groupModal')">
         <div class="custom-modal group-modal-box" style="text-align: right;" onclick="event.stopPropagation()">
@@ -2081,6 +2055,7 @@
         let lessons = [];
         let itemToDelete = null;
         let itemToRename = null;
+        let itemToNotes = null; // متغير لحفظ الـ ID عند فتح نافذة الملاحظات
         let realtimeUnsubscribe = null;
         let deviceWatchUnsub = null;
         let autoSyncInterval = null;
@@ -3271,56 +3246,44 @@
                     visibilityTitle = 'إظهار للطلاب';
                 }
 
-                const savedNotes = data.g_notes || ''; // جلب الملاحظات إن وجدت
-
                 const cardInnerContent = `
-                    <div class="card-main-row">
-                        ${lockedOverlayHTML}
-                        ${hiddenOverlayGlassHTML}
-                        ${statusDotHTML}
-                        <div class="card-actions">
-                            <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
-                            </button>
-                            <button class="btn-action btn-visibility ${visibilityClass}" title="${visibilityTitle}" onclick="toggleVisibility('${lesson.id}', event)" ${teacherIsBlocked || visibilityDisabled ? 'disabled' : ''}>
-                                ${visibilityIcon}
-                            </button>
-                            <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal('${lesson.id}', event)">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
-                            </button>
-                            <!-- أيقونة الملاحظات الجديدة -->
-                            <button class="btn-action btn-notes" title="ملاحظات المجموعة" onclick="toggleNotes('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;">
-                                  <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="card-image-box" onclick="${teacherIsBlocked ? '' : (hasReport && !isPublished ? `showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) بالأعلى لفتحها', true)` : `openGroupModal('${lesson.id}')`)}">
-                            <img src="./${imgName}" alt="صورة الحصة">
-                        </div>
-                        <div class="card-text">
-                            ${timeRangeHTML}
-                            ${statusBadgeHTML}
-                            <h2>${lesson.title}</h2>
-                            ${infoBadgesHTML}
-                            <p>${descText}</p>
-                            ${
-                                teacherIsBlocked 
-                                ? `<button type="button" class="btn-go" onclick="showToast('🔒 الحساب محظور — تواصل مع الإدارة', true)">مغلق</button>`
-                                : (hasReport && !isPublished) 
-                                    ? `<button type="button" class="btn-go" onclick="showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) في الأعلى لفتحها', true)">${btnText}</button>`
-                                    : `<a href="${targetUrl}" class="btn-go">${btnText}</a>`
-                            }
-                            ${noticeBannerHTML}
-                        </div>
+                    ${lockedOverlayHTML}
+                    ${hiddenOverlayGlassHTML}
+                    ${statusDotHTML}
+                    <div class="card-actions">
+                        <button class="btn-action btn-edit" title="تعديل اسم المجموعة" onclick="openRenameModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M16.862 4.487l1.687-1.688a1.875 1.875 0 112.652 2.652L6.832 19.82a4.5 4.5 0 01-1.897 1.13l-2.685.8.8-2.685a4.5 4.5 0 011.13-1.897L16.863 4.487zm0 0L19.5 7.125" /></svg>
+                        </button>
+                        <button class="btn-action btn-visibility ${visibilityClass}" title="${visibilityTitle}" onclick="toggleVisibility('${lesson.id}', event)" ${teacherIsBlocked || visibilityDisabled ? 'disabled' : ''}>
+                            ${visibilityIcon}
+                        </button>
+                        <button class="btn-action btn-delete" title="حذف المجموعة" onclick="openDeleteModal('${lesson.id}', event)">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;"><path stroke-linecap="round" stroke-linejoin="round" d="M14.74 9l-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 01-2.244 2.077H8.084a2.25 2.25 0 01-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 00-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 013.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 00-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 00-7.5 0" /></svg>
+                        </button>
+                        <!-- أيقونة الملاحظات تفتح المودال -->
+                        <button class="btn-action btn-notes" title="ملاحظات المجموعة" onclick="openNotesModal('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" style="width: 15px; height: 15px;">
+                              <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                            </svg>
+                        </button>
                     </div>
-                    
-                    <!-- الصندوق المتمدد للملاحظات -->
-                    <div class="notes-wrapper" id="notes-wrapper-${lesson.id}" onclick="event.stopPropagation()">
-                        <div class="notes-content">
-                            <textarea id="notes-text-${lesson.id}" class="notes-textarea" placeholder="اكتب ملاحظاتك هنا (مثلاً: تنبيهات للطلاب، مكان التجمع...)" spellcheck="false">${savedNotes}</textarea>
-                            <button class="btn-save-notes" onclick="saveNotes('${lesson.id}', event)">حفظ الملاحظات ✔</button>
-                        </div>
+                    <div class="card-image-box" onclick="${teacherIsBlocked ? '' : (hasReport && !isPublished ? `showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) بالأعلى لفتحها', true)` : `openGroupModal('${lesson.id}')`)}">
+                        <img src="./${imgName}" alt="صورة الحصة">
+                    </div>
+                    <div class="card-text">
+                        ${timeRangeHTML}
+                        ${statusBadgeHTML}
+                        <h2>${lesson.title}</h2>
+                        ${infoBadgesHTML}
+                        <p>${descText}</p>
+                        ${
+                            teacherIsBlocked 
+                            ? `<button type="button" class="btn-go" onclick="showToast('🔒 الحساب محظور — تواصل مع الإدارة', true)">مغلق</button>`
+                            : (hasReport && !isPublished) 
+                                ? `<button type="button" class="btn-go" onclick="showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) في الأعلى لفتحها', true)">${btnText}</button>`
+                                : `<a href="${targetUrl}" class="btn-go">${btnText}</a>`
+                        }
+                        ${noticeBannerHTML}
                     </div>
                 `;
 
@@ -3335,7 +3298,6 @@
                     if (existingCard.className !== fullClassName) {
                         existingCard.className = fullClassName;
                     }
-                    // ✅ ملاحظة: تم إزالة appendChild هنا لمنع الرمشة عند إعادة الترتيب
                 } else {
                     const newCard = document.createElement('div');
                     newCard.id = 'lesson-card-' + lesson.id;
@@ -3370,6 +3332,69 @@
                 });
             }
         }
+
+        // --- دوال مودال الملاحظات الجديد ---
+        function openNotesModal(id, event) {
+            if (event) event.stopPropagation();
+            playEditSound();
+            
+            if (teacherIsBlocked) {
+                showToast('🔒 الحساب محظور — لا يمكن إضافة ملاحظات', true);
+                return;
+            }
+            
+            itemToNotes = id;
+            const lesson = lessons.find(l => l.id === id);
+            
+            if (lesson) {
+                const textarea = document.getElementById('modalNotesTextarea');
+                const savedNotes = (lesson.data && lesson.data.g_notes) ? lesson.data.g_notes : '';
+                
+                textarea.value = savedNotes;
+                document.getElementById('notesModal').classList.add('active');
+                
+                setTimeout(() => textarea.focus(), 150);
+            }
+        }
+
+        document.getElementById('confirmSaveNotesBtn').addEventListener('click', async function() {
+            if(itemToNotes !== null) {
+                const textarea = document.getElementById('modalNotesTextarea');
+                const newNotes = textarea.value.trim();
+                const lessonIndex = lessons.findIndex(l => l.id === itemToNotes);
+                
+                if (lessonIndex !== -1) {
+                    if (!lessons[lessonIndex].data) lessons[lessonIndex].data = {};
+                    lessons[lessonIndex].data.g_notes = newNotes;
+
+                    saveLessonsToStorage();
+                    const stateKey = 'lessonState_' + itemToNotes;
+                    const savedState = localStorage.getItem(stateKey);
+                    if (savedState) {
+                        let stateObj = JSON.parse(savedState);
+                        stateObj.g_notes = newNotes;
+                        localStorage.setItem(stateKey, JSON.stringify(stateObj));
+                    }
+
+                    try {
+                        if (window.db && window.fsDoc && window.fsSetDoc) {
+                            showFbSyncBadge('☁️ جاري حفظ الملاحظات...');
+                            await window.fsSetDoc(window.fsDoc(window.db, "lessons", String(itemToNotes)), { 
+                                g_notes: newNotes,
+                                updatedAt: Date.now()
+                            }, { merge: true });
+                            showFbSyncBadge('✅ تم حفظ الملاحظات');
+                        }
+                    } catch (err) {
+                        showFbSyncBadge('❌ فشل الحفظ السحابي', true);
+                    }
+                    
+                    showToast('📝 تم حفظ الملاحظات بنجاح');
+                }
+            }
+            closeModal('notesModal');
+            itemToNotes = null;
+        });
 
         function openDeleteModal(id, event) {
             if (event) event.stopPropagation();
@@ -3703,72 +3728,6 @@
                 });
             }
         });
-
-        // --- دوال فتح وحفظ الملاحظات ---
-        
-        // فتح وإغلاق الملاحظات بسلاسة
-        function toggleNotes(lessonId, event) {
-            if (event) event.stopPropagation();
-            playVisibilitySound(); // تشغيل صوت كليك خفيف
-            
-            const wrapper = document.getElementById('notes-wrapper-' + lessonId);
-            if (wrapper) {
-                wrapper.classList.toggle('open');
-                
-                // عمل فوكس تلقائي إذا تم الفتح
-                if(wrapper.classList.contains('open')) {
-                    setTimeout(() => {
-                        const textarea = document.getElementById('notes-text-' + lessonId);
-                        if(textarea) textarea.focus();
-                    }, 300);
-                }
-            }
-        }
-
-        // حفظ الملاحظات في المتصفح وفي Firebase
-        async function saveNotes(lessonId, event) {
-            if (event) event.stopPropagation();
-            playEditSound();
-
-            const textarea = document.getElementById('notes-text-' + lessonId);
-            if (!textarea) return;
-
-            const newNotes = textarea.value.trim();
-            const lessonIndex = lessons.findIndex(l => l.id === lessonId);
-            if (lessonIndex === -1) return;
-
-            // تحديث البيانات محلياً (Memory)
-            if (!lessons[lessonIndex].data) lessons[lessonIndex].data = {};
-            lessons[lessonIndex].data.g_notes = newNotes;
-
-            // الحفظ في LocalStorage
-            saveLessonsToStorage();
-            const stateKey = 'lessonState_' + lessonId;
-            const savedState = localStorage.getItem(stateKey);
-            if (savedState) {
-                let stateObj = JSON.parse(savedState);
-                stateObj.g_notes = newNotes;
-                localStorage.setItem(stateKey, JSON.stringify(stateObj));
-            }
-
-            // الحفظ المباشر في Firebase
-            try {
-                if (window.db && window.fsDoc && window.fsSetDoc) {
-                    showFbSyncBadge('☁️ جاري حفظ الملاحظات...');
-                    await window.fsSetDoc(window.fsDoc(window.db, "lessons", String(lessonId)), { 
-                        g_notes: newNotes,
-                        updatedAt: Date.now()
-                    }, { merge: true });
-                    showFbSyncBadge('✅ تم حفظ الملاحظات');
-                }
-            } catch (err) {
-                showFbSyncBadge('❌ فشل الحفظ السحابي', true);
-            }
-
-            // إغلاق الصندوق وإظهار إشعار نجاح
-            toggleNotes(lessonId);
-            showToast('📝 تم حفظ الملاحظات بنجاح');
-        }
     </script>
 
     <script>
