@@ -335,6 +335,134 @@
         }
         .device-info-badge.show { display: block; }
         .device-info-badge .icon { font-size: 14px; margin-left: 4px; }
+
+        /* 🎉 مودال الترحيب بعد إنشاء الحساب */
+        #welcomeModal .custom-modal-box {
+            border-bottom-color: #10B981;
+            max-width: 360px;
+            padding: 28px 22px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #welcomeModal .custom-modal-box::before {
+            content: '';
+            position: absolute;
+            top: -50px; right: -50px;
+            width: 120px; height: 120px;
+            background: radial-gradient(circle, rgba(16,185,129,0.15), transparent 70%);
+            border-radius: 50%;
+        }
+
+        #welcomeModal .custom-modal-box::after {
+            content: '';
+            position: absolute;
+            bottom: -40px; left: -40px;
+            width: 100px; height: 100px;
+            background: radial-gradient(circle, rgba(37,99,235,0.12), transparent 70%);
+            border-radius: 50%;
+        }
+
+        .welcome-icon-circle {
+            width: 80px; height: 80px; border-radius: 50%; margin: 0 auto 14px;
+            display: flex; align-items: center; justify-content: center; font-size: 42px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            box-shadow: 0 10px 25px rgba(16,185,129,0.35);
+            animation: bounceIn 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            z-index: 2;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0) rotate(-180deg); opacity: 0; }
+            60% { transform: scale(1.15) rotate(10deg); opacity: 1; }
+            100% { transform: scale(1) rotate(0); opacity: 1; }
+        }
+
+        .welcome-title {
+            font-size: 22px;
+            font-weight: 900;
+            color: #065F46;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-name {
+            font-size: 17px;
+            font-weight: 900;
+            color: #2563EB;
+            margin-bottom: 4px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-name .title-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #F59E0B, #FCD34D);
+            color: #7C2D12;
+            font-size: 13px;
+            padding: 3px 12px;
+            border-radius: 999px;
+            margin-left: 6px;
+            font-weight: 900;
+            box-shadow: 0 2px 6px rgba(245,158,11,0.3);
+        }
+
+        .welcome-msg {
+            font-size: 13px;
+            font-weight: 700;
+            color: #64748B;
+            line-height: 1.7;
+            margin-bottom: 18px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .welcome-btn {
+            width: 100%;
+            padding: 13px;
+            background: linear-gradient(135deg, #10B981, #059669);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 8px 18px -4px rgba(16,185,129,0.5);
+            transition: all 0.25s;
+            position: relative;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .welcome-btn:active { transform: scale(0.97); }
+
+        .welcome-countdown {
+            font-size: 11px;
+            font-weight: 800;
+            color: #94A3B8;
+            margin-top: 10px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ✨ confetti effect */
+        .confetti {
+            position: absolute;
+            width: 8px; height: 8px;
+            top: -10px;
+            animation: fall 2.5s linear forwards;
+            z-index: 1;
+        }
+
+        @keyframes fall {
+            0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+            100% { transform: translateY(400px) rotate(720deg); opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -363,6 +491,26 @@
             <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">🚪</div>
             <h3 class="modal-title-text" style="color: #991B1B;">تم تسجيل الخروج</h3>
             <p class="modal-desc-text">تم تسجيل الدخول من جهاز آخر بنفس الحساب.<br>سيتم توجيهك لصفحة الدخول...</p>
+        </div>
+    </div>
+
+    <!-- 🎉 مودال الترحيب بعد إنشاء الحساب -->
+    <div id="welcomeModal" class="custom-modal-overlay" style="pointer-events: none;">
+        <div class="custom-modal-box" onclick="event.stopPropagation()">
+            <div id="confettiContainer" style="position:absolute; inset:0; overflow:hidden; pointer-events:none; border-radius:22px;"></div>
+            <div class="welcome-icon-circle" id="welcomeIcon">🎉</div>
+            <h3 class="welcome-title" id="welcomeTitle">أهلاً بيك يا بطل!</h3>
+            <div class="welcome-name" id="welcomeName"></div>
+            <p class="welcome-msg" id="welcomeMsg">
+                تم إنشاء حسابك بنجاح ✅<br>
+                يلا نبدأ رحلة التدريس مع <b style="color:#F59E0B;">احجزلى</b> 🚀
+            </p>
+            <button class="welcome-btn" onclick="goToDashboardNow()">
+                يلا نبدأ 🚀
+            </button>
+            <div class="welcome-countdown" id="welcomeCountdown">
+                هيتم تحويلك تلقائياً خلال <span id="countdownNum">3</span> ثواني...
+            </div>
         </div>
     </div>
 
@@ -593,6 +741,70 @@
         }
 
         // ==========================================
+        // 🎉 مودال الترحيب بعد إنشاء الحساب
+        // ==========================================
+        let _welcomeTimeout = null;
+        let _countdownInterval = null;
+
+        function showWelcomeModal(accountData) {
+            const modal = document.getElementById('welcomeModal');
+            const nameEl = document.getElementById('welcomeName');
+            const iconEl = document.getElementById('welcomeIcon');
+
+            // 👤 اسم المعلم مع اللقب
+            const titleBadge = accountData.title === 'مس' ? '👩‍🏫 مس' : '👨‍🏫 مستر';
+            nameEl.innerHTML = `<span class="title-badge">${titleBadge}</span> ${accountData.name || 'أستاذنا'}`;
+
+            // 🎨 أيقونة حسب اللقب
+            iconEl.textContent = accountData.title === 'مس' ? '🌸' : '🎉';
+
+            // 🎊 confetti
+            spawnConfetti();
+
+            // إظهار المودال
+            modal.classList.add('active');
+            modal.style.pointerEvents = 'auto';
+
+            // ⏱️ عداد تنازلي 3 ثواني
+            let counter = 3;
+            const numEl = document.getElementById('countdownNum');
+            numEl.textContent = counter;
+
+            _countdownInterval = setInterval(() => {
+                counter--;
+                if (counter > 0) numEl.textContent = counter;
+            }, 1000);
+
+            _welcomeTimeout = setTimeout(() => {
+                clearInterval(_countdownInterval);
+                window.location.href = './index2.html';
+            }, 3000);
+        }
+
+        function goToDashboardNow() {
+            if (_welcomeTimeout) clearTimeout(_welcomeTimeout);
+            if (_countdownInterval) clearInterval(_countdownInterval);
+            window.location.href = './index2.html';
+        }
+
+        function spawnConfetti() {
+            const container = document.getElementById('confettiContainer');
+            if (!container) return;
+            container.innerHTML = '';
+            const colors = ['#F59E0B', '#2563EB', '#10B981', '#EC4899', '#8B5CF6', '#FCD34D'];
+            for (let i = 0; i < 25; i++) {
+                const c = document.createElement('div');
+                c.className = 'confetti';
+                c.style.left = Math.random() * 100 + '%';
+                c.style.background = colors[Math.floor(Math.random() * colors.length)];
+                c.style.animationDelay = (Math.random() * 0.4) + 's';
+                c.style.animationDuration = (1.8 + Math.random() * 1.2) + 's';
+                c.style.borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+                container.appendChild(c);
+            }
+        }
+
+        // ==========================================
         // 🚀 عند تحميل الصفحة
         // ==========================================
         window.onload = function() {
@@ -653,13 +865,11 @@
             if (!name || !age || !phone || !phoneConfirm || !pass1 || !pass2) 
                 return showAlert('الرجاء إكمال جميع البيانات.');
 
-            // ✅ رقم المحمول 11 رقم + مطابقة التأكيد
             if (!/^\d{11}$/.test(phone)) 
                 return showAlert('رقم التليفون يجب أن يكون 11 رقماً بالضبط.');
             if (phone !== phoneConfirm) 
                 return showAlert('رقم التليفون وتأكيده غير متطابقين.');
 
-            // ✅ الرقم السري 6 أرقام بالضبط
             if (!/^\d{6}$/.test(pass1)) 
                 return showAlert('الرقم السري يجب أن يكون 6 أرقام بالضبط.');
             if (pass1 !== pass2) 
@@ -680,7 +890,6 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ فحص البصمة السوداء
                 let blockedCheck;
                 try {
                     blockedCheck = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
@@ -698,7 +907,6 @@
                     return;
                 }
 
-                // 2️⃣ فحص teachers
                 let teacherCheck;
                 try {
                     teacherCheck = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
@@ -723,11 +931,9 @@
 
                 btn.innerText = '⏳ جاري إنشاء الحساب...';
 
-                // 3️⃣ إنشاء الحساب
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
 
-                // 4️⃣ حفظ البيانات
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -752,7 +958,10 @@
                     await verifyAndRegisterDevice(phone, accountData);
                 } catch (e) {}
 
-                window.location.href = './index2.html';
+                // 🎉 إظهار مودال الترحيب بدل التحويل المباشر
+                btn.innerText = originalText;
+                btn.disabled = false;
+                showWelcomeModal(accountData);
 
             } catch (error) {
                 btn.innerText = originalText;
@@ -774,11 +983,9 @@
             const phone = document.getElementById('loginPhone').value.trim();
             const pass  = document.getElementById('loginPassword').value;
 
-            // ✅ تأكيد 11 رقم
             if (!/^\d{11}$/.test(phone)) 
                 return showAlert('رقم التليفون يجب أن يكون 11 رقماً بالضبط.');
 
-            // ✅ الرقم السري 6 أرقام بالضبط
             if (!/^\d{6}$/.test(pass)) 
                 return showAlert('الرقم السري يجب أن يكون 6 أرقام بالضبط.');
 
@@ -797,7 +1004,6 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ فحص البصمة السوداء
                 let blockedCheck;
                 try {
                     blockedCheck = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
@@ -814,10 +1020,8 @@
                     return;
                 }
 
-                // 2️⃣ تسجيل الدخول
                 const userCredential = await fb.signIn(fb.auth, fakeEmail, pass);
                 
-                // 3️⃣ فحص teachers
                 const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
                 
                 if (!snap.exists()) {
