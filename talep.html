@@ -472,6 +472,33 @@
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
+        /* ✅ العنوان التفصيلي في كارت المعلم */
+        .teacher-info-address {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            background: #F0FDF4;
+            border: 1.5px solid #A7F3D0;
+            border-radius: 8px;
+            padding: 6px 8px;
+            margin-bottom: 3px;
+            gap: 3px;
+        }
+        .teacher-info-address .addr-label {
+            color: #64748B;
+            font-size: 9.5px;
+            font-weight: 900;
+        }
+        .teacher-info-address .addr-value {
+            color: #065F46;
+            font-weight: 900;
+            text-align: right;
+            width: 100%;
+            line-height: 1.45;
+            font-size: 11px;
+            word-break: break-word;
+        }
+
         .teacher-info-actions {
             display: flex;
             gap: 6px;
@@ -3000,7 +3027,14 @@
                 <div class="teacher-info-row"><span>🎂 العمر</span><span>${t.age} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
                 <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
-                <div class="teacher-info-row"><span>📍 المكان</span><span style="color:#059669;">${t.locType}</span></div>
+                <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
+                
+                <!-- ✅ العنوان التفصيلي -->
+                <div class="teacher-info-address">
+                    <span class="addr-label">🏠 العنوان التفصيلي</span>
+                    <span class="addr-value">${t.address || 'غير محدد'}</span>
+                </div>
+                
                 <div class="teacher-info-row" style="background:#ECFDF5; border:1px solid #A7F3D0;">
                     <span>📱 التليفون</span>
                     ${t.phone 
