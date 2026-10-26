@@ -388,10 +388,6 @@
                 <input type="tel" id="loginPhone" class="custom-input" placeholder="01012345678" maxlength="11" inputmode="numeric" oninput="enforceDigitsOnly(this)">
             </div>
             <div class="input-group">
-                <label class="input-label">تأكيد رقم التليفون</label>
-                <input type="tel" id="loginPhoneConfirm" class="custom-input" placeholder="01012345678" maxlength="11" inputmode="numeric" oninput="enforceDigitsOnly(this)">
-            </div>
-            <div class="input-group">
                 <label class="input-label">الرقم السري (6 أرقام بالضبط)</label>
                 <input type="password" id="loginPassword" class="custom-input" placeholder="أدخل 6 أرقام" maxlength="6" inputmode="numeric" oninput="enforceDigitsOnly(this)">
             </div>
@@ -457,11 +453,8 @@
         // ==========================================
         function enforceDigitsOnly(input) {
             let v = input.value
-                // تحويل الأرقام العربية-الهندية (٠-٩) إلى إنجليزية
                 .replace(/[٠-٩]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x0660 + 48))
-                // تحويل الأرقام الفارسية (۰-۹) إلى إنجليزية
                 .replace(/[۰-۹]/g, d => String.fromCharCode(d.charCodeAt(0) - 0x06F0 + 48));
-            // حذف أي شيء غير 0-9
             v = v.replace(/[^0-9]/g, '');
             if (input.value !== v) input.value = v;
         }
@@ -608,7 +601,6 @@
             const rememberedPhone = localStorage.getItem('rememberedPhone');
             if (rememberedPhone) {
                 document.getElementById('loginPhone').value = rememberedPhone;
-                document.getElementById('loginPhoneConfirm').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
                 document.getElementById('regPhoneConfirm').value = rememberedPhone;
                 document.getElementById('loginPassword').value = '';
@@ -658,11 +650,10 @@
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
 
-            // ✅ التحقق من اكتمال البيانات
             if (!name || !age || !phone || !phoneConfirm || !pass1 || !pass2) 
                 return showAlert('الرجاء إكمال جميع البيانات.');
 
-            // ✅ تأكيد رقم المحمول 11 رقم متطابق
+            // ✅ رقم المحمول 11 رقم + مطابقة التأكيد
             if (!/^\d{11}$/.test(phone)) 
                 return showAlert('رقم التليفون يجب أن يكون 11 رقماً بالضبط.');
             if (phone !== phoneConfirm) 
@@ -781,14 +772,11 @@
         // ==========================================
         async function handleLogin(event) {
             const phone = document.getElementById('loginPhone').value.trim();
-            const phoneConfirm = document.getElementById('loginPhoneConfirm').value.trim();
             const pass  = document.getElementById('loginPassword').value;
 
-            // ✅ تأكيد 11 رقم متطابق
+            // ✅ تأكيد 11 رقم
             if (!/^\d{11}$/.test(phone)) 
                 return showAlert('رقم التليفون يجب أن يكون 11 رقماً بالضبط.');
-            if (phone !== phoneConfirm) 
-                return showAlert('رقم التليفون وتأكيده غير متطابقين.');
 
             // ✅ الرقم السري 6 أرقام بالضبط
             if (!/^\d{6}$/.test(pass)) 
