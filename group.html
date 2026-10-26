@@ -321,7 +321,6 @@
         }
         .locate-btn:active { transform: translateY(2px); border-bottom-width: 2px; }
 
-        /* ✅ نبض زر الموقع لجذب الانتباه */
         @keyframes pulse {
             0%, 100% { 
                 transform: scale(1); 
@@ -431,7 +430,6 @@
         .custom-btn-cancel { background: #F43F5E; border-bottom: 2.5px solid #E11D48; }
         .custom-btn-save { background: #10B981; border-bottom: 2.5px solid #059669; }
 
-        /* ✅ صف الخريطة + التفضيلات جنب بعض */
         .map-prefs-row {
             display: grid;
             grid-template-columns: 1.2fr 1fr;
@@ -483,6 +481,8 @@
         }
         .pref-toggle-blue input[type="checkbox"] { accent-color: #0284C7; }
         .pref-toggle-blue label { color: #075985; }
+
+        .required-star { color: #EF4444; font-weight: 900; }
 
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
@@ -766,7 +766,7 @@
             <h3 style="color: var(--c-dark); font-weight: 900; margin-bottom: 15px;">🗺️ تحديد الموقع الجغرافي وجدول المواعيد</h3>
 
             <div class="form-group">
-                <label>📅 أيام الحصص (اختر أيام الأسبوع)</label>
+                <label>📅 أيام الحصص <span class="required-star">*</span> (اختر يوم واحد على الأقل)</label>
                 <div class="days-grid">
                     <div><input type="checkbox" id="day_sat" value="السبت"><label for="day_sat">السبت</label></div>
                     <div><input type="checkbox" id="day_sun" value="الأحد"><label for="day_sun">الأحد</label></div>
@@ -779,7 +779,7 @@
             </div>
 
             <div class="form-group">
-                <label>🗓️ الشهور الميلادية (اختر الشهر أو الشهور)</label>
+                <label>🗓️ الشهور الميلادية <span class="required-star">*</span> (اختر شهر واحد على الأقل)</label>
                 <div class="months-grid">
                     <div><input type="checkbox" id="m_jan" value="يناير"><label for="m_jan">يناير</label></div>
                     <div><input type="checkbox" id="m_feb" value="فبراير"><label for="m_feb">فبراير</label></div>
@@ -823,7 +823,6 @@
                 </div>
             </div>
 
-            <!-- ✅ الخريطة + التفضيلات جنب بعض -->
             <div class="map-prefs-row">
                 <div class="form-group">
                     <label>🗺️ حدد موقعك على الخريطة</label>
@@ -1979,7 +1978,6 @@
             mapInitialized = true;
             map.invalidateSize();
 
-            // ✅ لا نشغل GPS تلقائياً — بدلاً من ذلك نلفت الانتباه لزر الموقع
             if (!savedLat) {
                 const addressInput = document.getElementById('m_address');
                 if (addressInput) {
@@ -2025,7 +2023,6 @@
             };
         }
 
-        // 🚀 نقطة الدخول الموحدة
         async function triggerLocationFlow() {
             if (isLocating) return;
             
@@ -2081,7 +2078,6 @@
                 } catch (e) {}
             }
             
-            // إزالة نبض الزر بعد الضغط
             const locateBtn = document.querySelector('.locate-btn');
             if (locateBtn) locateBtn.classList.remove('pulse');
             
@@ -2246,8 +2242,6 @@
             }
         }
 
-        // 💬 رسائل الأخطاء المخصصة لكل حالة وجهاز
-
         function getHttpsErrorMsg() {
             return `<b>⚠️ الموقع لا يعمل عبر HTTP</b><br><br>
             خدمة تحديد الموقع تتطلب اتصالاً آمناً (HTTPS).<br>
@@ -2334,7 +2328,6 @@
             return `<b>💡 نصيحة:</b> جرّب فتح الموقع في Chrome بدلاً من المتصفح الحالي`;
         }
 
-        // دالة جلب العنوان من الإحداثيات
         function fetchAddress(lat, lng) {
             const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&zoom=18&addressdetails=1&accept-language=ar`;
             fetch(url)
@@ -2389,6 +2382,7 @@
                 return;
             }
 
+            // ✅ جمع أيام الحصة
             const selectedDays = [];
             ['day_sat', 'day_sun', 'day_mon', 'day_tue', 'day_wed', 'day_thu', 'day_fri'].forEach(id => {
                 const el = document.getElementById(id);
@@ -2397,6 +2391,18 @@
 
             if (selectedDays.length === 0) {
                 showError("برجاء تحديد يوم واحد على الأقل للحصة.");
+                return;
+            }
+
+            // ✅ التحقق من الشهور الميلادية (جديد)
+            const selectedMonths = [];
+            ['m_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el && el.checked) selectedMonths.push(el.value);
+            });
+
+            if (selectedMonths.length === 0) {
+                showError("برجاء تحديد شهر ميلادي واحد على الأقل للحصة، لتحديد فترة سريان المجموعة.");
                 return;
             }
 
