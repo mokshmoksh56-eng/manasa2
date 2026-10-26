@@ -484,6 +484,22 @@
 
         .required-star { color: #EF4444; font-weight: 900; }
 
+        /* ✅ ستايل خاص لخانة اسم السنتر - مخفية/ظاهرة */
+        #centerNameGroup {
+            transition: all 0.3s ease;
+        }
+        #centerNameGroup.hidden-center {
+            display: none !important;
+        }
+        #centerNameGroup .center-hint {
+            display: block;
+            font-size: 11px;
+            font-weight: 800;
+            color: #64748B;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
         @media (max-width: 768px) {
             .hero-brand { font-size: 30px; }
             .hero-headline { font-size: 18px; }
@@ -688,9 +704,11 @@
                     <label>👤 اسم المستر (يأتي تلقائياً - مقفول)</label>
                     <input type="text" id="g_teacher" class="form-control" placeholder="أدخل اسم المعلم" readonly style="background-color: #F1F5F9; cursor: not-allowed;">
                 </div>
-                <div class="form-group">
-                    <label>🏫 اسم السنتر (اختياري)</label>
+                <!-- ✅ خانة اسم السنتر - تظهر فقط لو المكان "فى السنتر" -->
+                <div class="form-group" id="centerNameGroup">
+                    <label>🏫 اسم السنتر <span class="required-star">*</span></label>
                     <input type="text" id="g_center" class="form-control" placeholder="سنتر النخبة">
+                    <span class="center-hint">يظهر للطلاب ضمن تفاصيل المجموعة</span>
                 </div>
             </div>
 
@@ -1641,6 +1659,31 @@
             document.getElementById('end_ampm').value = 'م';
         }
 
+        // ==========================================
+        // ✅ دالة إظهار/إخفاء خانة اسم السنتر
+        // ==========================================
+        function updateCenterFieldVisibility() {
+            const selectedLoc = document.querySelector('input[name="g_loc"]:checked');
+            const centerGroup = document.getElementById('centerNameGroup');
+            const centerInput = document.getElementById('g_center');
+            
+            if (!centerGroup || !centerInput) return;
+            
+            const locValue = selectedLoc ? selectedLoc.value : 'فى السنتر';
+            
+            if (locValue === 'فى السنتر') {
+                // إظهار الخانة
+                centerGroup.classList.remove('hidden-center');
+                centerInput.disabled = false;
+                centerInput.style.backgroundColor = '#FFFFFF';
+            } else {
+                // إخفاء الخانة + تفريغها من أي قيمة
+                centerGroup.classList.add('hidden-center');
+                centerInput.value = '';
+                centerInput.disabled = true;
+            }
+        }
+
         let saveStateTimer = null;
         let saveStatePending = false;
 
@@ -1675,10 +1718,17 @@
                         }
                     } catch(e){}
 
+                    // ✅ التحقق من مكان الدرس - لو مش "فى السنتر" نخلي g_center فاضي
+                    const selectedLocRadio = document.querySelector('input[name="g_loc"]:checked');
+                    const locValue = selectedLocRadio ? selectedLocRadio.value : 'فى السنتر';
+                    const centerValue = (locValue === 'فى السنتر') 
+                        ? document.getElementById('g_center').value 
+                        : '';
+
                     const state = {
                         step: currentStepNumber,
                         g_name: document.getElementById('g_name').value,
-                        g_center: document.getElementById('g_center').value,
+                        g_center: centerValue,
                         g_teacher: document.getElementById('g_teacher').value,
                         g_count: document.getElementById('g_count').value,
                         g_phone: teacherPhone,
@@ -1731,7 +1781,22 @@
                     const state = JSON.parse(saved);
 
                     if(state.g_name) document.getElementById('g_name').value = state.g_name;
-                    if(state.g_center) document.getElementById('g_center').value = state.g_center;
+                    
+                    // ✅ أول حاجة: نحدد مكان الدرس عشان نظبط إظهار/إخفاء خانة السنتر
+                    if(state.g_loc && document.getElementById(state.g_loc)) {
+                        document.getElementById(state.g_loc).checked = true;
+                    }
+                    // ✅ نظبط إظهار/إخفاء خانة السنتر
+                    updateCenterFieldVisibility();
+                    
+                    // ✅ بعدها نضع اسم السنتر (لو المكان سنتر)
+                    const currentLoc = document.querySelector('input[name="g_loc"]:checked');
+                    if (state.g_center && currentLoc && currentLoc.value === 'فى السنتر') {
+                        document.getElementById('g_center').value = state.g_center;
+                    } else if (currentLoc && currentLoc.value !== 'فى السنتر') {
+                        document.getElementById('g_center').value = '';
+                    }
+                    
                     if(state.g_count) document.getElementById('g_count').value = state.g_count;
 
                     if(state.start_hour) document.getElementById('start_hour').value = state.start_hour;
@@ -1769,7 +1834,6 @@
                     }
 
                     if(state.g_gender && document.getElementById(state.g_gender)) document.getElementById(state.g_gender).checked = true;
-                    if(state.g_loc && document.getElementById(state.g_loc)) document.getElementById(state.g_loc).checked = true;
 
                     if(state.selectedSubjects) {
                         selectedSubjects = state.selectedSubjects;
@@ -1880,6 +1944,17 @@
             populateStagesDropdown(false);
             loadState();
 
+            // ✅ ربط الـ radio buttons بتحديث إظهار/إخفاء خانة السنتر
+            document.querySelectorAll('input[name="g_loc"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    updateCenterFieldVisibility();
+                    saveState();
+                });
+            });
+
+            // ✅ التطبيق الأولي على حسب الحالة المحفوظة
+            updateCenterFieldVisibility();
+
             const gNameInput = document.getElementById('g_name');
             if (gNameInput) {
                 gNameInput.addEventListener('input', updateLessonTitleHeader);
@@ -1901,9 +1976,19 @@
                     const gName = document.getElementById('g_name').value.trim();
                     const gTeacher = document.getElementById('g_teacher').value.trim();
                     const gCount = document.getElementById('g_count').value.trim();
+                    
+                    // ✅ التحقق من اسم السنتر لو المكان "فى السنتر"
+                    const selectedLoc = document.querySelector('input[name="g_loc"]:checked');
+                    const locValue = selectedLoc ? selectedLoc.value : 'فى السنتر';
+                    const gCenter = document.getElementById('g_center').value.trim();
 
                     if (!gName || !gTeacher || !gCount) {
                         showError("برجاء إكمال جميع البيانات الأساسية (اسم المجموعة، المستر، والعدد).");
+                        return;
+                    }
+                    
+                    if (locValue === 'فى السنتر' && !gCenter) {
+                        showError("برجاء كتابة اسم السنتر (لأنك اخترت مكان الدرس: فى السنتر).");
                         return;
                     }
                 }
@@ -2394,7 +2479,7 @@
                 return;
             }
 
-            // ✅ التحقق من الشهور الميلادية (جديد)
+            // ✅ التحقق من الشهور الميلادية
             const selectedMonths = [];
             ['m_jan', 'm_feb', 'm_mar', 'm_apr', 'm_may', 'm_jun', 'm_jul', 'm_aug', 'm_sep', 'm_oct', 'm_nov', 'm_dec'].forEach(id => {
                 const el = document.getElementById(id);
