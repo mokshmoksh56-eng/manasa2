@@ -335,76 +335,11 @@
         }
         .device-info-badge.show { display: block; }
         .device-info-badge .icon { font-size: 14px; margin-left: 4px; }
-
-        /* ✅ صندوق التشخيص */
-        #debugPanel {
-            position: fixed;
-            bottom: 10px;
-            left: 10px;
-            right: 10px;
-            max-width: 500px;
-            margin: 0 auto;
-            background: #0F172A;
-            color: #10B981;
-            border: 2px solid #10B981;
-            border-radius: 12px;
-            padding: 12px;
-            font-family: 'Courier New', monospace;
-            font-size: 11px;
-            line-height: 1.5;
-            z-index: 999999;
-            max-height: 250px;
-            overflow-y: auto;
-            display: none;
-            direction: ltr;
-            text-align: left;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        #debugPanel.show { display: block; }
-        #debugPanel .log-success { color: #10B981; }
-        #debugPanel .log-error { color: #EF4444; }
-        #debugPanel .log-warn { color: #F59E0B; }
-        #debugPanel .log-info { color: #60A5FA; }
-        #debugPanel .close-btn {
-            position: absolute;
-            top: 5px;
-            right: 5px;
-            background: #EF4444;
-            color: white;
-            border: none;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-weight: 900;
-            font-size: 12px;
-        }
-        .btn-debug {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background: #0F172A;
-            color: #10B981;
-            border: 2px solid #10B981;
-            border-radius: 999px;
-            padding: 6px 14px;
-            font-size: 11px;
-            font-weight: 900;
-            cursor: pointer;
-            z-index: 999998;
-        }
     </style>
 </head>
 <body>
 
-    <button class="btn-debug" onclick="toggleDebugPanel()">🐞 Debug</button>
-
-    <div id="debugPanel">
-        <button class="close-btn" onclick="toggleDebugPanel()">×</button>
-        <div style="font-weight: 900; color: #FCD34D; margin-bottom: 8px;">🔍 Diagnostic Log</div>
-        <div id="debugContent"></div>
-    </div>
-
+    <!-- مودال الحظر -->
     <div id="blockedAccountModal" class="custom-modal-overlay" onclick="closeCustomModal('blockedAccountModal')">
         <div class="custom-modal-box" style="border-bottom-color: #D97706;" onclick="event.stopPropagation()">
             <div class="modal-icon-circle" style="background: #FEF3C7; color: #D97706;">🔒</div>
@@ -422,6 +357,7 @@
         </div>
     </div>
 
+    <!-- مودال الطرد -->
     <div id="kickedDeviceModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div class="modal-icon-circle" style="background: #FEE2E2; color: #DC2626;">🚪</div>
@@ -445,6 +381,7 @@
 
         <div id="alertMsg" class="alert-msg"></div>
 
+        <!-- تسجيل الدخول -->
         <div id="loginForm">
             <div class="input-group">
                 <label class="input-label">رقم التليفون (11 رقم)</label>
@@ -462,6 +399,7 @@
             </div>
         </div>
 
+        <!-- حساب جديد -->
         <div id="registerForm" style="display: none;">
             <div class="input-group">
                 <label class="input-label">اللقب</label>
@@ -507,29 +445,6 @@
 
     <script>
         // ==========================================
-        // 🐞 نظام التشخيص (Debug)
-        // ==========================================
-        function toggleDebugPanel() {
-            const panel = document.getElementById('debugPanel');
-            panel.classList.toggle('show');
-        }
-
-        function debugLog(message, type = 'info') {
-            const el = document.getElementById('debugContent');
-            if (!el) return;
-            const time = new Date().toLocaleTimeString('en-GB');
-            const cls = 'log-' + type;
-            el.innerHTML += `<div class="${cls}">[${time}] ${message}</div>`;
-            el.scrollTop = el.scrollHeight;
-            console.log(`[DEBUG ${type.toUpperCase()}] ${message}`);
-        }
-
-        function clearDebugLog() {
-            const el = document.getElementById('debugContent');
-            if (el) el.innerHTML = '';
-        }
-
-        // ==========================================
         // 🔊 تأثير الصوت
         // ==========================================
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -571,12 +486,7 @@
                     }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
-                debugLog(`🧹 تم مسح ${keysToRemove.length} مفتاح`, 'info');
-                return keysToRemove.length;
-            } catch (e) {
-                debugLog(`⚠️ فشل مسح البيانات: ${e.message}`, 'warn');
-                return 0;
-            }
+            } catch (e) {}
         }
 
         // ==========================================
@@ -598,7 +508,6 @@
         async function getFbModule() {
             if (_fbModule) return _fbModule;
             try {
-                debugLog('📦 جاري تحميل Firebase...', 'info');
                 const { initializeApp, getApps } = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js");
                 const fs = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js");
                 const authModule = await import("https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js");
@@ -617,20 +526,15 @@
                 const auth = authModule.getAuth(app);
 
                 _fbModule = {
-                    db,
-                    auth,
+                    db, auth,
                     createUser: authModule.createUserWithEmailAndPassword,
                     signIn: authModule.signInWithEmailAndPassword,
                     signOut: authModule.signOut,
-                    doc: fs.doc,
-                    getDoc: fs.getDoc,
-                    setDoc: fs.setDoc,
-                    deleteDoc: fs.deleteDoc
+                    doc: fs.doc, getDoc: fs.getDoc, setDoc: fs.setDoc, deleteDoc: fs.deleteDoc
                 };
-                debugLog('✅ Firebase جاهز', 'success');
                 return _fbModule;
             } catch (err) {
-                debugLog(`❌ فشل تحميل Firebase: ${err.message}`, 'error');
+                console.warn("⚠️ فشل تحميل Firebase:", err);
                 return null;
             }
         }
@@ -644,20 +548,16 @@
 
             try {
                 const fb = await getFbModule();
-                if (!fb) {
-                    return { allowed: true, kickedOld: false, error: 'no-firebase' };
-                }
+                if (!fb) return { allowed: true, kickedOld: false, error: 'no-firebase' };
 
                 const ref = fb.doc(fb.db, "teacher_devices", teacherKey);
                 const snap = await fb.getDoc(ref);
 
                 let kickedOld = false;
-
                 if (snap.exists()) {
                     const oldDeviceId = snap.data().deviceId;
                     if (oldDeviceId && oldDeviceId !== currentDeviceId) {
                         kickedOld = true;
-                        debugLog('🔄 جهاز مختلف — طرد الجهاز القديم', 'warn');
                     }
                 }
 
@@ -672,7 +572,7 @@
 
                 return { allowed: true, kickedOld };
             } catch (err) {
-                debugLog(`⚠️ فشل تسجيل الجهاز: ${err.code || err.message}`, 'warn');
+                console.warn("⚠️ فشل التحقق من الجهاز:", err);
                 return { allowed: true, kickedOld: false, error: err };
             }
         }
@@ -681,9 +581,6 @@
         // 🚀 عند تحميل الصفحة
         // ==========================================
         window.onload = function() {
-            debugLog('🚀 صفحة تسجيل الدخول جاهزة', 'success');
-            debugLog(`🌐 URL: ${window.location.href}`, 'info');
-            
             localStorage.removeItem('loggedInTeacher');
 
             const rememberedPhone = localStorage.getItem('rememberedPhone');
@@ -691,7 +588,6 @@
                 document.getElementById('loginPhone').value = rememberedPhone;
                 document.getElementById('regPhone').value = rememberedPhone;
                 document.getElementById('loginPassword').value = '';
-                debugLog(`📱 رقم محفوظ: ${rememberedPhone}`, 'info');
             }
 
             if (localStorage.getItem('device_id')) {
@@ -727,14 +623,9 @@
         }
 
         // ==========================================
-        // 📝 Register — حساب جديد (مع تشخيص مفصل)
+        // 📝 Register — حساب جديد
         // ==========================================
         async function handleRegister(event) {
-            clearDebugLog();
-            debugLog('═══════════════════════════════', 'info');
-            debugLog('📝 بدء عملية تسجيل حساب جديد', 'info');
-            debugLog('═══════════════════════════════', 'info');
-
             const title = document.querySelector('input[name="title"]:checked').value;
             const name = document.getElementById('regName').value.trim();
             const age = document.getElementById('regAge').value.trim();
@@ -742,24 +633,10 @@
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
 
-            debugLog(`📋 البيانات: name="${name}" age="${age}" phone="${phone}" passLen=${pass1.length}`, 'info');
-
-            if (!name || !age || !phone || !pass1 || !pass2) {
-                debugLog('❌ بيانات ناقصة', 'error');
-                return showAlert('الرجاء إكمال جميع البيانات.');
-            }
-            if (phone.length !== 11) {
-                debugLog('❌ رقم التليفون ليس 11 رقماً', 'error');
-                return showAlert('رقم التليفون يجب أن يكون 11 رقماً.');
-            }
-            if (pass1.length < 6) {
-                debugLog('❌ كلمة المرور قصيرة', 'error');
-                return showAlert('الرقم السري يجب أن يكون 6 أرقام على الأقل.');
-            }
-            if (pass1 !== pass2) {
-                debugLog('❌ كلمتا المرور مختلفتان', 'error');
-                return showAlert('الرقمان السريان غير متطابقين.');
-            }
+            if (!name || !age || !phone || !pass1 || !pass2) return showAlert('الرجاء إكمال جميع البيانات.');
+            if (phone.length !== 11) return showAlert('رقم التليفون يجب أن يكون 11 رقماً.');
+            if (pass1.length < 6) return showAlert('الرقم السري يجب أن يكون 6 أرقام على الأقل.');
+            if (pass1 !== pass2) return showAlert('الرقمان السريان غير متطابقين.');
 
             const btn = document.getElementById('registerBtn');
             const originalText = btn.innerText;
@@ -770,108 +647,60 @@
             if (!fb) {
                 btn.innerText = originalText;
                 btn.disabled = false;
-                debugLog('❌ Firebase غير متاح', 'error');
                 return showAlert('تعذر الاتصال بالسحابة. تأكد من الإنترنت.');
             }
 
-            // ═══════════════════════════════════════════════
-            // 🔍 الفحص 1: blocked_teachers
-            // ═══════════════════════════════════════════════
-            debugLog('─────────────────────────────', 'info');
-            debugLog('🔍 [فحص 1] blocked_teachers', 'info');
-            debugLog(`📂 المسار: blocked_teachers/${phone}`, 'info');
+            const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                const blockedSnap = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
-                debugLog(`📊 النتيجة: exists=${blockedSnap.exists()}`, blockedSnap.exists() ? 'error' : 'success');
-                
-                if (blockedSnap.exists()) {
-                    const blockData = blockedSnap.data();
-                    debugLog(`🚫 بيانات الحظر:`, 'error');
-                    debugLog(`   - phone: ${blockData.phone}`, 'error');
-                    debugLog(`   - name: ${blockData.teacherName}`, 'error');
-                    debugLog(`   - reason: ${blockData.reason}`, 'error');
-                    debugLog(`   - blockedAt: ${new Date(blockData.blockedAt).toLocaleString('ar-EG')}`, 'error');
-                    debugLog(`❌ الحساب محظور نهائياً — إظهار المودال`, 'error');
-                    
+                // 1️⃣ فحص البصمة السوداء
+                let blockedCheck;
+                try {
+                    blockedCheck = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
+                } catch (blockErr) {
+                    console.error("فشل فحص البصمة السوداء:", blockErr);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت.');
+                }
+
+                if (blockedCheck.exists()) {
                     btn.innerText = originalText;
                     btn.disabled = false;
                     document.getElementById('blockedAccountModal').classList.add('active');
                     return;
                 }
-                
-                debugLog('✅ الرقم غير محظور في blocked_teachers', 'success');
-            } catch (blockErr) {
-                debugLog(`❌ فشل فحص blocked_teachers:`, 'error');
-                debugLog(`   - code: ${blockErr.code || 'unknown'}`, 'error');
-                debugLog(`   - message: ${blockErr.message}`, 'error');
-                
-                // ⚠️ لو الفحص فشل، امنع احتياطياً
-                btn.innerText = originalText;
-                btn.disabled = false;
-                return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت وحاول مجدداً.');
-            }
 
-            // ═══════════════════════════════════════════════
-            // 🔍 الفحص 2: teachers
-            // ═══════════════════════════════════════════════
-            debugLog('─────────────────────────────', 'info');
-            debugLog('🔍 [فحص 2] teachers', 'info');
-            debugLog(`📂 المسار: teachers/${phone}`, 'info');
+                // 2️⃣ فحص teachers
+                let teacherCheck;
+                try {
+                    teacherCheck = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                } catch (teachErr) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت.');
+                }
 
-            try {
-                const teacherSnap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
-                debugLog(`📊 النتيجة: exists=${teacherSnap.exists()}`, teacherSnap.exists() ? 'warn' : 'success');
-                
-                if (teacherSnap.exists()) {
-                    const existing = teacherSnap.data();
-                    debugLog(`📋 بيانات موجودة:`, 'warn');
-                    debugLog(`   - isBlocked: ${existing.isBlocked}`, 'warn');
-                    debugLog(`   - teacherName: ${existing.teacherName}`, 'warn');
-                    debugLog(`   - auth_uid: ${existing.auth_uid || 'غير موجود'}`, 'warn');
-                    
+                if (teacherCheck.exists()) {
+                    const existing = teacherCheck.data();
                     if (existing.isBlocked === true) {
-                        debugLog('🚫 الحساب محظور في teachers — إظهار المودال', 'error');
                         btn.innerText = originalText;
                         btn.disabled = false;
                         document.getElementById('blockedAccountModal').classList.add('active');
                         return;
                     }
-                    
-                    debugLog('⚠️ الحساب موجود مسبقاً — يجب الدخول بدل التسجيل', 'warn');
                     btn.innerText = originalText;
                     btn.disabled = false;
                     return showAlert('هذا الرقم مسجل مسبقاً! الرجاء تسجيل الدخول.');
                 }
-                
-                debugLog('✅ الرقم غير موجود في teachers — يمكن المتابعة', 'success');
-            } catch (teachErr) {
-                debugLog(`❌ فشل فحص teachers:`, 'error');
-                debugLog(`   - code: ${teachErr.code || 'unknown'}`, 'error');
-                debugLog(`   - message: ${teachErr.message}`, 'error');
-                
-                btn.innerText = originalText;
-                btn.disabled = false;
-                return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت وحاول مجدداً.');
-            }
 
-            // ═══════════════════════════════════════════════
-            // 🔍 الفحص 3: إنشاء الحساب
-            // ═══════════════════════════════════════════════
-            debugLog('─────────────────────────────', 'info');
-            debugLog('🔍 [فحص 3] إنشاء حساب Auth', 'info');
-            debugLog(`📧 Email: ${phone}@ehgezly.com`, 'info');
-
-            const fakeEmail = phone + "@ehgezly.com";
-
-            try {
                 btn.innerText = '⏳ جاري إنشاء الحساب...';
-                
+
+                // 3️⃣ إنشاء الحساب
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
-                debugLog(`✅ تم إنشاء Auth user: ${user.uid}`, 'success');
 
-                debugLog('💾 حفظ بيانات المعلم في teachers...', 'info');
+                // 4️⃣ حفظ البيانات
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -886,7 +715,6 @@
                     updatedAt: Date.now(),
                     lastSeen: Date.now()
                 }, { merge: true });
-                debugLog('✅ تم حفظ بيانات المعلم', 'success');
 
                 const accountData = { title, name, age, phone, createdAt: new Date().toISOString().split('T')[0] };
                 localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
@@ -895,22 +723,13 @@
 
                 try {
                     await verifyAndRegisterDevice(phone, accountData);
-                    debugLog('✅ تم تسجيل الجهاز', 'success');
-                } catch (e) {
-                    debugLog(`⚠️ فشل تسجيل الجهاز: ${e.message}`, 'warn');
-                }
+                } catch (e) {}
 
-                debugLog('🎉 التسجيل نجح! جاري التوجيه...', 'success');
                 window.location.href = './index2.html';
 
             } catch (error) {
-                debugLog(`❌ خطأ في التسجيل:`, 'error');
-                debugLog(`   - code: ${error.code || 'unknown'}`, 'error');
-                debugLog(`   - message: ${error.message}`, 'error');
-                
                 btn.innerText = originalText;
                 btn.disabled = false;
-                
                 if (error.code === 'auth/email-already-in-use') {
                     showAlert('هذا الرقم مسجل مسبقاً! الرجاء تسجيل الدخول.');
                 } else if (error.code === 'permission-denied') {
@@ -922,21 +741,13 @@
         }
 
         // ==========================================
-        // 🔐 Login — تسجيل الدخول (مع تشخيص مفصل)
+        // 🔐 Login — تسجيل الدخول
         // ==========================================
         async function handleLogin(event) {
-            clearDebugLog();
-            debugLog('═══════════════════════════════', 'info');
-            debugLog('🔐 بدء عملية تسجيل الدخول', 'info');
-            debugLog('═══════════════════════════════', 'info');
-
             const phone = document.getElementById('loginPhone').value.trim();
             const pass  = document.getElementById('loginPassword').value;
 
-            debugLog(`📋 البيانات: phone="${phone}" passLen=${pass.length}`, 'info');
-
             if (phone.length !== 11 || pass.length < 6) {
-                debugLog('❌ بيانات غير صحيحة', 'error');
                 return showAlert('يرجى إدخال بيانات صحيحة (التليفون 11 رقم، والرقم السري 6 أرقام على الأقل).');
             }
 
@@ -949,72 +760,36 @@
             if (!fb) {
                 btn.innerText = originalText;
                 btn.disabled = false;
-                debugLog('❌ Firebase غير متاح', 'error');
                 return showAlert('تعذر الاتصال بالسحابة. تأكد من الإنترنت.');
             }
 
-            // ═══════════════════════════════════════════════
-            // 🔍 الفحص 1: blocked_teachers
-            // ═══════════════════════════════════════════════
-            debugLog('─────────────────────────────', 'info');
-            debugLog('🔍 [فحص 1] blocked_teachers', 'info');
-            debugLog(`📂 المسار: blocked_teachers/${phone}`, 'info');
+            const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                const blockedSnap = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
-                debugLog(`📊 النتيجة: exists=${blockedSnap.exists()}`, blockedSnap.exists() ? 'error' : 'success');
-                
-                if (blockedSnap.exists()) {
-                    const blockData = blockedSnap.data();
-                    debugLog(`🚫 بيانات الحظر:`, 'error');
-                    debugLog(`   - phone: ${blockData.phone}`, 'error');
-                    debugLog(`   - name: ${blockData.teacherName}`, 'error');
-                    debugLog(`   - reason: ${blockData.reason}`, 'error');
-                    debugLog(`   - blockedAt: ${new Date(blockData.blockedAt).toLocaleString('ar-EG')}`, 'error');
-                    debugLog(`❌ الحساب محظور نهائياً — إظهار المودال`, 'error');
-                    
+                // 1️⃣ فحص البصمة السوداء
+                let blockedCheck;
+                try {
+                    blockedCheck = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
+                } catch (blockErr) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت.');
+                }
+
+                if (blockedCheck.exists()) {
                     btn.innerText = originalText;
                     btn.disabled = false;
                     document.getElementById('blockedAccountModal').classList.add('active');
                     return;
                 }
-                
-                debugLog('✅ الرقم غير محظور في blocked_teachers', 'success');
-            } catch (blockErr) {
-                debugLog(`❌ فشل فحص blocked_teachers:`, 'error');
-                debugLog(`   - code: ${blockErr.code || 'unknown'}`, 'error');
-                debugLog(`   - message: ${blockErr.message}`, 'error');
-                
-                btn.innerText = originalText;
-                btn.disabled = false;
-                return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت وحاول مجدداً.');
-            }
 
-            // ═══════════════════════════════════════════════
-            // 🔍 الفحص 2: signIn
-            // ═══════════════════════════════════════════════
-            debugLog('─────────────────────────────', 'info');
-            debugLog('🔍 [فحص 2] تسجيل الدخول في Auth', 'info');
-            debugLog(`📧 Email: ${phone}@ehgezly.com`, 'info');
-
-            const fakeEmail = phone + "@ehgezly.com";
-
-            try {
+                // 2️⃣ تسجيل الدخول
                 const userCredential = await fb.signIn(fb.auth, fakeEmail, pass);
-                debugLog(`✅ تم تسجيل الدخول: ${userCredential.user.uid}`, 'success');
-
-                // ═══════════════════════════════════════════════
-                // 🔍 الفحص 3: teachers
-                // ═══════════════════════════════════════════════
-                debugLog('─────────────────────────────', 'info');
-                debugLog('🔍 [فحص 3] teachers', 'info');
-                debugLog(`📂 المسار: teachers/${phone}`, 'info');
-
+                
+                // 3️⃣ فحص teachers
                 const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
-                debugLog(`📊 النتيجة: exists=${snap.exists()}`, snap.exists() ? 'success' : 'error');
                 
                 if (!snap.exists()) {
-                    debugLog('❌ المستند غير موجود — الحساب محذوف أو محظور نهائياً', 'error');
                     btn.innerText = originalText;
                     btn.disabled = false;
                     try { await fb.signOut(fb.auth); } catch(e) {}
@@ -1023,12 +798,8 @@
                 }
 
                 const d = snap.data();
-                debugLog(`📋 بيانات المعلم:`, 'info');
-                debugLog(`   - teacherName: ${d.teacherName}`, 'info');
-                debugLog(`   - isBlocked: ${d.isBlocked}`, d.isBlocked ? 'error' : 'success');
                 
                 if (d.isBlocked === true) {
-                    debugLog('🚫 الحساب محظور في teachers', 'error');
                     btn.innerText = originalText;
                     btn.disabled = false;
                     try { await fb.signOut(fb.auth); } catch(e) {}
@@ -1044,18 +815,15 @@
                     createdAt: d.createdAt || new Date().toISOString().split('T')[0]
                 };
 
-                debugLog('💾 تحديث lastSeen...', 'info');
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     lastSeen: Date.now()
                 }, { merge: true });
 
                 btn.innerText = '⏳ جاري التحقق من الجهاز...';
-                debugLog('🔍 [فحص 4] التحقق من الجهاز', 'info');
 
                 const deviceCheck = await verifyAndRegisterDevice(phone, savedData);
 
                 if (!deviceCheck.allowed) {
-                    debugLog('❌ الجهاز غير مسموح', 'error');
                     btn.innerText = originalText;
                     btn.disabled = false;
                     return showAlert('تعذر تسجيل الدخول. حاول مرة أخرى.');
@@ -1067,7 +835,6 @@
                 const newPhone = String(phone).replace(/\D/g, '');
 
                 if (oldPhone && oldPhone !== newPhone) {
-                    debugLog(`🧹 معلم مختلف (${oldPhone} → ${newPhone})`, 'warn');
                     clearPreviousTeacherData();
                 }
 
@@ -1075,7 +842,6 @@
                 localStorage.setItem('loggedInTeacher', JSON.stringify(savedData));
                 localStorage.setItem('rememberedPhone', phone);
 
-                debugLog('🎉 تسجيل الدخول نجح! جاري التوجيه...', 'success');
                 showAlert('✅ تم تسجيل الدخول بنجاح!', false);
 
                 setTimeout(() => {
@@ -1083,13 +849,8 @@
                 }, 500);
 
             } catch (error) {
-                debugLog(`❌ خطأ:`, 'error');
-                debugLog(`   - code: ${error.code || 'unknown'}`, 'error');
-                debugLog(`   - message: ${error.message}`, 'error');
-                
                 btn.innerText = originalText;
                 btn.disabled = false;
-                
                 if (error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found' || error.code === 'auth/invalid-credential') {
                     showAlert('رقم التليفون أو الرقم السري غير صحيح.');
                 } else if (error.code === 'auth/too-many-requests') {
