@@ -2133,6 +2133,15 @@
             });
 
             const unifiedRecords = Array.from(unifiedMap.values());
+
+            // ✅ ترتيب المعلمين من الأقدم للأحدث (الأقدم فوق، الأحدث تحت)
+            unifiedRecords.sort((a, b) => {
+                const dateA = new Date(a.regDate || 0).getTime() || 0;
+                const dateB = new Date(b.regDate || 0).getTime() || 0;
+                if (dateA !== dateB) return dateA - dateB;
+                // في حالة تساوي التاريخ، الترتيب الأبجدي بالاسم
+                return String(a.teacherName || '').localeCompare(String(b.teacherName || ''), 'ar');
+            });
             
             unifiedRecords.forEach(r => {
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
