@@ -531,6 +531,7 @@
                     auth,
                     createUser: authModule.createUserWithEmailAndPassword,
                     signIn: authModule.signInWithEmailAndPassword,
+                    signOut: authModule.signOut,
                     doc: fs.doc,
                     getDoc: fs.getDoc,
                     setDoc: fs.setDoc,
@@ -540,6 +541,25 @@
             } catch (err) {
                 console.warn("⚠️ فشل تحميل Firebase:", err);
                 return null;
+            }
+        }
+
+        // ==========================================
+        // 🚫 فحص البصمة السوداء (الحظر النهائي)
+        // ==========================================
+        async function checkPermanentBlock(phone) {
+            try {
+                const fb = await getFbModule();
+                if (!fb) return { blocked: false };
+                
+                const blockedSnap = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
+                if (blockedSnap.exists()) {
+                    return { blocked: true, data: blockedSnap.data() };
+                }
+                return { blocked: false };
+            } catch (err) {
+                console.warn("⚠️ فشل فحص البصمة السوداء:", err);
+                return { blocked: false, error: err };
             }
         }
 
@@ -648,7 +668,7 @@
 
             const btn = document.getElementById('registerBtn');
             const originalText = btn.innerText;
-            btn.innerText = '⏳ جاري إنشاء الحساب الآمن...';
+            btn.innerText = '⏳ جاري التحقق من الحساب...';
             btn.disabled = true;
 
             const fb = await getFbModule();
@@ -661,11 +681,38 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ إنشاء حساب Auth آمن
+                // ✅✅✅ 1. فحص البصمة السوداء (الحظر النهائي) — الأهم
+                const blockedSnap = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
+                if (blockedSnap.exists()) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    document.getElementById('blockedAccountModal').classList.add('active');
+                    return;
+                }
+
+                // ✅ 2. فحص teachers (لو الرقم موجود مسبقاً)
+                const teacherSnap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                if (teacherSnap.exists()) {
+                    const existing = teacherSnap.data();
+                    if (existing.isBlocked === true) {
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        document.getElementById('blockedAccountModal').classList.add('active');
+                        return;
+                    }
+                    // موجود وغير محظور → لازم يدخل بالباسورد
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('هذا الرقم مسجل مسبقاً! الرجاء تسجيل الدخول.');
+                }
+
+                btn.innerText = '⏳ جاري إنشاء الحساب الآمن...';
+
+                // 3️⃣ إنشاء حساب Auth آمن
                 const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
                 const user = userCredential.user;
 
-                // 2️⃣ حفظ بيانات المعلم العامة في Firestore (بدون أي توثيق / باقات)
+                // 4️⃣ حفظ بيانات المعلم العامة في Firestore
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     auth_uid: user.uid,
                     phone: phone,
@@ -732,36 +779,51 @@
             const fakeEmail = phone + "@ehgezly.com";
 
             try {
-                // 1️⃣ التحقق من الحساب وكلمة المرور
+                // ✅✅✅ 1. فحص البصمة السوداء (الحظر النهائي) — قبل أي شيء
+                const blockedSnap = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
+                if (blockedSnap.exists()) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    document.getElementById('blockedAccountModal').classList.add('active');
+                    return;
+                }
+
+                // 2️⃣ التحقق من الحساب وكلمة المرور
                 const userCredential = await fb.signIn(fb.auth, fakeEmail, pass);
                 
-                // 2️⃣ جلب بيانات المعلم من Firestore
+                // 3️⃣ جلب بيانات المعلم من Firestore
                 const snap = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
                 let savedData = {};
                 
-                if (snap.exists()) {
-                    const d = snap.data();
-                    
-                    // ✅ فحص الحظر اليدوي فقط من الإدارة
-                    if (d.isBlocked === true) {
-                        btn.innerText = originalText;
-                        btn.disabled = false;
-                        document.getElementById('blockedAccountModal').classList.add('active');
-                        return;
-                    }
-
-                    savedData = {
-                        title: d.title || 'مستر',
-                        name: d.teacherName || d.name || '',
-                        age: d.age || '',
-                        phone: phone,
-                        createdAt: d.createdAt || new Date().toISOString().split('T')[0]
-                    };
-                } else {
-                    savedData = { title: 'مستر', name: 'معلم', phone: phone };
+                // ✅ منع الدخول لو المستند مش موجود (الحساب اتحذف نهائياً)
+                if (!snap.exists()) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    try { await fb.signOut(fb.auth); } catch(e) {}
+                    document.getElementById('blockedAccountModal').classList.add('active');
+                    return;
                 }
 
-                // ✅ تحديث وقت آخر ظهور للمعلم في قاعدة البيانات عند تسجيل الدخول
+                const d = snap.data();
+                
+                // ✅ فحص الحظر اليدوي
+                if (d.isBlocked === true) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    try { await fb.signOut(fb.auth); } catch(e) {}
+                    document.getElementById('blockedAccountModal').classList.add('active');
+                    return;
+                }
+
+                savedData = {
+                    title: d.title || 'مستر',
+                    name: d.teacherName || d.name || '',
+                    age: d.age || '',
+                    phone: phone,
+                    createdAt: d.createdAt || new Date().toISOString().split('T')[0]
+                };
+
+                // ✅ تحديث وقت آخر ظهور
                 await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
                     lastSeen: Date.now()
                 }, { merge: true });
