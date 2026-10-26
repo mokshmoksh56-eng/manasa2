@@ -545,6 +545,9 @@
                 <span id="cloudStatusBadge" class="cloud-status-badge syncing" title="حالة المزامنة مع السحابة">
                     ⏳ جاري التحقق...
                 </span>
+                <button onclick="showBlockedList()" class="btn-nav" style="background: rgba(220, 38, 38, 0.15); border-color: rgba(220, 38, 38, 0.4); color: #fff;">
+                    🚫 المحظورين
+                </button>
                 <button onclick="openCurriculumModal()" class="btn-nav highlight-btn">
                     📚 المناهج والصفوف
                 </button>
@@ -968,7 +971,6 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
-        // ✅ التحديث اللحظي للوقت
         function formatLastSeen(timestamp) {
             if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: '' };
             
@@ -982,7 +984,6 @@
 
             const fullDate = new Date(timeMs).toLocaleString('ar-EG');
 
-            // ✅ إعادة "مباشر" كما طلبت
             if (diffMin < 5) return { text: 'مباشر', isOnline: true, fullDate };
             if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
             if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
@@ -1519,7 +1520,6 @@
 
             setCloudStatus('synced', '☁️ مزامنة لحظية نشطة');
 
-            // ✅ تحديث واجهة التطبيق كل 30 ثانية لضمان أن عداد (منذ دقيقة) يتحدث باستمرار
             setInterval(() => {
                 scheduleRender(0);
             }, 30000);
@@ -2055,7 +2055,6 @@
 
                 const lastSeenTs = t.lastSeen || t.updatedAt || (t.createdAt ? new Date(t.createdAt).getTime() : null);
                 
-                // جلب نوع الدخول الحالي من كاش الأجهزة
                 const matchingDevice = teacherDevicesCache.find(d => d.id === phone || d.phone === phone);
                 const currentActiveTab = matchingDevice ? (matchingDevice.currentActiveTab || 'teacher') : 'teacher';
 
@@ -2063,7 +2062,7 @@
                     type: 'account_only', docId: t.id, lessonIds: [], title: t.title || 'مستر',
                     teacherName: cleanName, phone: phone, regDate: t.createdAt || new Date().toISOString().split('T')[0],
                     lastSeen: lastSeenTs, 
-                    currentActiveTab: currentActiveTab, // تسجيل الوضع الحالي
+                    currentActiveTab: currentActiveTab,
                     groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
                     locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
                     isPublished: false, waClicks: t.waClicks || 0, groups: [], phoneType: t.phoneType || '',
@@ -2085,7 +2084,6 @@
                 const lsTs = state.lastSeen || state.updatedAt || (state.createdAt ? new Date(state.createdAt).getTime() : null);
 
                 if (!targetKey) {
-                    // جلب نوع الدخول الحالي من كاش الأجهزة
                     const cleanPhoneCheck = String(phone).replace(/\D/g, '');
                     const matchingDevice = teacherDevicesCache.find(d => d.id === cleanPhoneCheck || d.phone === cleanPhoneCheck);
                     const currentActiveTab = matchingDevice ? (matchingDevice.currentActiveTab || 'teacher') : 'teacher';
@@ -2096,7 +2094,7 @@
                         title: state.t_gender || (teacherName.startsWith('مس') ? 'مس' : 'مستر'),
                         teacherName: teacherName || 'بدون اسم', phone: phone,
                         lastSeen: lsTs,
-                        currentActiveTab: currentActiveTab, // تسجيل الوضع الحالي
+                        currentActiveTab: currentActiveTab,
                         regDate: state.createdAt || new Date().toISOString().split('T')[0],
                         waClicks: 0, groups: [], isBlocked: false
                     });
@@ -2134,23 +2132,19 @@
 
             const unifiedRecords = Array.from(unifiedMap.values());
 
-            // ✅ ترتيب المعلمين من الأقدم للأحدث (الأقدم فوق، الأحدث تحت)
             unifiedRecords.sort((a, b) => {
                 const dateA = new Date(a.regDate || 0).getTime() || 0;
                 const dateB = new Date(b.regDate || 0).getTime() || 0;
                 if (dateA !== dateB) return dateA - dateB;
-                // في حالة تساوي التاريخ، الترتيب الأبجدي بالاسم
                 return String(a.teacherName || '').localeCompare(String(b.teacherName || ''), 'ar');
             });
             
             unifiedRecords.forEach(r => {
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 
-                // جلب معرف الجهاز
                 const matchingDevice = teacherDevicesCache.find(d => d.id === cleanPhone || d.phone === cleanPhone);
                 r.deviceId = matchingDevice && matchingDevice.deviceId ? matchingDevice.deviceId : 'غير متاح';
 
-                // إذا كان فاتح التطبيق كطالب، نحدث الـ lastSeen بوقت الطالب لنكون دقيقين جداً
                 if (r.currentActiveTab === 'student') {
                     const matchedStudent = studentsCache.find(s => s.deviceId === r.deviceId && r.deviceId !== 'غير متاح');
                     if (matchedStudent && matchedStudent.updatedAt) {
@@ -2171,37 +2165,68 @@
 
         async function toggleBlock(docId, phone, teacherName, isBlocked) {
             const cleanName = cleanTeacherName(teacherName);
+            const cleanPhone = String(phone || '').replace(/\D/g, '');
             const newState = !isBlocked;
 
             const actionMessage = newState 
-                ? `هل أنت متأكد من حظر المعلم (${teacherName}) وإخفاء جميع مجموعاته عن الطلاب؟` 
-                : `هل أنت متأكد من إلغاء حظر المعلم (${teacherName}) وإظهار مجموعاته مجدداً؟`;
+                ? `⚠️ هل أنت متأكد من حظر (${teacherName}) نهائياً؟\n\nسيتم:\n• حظر الحساب في teachers\n• إضافة الرقم لسجل الحظر الدائم (blocked_teachers)\n• منع أي تسجيل جديد بنفس الرقم\n• إخفاء كل مجموعاته عن الطلاب`
+                : `هل أنت متأكد من إلغاء حظر (${teacherName}) وإظهار مجموعاته؟`;
 
             showCustomConfirm(actionMessage, async () => {
                 if (!window.db || !window.fsDoc || !window.fsSetDoc) {
-                    showToast("⚠️ Firebase غير جاهز", true); return;
+                    showToast("⚠️ Firebase غير جاهز", true); 
+                    return;
                 }
 
                 try {
                     setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
-                    const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
-                    const teacherKey = String(phone || '').replace(/\D/g, '');
+                    const safeDocId = docId || ((cleanPhone) ? cleanPhone : cleanName);
 
                     await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
-                        phone: phone, teacherName: cleanName,
+                        phone: phone, 
+                        teacherName: cleanName,
                         isBlocked: newState,
+                        lockTimestamp: newState ? Date.now() : null,
                         updatedAt: Date.now()
                     }, { merge: true });
 
-                    if (teacherKey && window.fsGetDocs && window.fsCollection) {
+                    if (cleanPhone) {
+                        if (newState) {
+                            await window.fsSetDoc(
+                                window.fsDoc(window.db, "blocked_teachers", cleanPhone), 
+                                {
+                                    phone: cleanPhone,
+                                    teacherName: cleanName,
+                                    blockedAt: Date.now(),
+                                    blockedBy: (window.auth && window.auth.currentUser) ? window.auth.currentUser.email : 'admin',
+                                    reason: 'حظر إداري دائم'
+                                }
+                            );
+                            console.log(`🚫 تم إضافة ${cleanPhone} للبصمة السوداء`);
+                        } else {
+                            try {
+                                await window.fsDeleteDoc(window.fsDoc(window.db, "blocked_teachers", cleanPhone));
+                                console.log(`✅ تم إزالة ${cleanPhone} من البصمة السوداء`);
+                            } catch(e) {
+                                console.log(`ℹ️ لا يوجد سجل بصمة لـ ${cleanPhone}`);
+                            }
+                        }
+                    }
+
+                    if (cleanPhone && window.fsGetDocs && window.fsCollection) {
                         const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
                         const updates = [];
                         lessonsSnap.forEach((lessonDoc) => {
                             const data = lessonDoc.data() || {};
                             const lessonPhone = String(data.g_phone || '').replace(/\D/g, '');
                             const lessonTeacher = cleanTeacherName(data.g_teacher || '');
-                            if ((teacherKey && lessonPhone && lessonPhone === teacherKey) || (cleanName && lessonTeacher && lessonTeacher === cleanName)) {
-                                updates.push(window.fsSetDoc(window.fsDoc(window.db, "lessons", lessonDoc.id), { g_publish_map: !newState }, { merge: true }));
+                            if ((cleanPhone && lessonPhone && lessonPhone === cleanPhone) || 
+                                (cleanName && lessonTeacher && lessonTeacher === cleanName)) {
+                                updates.push(window.fsSetDoc(
+                                    window.fsDoc(window.db, "lessons", lessonDoc.id), 
+                                    { g_publish_map: !newState }, 
+                                    { merge: true }
+                                ));
                             }
                         });
                         await Promise.all(updates);
@@ -2209,10 +2234,13 @@
 
                     setCloudStatus('synced', '☁️ متزامن مع السحابة');
                     await renderAllRecords();
-                    showToast(newState ? '🚫 تم حظر الحساب وإخفاء مجموعاته' : '✅ تم إلغاء الحظر وإظهار المجموعات');
+                    showToast(newState 
+                        ? '🚫 تم الحظر النهائي — الرقم مسجل في البصمة السوداء' 
+                        : '✅ تم إلغاء الحظر وإظهار المجموعات');
                 } catch (error) {
                     setCloudStatus('offline', '⚠️ فشل التحديث');
                     showToast("⚠️ فشل الاتصال بالسحابة", true);
+                    console.error('toggleBlock error:', error);
                 }
             });
         }
@@ -2306,28 +2334,23 @@
                     iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
                 }
 
-                // ✅ وقت الظهور
                 const lastSeenObj = formatLastSeen(r.lastSeen);
                 
-                // ✅ استخراج معرّف قصير (ID) بشكل منفصل
                 let shortDeviceId = 'غير متاح';
                 if (r.deviceId && r.deviceId !== 'غير متاح') {
                     shortDeviceId = r.deviceId.includes('_') ? r.deviceId.split('_')[2].substring(0, 6) : r.deviceId.substring(0, 6);
                 }
 
-                // ✅ 1. مربع الوقت والحالة بناءً على ما يفتحه المستخدم الآن
                 let lastSeenBadgeHTML = '';
                 let idOrStudentBadgeHTML = '';
 
                 if (r.currentActiveTab === 'student') {
-                    // 🟢 الطالب فاتح التطبيق
                     lastSeenBadgeHTML = `
                         <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" style="background:#FEF3C7; border-color:#FCD34D; color:#92400E; font-weight:900;" title="يتصفح كطالب الآن">
                             👨‍🎓 طالب: ${lastSeenObj.isOnline ? 'مباشر 🟢' : lastSeenObj.text}
                         </span>
                     `;
                 } else {
-                    // 🔵 المستر في وضع عادي
                     lastSeenBadgeHTML = `
                         <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر نشاط كمعلم">
                             ${lastSeenObj.isOnline ? 'مباشر 🟢' : `🕒 ${lastSeenObj.text}`}
@@ -2343,7 +2366,6 @@
                     }
                 }
 
-                // شريط التقييمات في الأعلى بجوار آخر ظهور
                 const ratingBadgeHTML = r.ratingCount > 0 
                     ? `<span class="badge-last-seen" style="background:#FFFBEB; border-color:#FDE68A; color:#B45309;" title="${r.ratingCount} تقييمات">⭐ ${r.ratingAvg.toFixed(1)}</span>` 
                     : `<span class="badge-last-seen" style="background:#F8FAFC; border-color:#E2E8F0; color:#94A3B8;">⭐ جديد</span>`;
@@ -2355,7 +2377,6 @@
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
 
-                // تقييمات الطلاب التفصيلية
                 let reviewsHtml = '';
                 if (r.ratingCount > 0) {
                     const topReviews = r.reviews.slice(0, 3).map(rev => `
@@ -2453,10 +2474,8 @@
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
                         
-                        <!-- ✅ تعديل هنا لمنع تداخل الكلام واستخدام flex-wrap -->
                         <div class="card-header flex flex-col gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
                             
-                            <!-- الطابق العلوي: الاسم والتليفون والصورة -->
                             <div class="flex items-start justify-between gap-2 w-full">
                                 <div class="flex items-center gap-2 min-w-0 flex-1">
                                     <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
@@ -2473,7 +2492,6 @@
                                 </div>
                             </div>
                             
-                            <!-- الطابق السفلي: البادجات فقط وتلتف للسطر التالي إذا زادت -->
                             <div class="flex flex-wrap items-center justify-start gap-1.5 w-full">
                                 ${statusBadgeHTML}
                                 <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
@@ -2519,11 +2537,11 @@
         }
 
         // ═══════════════════════════════════════════════════════════════════════════
-        // 🔥 الحذف الكامل والشامل من Firebase
+        // 🔥 الحذف الكامل والشامل من Firebase + الحظر النهائي
         // ═══════════════════════════════════════════════════════════════════════════
-        function deleteRecord(lessonsStr, phone, teacherName, docId) {
+        async function deleteRecord(lessonsStr, phone, teacherName, docId) {
             const lessonCount = lessonsStr ? lessonsStr.split(',').filter(l => l.trim()).length : 0;
-            const confirmMessage = `⚠️ حذف نهائي وشامل من Firebase\n\nهل أنت متأكد من حذف المعلم (${teacherName}) نهائياً؟\n\nسيتم حذف:\n• حساب المعلم من teachers\n• ${lessonCount} مجموعة/درس من lessons\n• سجل الجهاز من teacher_devices\n• كل تقييمات الطلاب من teacher_ratings\n• المعلم من قوائم الطلاب المفضلين\n• كل البيانات المحلية (localStorage)\n\n❌ لا يمكن التراجع عن هذا الإجراء!`;
+            const confirmMessage = `⚠️ حذف نهائي وشامل من Firebase\n\nهل أنت متأكد من حذف المعلم (${teacherName}) نهائياً؟\n\nسيتم حذف:\n• حساب المعلم من teachers\n• ${lessonCount} مجموعة/درس من lessons\n• سجل الجهاز من teacher_devices\n• كل تقييمات الطلاب من teacher_ratings\n• المعلم من قوائم الطلاب المفضلين\n• كل البيانات المحلية (localStorage)\n\n⚠️ سيتم حظره نهائياً (البصمة السوداء) لمنع أي تسجيل جديد بنفس الرقم\n\n❌ لا يمكن التراجع عن هذا الإجراء!`;
             
             showCustomConfirm(confirmMessage, async () => {
                 if (!window.db || !window.fsDeleteDoc) {
@@ -2531,7 +2549,7 @@
                     return;
                 }
                 
-                setCloudStatus('syncing', '⏳ جاري الحذف الشامل من السحابة...');
+                setCloudStatus('syncing', '⏳ جاري الحذف والحظر الشامل...');
                 
                 const targetDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
                 const cleanPhone = String(phone || '').replace(/\D/g, '');
@@ -2544,12 +2562,33 @@
                     lessonsFailed: 0,
                     ratings: 0,
                     students: 0,
+                    blocked: false,
                     errors: []
                 };
 
-                // ═══════════════════════════════════════════════════════
-                // 1️⃣ حذف حساب المعلم من teachers
-                // ═══════════════════════════════════════════════════════
+                // 0️⃣ إضافة البصمة السوداء أولاً
+                if (cleanPhone) {
+                    try {
+                        await window.fsSetDoc(
+                            window.fsDoc(window.db, "blocked_teachers", cleanPhone), 
+                            {
+                                phone: cleanPhone,
+                                teacherName: cleanTeacherName(teacherName),
+                                blockedAt: Date.now(),
+                                blockedBy: (window.auth && window.auth.currentUser) ? window.auth.currentUser.email : 'admin',
+                                reason: 'حذف نهائي + حظر دائم',
+                                wasDeleted: true
+                            }
+                        );
+                        result.blocked = true;
+                        console.log(`🚫 [0/6] تم إضافة ${cleanPhone} للبصمة السوداء قبل الحذف`);
+                    } catch (e) {
+                        result.errors.push('blocked: ' + e.message);
+                        console.warn('❌ فشل إضافة البصمة السوداء:', e);
+                    }
+                }
+
+                // 1️⃣ حذف teacher
                 if (targetDocId) {
                     try {
                         await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", targetDocId));
@@ -2562,23 +2601,18 @@
                     }
                 }
 
-                // ═══════════════════════════════════════════════════════
-                // 2️⃣ حذف سجل الجهاز من teacher_devices
-                // ═══════════════════════════════════════════════════════
+                // 2️⃣ حذف device
                 if (cleanPhone) {
                     try {
                         await window.fsDeleteDoc(window.fsDoc(window.db, "teacher_devices", cleanPhone));
                         result.device = true;
                         console.log(`✅ [2/6] تم حذف device: ${cleanPhone}`);
                     } catch (e) {
-                        // لو المستند مش موجود أصلاً، ده مش خطأ حقيقي
                         console.log(`ℹ️ [2/6] لا يوجد device محفوظ للرقم ${cleanPhone}`);
                     }
                 }
 
-                // ═══════════════════════════════════════════════════════
-                // 3️⃣ حذف كل الدروس من lessons
-                // ═══════════════════════════════════════════════════════
+                // 3️⃣ حذف lessons
                 for (const lId of lessonIds) {
                     try {
                         await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", lId));
@@ -2591,9 +2625,7 @@
                     }
                 }
 
-                // ═══════════════════════════════════════════════════════
-                // 4️⃣ حذف كل التقييمات من teacher_ratings
-                // ═══════════════════════════════════════════════════════
+                // 4️⃣ حذف ratings
                 if (cleanPhone && window.fsGetDocs && window.fsCollection) {
                     try {
                         const ratingsSnap = await window.fsGetDocs(window.fsCollection(window.db, "teacher_ratings"));
@@ -2616,8 +2648,6 @@
                             await Promise.allSettled(ratingDeletes);
                             result.ratings = ratingDeletes.length;
                             console.log(`✅ [4/6] تم حذف ${ratingDeletes.length} تقييم`);
-                        } else {
-                            console.log(`ℹ️ [4/6] لا توجد تقييمات محفوظة`);
                         }
                     } catch (e) {
                         result.errors.push('ratings: ' + e.message);
@@ -2625,9 +2655,7 @@
                     }
                 }
 
-                // ═══════════════════════════════════════════════════════
-                // 5️⃣ إزالة المعلم من قوائم الطلاب المفضلين (talep_data)
-                // ═══════════════════════════════════════════════════════
+                // 5️⃣ تحديث قوائم الطلاب
                 if (cleanPhone && window.fsGetDocs && window.fsCollection && window.fsSetDoc) {
                     try {
                         const studentsSnap = await window.fsGetDocs(window.fsCollection(window.db, "talep_data"));
@@ -2655,8 +2683,6 @@
                             await Promise.allSettled(studentUpdates);
                             result.students = studentUpdates.length;
                             console.log(`✅ [5/6] تم تحديث ${studentUpdates.length} طالب`);
-                        } else {
-                            console.log(`ℹ️ [5/6] لم يكن المعلم في قوائم أي طالب`);
                         }
                     } catch (e) {
                         result.errors.push('students: ' + e.message);
@@ -2664,9 +2690,7 @@
                     }
                 }
 
-                // ═══════════════════════════════════════════════════════
-                // 6️⃣ تنظيف localStorage (كاميرات محلية)
-                // ═══════════════════════════════════════════════════════
+                // 6️⃣ localStorage
                 try {
                     if (cleanPhone) {
                         localStorage.removeItem('teacherBlocked_' + cleanPhone);
@@ -2679,7 +2703,6 @@
                         localStorage.removeItem('publishState_' + lId);
                     });
                     
-                    // إزالة من talep_data المحلي (لو الطالب فاتح دلوقتي)
                     const talepRaw = localStorage.getItem('talep_data');
                     if (talepRaw) {
                         try {
@@ -2699,20 +2722,122 @@
                     console.warn('⚠️ localStorage cleanup:', e);
                 }
 
-                // ═══════════════════════════════════════════════════════
-                // 📊 عرض النتيجة النهائية
-                // ═══════════════════════════════════════════════════════
                 const hasErrors = result.errors.length > 0;
                 
                 if (hasErrors) {
                     setCloudStatus('offline', '⚠️ حذف جزئي — راجع الكونسول');
                     showToast(`⚠️ حذف جزئي: ${result.lessons} درس، ${result.ratings} تقييم — بعض العمليات فشلت`, true);
                 } else {
-                    setCloudStatus('synced', '☁️ تم الحذف الشامل بنجاح');
-                    showToast(`🗑️ تم الحذف: حساب + ${result.lessons} درس + ${result.ratings} تقييم + ${result.students} طالب`);
+                    setCloudStatus('synced', '☁️ تم الحذف والحظر النهائي بنجاح');
+                    showToast(`🗑️🚫 حذف + حظر: حساب + ${result.lessons} درس + ${result.ratings} تقييم`);
                 }
                 
-                console.log('📊 تقرير الحذف الشامل:', result);
+                console.log('📊 تقرير الحذف والحظر الشامل:', result);
+            });
+        }
+
+        // ═══════════════════════════════════════════════════════════════
+        // 🚫 قائمة المعلمين المحظورين نهائياً (البصمة السوداء)
+        // ═══════════════════════════════════════════════════════════════
+        async function showBlockedList() {
+            if (!window.fsGetDocs || !window.fsCollection) {
+                showToast('⚠️ Firebase غير جاهز', true);
+                return;
+            }
+            
+            try {
+                const snap = await window.fsGetDocs(window.fsCollection(window.db, "blocked_teachers"));
+                
+                if (snap.empty) {
+                    document.getElementById('summaryModalContent').innerHTML = `
+                        <div class="text-center py-10">
+                            <div class="text-5xl mb-3">✅</div>
+                            <p class="font-black text-slate-600 text-base">لا يوجد معلمون محظورون حالياً</p>
+                            <p class="text-xs font-bold text-slate-400 mt-1">القائمة فارغة — كل الحسابات نشطة</p>
+                        </div>`;
+                } else {
+                    let html = `
+                        <div class="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200">
+                            <p class="text-xs font-black text-amber-800">⚠️ هذه القائمة هي "البصمة السوداء" — أي رقم فيها لا يمكنه التسجيل حتى لو حذف حسابه</p>
+                        </div>
+                        <table class="w-full text-right border-collapse text-xs font-bold text-slate-700">
+                            <thead>
+                                <tr class="bg-rose-50 border-b-2 border-rose-300">
+                                    <th class="p-2.5 text-rose-800">#</th>
+                                    <th class="p-2.5 text-rose-800">الاسم</th>
+                                    <th class="p-2.5 text-rose-800">التليفون</th>
+                                    <th class="p-2.5 text-rose-800">تاريخ الحظر</th>
+                                    <th class="p-2.5 text-rose-800">السبب</th>
+                                    <th class="p-2.5 text-rose-800">إجراء</th>
+                                </tr>
+                            </thead>
+                            <tbody>`;
+                    
+                    let idx = 0;
+                    snap.forEach(d => {
+                        idx++;
+                        const data = d.data();
+                        const blockedDate = data.blockedAt 
+                            ? new Date(data.blockedAt).toLocaleDateString('ar-EG', { 
+                                year: 'numeric', month: 'short', day: 'numeric', 
+                                hour: '2-digit', minute: '2-digit' 
+                            }) 
+                            : 'غير محدد';
+                        
+                        const safeName = (data.teacherName || 'بدون اسم').replace(/'/g, "\\'");
+                        
+                        html += `
+                            <tr class="border-b border-slate-200 hover:bg-rose-50/50">
+                                <td class="p-2.5 text-slate-500">${idx}</td>
+                                <td class="p-2.5 font-black text-slate-800">${data.teacherName || 'بدون اسم'}</td>
+                                <td class="p-2.5 font-black text-blue-700" dir="ltr" style="text-align:right;">${data.phone}</td>
+                                <td class="p-2.5 text-amber-700">${blockedDate}</td>
+                                <td class="p-2.5 text-slate-600 text-[11px]">${data.reason || 'حظر إداري'}</td>
+                                <td class="p-2.5">
+                                    <button onclick="unblockPermanent('${data.phone}', '${safeName}')" 
+                                            class="action-chip bg-emerald-600 text-white px-3 py-1.5 text-[11px] shadow-sm">
+                                        ✅ إلغاء الحظر
+                                    </button>
+                                </td>
+                            </tr>`;
+                    });
+                    
+                    html += `</tbody></table>`;
+                    document.getElementById('summaryModalContent').innerHTML = html;
+                }
+                
+                document.getElementById('summaryModalTitle').textContent = '🚫 قائمة المحظورين نهائياً (البصمة السوداء)';
+                document.getElementById('teachersSummaryModal').classList.add('active');
+            } catch (e) {
+                console.error('showBlockedList error:', e);
+                showToast('⚠️ فشل جلب القائمة', true);
+            }
+        }
+
+        async function unblockPermanent(phone, teacherName) {
+            showCustomConfirm(`هل تريد إلغاء الحظر النهائي عن (${teacherName})؟\n\nسيتم:\n• إزالته من البصمة السوداء\n• السماح له بالتسجيل من جديد\n• إعادة تفعيل حسابه في teachers (إن وجد)`, async () => {
+                try {
+                    setCloudStatus('syncing', '⏳ جاري إلغاء الحظر...');
+                    
+                    await window.fsDeleteDoc(window.fsDoc(window.db, "blocked_teachers", phone));
+                    
+                    try {
+                        await window.fsSetDoc(window.fsDoc(window.db, "teachers", phone), {
+                            isBlocked: false,
+                            lockTimestamp: null,
+                            updatedAt: Date.now()
+                        }, { merge: true });
+                    } catch(e) {}
+                    
+                    setCloudStatus('synced', '☁️ تم إلغاء الحظر');
+                    showToast('✅ تم إلغاء الحظر — يمكنه التسجيل الآن');
+                    closeModal('teachersSummaryModal');
+                    await renderAllRecords();
+                } catch (e) {
+                    setCloudStatus('offline', '⚠️ فشل');
+                    showToast('⚠️ فشل إلغاء الحظر', true);
+                    console.error(e);
+                }
             });
         }
 
