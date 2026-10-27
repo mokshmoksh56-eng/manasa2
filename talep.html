@@ -1574,7 +1574,7 @@
             activeTeacherListeners = [];
         }
 
-        // ✅ المزامنة اللحظية بالـ Geohash
+        // ✅ المزامنة اللحظية بالـ Geohash (تم تحسينها للظهور الفوري)
         async function startTeachersRealtimeListener(center, radius) {
             stopTeacherListeners();
             
@@ -1601,31 +1601,25 @@
             cachedTeachersStageKey = stage;
             cachedTeachersGrade = grade;
 
-            bounds.forEach(b => {
-                const q = mod.query(
-                    mod.collection(mod.db, "lessons"),
-                    mod.where("g_publish_map", "==", true),
-                    mod.where("s_stage", "==", stage),
-                    mod.where("s_grade", "==", grade),
-                    mod.orderBy("geohash"),
-                    mod.startAt(b[0]),
-                    mod.endAt(b[1])
-                );
+            const fetchBoundsData = async (b) => {
+                try {
+                    const q = mod.query(
+                        mod.collection(mod.db, "lessons"),
+                        mod.where("g_publish_map", "==", true),
+                        mod.where("s_stage", "==", stage),
+                        mod.where("s_grade", "==", grade),
+                        mod.orderBy("geohash"),
+                        mod.startAt(b[0]),
+                        mod.endAt(b[1]),
+                        mod.limit(50) // ✅ حد أقصى 50 لكل نطاق لتحسين الأداء
+                    );
 
-                const unsub = mod.onSnapshot(q, (snapshot) => {
-                    snapshot.docChanges().forEach(change => {
-                        const docSnap = change.doc;
+                    // ✅ استخدام getDocs بدلاً من onSnapshot للسرعة الفائقة
+                    const snapshot = await mod.getDocs(q);
+
+                    snapshot.forEach(docSnap => {
                         const state = docSnap.data();
-                        
-                        if (change.type === "removed") {
-                            teachersMap.delete(docSnap.id);
-                            return;
-                        }
-
-                        if (state.g_publish_map === false) {
-                            teachersMap.delete(docSnap.id);
-                            return;
-                        }
+                        if (state.g_publish_map === false) return;
 
                         const t = parseTeacherDoc(docSnap);
                         
@@ -1633,35 +1627,60 @@
                         const distance = map.distance(center, [t.lat, t.lng]);
                         if (distance <= radius) {
                             teachersMap.set(docSnap.id, t);
-                        } else {
-                            teachersMap.delete(docSnap.id);
                         }
                     });
+                } catch (err) {
+                    console.warn("⚠️ خطأ في جلب نطاق:", err);
+                }
+            };
 
-                    cachedTeachersList = Array.from(teachersMap.values());
-                    cacheReady = true;
+            // ✅ تنفيذ كل النطاقات بالتوازي للسرعة
+            await Promise.all(bounds.map(b => fetchBoundsData(b)));
 
-                    const liveIndicator = document.getElementById('liveIndicator');
-                    if (liveIndicator) {
-                        liveIndicator.classList.add('show');
-                        liveIndicator.classList.add('updating');
-                        const textEl = liveIndicator.querySelector('span:last-child');
-                        if (textEl) textEl.textContent = 'جاري التحديث...';
-                        
-                        setTimeout(() => {
-                            liveIndicator.classList.remove('updating');
-                            if (textEl) textEl.textContent = 'مباشر';
-                        }, 1000);
-                    }
+            // ⚠️ بحث احتياطي: لو مفيش نتائج، يبقى المعلم مش عنده Geohash (زي المعلمين القدام)
+            if (teachersMap.size === 0) {
+                console.log("⚠️ لم يتم العثور على معلمين بالـ Geohash. جاري البحث بدون Geohash...");
+                try {
+                    const qFallback = mod.query(
+                        mod.collection(mod.db, "lessons"),
+                        mod.where("g_publish_map", "==", true),
+                        mod.where("s_stage", "==", stage),
+                        mod.where("s_grade", "==", grade),
+                        mod.limit(100) // جلب أحدث 100 معلم كحد أقصى
+                    );
+                    const snapshotFallback = await mod.getDocs(qFallback);
+                    snapshotFallback.forEach(docSnap => {
+                        const state = docSnap.data();
+                        if (state.g_publish_map === false) return;
 
-                    renderRegisteredTeachersFromEnd(center, radius);
+                        const t = parseTeacherDoc(docSnap);
+                        const distance = map.distance(center, [t.lat, t.lng]);
+                        if (distance <= radius) {
+                            teachersMap.set(docSnap.id, t);
+                        }
+                    });
+                } catch (err) {
+                    console.warn("⚠️ خطأ في البحث الاحتياطي:", err);
+                }
+            }
 
-                }, (err) => {
-                    console.warn("⚠️ geohash snapshot error:", err);
-                });
+            cachedTeachersList = Array.from(teachersMap.values());
+            cacheReady = true;
+
+            const liveIndicator = document.getElementById('liveIndicator');
+            if (liveIndicator) {
+                liveIndicator.classList.add('show');
+                liveIndicator.classList.add('updating');
+                const textEl = liveIndicator.querySelector('span:last-child');
+                if (textEl) textEl.textContent = 'جاري التحديث...';
                 
-                activeTeacherListeners.push(unsub);
-            });
+                setTimeout(() => {
+                    liveIndicator.classList.remove('updating');
+                    if (textEl) textEl.textContent = 'مباشر';
+                }, 1000);
+            }
+
+            renderRegisteredTeachersFromEnd(center, radius);
         }
 
         function toggleMapFullscreen() {
@@ -2061,7 +2080,12 @@
             if (currentCenter && map && curSubj) {
                 const curGrade = document.getElementById('s_grade').value;
                 if (curGrade) {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    // ✅ لو الكاش جاهز ارسم فوراً، لو لسه بيجيب في الداتا استنى
+                    if (cacheReady) {
+                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    } else {
+                        startTeachersRealtimeListener(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    }
                 }
             }
         }
@@ -2112,7 +2136,12 @@
             if (currentCenter && map && subjName) {
                 const curGrade = document.getElementById('s_grade').value;
                 if (curGrade) {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    // ✅ لو الكاش جاهز ارسم فوراً
+                    if (cacheReady) {
+                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    } else {
+                        startTeachersRealtimeListener(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    }
                 }
             }
         }
