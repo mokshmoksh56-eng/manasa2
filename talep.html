@@ -1574,7 +1574,7 @@
             activeTeacherListeners = [];
         }
 
-        // ✅ المزامنة اللحظية بالـ Geohash (تم تحسينها للظهور الفوري)
+        // ✅ البحث المتقدم (Geohash + Fallback) لضمان ظهور كل المعلمين
         async function startTeachersRealtimeListener(center, radius) {
             stopTeacherListeners();
             
@@ -1591,7 +1591,7 @@
             const mod = await loadFirebaseModule();
             if (!mod) return;
 
-            console.log(`🔴 بدء البحث بالـ Geohash للمعلمين القريبين (النطاق: ${radius}م)...`);
+            console.log(`🔴 بدء البحث عن المعلمين (Geohash + Fallback)...`);
 
             const bounds = geofire.geohashQueryBounds(center, radius);
             const teachersMap = new Map();
@@ -1601,6 +1601,7 @@
             cachedTeachersStageKey = stage;
             cachedTeachersGrade = grade;
 
+            // 1. البحث بالـ Geohash (للمعلمين الجدد)
             const fetchBoundsData = async (b) => {
                 try {
                     const q = mod.query(
@@ -1611,58 +1612,48 @@
                         mod.orderBy("geohash"),
                         mod.startAt(b[0]),
                         mod.endAt(b[1]),
-                        mod.limit(50) // ✅ حد أقصى 50 لكل نطاق لتحسين الأداء
+                        mod.limit(50)
                     );
 
-                    // ✅ استخدام getDocs بدلاً من onSnapshot للسرعة الفائقة
                     const snapshot = await mod.getDocs(q);
-
                     snapshot.forEach(docSnap => {
                         const state = docSnap.data();
                         if (state.g_publish_map === false) return;
-
                         const t = parseTeacherDoc(docSnap);
-                        
-                        // فلترة دقيقة للتأكد أن المعلم داخل الدائرة بالفعل
                         const distance = map.distance(center, [t.lat, t.lng]);
                         if (distance <= radius) {
                             teachersMap.set(docSnap.id, t);
                         }
                     });
-                } catch (err) {
-                    console.warn("⚠️ خطأ في جلب نطاق:", err);
-                }
+                } catch (err) { console.warn("⚠️ خطأ في Geohash:", err); }
             };
 
-            // ✅ تنفيذ كل النطاقات بالتوازي للسرعة
             await Promise.all(bounds.map(b => fetchBoundsData(b)));
 
-            // ⚠️ بحث احتياطي: لو مفيش نتائج، يبقى المعلم مش عنده Geohash (زي المعلمين القدام)
-            if (teachersMap.size === 0) {
-                console.log("⚠️ لم يتم العثور على معلمين بالـ Geohash. جاري البحث بدون Geohash...");
-                try {
-                    const qFallback = mod.query(
-                        mod.collection(mod.db, "lessons"),
-                        mod.where("g_publish_map", "==", true),
-                        mod.where("s_stage", "==", stage),
-                        mod.where("s_grade", "==", grade),
-                        mod.limit(100) // جلب أحدث 100 معلم كحد أقصى
-                    );
-                    const snapshotFallback = await mod.getDocs(qFallback);
-                    snapshotFallback.forEach(docSnap => {
-                        const state = docSnap.data();
-                        if (state.g_publish_map === false) return;
+            // 2. البحث الاحتياطي (للمعلمين القدامى اللي معندهمش Geohash)
+            // ✅ بنشغله دايماً عشان نضمن مفيش معلم يختفي
+            try {
+                const qFallback = mod.query(
+                    mod.collection(mod.db, "lessons"),
+                    mod.where("g_publish_map", "==", true),
+                    mod.where("s_stage", "==", stage),
+                    mod.where("s_grade", "==", grade),
+                    mod.limit(100)
+                );
+                const snapshotFallback = await mod.getDocs(qFallback);
+                snapshotFallback.forEach(docSnap => {
+                    if (teachersMap.has(docSnap.id)) return; // لو ظهر خلاص في الـ Geohash متكررش
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) return;
+                    const t = parseTeacherDoc(docSnap);
+                    const distance = map.distance(center, [t.lat, t.lng]);
+                    if (distance <= radius) {
+                        teachersMap.set(docSnap.id, t);
+                    }
+                });
+            } catch (err) { console.warn("⚠️ خطأ في Fallback:", err); }
 
-                        const t = parseTeacherDoc(docSnap);
-                        const distance = map.distance(center, [t.lat, t.lng]);
-                        if (distance <= radius) {
-                            teachersMap.set(docSnap.id, t);
-                        }
-                    });
-                } catch (err) {
-                    console.warn("⚠️ خطأ في البحث الاحتياطي:", err);
-                }
-            }
+            console.log(`✅ إجمالي المعلمين اللي تم العثور عليهم: ${teachersMap.size}`);
 
             cachedTeachersList = Array.from(teachersMap.values());
             cacheReady = true;
