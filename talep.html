@@ -2608,20 +2608,13 @@
             const selectedGrade = (document.getElementById('s_grade').value || '').trim();
 
             try {
-                const mod = await loadFirebaseModule();
-                if (!mod) return { registeredList, hiddenCount };
+                // ⚠️ استعلام مباشر ومقيد من السيرفر (Server-side Filtering)
+                const constraints = [window.where("g_publish_map", "==", true)];
+                if (selectedStageKey) constraints.push(window.where("s_stage", "==", selectedStageKey));
+                if (selectedGrade) constraints.push(window.where("s_grade", "==", selectedGrade));
 
-                const constraints = [mod.where("g_publish_map", "==", true)];
-                
-                if (selectedStageKey) {
-                    constraints.push(mod.where("s_stage", "==", selectedStageKey));
-                }
-                if (selectedGrade) {
-                    constraints.push(mod.where("s_grade", "==", selectedGrade));
-                }
-
-                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
-                const querySnapshot = await mod.getDocs(q);
+                const q = window.query(window.collection(window.db, "lessons"), ...constraints);
+                const querySnapshot = await window.fsGetDocs(q);
                 
                 querySnapshot.forEach(docSnap => {
                     const state = docSnap.data();
@@ -2632,21 +2625,18 @@
                         return;
                     }
 
-                    // لا يوجد استعلام إضافي (N+1) هنا لمعرفة عمر المعلم.
+                    // ✅ لا يتم جلب عمر المعلم باستعلام N+1 للحد من القراءات
                     let teacherAge = state.t_age || state.age || 'غير محدد';
 
                     let subjectsText = '';
-                    if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
-                        subjectsText = state.selectedSubjects.map(sub => {
-                            const parts = String(sub).split(' - ');
-                            return parts[1] ? parts[1].trim() : String(sub).trim();
-                        }).join('، ');
+                    if (state.selectedSubjects && Array.isArray(state.selectedSubjects)) {
+                        subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1].trim() : String(sub).trim()).join('، ');
                     }
 
                     let locLabel = 'السنتر';
                     if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
                     else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
-                    else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+                    else if (state.g_loc === 'فى السنتر' || state.g_loc === 'l_center') locLabel = 'فى السنتر';
 
                     let fullAddress = state.m_address || 'محدد على الخريطة';
                     if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
@@ -2654,7 +2644,7 @@
                     const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
                     const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
 
-                    const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+                    const daysText = (state.g_days && Array.isArray(state.g_days)) ? state.g_days.join('، ') : 'غير محدد';
 
                     const lat = state.lat ? parseFloat(state.lat) : 30.0444;
                     const lng = state.lng ? parseFloat(state.lng) : 31.2357;
@@ -2687,14 +2677,15 @@
             } catch (error) {
                 console.warn("⚠️ الاستعلام المركب فشل، يرجى إنشاء Index في Firebase:", error);
                 showToast("⚠️ جاري تحديث الفهارس، قد لا تظهر كل النتائج.", true);
+                
                 try {
-                    const mod = await loadFirebaseModule();
-                    const q2 = mod.query(
-                        mod.collection(mod.db, "lessons"), 
-                        mod.where("g_publish_map", "==", true),
-                        mod.limit(150)
+                    // Fallback in case indices are still building
+                    const q2 = window.query(
+                        window.collection(window.db, "lessons"), 
+                        window.where("g_publish_map", "==", true),
+                        window.fsLimit(150)
                     );
-                    const snap2 = await mod.getDocs(q2);
+                    const snap2 = await window.fsGetDocs(q2);
                     
                     snap2.forEach(docSnap => {
                         const state = docSnap.data();
@@ -2706,17 +2697,14 @@
                         let teacherAge = state.t_age || state.age || 'غير محدد';
 
                         let subjectsText = '';
-                        if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
-                            subjectsText = state.selectedSubjects.map(sub => {
-                                const parts = String(sub).split(' - ');
-                                return parts[1] ? parts[1].trim() : String(sub).trim();
-                            }).join('، ');
+                        if (state.selectedSubjects && Array.isArray(state.selectedSubjects)) {
+                            subjectsText = state.selectedSubjects.map(sub => sub.includes(' - ') ? sub.split(' - ')[1].trim() : String(sub).trim()).join('، ');
                         }
 
                         let locLabel = 'السنتر';
                         if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
                         else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
-                        else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+                        else if (state.g_loc === 'فى السنتر' || state.g_loc === 'l_center') locLabel = 'فى السنتر';
 
                         let fullAddress = state.m_address || 'محدد على الخريطة';
                         if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
@@ -2724,7 +2712,7 @@
                         const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
                         const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
 
-                        const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+                        const daysText = (state.g_days && Array.isArray(state.g_days)) ? state.g_days.join('، ') : 'غير محدد';
 
                         const lat = state.lat ? parseFloat(state.lat) : 30.0444;
                         const lng = state.lng ? parseFloat(state.lng) : 31.2357;
@@ -2962,11 +2950,15 @@
                     createdAt: Date.now()
                 };
 
+                // حفظ التقييم في مجموعة teacher_ratings
                 await mod.setDoc(ref, payload);
 
-                if (cleanPhone && globalRatingCache[cleanPhone]) {
-                    delete globalRatingCache[cleanPhone];
-                }
+                // ✅ تحديث متوسط التقييم داخل كارت الحصة (lessons) لكي يظهر سريعاً على الخريطة للجميع
+                const updatedRatings = await loadTeacherRatings(lessonId);
+                await mod.setDoc(mod.doc(mod.db, "lessons", safeLessonId), {
+                    ratingAvg: updatedRatings.avg,
+                    ratingCount: updatedRatings.count
+                }, { merge: true });
 
                 showToast("شكراً لك! تم إرسال تقييمك ⭐");
                 vibrateSuccess();
@@ -3297,13 +3289,6 @@
             return false;
         }
 
-        window.selectStar = function(stars) {
-            currentSelectedStars = stars;
-            document.querySelectorAll('.star-btn').forEach((btn, idx) => {
-                btn.classList.toggle('active', idx < stars);
-            });
-        };
-
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3311,11 +3296,19 @@
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
 
-            if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck) {
+            // 🚫 شرط: لو المرحلة أو الصف أو المادة مش مختارين — امسح المعلمين واخرج
+            if (!stageCheck || !gradeCheck || !subjectCheck) {
                 if (teachersLayer) teachersLayer.clearLayers();
                 const liveIndicator = document.getElementById('liveIndicator');
                 if (liveIndicator) liveIndicator.classList.remove('show');
                 closeTeacherInfoCard();
+                return;
+            }
+
+            if (!nameCheck || !phoneCheck) {
+                if (teachersLayer) teachersLayer.clearLayers();
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) liveIndicator.classList.remove('show');
                 return;
             }
 
@@ -3369,6 +3362,7 @@
                 return;
             }
 
+            // ✅ تحديث التقييم المدمج بدون استعلامات سحابية إضافية
             matched.forEach(t => {
                 t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
             });
