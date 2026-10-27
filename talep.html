@@ -1083,6 +1083,7 @@
         let cachedTeachersStageKey = '__init__';
         let cachedTeachersGrade = '__init__';
         let cacheReady = false;
+        let isFetchingTeachers = false;   // ✅ جديد: يمنع الرندر قبل انتهاء الجلب
         let teacherRenderTimer = null;
 
         // ✅ لحفظ الـ popup المفتوح حاليًا
@@ -1584,22 +1585,29 @@
             if (!stage || !grade || !center || !map) {
                 cachedTeachersList = [];
                 cacheReady = false;
+                isFetchingTeachers = false;
                 if (teachersLayer) teachersLayer.clearLayers();
                 return;
             }
 
+            // ✅ تصفير الكاش فوراً لمنع استخدام بيانات قديمة
+            cachedTeachersList = [];
+            cachedTeachersHiddenCount = 0;
+            cachedTeachersStageKey = stage;
+            cachedTeachersGrade = grade;
+            cacheReady = false;
+            isFetchingTeachers = true;
+
             const mod = await loadFirebaseModule();
-            if (!mod) return;
+            if (!mod) {
+                isFetchingTeachers = false;
+                return;
+            }
 
             console.log(`🔴 بدء البحث عن المعلمين (Geohash + Fallback)...`);
 
             const bounds = geofire.geohashQueryBounds(center, radius);
             const teachersMap = new Map();
-
-            cachedTeachersList = [];
-            cachedTeachersHiddenCount = 0;
-            cachedTeachersStageKey = stage;
-            cachedTeachersGrade = grade;
 
             // 1. البحث بالـ Geohash (للمعلمين الجدد)
             const fetchBoundsData = async (b) => {
@@ -1657,6 +1665,7 @@
 
             cachedTeachersList = Array.from(teachersMap.values());
             cacheReady = true;
+            isFetchingTeachers = false;
 
             const liveIndicator = document.getElementById('liveIndicator');
             if (liveIndicator) {
@@ -2072,7 +2081,7 @@
                 const curGrade = document.getElementById('s_grade').value;
                 if (curGrade) {
                     // ✅ لو الكاش جاهز ارسم فوراً، لو لسه بيجيب في الداتا استنى
-                    if (cacheReady) {
+                    if (cacheReady && !isFetchingTeachers) {
                         renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
                     } else {
                         startTeachersRealtimeListener(currentCenter, parseInt(document.getElementById('search_radius').value));
@@ -2128,7 +2137,7 @@
                 const curGrade = document.getElementById('s_grade').value;
                 if (curGrade) {
                     // ✅ لو الكاش جاهز ارسم فوراً
-                    if (cacheReady) {
+                    if (cacheReady && !isFetchingTeachers) {
                         renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
                     } else {
                         startTeachersRealtimeListener(currentCenter, parseInt(document.getElementById('search_radius').value));
@@ -2706,7 +2715,8 @@
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
 
-            if (cacheReady
+            // ✅ منع استخدام كاش غير جاهز أو في طور التحديث
+            if (cacheReady && !isFetchingTeachers
                 && cachedTeachersStageKey === currentStage
                 && cachedTeachersGrade === currentGrade) {
                 return {
@@ -3299,6 +3309,12 @@
 
         // ✅ دالة عرض المعلمين — تقرأ من الكاش وتفلتر داخل الدائرة فقط
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
+            // ✅ منع الرندر أثناء جلب البيانات (الرندر بيتم تلقائياً بعد انتهاء الجلب)
+            if (isFetchingTeachers) {
+                console.log("⏳ جلب البيانات شغّال، سيتم الرندر بعد الانتهاء...");
+                return;
+            }
+
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
