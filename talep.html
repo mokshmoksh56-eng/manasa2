@@ -1021,7 +1021,8 @@
           doc,
           onSnapshot,
           getDoc,
-          setDoc
+          setDoc,
+          limit
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -1045,6 +1046,7 @@
       window.fsOnSnapshot = onSnapshot;
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
+      window.fsLimit = limit;
 
       console.log("✅ Firebase + Firestore جاهز في talep.html");
     </script>
@@ -1068,8 +1070,6 @@
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
-        let globalTeacherAgeCache = {};
-
         // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
@@ -1077,9 +1077,6 @@
         // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
-
-        // ✅ جـديـد: كاش التقييمات لتسريع الأداء
-        let globalRatingCache = {}; // { phone: { avg, count, sum, lastFetch } }
 
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
@@ -1335,7 +1332,8 @@
                     collection: fs.collection,
                     getDocs: fs.getDocs,
                     query: fs.query,
-                    where: fs.where
+                    where: fs.where,
+                    limit: fs.limit
                 };
                 return firebaseSyncModule;
             } catch (err) {
@@ -2625,30 +2623,17 @@
                 const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
                 const querySnapshot = await mod.getDocs(q);
                 
-                for (const docSnap of querySnapshot.docs) {
+                querySnapshot.forEach(docSnap => {
                     const state = docSnap.data();
                     const lessonId = docSnap.id;
 
                     if (state.g_publish_map === false) {
                         hiddenCount++;
-                        continue;
+                        return;
                     }
 
+                    // لا يوجد استعلام إضافي (N+1) هنا لمعرفة عمر المعلم.
                     let teacherAge = state.t_age || state.age || 'غير محدد';
-                    if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
-                        if (globalTeacherAgeCache[state.g_phone]) {
-                            teacherAge = globalTeacherAgeCache[state.g_phone];
-                        } else {
-                            try {
-                                const tRef = mod.doc(mod.db, "teachers", state.g_phone);
-                                const tSnap = await mod.getDoc(tRef);
-                                if (tSnap.exists() && tSnap.data().age) {
-                                    teacherAge = tSnap.data().age;
-                                    globalTeacherAgeCache[state.g_phone] = teacherAge;
-                                }
-                            } catch(e) {}
-                        }
-                    }
 
                     let subjectsText = '';
                     if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
@@ -2694,42 +2679,31 @@
                         gender: state.t_gender || 'مستر',
                         allowedGender: state.g_gender || 'ولاد وبنات',
                         lat: lat,
-                        lng: lng
+                        lng: lng,
+                        ratingAvg: state.ratingAvg || 0,
+                        ratingCount: state.ratingCount || 0
                     });
-                }
+                });
             } catch (error) {
-                console.warn("⚠️ الاستعلام المركب فشل، جاري المحاولة بدون فلترة متقدمة:", error);
-                
+                console.warn("⚠️ الاستعلام المركب فشل، يرجى إنشاء Index في Firebase:", error);
+                showToast("⚠️ جاري تحديث الفهارس، قد لا تظهر كل النتائج.", true);
                 try {
                     const mod = await loadFirebaseModule();
                     const q2 = mod.query(
                         mod.collection(mod.db, "lessons"), 
-                        mod.where("g_publish_map", "==", true)
+                        mod.where("g_publish_map", "==", true),
+                        mod.limit(150)
                     );
                     const snap2 = await mod.getDocs(q2);
                     
-                    for (const docSnap of snap2.docs) {
+                    snap2.forEach(docSnap => {
                         const state = docSnap.data();
                         const lessonId = docSnap.id;
                         
-                        if (selectedStageKey && state.s_stage !== selectedStageKey) continue;
-                        if (selectedGrade && state.s_grade !== selectedGrade) continue;
+                        if (selectedStageKey && state.s_stage !== selectedStageKey) return;
+                        if (selectedGrade && state.s_grade !== selectedGrade) return;
 
                         let teacherAge = state.t_age || state.age || 'غير محدد';
-                        if ((teacherAge === 'غير محدد' || !teacherAge) && state.g_phone) {
-                            if (globalTeacherAgeCache[state.g_phone]) {
-                                teacherAge = globalTeacherAgeCache[state.g_phone];
-                            } else {
-                                try {
-                                    const tRef = mod.doc(mod.db, "teachers", state.g_phone);
-                                    const tSnap = await mod.getDoc(tRef);
-                                    if (tSnap.exists() && tSnap.data().age) {
-                                        teacherAge = tSnap.data().age;
-                                        globalTeacherAgeCache[state.g_phone] = teacherAge;
-                                    }
-                                } catch(e) {}
-                            }
-                        }
 
                         let subjectsText = '';
                         if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
@@ -2775,9 +2749,11 @@
                             gender: state.t_gender || 'مستر',
                             allowedGender: state.g_gender || 'ولاد وبنات',
                             lat: lat,
-                            lng: lng
+                            lng: lng,
+                            ratingAvg: state.ratingAvg || 0,
+                            ratingCount: state.ratingCount || 0
                         });
-                    }
+                    });
                 } catch (err2) {
                     console.error("❌ فشل الاستعلام الاحتياطي أيضاً:", err2);
                 }
@@ -2934,64 +2910,6 @@
                 const yOffset = mapEl.getBoundingClientRect().top + window.pageYOffset - 80;
                 window.scrollTo({ top: yOffset, behavior: 'smooth' });
             }, 300);
-        }
-
-        // ⭐ ==========================================
-        // ⭐ نظام تقييمات المعلمين
-        // ⭐ ==========================================
-        window.selectStar = function(stars) {
-            currentSelectedStars = stars;
-            document.querySelectorAll('.star-btn').forEach((btn, idx) => {
-                btn.classList.toggle('active', idx < stars);
-            });
-        };
-
-        async function batchLoadRatingSummaries(phones, forceRefresh = false) {
-            const mod = await loadFirebaseModule();
-            if (!mod) return {};
-
-            const now = Date.now();
-            const result = {};
-            const phonesToFetch = [];
-
-            phones.forEach(p => {
-                const clean = String(p || '').replace(/\D/g, '');
-                if (!clean) return;
-                const cached = globalRatingCache[clean];
-                if (!forceRefresh && cached && (now - cached.lastFetch < 60000)) {
-                    result[clean] = { avg: cached.avg, count: cached.count };
-                } else {
-                    phonesToFetch.push(clean);
-                }
-            });
-
-            if (phonesToFetch.length === 0) return result;
-
-            try {
-                const q = mod.query(mod.collection(mod.db, "teacher_ratings"));
-                const snap = await mod.getDocs(q);
-                const allRatings = {};
-
-                snap.forEach(d => {
-                    const data = d.data();
-                    const phone = String(data.teacherPhone || '').replace(/\D/g, '');
-                    if (!phone) return;
-                    if (!allRatings[phone]) allRatings[phone] = { sum: 0, count: 0 };
-                    allRatings[phone].sum += data.stars || 0;
-                    allRatings[phone].count++;
-                });
-
-                phonesToFetch.forEach(p => {
-                    const data = allRatings[p] || { sum: 0, count: 0 };
-                    const avg = data.count > 0 ? data.sum / data.count : 0;
-                    globalRatingCache[p] = { avg, count: data.count, sum: data.sum, lastFetch: now };
-                    result[p] = { avg, count: data.count };
-                });
-            } catch (e) {
-                console.warn("batch ratings:", e);
-            }
-
-            return result;
         }
 
         window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
@@ -3379,6 +3297,13 @@
             return false;
         }
 
+        window.selectStar = function(stars) {
+            currentSelectedStars = stars;
+            document.querySelectorAll('.star-btn').forEach((btn, idx) => {
+                btn.classList.toggle('active', idx < stars);
+            });
+        };
+
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3386,19 +3311,11 @@
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
 
-            // 🚫 شرط: لو المرحلة أو الصف أو المادة مش مختارين — امسح المعلمين واخرج
-            if (!stageCheck || !gradeCheck || !subjectCheck) {
+            if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck) {
                 if (teachersLayer) teachersLayer.clearLayers();
                 const liveIndicator = document.getElementById('liveIndicator');
                 if (liveIndicator) liveIndicator.classList.remove('show');
                 closeTeacherInfoCard();
-                return;
-            }
-
-            if (!nameCheck || !phoneCheck) {
-                if (teachersLayer) teachersLayer.clearLayers();
-                const liveIndicator = document.getElementById('liveIndicator');
-                if (liveIndicator) liveIndicator.classList.remove('show');
                 return;
             }
 
@@ -3452,12 +3369,8 @@
                 return;
             }
 
-            const allPhones = [...new Set(matched.map(t => String(t.phone || '').replace(/\D/g, '')).filter(Boolean))];
-            const ratingSummaries = await batchLoadRatingSummaries(allPhones);
-
             matched.forEach(t => {
-                const cleanPhone = String(t.phone || '').replace(/\D/g, '');
-                t.ratingSummary = ratingSummaries[cleanPhone] || { avg: 0, count: 0 };
+                t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
             });
 
             matched.sort((a, b) => {
