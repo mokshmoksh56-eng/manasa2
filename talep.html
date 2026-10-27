@@ -182,6 +182,7 @@
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: visible; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; border-radius: 12px; }
 
+        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
         .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
         .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
@@ -197,6 +198,7 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
+        /* ✅ مؤشر المزامنة اللحظية */
         .live-indicator {
             position: absolute;
             top: 10px;
@@ -248,6 +250,7 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
+        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -268,6 +271,9 @@
         .leaflet-popup { z-index: 100000 !important; }
         .leaflet-control-zoom { z-index: 100001 !important; }
 
+        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
+        .teacher-popup-detail { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #475569; font-size: 10.5px; margin-bottom: 4px; background: #F8FAFC; padding: 4px 6px; border-radius: 5px; gap: 6px;}
+        
         .registered-teacher-marker {
             background-color: #10B981; color: white; border-radius: 50%;
             width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
@@ -347,6 +353,7 @@
             margin-top: 4px; font-weight: 800;
         }
 
+        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
             display: none;
             position: absolute;
@@ -389,6 +396,7 @@
             max-height: 50vh;
         }
 
+        /* ✅ كارت بيانات المعلم العائم فوق الخريطة والجداول (مضغوط للموبايل) */
         .teacher-info-card {
             display: none;
             position: absolute;
@@ -464,6 +472,7 @@
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
+        /* ✅ العنوان التفصيلي في كارت المعلم */
         .teacher-info-address {
             display: flex;
             flex-direction: column;
@@ -509,6 +518,7 @@
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 2.5px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
+        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل) */
         .teacher-rating-section {
             margin-top: 6px;
             padding: 6px;
@@ -641,6 +651,7 @@
             margin-top: 3px;
         }
 
+        /* ✅ تنسيقات مودال الشكاوى */
         .complaint-teacher-btn {
             width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px;
             font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2;
@@ -662,6 +673,7 @@
         }
         .complaint-copy-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
 
+        /* 📢 شريط الشكاوى الصغير */
         .mini-complaint-strip {
             display: flex;
             align-items: center;
@@ -759,6 +771,7 @@
         </div>
     </div>
 
+    <!-- 📢 مودال الشكاوى -->
     <div id="complaintModal" class="custom-modal-overlay">
         <div class="custom-modal-box complaint-modal-box">
             <button onclick="closeComplaintModal()" style="position:absolute; top:8px; left:8px; width:26px; height:26px; border-radius:50%; background:#FEE2E2; color:#DC2626; border:1.5px solid #FCA5A5; font-weight:900; font-size:13px; cursor:pointer; z-index:10;">✕</button>
@@ -950,6 +963,7 @@
 
                     <div id="map"></div>
 
+                    <!-- ✅ كارت بيانات المعلم العائم فوق الخريطة -->
                     <div id="teacherInfoCard" class="teacher-info-card">
                         <button class="teacher-info-close" onclick="closeTeacherInfoCard()">✕</button>
                         <div id="teacherInfoCardBody"></div>
@@ -988,6 +1002,7 @@
             
         </div>
 
+        <!-- 📢 شريط الشكاوى الصغير -->
         <div class="mini-complaint-strip clickable-element" onclick="openComplaintModal()">
             <span style="font-size: 14px;">📢</span>
             <span style="font-size: 11px; font-weight: 900; color: #991B1B;">عندك شكوى أو اقتراح؟</span>
@@ -1055,6 +1070,7 @@
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
+        // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
 
@@ -1062,196 +1078,6 @@
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
 
-        // ==========================================
-        // 🌍 نظام البحث الجغرافي الذكي (Geo-Query System) — لـ 20K+ معلم
-        // ==========================================
-        const geoCache = new Map();
-        const GEO_CACHE_TTL = 60000; // 60 ثانية
-        let bboxListenerTimer = null;
-
-        const geoStats = { bbox: 0, latOnly: 0, fallback: 0, cache: 0, totalDocs: 0 };
-
-        function calculateBoundingBox(lat, lng, radiusMeters) {
-            const latDelta = (radiusMeters / 111320) * 1.15;
-            const lngDelta = (radiusMeters / (111320 * Math.cos(lat * Math.PI / 180))) * 1.15;
-            return {
-                minLat: lat - latDelta,
-                maxLat: lat + latDelta,
-                minLng: lng - lngDelta,
-                maxLng: lng + lngDelta
-            };
-        }
-
-        function getGeoCacheKey(center, radius, stage, grade) {
-            return `${center[0].toFixed(4)}_${center[1].toFixed(4)}_${radius}_${stage}_${grade}`;
-        }
-
-        function cleanGeoCache() {
-            const now = Date.now();
-            for (const [k, v] of geoCache.entries()) {
-                if (now - v.ts > GEO_CACHE_TTL) geoCache.delete(k);
-            }
-        }
-
-        async function _queryTeachersInBBox(mod, bbox, stage, grade) {
-            const constraints = [
-                mod.where("g_publish_map", "==", true),
-                mod.where("lat", ">=", bbox.minLat),
-                mod.where("lat", "<=", bbox.maxLat),
-                mod.where("lng", ">=", bbox.minLng),
-                mod.where("lng", "<=", bbox.maxLng)
-            ];
-            if (stage) constraints.push(mod.where("s_stage", "==", stage));
-            if (grade) constraints.push(mod.where("s_grade", "==", grade));
-            constraints.push(mod.limit(800));
-
-            const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
-            return await mod.getDocs(q);
-        }
-
-        async function _queryTeachersLatOnly(mod, bbox, stage, grade) {
-            const constraints = [
-                mod.where("g_publish_map", "==", true),
-                mod.where("lat", ">=", bbox.minLat),
-                mod.where("lat", "<=", bbox.maxLat)
-            ];
-            if (stage) constraints.push(mod.where("s_stage", "==", stage));
-            if (grade) constraints.push(mod.where("s_grade", "==", grade));
-            constraints.push(mod.limit(2000));
-
-            const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
-            const snap = await mod.getDocs(q);
-
-            return {
-                size: snap.size,
-                docs: snap.docs.filter(d => {
-                    const lng = parseFloat(d.data().lng);
-                    return !isNaN(lng) && lng >= bbox.minLng && lng <= bbox.maxLng;
-                })
-            };
-        }
-
-        async function _queryTeachersFallback(mod, stage, grade) {
-            const constraints = [mod.where("g_publish_map", "==", true)];
-            if (stage) constraints.push(mod.where("s_stage", "==", stage));
-            if (grade) constraints.push(mod.where("s_grade", "==", grade));
-            constraints.push(mod.limit(500));
-
-            const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
-            return await mod.getDocs(q);
-        }
-
-        async function fetchTeachersInRadius(centerPos, radiusMeters) {
-            const mod = await loadFirebaseModule();
-            if (!mod || !centerPos) return { docs: [], method: 'none' };
-
-            const stage = document.getElementById('s_stage').value;
-            const grade = document.getElementById('s_grade').value;
-
-            const cacheKey = getGeoCacheKey(centerPos, radiusMeters, stage, grade);
-            const cached = geoCache.get(cacheKey);
-            if (cached && Date.now() - cached.ts < GEO_CACHE_TTL) {
-                geoStats.cache++;
-                console.log(`📦 [Cache] ${cacheKey} → ${cached.docs.length} نتيجة`);
-                return { docs: cached.docs, method: 'cache' };
-            }
-
-            const bbox = calculateBoundingBox(centerPos[0], centerPos[1], radiusMeters);
-            let docs = [];
-            let method = 'unknown';
-
-            try {
-                const snap = await _queryTeachersInBBox(mod, bbox, stage, grade);
-                docs = snap.docs;
-                method = 'bbox';
-                geoStats.bbox++;
-                console.log(`✅ [BBox] ${docs.length} نتيجة`);
-            } catch (e1) {
-                console.warn("⚠️ BBox query failed:", e1.message || e1);
-
-                try {
-                    const snap2 = await _queryTeachersLatOnly(mod, bbox, stage, grade);
-                    docs = snap2.docs;
-                    method = 'lat-only';
-                    geoStats.latOnly++;
-                    console.log(`✅ [LatOnly] ${docs.length} نتيجة من ${snap2.size}`);
-                } catch (e2) {
-                    console.warn("⚠️ Lat-only failed:", e2.message || e2);
-
-                    try {
-                        const snap3 = await _queryTeachersFallback(mod, stage, grade);
-                        docs = snap3.docs;
-                        method = 'fallback';
-                        geoStats.fallback++;
-                        console.warn(`⚠️ [Fallback] ${docs.length} نتيجة — يُنصح بإنشاء Index`);
-                        showToast("⚙️ يُنصح بإنشاء فهرس Firebase للبحث الجغرافي الأسرع", true);
-                    } catch (e3) {
-                        console.error("❌ كل المحاولات فشلت:", e3.message);
-                        return { docs: [], method: 'failed' };
-                    }
-                }
-            }
-
-            geoStats.totalDocs += docs.length;
-            geoCache.set(cacheKey, { docs, ts: Date.now() });
-            cleanGeoCache();
-            return { docs, method };
-        }
-
-        function _mapDocToTeacher(docSnap) {
-            const state = docSnap.data();
-            const lessonId = docSnap.id;
-
-            if (state.g_publish_map === false) return null;
-
-            let subjectsText = '';
-            if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
-                subjectsText = state.selectedSubjects.map(sub => {
-                    const parts = String(sub).split(' - ');
-                    return parts[1] ? parts[1].trim() : String(sub).trim();
-                }).join('، ');
-            }
-
-            let locLabel = 'السنتر';
-            if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
-            else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
-            else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
-
-            let fullAddress = state.m_address || 'محدد على الخريطة';
-            if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
-
-            const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
-            const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
-            const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
-
-            return {
-                lessonId,
-                groupName: state.g_name || `مجموعة ${lessonId}`,
-                teacherName: state.g_teacher || 'المعلم',
-                age: state.t_age || state.age || 'غير محدد',
-                count: state.g_count || '--',
-                grade: (state.s_grade || '').trim(),
-                stageKey: (state.s_stage || '').trim(),
-                stageName: getStageNameByKey(state.s_stage),
-                subject: subjectsText || '',
-                subjectsRaw: state.selectedSubjects || [],
-                days: daysText,
-                startTime, endTime,
-                locType: locLabel,
-                address: fullAddress,
-                phone: state.g_phone || '',
-                gender: state.t_gender || 'مستر',
-                allowedGender: state.g_gender || 'ولاد وبنات',
-                lat: parseFloat(state.lat) || 30.0444,
-                lng: parseFloat(state.lng) || 31.2357,
-                ratingAvg: state.ratingAvg || 0,
-                ratingCount: state.ratingCount || 0
-            };
-        }
-
-        // ==========================================
-        // 1. أدوات مساعدة عامة
-        // ==========================================
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
             if (!stId) {
@@ -1392,11 +1218,15 @@
         }
 
         function vibrateError() {
-            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+            if (navigator.vibrate) {
+                navigator.vibrate([200, 100, 200]);
+            }
         }
 
         function vibrateSuccess() {
-            if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
+            if (navigator.vibrate) {
+                navigator.vibrate([80, 50, 80]);
+            }
         }
 
         function alertMissingData(missingList) {
@@ -1441,13 +1271,19 @@
                 return;
             }
 
-            if (cleanPhone.startsWith('0020')) cleanPhone = cleanPhone.substring(2);
-            else if (cleanPhone.startsWith('01') && cleanPhone.length === 11) cleanPhone = '2' + cleanPhone;
-            else if (cleanPhone.startsWith('1') && cleanPhone.length === 10) cleanPhone = '20' + cleanPhone;
+            if (cleanPhone.startsWith('0020')) {
+                cleanPhone = cleanPhone.substring(2);
+            } else if (cleanPhone.startsWith('01') && cleanPhone.length === 11) {
+                cleanPhone = '2' + cleanPhone;
+            } else if (cleanPhone.startsWith('1') && cleanPhone.length === 10) {
+                cleanPhone = '20' + cleanPhone;
+            }
 
             const studentName = document.getElementById('st_name')?.value || 'طالب';
             const msg = `السلام عليكم أ/ ${teacherName}، أنا الطالب (${studentName}) وأرغب في الحجز والاستفسار عن مادة (${subject} - ${grade})${groupName ? ' - ' + groupName : ''} عبر منصة احجزلي.`;
-            window.open(`https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            const waUrl = `https://wa.me/${cleanPhone}?text=${encodeURIComponent(msg)}`;
+            
+            window.open(waUrl, '_blank');
         };
 
         window.shareTeacher = function(name, subject, grade, phone) {
@@ -1558,8 +1394,11 @@
                 }
             };
 
-            if (immediate) await doSave();
-            else _talepSaveTimer = setTimeout(doSave, 600);
+            if (immediate) {
+                await doSave();
+            } else {
+                _talepSaveTimer = setTimeout(doSave, 600);
+            }
         }
 
         async function loadTalepFromFirebase() {
@@ -1595,8 +1434,11 @@
                 };
 
                 localStorage.setItem('talep_data', JSON.stringify(localObj));
-                if (d.location_consent === true) localStorage.setItem('location_consent_given', 'true');
-                else localStorage.removeItem('location_consent_given');
+                if (d.location_consent === true) {
+                    localStorage.setItem('location_consent_given', 'true');
+                } else {
+                    localStorage.removeItem('location_consent_given');
+                }
 
                 console.log("☁️ [talep] تم تحميل البيانات من Firestore");
                 return true;
@@ -1647,10 +1489,7 @@
             });
         }
 
-        // ==========================================
-        // 2. المزامنة اللحظية — BBox فقط (مقتصرة على النطاق)
-        // ==========================================
-        async function startTeachersRealtimeListener(centerPos = null, radiusMeters = null) {
+        async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
 
@@ -1659,221 +1498,89 @@
                 return;
             }
 
-            if (!centerPos || !radiusMeters) {
-                if (teachersRealtimeUnsub) { teachersRealtimeUnsub(); teachersRealtimeUnsub = null; }
-                console.log("⏸️ [Realtime] في انتظار تحديد الموقع...");
+            const mod = await loadFirebaseModule();
+            if (!mod) {
+                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
                 return;
             }
-
-            const mod = await loadFirebaseModule();
-            if (!mod) return;
 
             if (teachersRealtimeUnsub) {
                 try { teachersRealtimeUnsub(); } catch(e) {}
                 teachersRealtimeUnsub = null;
             }
 
-            const bbox = calculateBoundingBox(centerPos[0], centerPos[1], radiusMeters);
-            console.log("🔴 [Realtime] بدء المزامنة داخل الـ BBox فقط...");
+            console.log("🔴 بدء المزامنة اللحظية للمعلمين على الخريطة...");
 
-            const constraints = [
+            const q = mod.query(
+                mod.collection(mod.db, "lessons"),
                 mod.where("g_publish_map", "==", true),
                 mod.where("s_stage", "==", stage),
-                mod.where("s_grade", "==", grade),
-                mod.where("lat", ">=", bbox.minLat),
-                mod.where("lat", "<=", bbox.maxLat),
-                mod.where("lng", ">=", bbox.minLng),
-                mod.where("lng", "<=", bbox.maxLng),
-                mod.limit(800)
-            ];
+                mod.where("s_grade", "==", grade)
+            );
 
-            try {
-                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+            teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
+                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
 
-                teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
-                    console.log(`🔄 [Realtime] ${snapshot.size} حصة في النطاق`);
+                const newHash = snapshot.docs.map(d => d.id + '_' + (d.data().updatedAt || '')).join('|');
+                if (newHash === lastRenderedTeachersHash) {
+                    console.log("⏭️ لا يوجد تغيير حقيقي — تم تجاهل إعادة الرسم");
+                    return;
+                }
+                lastRenderedTeachersHash = newHash;
 
-                    const newHash = snapshot.docs.map(d => d.id + '_' + (d.data().updatedAt || '')).join('|');
-                    if (newHash === lastRenderedTeachersHash) return;
-                    lastRenderedTeachersHash = newHash;
-
-                    const liveIndicator = document.getElementById('liveIndicator');
-                    const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
-
-                    if (liveIndicator) {
-                        liveIndicator.classList.add('show');
-                        if (!isFirstTeachersSnapshot) {
-                            liveIndicator.classList.add('updating');
-                            const textEl = liveIndicator.querySelector('span:last-child');
-                            if (textEl) textEl.textContent = 'جاري التحديث...';
-                            setTimeout(() => {
-                                liveIndicator.classList.remove('updating');
-                                if (textEl) textEl.textContent = 'مباشر';
-                            }, 1500);
-                        }
-                    }
-
-                    if (!cardOpen) {
-                        renderTeachersFromSnapshot(snapshot, centerPos, radiusMeters);
-                    }
-
-                    if (!isFirstTeachersSnapshot) showToast("🔄 تم تحديث المعلمين في النطاق");
+                const liveIndicator = document.getElementById('liveIndicator');
+                
+                if (!currentCenter || !map) {
                     isFirstTeachersSnapshot = false;
+                    return;
+                }
 
-                }, (error) => {
-                    console.warn("⚠️ Realtime failed:", error.message);
-                    const liveIndicator = document.getElementById('liveIndicator');
-                    if (liveIndicator) liveIndicator.classList.remove('show');
-                });
-            } catch (e) {
-                console.warn("⚠️ Cannot start realtime:", e.message);
-            }
-        }
+                const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
+                if (cardOpen && !isFirstTeachersSnapshot) {
+                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
+                    return;
+                }
 
-        function scheduleRealtimeListenerUpdate(centerPos, radiusMeters) {
-            if (bboxListenerTimer) clearTimeout(bboxListenerTimer);
-            bboxListenerTimer = setTimeout(() => {
-                startTeachersRealtimeListener(centerPos, radiusMeters);
-            }, 900);
-        }
-
-        // ==========================================
-        // 3. رسم المعلمين من snapshot مباشرة (بدون استعلام)
-        // ==========================================
-        function renderTeachersFromSnapshot(snapshot, centerPos, radiusMeters) {
-            const selectedSubject = (document.getElementById('s_subject').value || '').trim();
-            const selectedGrade = (document.getElementById('s_grade').value || '').trim();
-            const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
-            let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
-            const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
-            const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
-
-            const allTeachers = [];
-            snapshot.forEach(docSnap => {
-                const t = _mapDocToTeacher(docSnap);
-                if (t) allTeachers.push(t);
-            });
-
-            _renderFilteredTeachers(allTeachers, centerPos, radiusMeters, {
-                selectedSubject, selectedGrade, selectedStageKey,
-                prefTeacher, prefLocValue, studentGender
-            });
-        }
-
-        function _renderFilteredTeachers(allTeachers, centerPos, radiusMeters, opts) {
-            const { selectedSubject, selectedGrade, selectedStageKey, prefTeacher, prefLocValue, studentGender } = opts;
-
-            teachersLayer.clearLayers();
-
-            const matched = allTeachers.filter(t => {
-                if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
-                if (!isTeacherGenderMatches(t.allowedGender, studentGender)) return false;
-
-                if (selectedStageKey) {
-                    const tStageKey = String(t.stageKey || '').trim();
-                    if (tStageKey && tStageKey !== selectedStageKey) {
-                        const tGrade = normalizeArabicText(t.grade || '');
-                        const sGrade = normalizeArabicText(selectedGrade);
-                        if (!(tGrade === sGrade || tGrade.includes(sGrade) || sGrade.includes(tGrade))) return false;
+                if (liveIndicator) {
+                    liveIndicator.classList.add('show');
+                    if (!isFirstTeachersSnapshot) {
+                        liveIndicator.classList.add('updating');
+                        const textEl = liveIndicator.querySelector('span:last-child');
+                        if (textEl) textEl.textContent = 'جاري التحديث...';
+                        
+                        setTimeout(() => {
+                            liveIndicator.classList.remove('updating');
+                            if (textEl) textEl.textContent = 'مباشر';
+                        }, 1500);
                     }
                 }
-                if (prefLocValue && !isTeacherLocationMatches(t, prefLocValue)) return false;
-                if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
-                if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
-                return true;
-            });
 
-            if (matched.length === 0) {
-                showToast(prefLocValue
-                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
-                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`, true);
-                return;
-            }
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
 
-            matched.forEach(t => {
-                t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
-            });
+                if (!isFirstTeachersSnapshot) {
+                    showToast(`🔄 تم تحديث المعلمين على الخريطة`);
+                }
+                isFirstTeachersSnapshot = false;
 
-            matched.sort((a, b) => {
-                if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
-                if (b.ratingSummary.count === 0) return -1;
-                if (a.ratingSummary.count === 0) return 1;
-                return b.ratingSummary.avg - a.ratingSummary.avg;
-            });
-
-            let shownCount = 0;
-            const outOfRange = [];
-
-            matched.forEach(t => {
-                const distance = map.distance(centerPos, [t.lat, t.lng]);
-                if (distance <= radiusMeters) {
-                    shownCount++;
-                    _addTeacherMarker(t);
-                } else {
-                    outOfRange.push({ ...t, distance });
+            }, (error) => {
+                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) {
+                    liveIndicator.classList.remove('show');
                 }
             });
-
-            if (shownCount === 0 && outOfRange.length > 0) {
-                const nearest = outOfRange.sort((a, b) => a.distance - b.distance)[0];
-                const km = (nearest.distance / 1000).toFixed(1);
-                showToast(`فيه ${outOfRange.length} مدرس مطابق لكن خارج النطاق (أقربهم على ${km} كم) — وسّع النطاق!`, true);
-            } else if (shownCount > 0) {
-                vibrateSuccess();
-                showToast(`تم العثور على (${shownCount}) مدرس مطابق ✨`);
-            }
         }
 
-        function _addTeacherMarker(t) {
-            const isMs = (t.gender === 'مس');
-            const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
-            const rating = t.ratingSummary;
-
-            let ratingBadgeHtml = '';
-            if (rating.count > 0) {
-                const bgColor = rating.avg >= 4.5 ? 'linear-gradient(135deg,#FBBF24,#F59E0B)'
-                              : rating.avg >= 3.5 ? 'linear-gradient(135deg,#10B981,#059669)'
-                              : 'linear-gradient(135deg,#94A3B8,#64748B)';
-                ratingBadgeHtml = `<div style="position:absolute; top:-9px; right:-10px; background:${bgColor}; color:#fff; border-radius:99px; padding:1.5px 6px; font-size:9px; font-weight:900; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.25); z-index:10; white-space:nowrap; line-height:1.2;">★ ${rating.avg.toFixed(1)}</div>`;
-                if (rating.avg >= 4.5 && rating.count >= 3) {
-                    ratingBadgeHtml += `<div style="position:absolute; top:-14px; left:-10px; font-size:16px; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index:11;">🏆</div>`;
-                }
-            }
-
-            const iconHtml = `<div style="position:relative; width:36px; height:36px;"><div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>${ratingBadgeHtml}</div>`;
-
-            const customIcon = L.divIcon({
-                className: 'custom-leaflet-marker',
-                html: iconHtml,
-                iconSize: [36, 36],
-                iconAnchor: [18, 18],
-                popupAnchor: [0, -16]
-            });
-
-            const marker = L.marker([t.lat, t.lng], {
-                icon: customIcon,
-                zIndexOffset: rating.avg >= 4.5 ? 500 : (rating.avg >= 3.5 ? 200 : 0)
-            });
-
-            marker._teacherData = t;
-            marker.on('click', function(e) {
-                L.DomEvent.stopPropagation(e);
-                showTeacherInfoCard(t.lessonId);
-            });
-
-            teachersLayer.addLayer(marker);
-        }
-
-        // ==========================================
-        // 4. الخريطة والتكبير
-        // ==========================================
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
                 openMapFullscreen();
                 history.pushState({ mapFullscreen: true }, "");
             } else {
-                if (history.state && history.state.mapFullscreen) history.back();
-                else closeMapFullscreen();
+                if (history.state && history.state.mapFullscreen) {
+                    history.back();
+                } else {
+                    closeMapFullscreen();
+                }
             }
         }
 
@@ -1941,8 +1648,11 @@
             const btnText = document.getElementById('searchBtnText');
             if (!btnText) return;
             
-            if (!stage || !grade || !subject) btnText.textContent = '⚠️ اختر المرحلة والصف والمادة أولاً';
-            else btnText.textContent = 'تحديد الموقع والبحث بالـ GPS';
+            if (!stage || !grade || !subject) {
+                btnText.textContent = '⚠️ اختر المرحلة والصف والمادة أولاً';
+            } else {
+                btnText.textContent = 'تحديد الموقع والبحث بالـ GPS';
+            }
         }
 
         const defaultCurriculum = {
@@ -2037,7 +1747,9 @@
                 st.grades = mergedGrades;
 
                 st.grades.forEach((g, i) => {
-                    if (typeof st.gradeOrder[g] !== 'number') st.gradeOrder[g] = i + 1;
+                    if (typeof st.gradeOrder[g] !== 'number') {
+                        st.gradeOrder[g] = i + 1;
+                    }
                 });
 
                 st.grades.forEach(g => {
@@ -2060,22 +1772,31 @@
                         st.subjectOrder[g] = {};
                     }
                     st.gradeSubjects[g].forEach((s, i) => {
-                        if (typeof st.subjectOrder[g][s] !== 'number') st.subjectOrder[g][s] = i + 1;
+                        if (typeof st.subjectOrder[g][s] !== 'number') {
+                            st.subjectOrder[g][s] = i + 1;
+                        }
                     });
 
                     Object.keys(st.subjectOrder[g]).forEach(s => {
-                        if (!st.gradeSubjects[g].includes(s)) delete st.subjectOrder[g][s];
+                        if (!st.gradeSubjects[g].includes(s)) {
+                            delete st.subjectOrder[g][s];
+                        }
                     });
                 });
 
                 Object.keys(st.gradeOrder).forEach(g => {
-                    if (!st.grades.includes(g)) delete st.gradeOrder[g];
+                    if (!st.grades.includes(g)) {
+                        delete st.gradeOrder[g];
+                    }
                 });
                 
-                if (!currObj.main_order.includes(stageKey)) currObj.main_order.push(stageKey);
+                if (!currObj.main_order.includes(stageKey)) {
+                    currObj.main_order.push(stageKey);
+                }
             });
             
             currObj.main_order = currObj.main_order.filter(k => currObj[k]);
+
             return currObj;
         }
 
@@ -2103,7 +1824,13 @@
             if (curr.main_order && Array.isArray(curr.main_order) && curr.main_order.length > 0) {
                 return curr.main_order.filter(k => curr[k]);
             }
-            return Object.keys(curr).filter(k => k !== 'main_order' && k !== 'updatedAt' && k !== 'id' && typeof curr[k] === 'object' && !Array.isArray(curr[k]));
+            return Object.keys(curr).filter(k => 
+                k !== 'main_order' && 
+                k !== 'updatedAt' && 
+                k !== 'id' && 
+                typeof curr[k] === 'object' && 
+                !Array.isArray(curr[k])
+            );
         }
 
         function getSortedGrades(stageKey) {
@@ -2143,7 +1870,8 @@
 
             stageSelect.innerHTML = '<option value="">-- اختر --</option>';
             
-            getSortedStages().forEach(stageKey => {
+            const sortedStages = getSortedStages();
+            sortedStages.forEach(stageKey => {
                 if (curr[stageKey]) {
                     const stageName = curr[stageKey].name || stageKey;
                     stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
@@ -2172,16 +1900,20 @@
 
             if (stage && curr[stage]) {
                 const sortedGrades = getSortedGrades(stage);
+                
                 sortedGrades.forEach(g => {
                     gSelect.innerHTML += `<option value="${g}">${g}</option>`;
                 });
                 gSelect.disabled = false;
 
-                if (currentGrade && sortedGrades.includes(currentGrade)) gSelect.value = currentGrade;
+                if (currentGrade && sortedGrades.includes(currentGrade)) {
+                    gSelect.value = currentGrade;
+                }
                 updateSubjects(preferredSubj);
             } else {
                 gSelect.disabled = true;
                 renderStudentGradeSubjectsBar();
+                // ✅ امسح المعلمين من الخريطة لو المرحلة اتغيرت لاختيار فاضي
                 if (teachersLayer) teachersLayer.clearLayers();
                 closeTeacherInfoCard();
             }
@@ -2202,20 +1934,20 @@
                 });
                 sSelect.disabled = false;
 
-                if (currentSubj && subjs.includes(currentSubj)) sSelect.value = currentSubj;
+                if (currentSubj && subjs.includes(currentSubj)) {
+                    sSelect.value = currentSubj;
+                }
             } else {
                 sSelect.disabled = true;
             }
             
-            // ⏸️ المستمع هيبدأ بس بعد ما يتحدد مركز البحث (في buildRadarMap)
-            if (currentCenter) {
-                scheduleRealtimeListenerUpdate(currentCenter, parseInt(document.getElementById('search_radius').value));
-            }
+            startTeachersRealtimeListener();
 
             renderStudentGradeSubjectsBar();
             updateStudentSummary();
             updateSearchBtnHint();
 
+            // ✅ لو الصف أو المادة اتغيروا لاختيار فاضي — امسح المعلمين من الخريطة
             const finalGrade = document.getElementById('s_grade').value;
             const finalSubj = document.getElementById('s_subject').value;
             if ((!finalGrade || !finalSubj) && teachersLayer) {
@@ -2230,6 +1962,7 @@
             updateStudentSummary();
             updateSearchBtnHint();
 
+            // ✅ لو المادة اتغيرت لاختيار فاضي — امسح المعلمين
             const curSubj = document.getElementById('s_subject').value;
             if (!curSubj && teachersLayer) {
                 teachersLayer.clearLayers();
@@ -2350,10 +2083,14 @@
                     populateStagesDropdown(true);
                     updateStudentSummary();
 
-                    if (!isFirstCurriculumSnapshot) showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة");
+                    if (!isFirstCurriculumSnapshot) {
+                        showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة");
+                    }
                     isFirstCurriculumSnapshot = false;
                 }
-            }, (err) => console.warn("⚠️ [talep] onSnapshot فشل:", err));
+            }, (err) => {
+                console.warn("⚠️ [talep] onSnapshot فشل:", err);
+            });
         }
 
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
@@ -2376,7 +2113,7 @@
             const display = document.getElementById('radius_val_display');
             
             let text = "";
-            if (val < 1000) text = val + " متر";
+            if (val < 1000) { text = val + " متر"; }
             else {
                 let kmVal = (val / 1000).toFixed(1);
                 if (kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
@@ -2387,12 +2124,12 @@
 
             const fsSlider = document.getElementById('fs_search_radius');
             const fsDisplay = document.getElementById('fs_radius_val_display');
-            if (fsSlider && fsSlider.value !== val) fsSlider.value = val;
-            if (fsDisplay) fsDisplay.innerText = text;
+            if (fsSlider && fsSlider.value !== val) { fsSlider.value = val; }
+            if (fsDisplay) { fsDisplay.innerText = text; }
 
             updateStudentSummary(); 
             saveStudentData();
-            if (searchCircle) searchCircle.setRadius(val);
+            if (searchCircle) { searchCircle.setRadius(val); }
         }
 
         function updateRadiusDisplayFS() {
@@ -2405,6 +2142,7 @@
         }
 
         function onRadiusChangeEnd() {
+            // ✅ لو الصف أو المادة مش مختارين — امسح المعلمين
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
             if (!gradeCheck || !subjectCheck) {
@@ -2417,7 +2155,6 @@
                 lastRenderRadius = parseInt(document.getElementById('search_radius').value);
                 renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius);
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
-                scheduleRealtimeListenerUpdate(currentCenter, lastRenderRadius);
             }
         }
 
@@ -2465,19 +2202,29 @@
         function loadStudentData() {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             
-            if (data.st_gender && document.getElementById(data.st_gender)) document.getElementById(data.st_gender).checked = true;
-            if (data.st_name && !document.getElementById('st_name').value) document.getElementById('st_name').value = data.st_name;
+            if (data.st_gender && document.getElementById(data.st_gender)) {
+                document.getElementById(data.st_gender).checked = true;
+            }
+            if (data.st_name && !document.getElementById('st_name').value) {
+                document.getElementById('st_name').value = data.st_name;
+            }
             if (data.st_age && !document.getElementById('st_age').value) {
                 document.getElementById('st_age').value = data.st_age; 
                 checkAge();
             }
-            if (data.st_phone && !document.getElementById('st_phone').value) document.getElementById('st_phone').value = data.st_phone;
+            if (data.st_phone && !document.getElementById('st_phone').value) {
+                document.getElementById('st_phone').value = data.st_phone;
+            }
             if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s_stage').value) {
                 document.getElementById('s_stage').value = data.s_stage;
                 updateGrades(data.s_grade || '', data.s_subject || '');
             }
-            if (data.pref_teacher && document.getElementById(data.pref_teacher)) document.getElementById(data.pref_teacher).checked = true;
-            if (data.pref_loc && document.getElementById(data.pref_loc)) document.getElementById(data.pref_loc).checked = true;
+            if (data.pref_teacher && document.getElementById(data.pref_teacher)) {
+                document.getElementById(data.pref_teacher).checked = true;
+            }
+            if (data.pref_loc && document.getElementById(data.pref_loc)) {
+                document.getElementById(data.pref_loc).checked = true;
+            }
             if (data.search_radius && !document.getElementById('search_radius').dataset.userChanged) {
                 document.getElementById('search_radius').value = data.search_radius;
                 updateRadiusDisplay();
@@ -2505,13 +2252,17 @@
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
                     if (!k) continue;
-                    if (k.startsWith('lessonState_') || k.startsWith('publishState_')) keysToRemove.push(k);
+                    if (k.startsWith('lessonState_') || k.startsWith('publishState_')) {
+                        keysToRemove.push(k);
+                    }
                 }
                 keysToRemove.forEach(k => localStorage.removeItem(k));
                 localStorage.removeItem('teacher_lessons');
             }
 
-            if (currentKey_talep && currentKey_talep !== 'guest') localStorage.setItem(lessonsOwnerKey_talep, currentKey_talep);
+            if (currentKey_talep && currentKey_talep !== 'guest') {
+                localStorage.setItem(lessonsOwnerKey_talep, currentKey_talep);
+            }
 
             const ownerKey = 'talep_data_owner';
             const currentStudentKey = getStudentId();
@@ -2621,6 +2372,7 @@
 
             startCurriculumRealtimeListener();
             startTalepRealtimeListener();
+            startTeachersRealtimeListener();
         };
 
         function triggerLocationFlow() {
@@ -2648,8 +2400,11 @@
             }
 
             const hasConsented = localStorage.getItem('location_consent_given');
-            if (hasConsented === 'true') startSmartSearch();
-            else document.getElementById('locationDisclosureModal').classList.add('active');
+            if (hasConsented === 'true') {
+                startSmartSearch();
+            } else {
+                document.getElementById('locationDisclosureModal').classList.add('active');
+            }
         }
 
         function declineLocation() {
@@ -2732,9 +2487,15 @@
                                 <div class="loc-icon">📌</div><span class="loc-name">${loc.name}</span>
                             </div>
                             <div class="loc-actions">
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})" title="حذف">${svgTrash}</button>
-                                <button class="btn-icon btn-edit-loc clickable-element" onclick="openEditLocModal(${index})" title="تعديل الاسم">${svgEdit}</button>
-                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">${svgGo}</button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('location', ${index})" title="حذف">
+                                    ${svgTrash}
+                                </button>
+                                <button class="btn-icon btn-edit-loc clickable-element" onclick="openEditLocModal(${index})" title="تعديل الاسم">
+                                    ${svgEdit}
+                                </button>
+                                <button class="btn-icon btn-go-loc clickable-element" onclick="loadSpecificLocation(${index})" title="اذهب للموقع">
+                                    ${svgGo}
+                                </button>
                             </div>
                         </div>
                     `;
@@ -2795,7 +2556,9 @@
                                         <span style="font-size: 11px; color: #0D9488; font-weight: 900; display: block; margin-top: 2px;" dir="ltr">📱 ${displayPhone}</span>
                                     </div>
                                 </div>
-                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">${svgTrash}</button>
+                                <button class="btn-icon btn-del-loc clickable-element" onclick="deleteItem('teacher', ${index})" title="إزالة المعلم">
+                                    ${svgTrash}
+                                </button>
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
                                 <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
@@ -2832,31 +2595,169 @@
             closeDeleteModal();
         }
 
-        // ==========================================
-        // 5. جلب معلمين النطاق (النسخة القديمة — معطلة، مستخدمة كمرجع فقط)
-        // ==========================================
-        async function getRegisteredTeachersFromFirebase(centerPos, radiusMeters) {
-            if (!window.db) {
-                console.warn("⚠️ Firebase لم يتصل بعد");
-                return { registeredList: [], hiddenCount: 0 };
-            }
-            if (!centerPos) {
-                console.warn("⚠️ لا يوجد مركز للبحث");
-                return { registeredList: [], hiddenCount: 0 };
-            }
-
-            const { docs, method } = await fetchTeachersInRadius(centerPos, radiusMeters);
-
+        async function getRegisteredTeachersFromFirebase() {
             const registeredList = [];
             let hiddenCount = 0;
 
-            docs.forEach(docSnap => {
-                const t = _mapDocToTeacher(docSnap);
-                if (!t) { hiddenCount++; return; }
-                registeredList.push(t);
-            });
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
+                return { registeredList, hiddenCount };
+            }
 
-            console.log(`📊 [Geo] method=${method} | docs=${docs.length} | visible=${registeredList.length} | hidden=${hiddenCount}`);
+            const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
+            const selectedGrade = (document.getElementById('s_grade').value || '').trim();
+
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) return { registeredList, hiddenCount };
+
+                const constraints = [mod.where("g_publish_map", "==", true)];
+                
+                if (selectedStageKey) {
+                    constraints.push(mod.where("s_stage", "==", selectedStageKey));
+                }
+                if (selectedGrade) {
+                    constraints.push(mod.where("s_grade", "==", selectedGrade));
+                }
+
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const querySnapshot = await mod.getDocs(q);
+                
+                querySnapshot.forEach(docSnap => {
+                    const state = docSnap.data();
+                    const lessonId = docSnap.id;
+
+                    if (state.g_publish_map === false) {
+                        hiddenCount++;
+                        return;
+                    }
+
+                    let teacherAge = state.t_age || state.age || 'غير محدد';
+
+                    let subjectsText = '';
+                    if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
+                        subjectsText = state.selectedSubjects.map(sub => {
+                            const parts = String(sub).split(' - ');
+                            return parts[1] ? parts[1].trim() : String(sub).trim();
+                        }).join('، ');
+                    }
+
+                    let locLabel = 'السنتر';
+                    if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
+                    else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
+                    else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+
+                    let fullAddress = state.m_address || 'محدد على الخريطة';
+                    if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
+
+                    const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
+                    const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
+
+                    const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+
+                    const lat = state.lat ? parseFloat(state.lat) : 30.0444;
+                    const lng = state.lng ? parseFloat(state.lng) : 31.2357;
+
+                    registeredList.push({
+                        lessonId: lessonId,
+                        groupName: state.g_name || `مجموعة ${lessonId}`,
+                        teacherName: state.g_teacher || 'المعلم',
+                        age: teacherAge, 
+                        count: state.g_count || '--',
+                        grade: (state.s_grade || '').trim(),
+                        stageKey: (state.s_stage || '').trim(),
+                        stageName: getStageNameByKey(state.s_stage),
+                        subject: subjectsText || '',
+                        subjectsRaw: state.selectedSubjects || [],
+                        days: daysText,
+                        startTime: startTime,
+                        endTime: endTime,
+                        locType: locLabel,
+                        address: fullAddress,
+                        phone: state.g_phone || '',
+                        gender: state.t_gender || 'مستر',
+                        allowedGender: state.g_gender || 'ولاد وبنات',
+                        lat: lat,
+                        lng: lng,
+                        ratingAvg: state.ratingAvg || 0,
+                        ratingCount: state.ratingCount || 0
+                    });
+                });
+            } catch (error) {
+                console.warn("⚠️ الاستعلام المركب فشل، يرجى إنشاء Index في Firebase:", error);
+                showToast("⚠️ جاري تحديث الفهارس، قد لا تظهر كل النتائج.", true);
+                try {
+                    const mod = await loadFirebaseModule();
+                    const q2 = mod.query(
+                        mod.collection(mod.db, "lessons"), 
+                        mod.where("g_publish_map", "==", true),
+                        mod.limit(150)
+                    );
+                    const snap2 = await mod.getDocs(q2);
+                    
+                    snap2.forEach(docSnap => {
+                        const state = docSnap.data();
+                        const lessonId = docSnap.id;
+                        
+                        if (selectedStageKey && state.s_stage !== selectedStageKey) return;
+                        if (selectedGrade && state.s_grade !== selectedGrade) return;
+
+                        let teacherAge = state.t_age || state.age || 'غير محدد';
+
+                        let subjectsText = '';
+                        if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
+                            subjectsText = state.selectedSubjects.map(sub => {
+                                const parts = String(sub).split(' - ');
+                                return parts[1] ? parts[1].trim() : String(sub).trim();
+                            }).join('، ');
+                        }
+
+                        let locLabel = 'السنتر';
+                        if (state.g_loc === 'l_teach' || state.g_loc === 'عند المستر') locLabel = 'عند المستر';
+                        else if (state.g_loc === 'l_stud' || state.g_loc === 'فى منزل الطالب') locLabel = 'فى منزل الطالب';
+                        else if (state.g_loc === 'l_center' || state.g_loc === 'فى السنتر') locLabel = 'فى السنتر';
+
+                        let fullAddress = state.m_address || 'محدد على الخريطة';
+                        if (state.g_center) fullAddress = `${state.g_center} - ${fullAddress}`;
+
+                        const startTime = (state.start_hour && state.start_min && state.start_ampm) ? `${state.start_hour}:${state.start_min} ${state.start_ampm}` : '--:--';
+                        const endTime = (state.end_hour && state.end_min && state.end_ampm) ? `${state.end_hour}:${state.end_min} ${state.end_ampm}` : '--:--';
+
+                        const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0) ? state.g_days.join('، ') : 'غير محدد';
+
+                        const lat = state.lat ? parseFloat(state.lat) : 30.0444;
+                        const lng = state.lng ? parseFloat(state.lng) : 31.2357;
+
+                        registeredList.push({
+                            lessonId: lessonId,
+                            groupName: state.g_name || `مجموعة ${lessonId}`,
+                            teacherName: state.g_teacher || 'المعلم',
+                            age: teacherAge,
+                            count: state.g_count || '--',
+                            grade: (state.s_grade || '').trim(),
+                            stageKey: (state.s_stage || '').trim(),
+                            stageName: getStageNameByKey(state.s_stage),
+                            subject: subjectsText || '',
+                            subjectsRaw: state.selectedSubjects || [],
+                            days: daysText,
+                            startTime: startTime,
+                            endTime: endTime,
+                            locType: locLabel,
+                            address: fullAddress,
+                            phone: state.g_phone || '',
+                            gender: state.t_gender || 'مستر',
+                            allowedGender: state.g_gender || 'ولاد وبنات',
+                            lat: lat,
+                            lng: lng,
+                            ratingAvg: state.ratingAvg || 0,
+                            ratingCount: state.ratingCount || 0
+                        });
+                    });
+                } catch (err2) {
+                    console.error("❌ فشل الاستعلام الاحتياطي أيضاً:", err2);
+                }
+            }
+
             return { registeredList, hiddenCount };
         }
 
@@ -2867,7 +2768,9 @@
             if (stageKey === 'secondary') return 'المرحلة الثانوية';
             try {
                 const curr = getCurriculum();
-                if (curr[stageKey] && curr[stageKey].name) return curr[stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                if (curr[stageKey] && curr[stageKey].name) {
+                    return curr[stageKey].name.replace(/^[🎒📐🎓]\s*/, '');
+                }
             } catch (e) {}
             return stageKey;
         }
@@ -2887,7 +2790,9 @@
                     disableClusteringAtZoom: 18
                 }).addTo(map);
 
-                map.on('click', function() { closeTeacherInfoCard(); });
+                map.on('click', function() {
+                    closeTeacherInfoCard();
+                });
             }
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
         }
@@ -2989,17 +2894,13 @@
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
-                const r = parseInt(document.getElementById('search_radius').value);
-                renderRegisteredTeachersFromEnd(currentCenter, r);
-                scheduleRealtimeListenerUpdate(currentCenter, r);
+                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
             });
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
 
             const liveIndicator = document.getElementById('liveIndicator');
             if (liveIndicator) liveIndicator.classList.add('show');
-
-            scheduleRealtimeListenerUpdate(currentCenter, searchRadius);
 
             setTimeout(() => {
                 map.invalidateSize();
@@ -3010,9 +2911,6 @@
             }, 300);
         }
 
-        // ==========================================
-        // 6. نظام التقييمات
-        // ==========================================
         window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
             if (currentSelectedStars === 0) {
                 showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
@@ -3064,6 +2962,11 @@
                 };
 
                 await mod.setDoc(ref, payload);
+
+                if (cleanPhone && globalRatingCache[cleanPhone]) {
+                    delete globalRatingCache[cleanPhone];
+                }
+
                 showToast("شكراً لك! تم إرسال تقييمك ⭐");
                 vibrateSuccess();
 
@@ -3071,12 +2974,15 @@
                 if (commentEl) commentEl.value = '';
 
                 showTeacherInfoCard(lessonId);
+
             } catch (err) {
                 console.error("❌ خطأ في حفظ التقييم:", err);
+                
                 let errMsg = "حدث خطأ، حاول مرة أخرى!";
                 if (err.code === 'permission-denied' || String(err).includes('permissions')) {
                     errMsg = "صلاحيات الحفظ غير كافية! يرجى تعديل قواعد Firestore.";
                 }
+                
                 showToast(errMsg, true);
                 if (submitBtn) {
                     submitBtn.disabled = false;
@@ -3147,6 +3053,7 @@
             const now = new Date();
             const diffMs = now - d;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
             if (diffDays === 0) return 'اليوم';
             if (diffDays === 1) return 'أمس';
             if (diffDays < 7) return `منذ ${diffDays} أيام`;
@@ -3156,7 +3063,9 @@
         window.showTeacherInfoCard = async function(lessonId) {
             let targetTeacher = null;
             teachersLayer.eachLayer(layer => {
-                if (layer._teacherData && layer._teacherData.lessonId === lessonId) targetTeacher = layer._teacherData;
+                if (layer._teacherData && layer._teacherData.lessonId === lessonId) {
+                    targetTeacher = layer._teacherData;
+                }
             });
             if (!targetTeacher) return;
 
@@ -3176,17 +3085,24 @@
                 <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
                 <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
+                
+                <!-- ✅ العنوان التفصيلي -->
                 <div class="teacher-info-address">
                     <span class="addr-label">🏠 العنوان التفصيلي</span>
                     <span class="addr-value">${t.address || 'غير محدد'}</span>
                 </div>
+                
                 <div class="teacher-info-row" style="background:#ECFDF5; border:1px solid #A7F3D0;">
                     <span>📱 التليفون</span>
-                    ${t.phone ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:11px;" dir="ltr">📞 ${t.phone}</a>` : `<span style="color:#EF4444;">غير مسجل</span>`}
+                    ${t.phone 
+                        ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:11px;" dir="ltr">📞 ${t.phone}</a>` 
+                        : `<span style="color:#EF4444;">غير مسجل</span>`}
                 </div>
+                
                 <div id="ratingBlock_${lessonId}">
                     <div class="reviews-empty">⏳ جاري تحميل التقييمات...</div>
                 </div>
+
                 <div class="teacher-info-actions">
                     <button class="teacher-info-btn-save" onclick="saveTeacher('${t.teacherName}', '${t.subject}', '${t.grade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')">⭐ حفظ</button>
                     <button class="teacher-info-btn-wa" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${t.subject}', '${t.grade}', '${t.groupName}')">💬 واتساب</button>
@@ -3205,10 +3121,18 @@
             const ratingBlock = document.getElementById('ratingBlock_' + lessonId);
             if (!ratingBlock) return;
 
-            const starsDisplay = ratings.count > 0 ? renderStarsDisplay(ratings.avg) : '☆☆☆☆☆';
+            const starsDisplay = ratings.count > 0
+                ? renderStarsDisplay(ratings.avg)
+                : '☆☆☆☆☆';
 
             const isTopRated = ratings.count >= 3 && ratings.avg >= 4.5;
-            const topBadge = isTopRated ? `<div style="text-align:center; margin-bottom:3px;"><span style="background:linear-gradient(135deg,#FBBF24,#F59E0B); color:#fff; padding:1px 8px; border-radius:99px; font-size:9px; font-weight:900; box-shadow:0 2px 4px rgba(251,191,36,0.4); display:inline-flex; align-items:center; gap:4px;">🏆 معلم مميز</span></div>` : '';
+            const topBadge = isTopRated ? `
+                <div style="text-align:center; margin-bottom:3px;">
+                    <span style="background:linear-gradient(135deg,#FBBF24,#F59E0B); color:#fff; padding:1px 8px; border-radius:99px; font-size:9px; font-weight:900; box-shadow:0 2px 4px rgba(251,191,36,0.4); display:inline-flex; align-items:center; gap:4px;">
+                        🏆 معلم مميز
+                    </span>
+                </div>
+            ` : '';
 
             let distributionBars = '';
             if (ratings.count > 0) {
@@ -3246,7 +3170,12 @@
                     </div>
                 `).join('');
             } else {
-                reviewsHtml = `<div style="text-align:center; padding:4px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); border-radius:4px; border:1px dashed #FBBF24;"><div style="font-size:14px; margin-bottom:1px;">🌟</div><div style="font-size:9px; color:#92400E; font-weight:900;">كن أول من يقيّم!</div></div>`;
+                reviewsHtml = `
+                    <div style="text-align:center; padding:4px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); border-radius:4px; border:1px dashed #FBBF24;">
+                        <div style="font-size:14px; margin-bottom:1px;">🌟</div>
+                        <div style="font-size:9px; color:#92400E; font-weight:900;">كن أول من يقيّم!</div>
+                    </div>
+                `;
             }
 
             const ratingFormHtml = ratings.hasRated
@@ -3264,15 +3193,24 @@
             ratingBlock.innerHTML = `
                 <div class="teacher-rating-section">
                     ${topBadge}
+
                     <div style="display:flex; gap:6px; align-items:center; background:linear-gradient(135deg,#FFFBEB,#FEF3C7); padding:4px; border-radius:6px; margin-bottom:4px; border:1px solid #FDE68A;">
                         <div style="text-align:center; min-width:35px;">
-                            <div style="font-size:16px; font-weight:900; color:#B45309; line-height:1;">${ratings.count > 0 ? ratings.avg.toFixed(1) : '—'}</div>
+                            <div style="font-size:16px; font-weight:900; color:#B45309; line-height:1;">
+                                ${ratings.count > 0 ? ratings.avg.toFixed(1) : '—'}
+                            </div>
                             <div style="font-size:8px; color:#F59E0B; direction:ltr; margin-top:1px;">${starsDisplay}</div>
                         </div>
-                        <div style="flex:1;">${distributionBars || '<div style="font-size:8px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات</div>'}</div>
+                        <div style="flex:1;">
+                            ${distributionBars || '<div style="font-size:8px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات</div>'}
+                        </div>
                     </div>
+
                     ${ratingFormHtml}
-                    <div class="reviews-list">${reviewsHtml}</div>
+
+                    <div class="reviews-list">
+                        ${reviewsHtml}
+                    </div>
                 </div>
             `;
         };
@@ -3283,14 +3221,20 @@
 
         function normalizeArabicText(str) {
             if (!str) return '';
-            return String(str).replace(/\u0640/g, '').replace(/[\u064B-\u065F\u0670]/g, '')
-                .replace(/[إأآا]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه')
-                .replace(/\s+/g, ' ').trim();
+            return String(str)
+                .replace(/\u0640/g, '')
+                .replace(/[\u064B-\u065F\u0670]/g, '')
+                .replace(/[إأآا]/g, 'ا')
+                .replace(/ى/g, 'ي')
+                .replace(/ة/g, 'ه')
+                .replace(/\s+/g, ' ')
+                .trim();
         }
 
         function isTeacherSubjectMatches(teacher, selectedSubject, selectedGrade) {
             const selSubj = normalizeArabicText(selectedSubject);
             const selGrade = normalizeArabicText(selectedGrade);
+
             if (!selSubj) return true;
 
             if (Array.isArray(teacher.subjectsRaw) && teacher.subjectsRaw.length > 0) {
@@ -3300,17 +3244,27 @@
                         const full = normalizeArabicText(raw);
                         return full.includes(selSubj) && full.includes(selGrade);
                     }
+
                     const rawGrade = normalizeArabicText(parts[0]);
                     const rawSubj = normalizeArabicText(parts[1]);
+
                     const subjMatch = (rawSubj === selSubj) || rawSubj.includes(selSubj) || selSubj.includes(rawSubj);
                     const gradeMatch = (rawGrade === selGrade) || rawGrade.includes(selGrade) || selGrade.includes(rawGrade);
+
                     return subjMatch && gradeMatch;
                 });
             }
 
-            const teacherSubjs = String(teacher.subject || '').split(/[،,]/).map(s => normalizeArabicText(s)).filter(Boolean);
+            const teacherSubjs = String(teacher.subject || '')
+                .split(/[،,]/)
+                .map(s => normalizeArabicText(s))
+                .filter(Boolean);
+
             const teacherGradeNorm = normalizeArabicText(teacher.grade || '');
-            const gradeMatch = teacherGradeNorm === selGrade || teacherGradeNorm.includes(selGrade) || selGrade.includes(teacherGradeNorm);
+            const gradeMatch = teacherGradeNorm === selGrade 
+                || teacherGradeNorm.includes(selGrade) 
+                || selGrade.includes(teacherGradeNorm);
+
             return teacherSubjs.includes(selSubj) && gradeMatch;
         }
 
@@ -3325,8 +3279,10 @@
         function isTeacherLocationMatches(teacher, prefLocValue) {
             const studentLoc = getStudentPreferredLocLabel(prefLocValue);
             if (!studentLoc) return true;
+
             const teacherLoc = String(teacher.locType || '').trim();
             if (teacherLoc === studentLoc) return true;
+
             const normTeacher = normalizeArabicText(teacherLoc);
             const normStudent = normalizeArabicText(studentLoc);
             return normTeacher.includes(normStudent) || normStudent.includes(normTeacher);
@@ -3347,9 +3303,7 @@
             });
         };
 
-        // ==========================================
-        // 7. الدالة الرئيسية لرسم المعلمين — تستخدم Geo-Query
-        // ==========================================
+        // ✅ دالة عرض المعلمين — تعرض المعلمين داخل الدائرة فقط
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3357,7 +3311,7 @@
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
 
-            if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck || !centerPos) {
+            if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck) {
                 if (teachersLayer) teachersLayer.clearLayers();
                 const liveIndicator = document.getElementById('liveIndicator');
                 if (liveIndicator) liveIndicator.classList.remove('show');
@@ -3365,40 +3319,152 @@
                 return;
             }
 
-            const btn = document.getElementById('searchBtn');
-            const wasLoading = btn.classList.contains('loading');
-            if (!wasLoading) btn.classList.add('loading');
+            const selectedSubject = (document.getElementById('s_subject').value || '').trim();
+            const selectedGrade = (document.getElementById('s_grade').value || '').trim();
+            const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
+            let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
+            if (prefTeacher === 'أيهم') prefTeacher = 'مستر او مس';
+            const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
+            const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
-            try {
-                const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase(centerPos, radiusInMeters);
+            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
-                if (registeredList.length === 0) {
-                    teachersLayer.clearLayers();
-                    showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم في نطاق بحثك حالياً!", true);
-                    return;
+            teachersLayer.clearLayers();
+
+            if (registeredList.length === 0) {
+                showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم مسجل حالياً في النظام!", true);
+                return;
+            }
+
+            // فلترة المعلمين حسب التفضيلات والمواد
+            const matched = registeredList.filter(t => {
+                if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
+                if (!isTeacherGenderMatches(t.allowedGender, studentGender)) return false;
+
+                if (selectedStageKey) {
+                    const tStageKey = String(t.stageKey || '').trim();
+                    if (tStageKey && tStageKey !== selectedStageKey) {
+                        const tGrade = normalizeArabicText(t.grade || '');
+                        const sGrade = normalizeArabicText(selectedGrade);
+                        if (!(tGrade === sGrade || tGrade.includes(sGrade) || sGrade.includes(tGrade))) {
+                            return false;
+                        }
+                    }
                 }
 
-                const selectedSubject = (document.getElementById('s_subject').value || '').trim();
-                const selectedGrade = (document.getElementById('s_grade').value || '').trim();
-                const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
-                let prefTeacher = document.querySelector('input[name="pref_teacher"]:checked')?.value || 'مستر او مس';
-                const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
-                const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
+                if (prefLocValue && !isTeacherLocationMatches(t, prefLocValue)) {
+                    return false;
+                }
 
-                _renderFilteredTeachers(registeredList, centerPos, radiusInMeters, {
-                    selectedSubject, selectedGrade, selectedStageKey,
-                    prefTeacher, prefLocValue, studentGender
+                if (prefTeacher === 'مستر' && t.gender === 'مس') return false;
+                if (prefTeacher === 'مس' && t.gender !== 'مس') return false;
+
+                return true;
+            });
+
+            if (matched.length === 0) {
+                const noMatchMsg = prefLocValue
+                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
+                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
+                showToast(noMatchMsg, true);
+                return;
+            }
+
+            // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة قبل ما نكمل
+            const matchedInRadius = matched.filter(t => {
+                const d = map.distance(centerPos, [t.lat, t.lng]);
+                return d <= radiusInMeters;
+            });
+
+            // ✅ لو مفيش ولا معلم داخل الدائرة — رسالة واحدة بس
+            if (matchedInRadius.length === 0) {
+                showToast(
+                    `🔍 لا يوجد أي معلم داخل هذا النطاق لـ (${selectedSubject} - ${selectedGrade}) — وسّع النطاق أو حرّك النقطة الزرقاء!`,
+                    true
+                );
+                return;
+            }
+
+            // إضافة التقييمات للترتيب
+            matchedInRadius.forEach(t => {
+                t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
+            });
+
+            // ترتيب حسب التقييم
+            matchedInRadius.sort((a, b) => {
+                if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
+                if (b.ratingSummary.count === 0) return -1;
+                if (a.ratingSummary.count === 0) return 1;
+                return b.ratingSummary.avg - a.ratingSummary.avg;
+            });
+
+            let shownCount = 0;
+
+            // ✅ نضيف المعلمين اللي جوه الدائرة فقط
+            matchedInRadius.forEach(t => {
+                shownCount++;
+
+                const isMs = (t.gender === 'مس');
+                const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
+                const rating = t.ratingSummary;
+
+                let ratingBadgeHtml = '';
+                if (rating.count > 0) {
+                    const bgColor = rating.avg >= 4.5 ? 'linear-gradient(135deg,#FBBF24,#F59E0B)'
+                                  : rating.avg >= 3.5 ? 'linear-gradient(135deg,#10B981,#059669)'
+                                  : 'linear-gradient(135deg,#94A3B8,#64748B)';
+
+                    ratingBadgeHtml = `
+                        <div style="position:absolute; top:-9px; right:-10px; background:${bgColor}; color:#fff; border-radius:99px; padding:1.5px 6px; font-size:9px; font-weight:900; border:2px solid #fff; box-shadow:0 2px 6px rgba(0,0,0,0.25); z-index:10; white-space:nowrap; line-height:1.2;">
+                            ★ ${rating.avg.toFixed(1)}
+                        </div>
+                    `;
+
+                    if (rating.avg >= 4.5 && rating.count >= 3) {
+                        ratingBadgeHtml += `
+                            <div style="position:absolute; top:-14px; left:-10px; font-size:16px; filter:drop-shadow(0 2px 3px rgba(0,0,0,0.3)); z-index:11;">🏆</div>
+                        `;
+                    }
+                }
+
+                const iconHtml = `
+                    <div style="position:relative; width:36px; height:36px;">
+                        <div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>
+                        ${ratingBadgeHtml}
+                    </div>
+                `;
+
+                const customIcon = L.divIcon({
+                    className: 'custom-leaflet-marker',
+                    html: iconHtml,
+                    iconSize: [36, 36],
+                    iconAnchor: [18, 18],
+                    popupAnchor: [0, -16]
                 });
 
-                scheduleRealtimeListenerUpdate(centerPos, radiusInMeters);
-            } finally {
-                if (!wasLoading) btn.classList.remove('loading');
-            }
+                const marker = L.marker([t.lat, t.lng], {
+                    icon: customIcon,
+                    zIndexOffset: rating.avg >= 4.5 ? 500 : (rating.avg >= 3.5 ? 200 : 0)
+                });
+
+                marker._teacherData = t;
+
+                marker.on('click', function(e) {
+                    L.DomEvent.stopPropagation(e);
+                    showTeacherInfoCard(t.lessonId);
+                });
+
+                teachersLayer.addLayer(marker);
+            });
+
+            // ✅ رسالة واحدة للنجاح
+            vibrateSuccess();
+            showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})`);
         }
 
-        // ==========================================
-        // 8. الشكاوى
-        // ==========================================
+        // ══════════════════════════════════════════
+        // 📢 نظام الشكاوى والاقتراحات
+        // ══════════════════════════════════════════
         const COMPLAINT_EMAIL = 'mmoksh162@gmail.com';
 
         window.openComplaintModal = function() {
@@ -3435,7 +3501,23 @@
             const studentName = document.getElementById('st_name').value.trim() || 'طالب غير معروف';
 
             const subject = `[احجزلي - شكوى] ${type}${teacherName ? ' - ' + teacherName : ''}`;
-            const body = `📢 رسالة من منصة احجزلي\n\n━━━━━━━━━━━━━━━━━━━━\nنوع الرسالة: ${type}\nاسم المدرس: ${teacherName || 'غير محدد'}\nاسم الطالب: ${studentName}\nرقم التواصل: ${phone || 'غير مسجل'}\nالتاريخ: ${new Date().toLocaleString('ar-EG')}\n━━━━━━━━━━━━━━━━━━━━\n\nتفاصيل الرسالة:\n${details}\n\n━━━━━━━━━━━━━━━━━━━━\nتم الإرسال من: منصة احجزلي - صفحة الطالب\nالبريد الرسمي للإدارة: ${COMPLAINT_EMAIL}`;
+            const body =
+`📢 رسالة من منصة احجزلي
+
+━━━━━━━━━━━━━━━━━━━━
+نوع الرسالة: ${type}
+اسم المدرس: ${teacherName || 'غير محدد'}
+اسم الطالب: ${studentName}
+رقم التواصل: ${phone || 'غير مسجل'}
+التاريخ: ${new Date().toLocaleString('ar-EG')}
+━━━━━━━━━━━━━━━━━━━━
+
+تفاصيل الرسالة:
+${details}
+
+━━━━━━━━━━━━━━━━━━━━
+تم الإرسال من: منصة احجزلي - صفحة الطالب
+البريد الرسمي للإدارة: ${COMPLAINT_EMAIL}`;
 
             return { subject, body, details };
         }
@@ -3455,7 +3537,9 @@
 
             const mailtoLink = `mailto:${COMPLAINT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
-            if (navigator.clipboard) navigator.clipboard.writeText(`إلى: ${COMPLAINT_EMAIL}\n\nالموضوع: ${subject}\n\n${body}`).catch(() => {});
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(`إلى: ${COMPLAINT_EMAIL}\n\nالموضوع: ${subject}\n\n${body}`).catch(() => {});
+            }
 
             try {
                 const a = document.createElement('a');
@@ -3489,7 +3573,9 @@
                 navigator.clipboard.writeText(fullText).then(() => {
                     showToast("📋 تم نسخ الشكوى — الصقها في بريدك وأرسلها لـ mmoksh162@gmail.com");
                     vibrateSuccess();
-                }).catch(() => { showToast("⚠️ تعذر النسخ — استخدم متصفح أحدث", true); });
+                }).catch(() => {
+                    showToast("⚠️ تعذر النسخ — استخدم متصفح أحدث", true);
+                });
             } else {
                 showToast("⚠️ النسخ التلقائي غير مدعوم — استخدم خيار الإرسال", true);
             }
