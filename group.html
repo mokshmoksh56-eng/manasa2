@@ -12,9 +12,9 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-    
-    <!-- ✅ إضافة مكتبة Geofire للبحث الجغرافي السريع -->
-    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js"></script>
+
+    <!-- ✅ مكتبة Geofire لحساب الـ Geohash -->
+    <script src="https://unpkg.com/geofire-common@5.1.0/dist/geofire-common.umd.js"></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -1721,21 +1721,21 @@
                         }
                     } catch(e){}
 
+                    // ✅ التحقق من مكان الدرس - لو مش "فى السنتر" نخلي g_center فاضي
                     const selectedLocRadio = document.querySelector('input[name="g_loc"]:checked');
                     const locValue = selectedLocRadio ? selectedLocRadio.value : 'فى السنتر';
                     const centerValue = (locValue === 'فى السنتر') 
                         ? document.getElementById('g_center').value 
                         : '';
 
-                    // === 🎯 حساب الـ Geohash ===
-                    let finalLat = (mapInitialized && marker) ? marker.getLatLng().lat : savedLat;
-                    let finalLng = (mapInitialized && marker) ? marker.getLatLng().lng : savedLng;
-                    let computedGeohash = null;
+                    // ✅ حساب الإحداثيات والـ Geohash
+                    let lat = (mapInitialized && marker) ? marker.getLatLng().lat : savedLat;
+                    let lng = (mapInitialized && marker) ? marker.getLatLng().lng : savedLng;
+                    let geohash = '';
 
-                    if (finalLat !== null && finalLng !== null && !isNaN(finalLat) && !isNaN(finalLng)) {
-                        computedGeohash = geofirecommon.geohashForLocation([parseFloat(finalLat), parseFloat(finalLng)]);
+                    if (lat && lng && typeof geofire !== 'undefined') {
+                        geohash = geofire.geohashForLocation([lat, lng]);
                     }
-                    // =========================
 
                     const state = {
                         step: currentStepNumber,
@@ -1762,11 +1762,9 @@
                         selectedSubjects: selectedSubjects,
                         m_address: document.getElementById('m_address').value,
                         g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
-                        
-                        lat: finalLat,
-                        lng: finalLng,
-                        geohash: computedGeohash, // 🎯 الحقل الجغرافي
-                        
+                        lat: lat,
+                        lng: lng,
+                        geohash: geohash, // ✅ حفظ الـ Geohash
                         createdAt: new Date().toISOString().split('T')[0],
                         updatedAt: Date.now()
                     };
@@ -1777,7 +1775,7 @@
                     if(window.db && window.setDoc && window.doc) {
                         try {
                             await window.setDoc(window.doc(window.db, "lessons", currentLessonId), state);
-                            console.log("☁️ تم تحديث السحابة بنجاح");
+                            console.log("☁️ تم تحديث السحابة بنجاح مع Geohash");
                         } catch(e) {
                             console.error("خطأ في تحديث السحابة", e);
                         }
