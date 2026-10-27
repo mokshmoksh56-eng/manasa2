@@ -16,8 +16,8 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <!-- ✅ إضافة مكتبة Geofire للبحث الجغرافي السريع -->
-    <script src="https://unpkg.com/geofire-common@5.2.0/dist/geofire-common.min.js"></script>
+    <!-- ✅ مكتبة Geofire لحساب الـ Geohash -->
+    <script src="https://unpkg.com/geofire-common@5.1.0/dist/geofire-common.umd.js"></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -231,6 +231,11 @@
             background: white;
             border-radius: 50%;
             animation: livePulse 1.5s infinite;
+        }
+
+        @keyframes livePulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.5; transform: scale(1.3); }
         }
 
         .live-indicator.updating { background: #F59E0B; }
@@ -1021,9 +1026,9 @@
           getDoc,
           setDoc,
           limit,
-          orderBy, // ✅ إضافة orderBy
-          startAt, // ✅ إضافة startAt
-          endAt    // ✅ إضافة endAt
+          orderBy,
+          startAt,
+          endAt // ✅ استيراد الدوال الخاصة بالـ Geohash
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -1048,11 +1053,13 @@
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
       window.fsLimit = limit;
-      window.orderBy = orderBy; // ✅ تمرير
-      window.startAt = startAt; // ✅ تمرير
-      window.endAt = endAt;     // ✅ تمرير
+      
+      // ✅ تصدير دوال Geohash للـ window
+      window.fsOrderBy = orderBy;
+      window.fsStartAt = startAt;
+      window.fsEndAt = endAt;
 
-      console.log("✅ Firebase + Firestore جاهز في talep.html");
+      console.log("✅ Firebase + Firestore + Geohash جاهز في talep.html");
     </script>
 
     <script>
@@ -1069,12 +1076,8 @@
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
 
-        let teachersRealtimeUnsub = null;
-        let isFirstTeachersSnapshot = true;
-        let lastRenderCenter = null;
-        let lastRenderRadius = 3000;
-
-        // ✅ كاش المعلمين — يمنع القراءات المتكررة من Firestore
+        // ✅ متغيرات البحث بالـ Geohash
+        let activeTeacherListeners = [];
         let cachedTeachersList = [];
         let cachedTeachersHiddenCount = 0;
         let cachedTeachersStageKey = '__init__';
@@ -1084,8 +1087,7 @@
 
         // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
-        let lastRenderedTeachersHash = '';
-
+        
         // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
@@ -1346,9 +1348,9 @@
                     query: fs.query,
                     where: fs.where,
                     limit: fs.limit,
-                    orderBy: fs.orderBy, // ✅ إضافة
-                    startAt: fs.startAt, // ✅ إضافة
-                    endAt: fs.endAt      // ✅ إضافة
+                    orderBy: fs.orderBy,
+                    startAt: fs.startAt,
+                    endAt: fs.endAt
                 };
                 return firebaseSyncModule;
             } catch (err) {
@@ -1564,18 +1566,102 @@
             };
         }
 
-        async function startTeachersRealtimeListener() {
-            if (teachersRealtimeUnsub) {
-                try { teachersRealtimeUnsub(); } catch(e) {}
-                teachersRealtimeUnsub = null;
-            }
+        // ✅ إيقاف كل مستمعي البحث القديمين
+        function stopTeacherListeners() {
+            activeTeacherListeners.forEach(unsub => {
+                try { unsub(); } catch(e){}
+            });
+            activeTeacherListeners = [];
+        }
+
+        // ✅ المزامنة اللحظية بالـ Geohash
+        async function startTeachersRealtimeListener(center, radius) {
+            stopTeacherListeners();
+            
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
+
+            if (!stage || !grade || !center || !map) {
+                cachedTeachersList = [];
+                cacheReady = false;
+                if (teachersLayer) teachersLayer.clearLayers();
+                return;
+            }
+
+            const mod = await loadFirebaseModule();
+            if (!mod) return;
+
+            console.log(`🔴 بدء البحث بالـ Geohash للمعلمين القريبين (النطاق: ${radius}م)...`);
+
+            const bounds = geofire.geohashQueryBounds(center, radius);
+            const teachersMap = new Map();
+
             cachedTeachersList = [];
             cachedTeachersHiddenCount = 0;
             cachedTeachersStageKey = stage;
             cachedTeachersGrade = grade;
-            cacheReady = false;
+
+            bounds.forEach(b => {
+                const q = mod.query(
+                    mod.collection(mod.db, "lessons"),
+                    mod.where("g_publish_map", "==", true),
+                    mod.where("s_stage", "==", stage),
+                    mod.where("s_grade", "==", grade),
+                    mod.orderBy("geohash"),
+                    mod.startAt(b[0]),
+                    mod.endAt(b[1])
+                );
+
+                const unsub = mod.onSnapshot(q, (snapshot) => {
+                    snapshot.docChanges().forEach(change => {
+                        const docSnap = change.doc;
+                        const state = docSnap.data();
+                        
+                        if (change.type === "removed") {
+                            teachersMap.delete(docSnap.id);
+                            return;
+                        }
+
+                        if (state.g_publish_map === false) {
+                            teachersMap.delete(docSnap.id);
+                            return;
+                        }
+
+                        const t = parseTeacherDoc(docSnap);
+                        
+                        // فلترة دقيقة للتأكد أن المعلم داخل الدائرة بالفعل
+                        const distance = map.distance(center, [t.lat, t.lng]);
+                        if (distance <= radius) {
+                            teachersMap.set(docSnap.id, t);
+                        } else {
+                            teachersMap.delete(docSnap.id);
+                        }
+                    });
+
+                    cachedTeachersList = Array.from(teachersMap.values());
+                    cacheReady = true;
+
+                    const liveIndicator = document.getElementById('liveIndicator');
+                    if (liveIndicator) {
+                        liveIndicator.classList.add('show');
+                        liveIndicator.classList.add('updating');
+                        const textEl = liveIndicator.querySelector('span:last-child');
+                        if (textEl) textEl.textContent = 'جاري التحديث...';
+                        
+                        setTimeout(() => {
+                            liveIndicator.classList.remove('updating');
+                            if (textEl) textEl.textContent = 'مباشر';
+                        }, 1000);
+                    }
+
+                    renderRegisteredTeachersFromEnd(center, radius);
+
+                }, (err) => {
+                    console.warn("⚠️ geohash snapshot error:", err);
+                });
+                
+                activeTeacherListeners.push(unsub);
+            });
         }
 
         function toggleMapFullscreen() {
@@ -1947,8 +2033,6 @@
                 sSelect.disabled = true;
             }
             
-            startTeachersRealtimeListener();
-
             renderStudentGradeSubjectsBar();
             updateStudentSummary();
             updateSearchBtnHint();
@@ -2155,8 +2239,8 @@
                 return;
             }
             if (currentCenter && searchCircle) {
-                lastRenderRadius = parseInt(document.getElementById('search_radius').value);
-                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius);
+                const newRadius = parseInt(document.getElementById('search_radius').value);
+                startTeachersRealtimeListener(currentCenter, newRadius); // ✅ استخدام Geohash
                 map.fitBounds(searchCircle.getBounds(), { padding: [20, 20], maxZoom: 16 });
             }
         }
@@ -2199,7 +2283,7 @@
             localStorage.setItem('talep_data', JSON.stringify(studentData));
             updateStudentSummary();
             updateSearchBtnHint();
-            // ❌ تم إيقاف الحفظ التلقائي في الفايربيز هنا لتقليل التكلفة
+            saveTalepToFirebase(false);
         }
 
         function loadStudentData() {
@@ -2375,7 +2459,6 @@
 
             startCurriculumRealtimeListener();
             startTalepRealtimeListener();
-            startTeachersRealtimeListener();
         };
 
         function triggerLocationFlow() {
@@ -2598,19 +2681,27 @@
             closeDeleteModal();
         }
 
-        // ✅ قراءة من الكاش — القراءة الاحتياطية (تعدلت لتعمل ببحث جغرافي)
+        // ✅ قراءة من الكاش — القراءة الاحتياطية فقط لو الكاش لسه ما امتلأش
         async function getRegisteredTeachersFromFirebase() {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
 
-            if (cacheReady && cachedTeachersStageKey === currentStage && cachedTeachersGrade === currentGrade) {
-                return { registeredList: cachedTeachersList, hiddenCount: cachedTeachersHiddenCount };
+            if (cacheReady
+                && cachedTeachersStageKey === currentStage
+                && cachedTeachersGrade === currentGrade) {
+                return {
+                    registeredList: cachedTeachersList,
+                    hiddenCount: cachedTeachersHiddenCount
+                };
             }
+
+            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
 
             const registeredList = [];
             let hiddenCount = 0;
 
-            if (!window.db || !currentStage || !currentGrade || !currentCenter) {
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
                 return { registeredList, hiddenCount };
             }
 
@@ -2618,54 +2709,20 @@
                 const mod = await loadFirebaseModule();
                 if (!mod) return { registeredList, hiddenCount };
 
-                const radiusInM = parseInt(document.getElementById('search_radius').value);
-                const center = [currentCenter[0], currentCenter[1]];
-                
-                // 🎯 حساب المربعات الجغرافية التي تغطي الدائرة المحددة
-                const bounds = geofire.geohashQueryBounds(center, radiusInM);
-                const promises = [];
+                const constraints = [mod.where("g_publish_map", "==", true)];
+                if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
+                if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
 
-                // 🎯 تنفيذ استعلامات تتطابق مع الـ Index الذي أنشأته
-                for (const b of bounds) {
-                    const q = mod.query(
-                        mod.collection(mod.db, "lessons"),
-                        mod.where("g_publish_map", "==", true),
-                        mod.where("s_stage", "==", currentStage),
-                        mod.where("s_grade", "==", currentGrade),
-                        mod.orderBy("geohash"),
-                        mod.startAt(b[0]),
-                        mod.endAt(b[1])
-                    );
-                    promises.push(mod.getDocs(q));
-                }
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const snap = await mod.getDocs(q);
 
-                const snapshots = await Promise.all(promises);
-                
-                snapshots.forEach((snap) => {
-                    snap.forEach(docSnap => {
-                        const state = docSnap.data();
-                        if (state.g_publish_map === false) { hiddenCount++; return; }
-                        
-                        // 🎯 فلترة نهائية لضمان أن المعلم داخل الدائرة بالمللي متر
-                        const distanceInKm = geofire.distanceBetween([state.lat, state.lng], center);
-                        const distanceInM = distanceInKm * 1000;
-                        
-                        if (distanceInM <= radiusInM) {
-                            if (!registeredList.some(t => t.lessonId === docSnap.id)) {
-                                registeredList.push(parseTeacherDoc(docSnap));
-                            }
-                        }
-                    });
+                snap.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) { hiddenCount++; return; }
+                    registeredList.push(parseTeacherDoc(docSnap));
                 });
-
-                cachedTeachersList = registeredList;
-                cachedTeachersStageKey = currentStage;
-                cachedTeachersGrade = currentGrade;
-                cachedTeachersHiddenCount = hiddenCount;
-                cacheReady = true;
-
             } catch (err) {
-                console.error("❌ فشل تحميل المعلمين:", err);
+                console.error("❌ فشل القراءة الاحتياطية:", err);
             }
 
             return { registeredList, hiddenCount };
@@ -2802,18 +2859,20 @@
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
 
-            // ✅ Debounce: انتظر 250ms قبل الرسم عشان مايتكررش مع كل حركة سريعة
+            // ✅ عند تحريك الموقع، نعيد البحث باستخدام Geohash
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
 
                 if (teacherRenderTimer) clearTimeout(teacherRenderTimer);
                 teacherRenderTimer = setTimeout(() => {
-                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                    const currentRadius = parseInt(document.getElementById('search_radius').value);
+                    startTeachersRealtimeListener(currentCenter, currentRadius); // ✅ استخدام Geohash
                 }, 250);
             });
 
-            renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
+            // ✅ بدء المزامنة عند فتح الخريطة
+            startTeachersRealtimeListener(currentCenter, searchRadius);
 
             const liveIndicator = document.getElementById('liveIndicator');
             if (liveIndicator) liveIndicator.classList.add('show');
