@@ -11,7 +11,6 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     
-    <!-- ✅ مكتبة تجميع الدبابيس (MarkerCluster) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
@@ -182,7 +181,6 @@
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: visible; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; border-radius: 12px; }
 
-        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
         .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
         .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
@@ -198,7 +196,6 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
-        /* ✅ مؤشر المزامنة اللحظية */
         .live-indicator {
             position: absolute;
             top: 10px;
@@ -250,7 +247,6 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -353,7 +349,6 @@
             margin-top: 4px; font-weight: 800;
         }
 
-        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
             display: none;
             position: absolute;
@@ -396,7 +391,6 @@
             max-height: 50vh;
         }
 
-        /* ✅ كارت بيانات المعلم العائم فوق الخريطة والجداول (مضغوط للموبايل) */
         .teacher-info-card {
             display: none;
             position: absolute;
@@ -472,7 +466,6 @@
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
-        /* ✅ العنوان التفصيلي في كارت المعلم */
         .teacher-info-address {
             display: flex;
             flex-direction: column;
@@ -518,7 +511,6 @@
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 2.5px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل) */
         .teacher-rating-section {
             margin-top: 6px;
             padding: 6px;
@@ -651,6 +643,33 @@
             margin-top: 3px;
         }
 
+        /* ✅ نظام الشكاوى — زر عائم */
+        .complaint-float-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            color: white;
+            border: 2.5px solid #fff;
+            border-bottom: 4px solid #B45309;
+            box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99998;
+            transition: all 0.2s;
+            animation: complaintPulse 2.5s infinite;
+        }
+        .complaint-float-btn:active { transform: translateY(2px) scale(0.95); border-bottom-width: 2px; }
+        @keyframes complaintPulse {
+            0%, 100% { box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4); }
+            50% { box-shadow: 0 6px 30px rgba(245, 158, 11, 0.7); }
+        }
+
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
             .hero-brand { font-size: 20px; }
@@ -725,6 +744,47 @@
                 تم تسجيل الدخول من جهاز آخر بنفس الحساب.<br>
                 جاري توجيهك لصفحة الدخول...
             </p>
+        </div>
+    </div>
+
+    <!-- ✅ Modal الشكاوى -->
+    <div id="complaintModal" class="custom-modal-overlay">
+        <div class="custom-modal-box" style="border-bottom-color: #F59E0B; max-width: 380px;">
+            <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">📩</div>
+            <div class="custom-modal-title" style="text-align: center;">تقديم شكوى أو اقتراح</div>
+            <p style="font-size: 12px; color: #475569; margin-bottom: 12px; font-weight: 800; text-align: center; line-height: 1.6;">
+                اكتب رسالتك وهنفتحلك تطبيق الإيميل عشان تبعتها 📧
+            </p>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label style="font-size: 11px;">اسمك</label>
+                <input type="text" id="complaintName" class="form-control" placeholder="اسمك الكامل..." style="font-size: 12px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label style="font-size: 11px;">📱 رقم الهاتف (اختياري)</label>
+                <input type="tel" id="complaintPhone" class="form-control" placeholder="010XXXXXXXX" style="font-size: 12px;">
+            </div>
+
+            <div class="form-group" style="margin-bottom: 8px;">
+                <label style="font-size: 11px;">نوع الرسالة</label>
+                <select id="complaintType" class="form-control" style="font-size: 12px; height: 34px;">
+                    <option value="شكوى">⚠️ شكوى</option>
+                    <option value="اقتراح">💡 اقتراح</option>
+                    <option value="استفسار">❓ استفسار</option>
+                    <option value="مشكلة تقنية">🔧 مشكلة تقنية</option>
+                </select>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 12px;">
+                <label style="font-size: 11px;">تفاصيل الرسالة</label>
+                <textarea id="complaintMessage" class="form-control" placeholder="اكتب التفاصيل هنا..." rows="4" style="font-size: 12px; resize: none; min-height: 80px;"></textarea>
+            </div>
+
+            <div class="custom-modal-buttons">
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="closeComplaintModal()">إلغاء</button>
+                <button class="custom-btn clickable-element" style="background: #F59E0B; border-bottom: 2.5px solid #B45309;" onclick="sendComplaint()">فتح الإيميل 📧</button>
+            </div>
         </div>
     </div>
 
@@ -882,7 +942,6 @@
 
                     <div id="map"></div>
 
-                    <!-- ✅ كارت بيانات المعلم العائم فوق الخريطة -->
                     <div id="teacherInfoCard" class="teacher-info-card">
                         <button class="teacher-info-close" onclick="closeTeacherInfoCard()">✕</button>
                         <div id="teacherInfoCardBody"></div>
@@ -921,6 +980,13 @@
             
         </div>
     </div>
+
+    <!-- ✅ زر الشكاوى العائم -->
+    <button id="complaintFloatBtn" class="complaint-float-btn" onclick="openComplaintModal()" title="تقديم شكوى">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 24px; height: 24px;">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+        </svg>
+    </button>
 
     <script type="module">
       import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
@@ -982,16 +1048,13 @@
 
         let globalTeacherAgeCache = {};
 
-        // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
 
-        // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
 
-        // ✅ جـديـد: كاش التقييمات لتسريع الأداء
-        let globalRatingCache = {}; // { phone: { avg, count, sum, lastFetch } }
+        let globalRatingCache = {};
 
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
@@ -1730,7 +1793,7 @@
             const copy = JSON.parse(JSON.stringify(defaultCurriculum));
             localStorage.setItem('app_curriculum', JSON.stringify(copy));
             curriculumCache = copy;
-            return copy;
+            return curriculumCache;
         }
 
         function getSortedStages() {
@@ -1827,7 +1890,6 @@
             } else {
                 gSelect.disabled = true;
                 renderStudentGradeSubjectsBar();
-                // ✅ امسح المعلمين من الخريطة لو المرحلة اتغيرت لاختيار فاضي
                 if (teachersLayer) teachersLayer.clearLayers();
                 closeTeacherInfoCard();
             }
@@ -1861,7 +1923,6 @@
             updateStudentSummary();
             updateSearchBtnHint();
 
-            // ✅ لو الصف أو المادة اتغيروا لاختيار فاضي — امسح المعلمين من الخريطة
             const finalGrade = document.getElementById('s_grade').value;
             const finalSubj = document.getElementById('s_subject').value;
             if ((!finalGrade || !finalSubj) && teachersLayer) {
@@ -1876,7 +1937,6 @@
             updateStudentSummary();
             updateSearchBtnHint();
 
-            // ✅ لو المادة اتغيرت لاختيار فاضي — امسح المعلمين
             const curSubj = document.getElementById('s_subject').value;
             if (!curSubj && teachersLayer) {
                 teachersLayer.clearLayers();
@@ -2056,7 +2116,6 @@
         }
 
         function onRadiusChangeEnd() {
-            // ✅ لو الصف أو المادة مش مختارين — امسح المعلمين
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
             if (!gradeCheck || !subjectCheck) {
@@ -2850,9 +2909,6 @@
             }, 300);
         }
 
-        // ⭐ ==========================================
-        // ⭐ نظام تقييمات المعلمين
-        // ⭐ ==========================================
         window.selectStar = function(stars) {
             currentSelectedStars = stars;
             document.querySelectorAll('.star-btn').forEach((btn, idx) => {
@@ -2860,7 +2916,6 @@
             });
         };
 
-        // ✅ دالة تحميل ملخصات التقييمات دفعة واحدة
         async function batchLoadRatingSummaries(phones, forceRefresh = false) {
             const mod = await loadFirebaseModule();
             if (!mod) return {};
@@ -2909,7 +2964,6 @@
             return result;
         }
 
-        // ✅ حفظ التقييم مع معالجة الأخطاء وتنظيف البيانات
         window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
             if (currentSelectedStars === 0) {
                 showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
@@ -2932,7 +2986,6 @@
                 const studentId = getStudentId();
                 const studentName = document.getElementById('st_name').value.trim() || 'طالب';
                 
-                // تنظيف البيانات عشان نمنع أي أخطاء
                 const cleanPhone = String(teacherPhone || '').replace(/\D/g, '');
                 const safeLessonId = String(lessonId).replace(/[\/\s]+/g, '_');
                 const safeTeacherName = String(teacherName || 'معلم').replace(/undefined/g, 'معلم');
@@ -3060,7 +3113,6 @@
             return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
         }
 
-        // ✅ عرض كارت بيانات المعلم مع التقييمات (مضغوط جداً للموبايل)
         window.showTeacherInfoCard = async function(lessonId) {
             let targetTeacher = null;
             teachersLayer.eachLayer(layer => {
@@ -3087,7 +3139,6 @@
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
                 <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
                 
-                <!-- ✅ العنوان التفصيلي -->
                 <div class="teacher-info-address">
                     <span class="addr-label">🏠 العنوان التفصيلي</span>
                     <span class="addr-value">${t.address || 'غير محدد'}</span>
@@ -3154,7 +3205,6 @@
 
             let reviewsHtml = '';
             if (ratings.reviews.length > 0) {
-                // عرض 3 تقييمات فقط لتوفير المساحة
                 reviewsHtml = ratings.reviews.slice(0, 3).map((r, i) => `
                     <div class="review-item" style="${i === 0 ? 'border-color:#FCD34D; background:#FFFBEB;' : ''}">
                         <div class="review-item-header">
@@ -3295,7 +3345,6 @@
             return false;
         }
 
-        // ✅ تم التعديل: منع عرض المعلمين لو الصف أو المادة مش مختارين
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3303,7 +3352,6 @@
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
 
-            // 🚫 شرط جديد: لو المرحلة أو الصف أو المادة مش مختارين — امسح المعلمين واخرج
             if (!stageCheck || !gradeCheck || !subjectCheck) {
                 if (teachersLayer) teachersLayer.clearLayers();
                 const liveIndicator = document.getElementById('liveIndicator');
@@ -3464,6 +3512,74 @@
                 showToast(`تم العثور على (${shownCount}) مدرس مطابق لـ (${selectedSubject} - ${selectedGrade}) ✨`);
             }
         }
+
+        // ==========================================
+        // ✅ نظام الشكاوى عبر الإيميل (mailto)
+        // ==========================================
+        const COMPLAINT_EMAIL = 'mmoksh162@gmail.com';
+
+        window.openComplaintModal = function() {
+            const stName = document.getElementById('st_name')?.value?.trim();
+            const stPhone = document.getElementById('st_phone')?.value?.trim();
+            if (stName) document.getElementById('complaintName').value = stName;
+            if (stPhone) document.getElementById('complaintPhone').value = stPhone;
+
+            document.getElementById('complaintModal').classList.add('active');
+        };
+
+        window.closeComplaintModal = function() {
+            document.getElementById('complaintModal').classList.remove('active');
+        };
+
+        window.sendComplaint = function() {
+            const name    = document.getElementById('complaintName').value.trim();
+            const phone   = document.getElementById('complaintPhone').value.trim();
+            const type    = document.getElementById('complaintType').value;
+            const message = document.getElementById('complaintMessage').value.trim();
+
+            if (!name) {
+                showToast("⚠️ اكتب اسمك أولاً!", true);
+                highlightMissingField('complaintName', true);
+                return;
+            }
+            if (!message || message.length < 10) {
+                showToast("⚠️ اكتب تفاصيل الرسالة (10 حروف على الأقل)!", true);
+                highlightMissingField('complaintMessage', true);
+                return;
+            }
+            if (phone && !/^01[0-9]{9}$/.test(phone)) {
+                showToast("⚠️ رقم الهاتف غير صحيح!", true);
+                highlightMissingField('complaintPhone', true);
+                return;
+            }
+
+            const emailSubject = `[منصة احجزلي] ${type} من ${name}`;
+            const emailBody =
+                `السلام عليكم،\n\n` +
+                `نوع الرسالة: ${type}\n` +
+                `الاسم: ${name}\n` +
+                `الهاتف: ${phone || 'غير مسجل'}\n` +
+                `التاريخ: ${new Date().toLocaleString('ar-EG')}\n\n` +
+                `التفاصيل:\n${message}\n\n` +
+                `---\n` +
+                `تم الإرسال من صفحة تسجيل الطالب - منصة احجزلي`;
+
+            const mailtoUrl = `mailto:${COMPLAINT_EMAIL}?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+
+            try {
+                window.location.href = mailtoUrl;
+                vibrateSuccess();
+                showToast("📧 جاري فتح تطبيق الإيميل... ابعتها وهنرد عليك 💌");
+                setTimeout(() => closeComplaintModal(), 800);
+            } catch (e) {
+                console.error(e);
+                navigator.clipboard.writeText(COMPLAINT_EMAIL).then(() => {
+                    showToast(`📋 اتنسخ الإيميل: ${COMPLAINT_EMAIL} — ابعتهلنا يدوياً`, true);
+                }).catch(() => {
+                    showToast(`⚠️ ابعتهلنا على: ${COMPLAINT_EMAIL}`, true);
+                });
+            }
+        };
     </script>
 </body>
 </html>
