@@ -651,103 +651,6 @@
             margin-top: 3px;
         }
 
-        /* ✅ ستايل العد التنازلي */
-        .countdown-wrapper {
-            display: none;
-            margin-top: 15px;
-            animation: fadeInDown 0.3s ease-out;
-        }
-        .countdown-wrapper.show { display: block; }
-
-        @keyframes fadeInDown {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .countdown-box {
-            text-align: center;
-            background: linear-gradient(135deg, #10B981, #059669);
-            color: white;
-            padding: 15px;
-            border-radius: 12px;
-            border-bottom: 4px solid #064E3B;
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .countdown-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 60%);
-            animation: rotateGlow 4s linear infinite;
-            pointer-events: none;
-        }
-
-        @keyframes rotateGlow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        .countdown-title {
-            font-size: 14px;
-            font-weight: 900;
-            margin-bottom: 8px;
-            position: relative;
-            z-index: 1;
-        }
-
-        .countdown-number {
-            font-size: 42px;
-            font-weight: 900;
-            line-height: 1;
-            text-shadow: 0 3px 6px rgba(0,0,0,0.2);
-            position: relative;
-            z-index: 1;
-            transition: transform 0.3s ease;
-        }
-
-        .countdown-number.pulse {
-            animation: numberPulse 1s ease;
-        }
-
-        @keyframes numberPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.2); color: #FEF08A; }
-            100% { transform: scale(1); }
-        }
-
-        .countdown-unit {
-            font-size: 11px;
-            font-weight: 800;
-            margin-top: 5px;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-        }
-
-        .countdown-progress-track {
-            width: 100%;
-            height: 6px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 99px;
-            margin-top: 10px;
-            overflow: hidden;
-            position: relative;
-            z-index: 1;
-        }
-
-        .countdown-progress-bar {
-            height: 100%;
-            width: 100%;
-            background: white;
-            border-radius: 99px;
-        }
-
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
             .hero-brand { font-size: 20px; }
@@ -760,7 +663,6 @@
             .btn-search { padding: 10px; font-size: 13px; }
             #map { height: 260px; }
             .teacher-info-card { max-height: 70vh; padding: 8px; }
-            .countdown-number { font-size: 36px; }
         }
     </style>
 </head>
@@ -936,18 +838,6 @@
                 <span id="searchBtnText">تحديد الموقع والبحث بالـ GPS</span>
             </button>
 
-            <!-- ✅ العد التنازلي للبحث -->
-            <div id="searchCountdown" class="countdown-wrapper">
-                <div class="countdown-box">
-                    <div class="countdown-title">🔍 جاري البحث عن المعلمين...</div>
-                    <div id="countdownNumber" class="countdown-number">5</div>
-                    <div class="countdown-unit">ثانية</div>
-                    <div class="countdown-progress-track">
-                        <div id="countdownProgress" class="countdown-progress-bar"></div>
-                    </div>
-                </div>
-            </div>
-
             <div class="radius-card-below-search">
                 <div class="radius-label-row">
                     <span>🎯 نطاق البحث:</span>
@@ -1102,11 +992,6 @@
 
         // ✅ جـديـد: كاش التقييمات لتسريع الأداء
         let globalRatingCache = {}; // { phone: { avg, count, sum, lastFetch } }
-
-        // ⏱️ متغيرات العد التنازلي
-        let countdownInterval = null;
-        let countdownTimeout = null;
-        let countdownActive = false;
 
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
@@ -1942,6 +1827,7 @@
             } else {
                 gSelect.disabled = true;
                 renderStudentGradeSubjectsBar();
+                // ✅ امسح المعلمين من الخريطة لو المرحلة اتغيرت لاختيار فاضي
                 if (teachersLayer) teachersLayer.clearLayers();
                 closeTeacherInfoCard();
             }
@@ -1975,6 +1861,7 @@
             updateStudentSummary();
             updateSearchBtnHint();
 
+            // ✅ لو الصف أو المادة اتغيروا لاختيار فاضي — امسح المعلمين من الخريطة
             const finalGrade = document.getElementById('s_grade').value;
             const finalSubj = document.getElementById('s_subject').value;
             if ((!finalGrade || !finalSubj) && teachersLayer) {
@@ -1989,6 +1876,7 @@
             updateStudentSummary();
             updateSearchBtnHint();
 
+            // ✅ لو المادة اتغيرت لاختيار فاضي — امسح المعلمين
             const curSubj = document.getElementById('s_subject').value;
             if (!curSubj && teachersLayer) {
                 teachersLayer.clearLayers();
@@ -2168,6 +2056,7 @@
         }
 
         function onRadiusChangeEnd() {
+            // ✅ لو الصف أو المادة مش مختارين — امسح المعلمين
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
             if (!gradeCheck || !subjectCheck) {
@@ -2961,56 +2850,6 @@
             }, 300);
         }
 
-        // ==========================================
-        // ⏱️ دالة العد التنازلي للبحث
-        // ==========================================
-        function startSearchCountdown(seconds, onComplete) {
-            if (countdownInterval) clearInterval(countdownInterval);
-            if (countdownTimeout) clearTimeout(countdownTimeout);
-
-            const wrapper = document.getElementById('searchCountdown');
-            const numberEl = document.getElementById('countdownNumber');
-            const progressEl = document.getElementById('countdownProgress');
-
-            if (!wrapper || !numberEl || !progressEl) {
-                if (onComplete) onComplete();
-                return;
-            }
-
-            wrapper.classList.add('show');
-            countdownActive = true;
-
-            let remaining = seconds;
-            numberEl.textContent = remaining;
-            numberEl.classList.remove('pulse');
-
-            progressEl.style.transition = 'none';
-            progressEl.style.width = '100%';
-            void progressEl.offsetWidth;
-            progressEl.style.transition = `width ${seconds}s linear`;
-            progressEl.style.width = '0%';
-
-            countdownInterval = setInterval(() => {
-                remaining--;
-                if (remaining >= 0) {
-                    numberEl.textContent = remaining;
-                    numberEl.classList.remove('pulse');
-                    void numberEl.offsetWidth;
-                    numberEl.classList.add('pulse');
-                }
-            }, 1000);
-
-            countdownTimeout = setTimeout(() => {
-                clearInterval(countdownInterval);
-                countdownInterval = null;
-                wrapper.classList.remove('show');
-                countdownActive = false;
-                progressEl.style.transition = 'none';
-                progressEl.style.width = '100%';
-                if (onComplete) onComplete();
-            }, seconds * 1000);
-        }
-
         // ⭐ ==========================================
         // ⭐ نظام تقييمات المعلمين
         // ⭐ ==========================================
@@ -3021,6 +2860,7 @@
             });
         };
 
+        // ✅ دالة تحميل ملخصات التقييمات دفعة واحدة
         async function batchLoadRatingSummaries(phones, forceRefresh = false) {
             const mod = await loadFirebaseModule();
             if (!mod) return {};
@@ -3069,6 +2909,7 @@
             return result;
         }
 
+        // ✅ حفظ التقييم مع معالجة الأخطاء وتنظيف البيانات
         window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
             if (currentSelectedStars === 0) {
                 showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
@@ -3091,6 +2932,7 @@
                 const studentId = getStudentId();
                 const studentName = document.getElementById('st_name').value.trim() || 'طالب';
                 
+                // تنظيف البيانات عشان نمنع أي أخطاء
                 const cleanPhone = String(teacherPhone || '').replace(/\D/g, '');
                 const safeLessonId = String(lessonId).replace(/[\/\s]+/g, '_');
                 const safeTeacherName = String(teacherName || 'معلم').replace(/undefined/g, 'معلم');
@@ -3218,6 +3060,7 @@
             return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
         }
 
+        // ✅ عرض كارت بيانات المعلم مع التقييمات (مضغوط جداً للموبايل)
         window.showTeacherInfoCard = async function(lessonId) {
             let targetTeacher = null;
             teachersLayer.eachLayer(layer => {
@@ -3244,6 +3087,7 @@
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
                 <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
                 
+                <!-- ✅ العنوان التفصيلي -->
                 <div class="teacher-info-address">
                     <span class="addr-label">🏠 العنوان التفصيلي</span>
                     <span class="addr-value">${t.address || 'غير محدد'}</span>
@@ -3310,6 +3154,7 @@
 
             let reviewsHtml = '';
             if (ratings.reviews.length > 0) {
+                // عرض 3 تقييمات فقط لتوفير المساحة
                 reviewsHtml = ratings.reviews.slice(0, 3).map((r, i) => `
                     <div class="review-item" style="${i === 0 ? 'border-color:#FCD34D; background:#FFFBEB;' : ''}">
                         <div class="review-item-header">
@@ -3450,7 +3295,7 @@
             return false;
         }
 
-        // ✅ دالة البحث مع العد التنازلي
+        // ✅ تم التعديل: منع عرض المعلمين لو الصف أو المادة مش مختارين
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3458,6 +3303,7 @@
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
 
+            // 🚫 شرط جديد: لو المرحلة أو الصف أو المادة مش مختارين — امسح المعلمين واخرج
             if (!stageCheck || !gradeCheck || !subjectCheck) {
                 if (teachersLayer) teachersLayer.clearLayers();
                 const liveIndicator = document.getElementById('liveIndicator');
@@ -3481,19 +3327,7 @@
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
-            // ✅ تشغيل العد التنازلي + جلب البيانات بالتوازي
-            const countdownPromise = new Promise(resolve => {
-                startSearchCountdown(5, resolve);
-            });
-
-            const fetchPromise = getRegisteredTeachersFromFirebase().catch(err => {
-                console.warn("⚠️ فشل جلب المعلمين:", err);
-                return { registeredList: [], hiddenCount: 0 };
-            });
-
-            // الانتظار لحد ما الاتنين يخلصوا
-            const [_, fetchResult] = await Promise.all([countdownPromise, fetchPromise]);
-            const { registeredList, hiddenCount } = fetchResult;
+            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
             teachersLayer.clearLayers();
 
