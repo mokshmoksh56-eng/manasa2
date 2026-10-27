@@ -651,24 +651,7 @@
             margin-top: 3px;
         }
 
-        /* ✅ تنسيقات قسم الشكاوى */
-        .complaint-section-card {
-            background: #FEF2F2 !important;
-            border: 1.5px solid #FECACA !important;
-            border-top: 4px solid #F87171 !important;
-            border-bottom: 4px solid #DC2626 !important;
-        }
-        .complaint-section-card .section-title {
-            color: #991B1B !important;
-            border-bottom-color: rgba(220, 38, 38, 0.2) !important;
-        }
-        .complaint-main-btn {
-            width: 100%; padding: 11px; border-radius: 9px; font-size: 13.5px; font-weight: 900;
-            background: linear-gradient(135deg, #EF4444, #DC2626); color: white;
-            border: 1.5px solid #B91C1C; border-bottom: 3px solid #991B1B;
-            cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s;
-        }
-        .complaint-main-btn:active { transform: translateY(2px); border-bottom-width: 1px; }
+        /* ✅ تنسيقات مودال الشكاوى */
         .complaint-teacher-btn {
             width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px;
             font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2;
@@ -689,6 +672,27 @@
             background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; border-bottom: 2px solid #94A3B8; cursor: pointer;
         }
         .complaint-copy-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
+
+        /* 📢 شريط الشكاوى الصغير */
+        .mini-complaint-strip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #FEF2F2;
+            border: 1.5px solid #FECACA;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
+        }
+        .mini-complaint-strip:active {
+            transform: scale(0.98);
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+        }
 
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
@@ -998,15 +1002,11 @@
             
         </div>
 
-        <!-- 📢 قسم الشكاوى -->
-        <div class="smart-card complaint-section-card">
-            <h3 class="section-title"><span>📢</span> الشكاوى والاقتراحات</h3>
-            <p style="font-size: 11.5px; color: #7F1D1D; font-weight: 800; margin-bottom: 10px; line-height: 1.6;">
-                عندك شكوى عن مدرس أو اقتراح لتحسين المنصة؟ اضغط على الزر تحت وهيتم إرسال رسالتك مباشرة للإدارة على البريد الرسمي <strong>mmoksh162@gmail.com</strong>
-            </p>
-            <button class="complaint-main-btn clickable-element" onclick="openComplaintModal()">
-                <span>📧</span> تقديم شكوى أو اقتراح
-            </button>
+        <!-- 📢 شريط الشكاوى الصغير -->
+        <div class="mini-complaint-strip clickable-element" onclick="openComplaintModal()">
+            <span style="font-size: 14px;">📢</span>
+            <span style="font-size: 11px; font-weight: 900; color: #991B1B;">عندك شكوى أو اقتراح؟</span>
+            <span style="font-size: 10px; font-weight: 800; color: #DC2626; margin-right: auto;">اضغط هنا ›</span>
         </div>
     </div>
 
