@@ -1827,6 +1827,9 @@
             } else {
                 gSelect.disabled = true;
                 renderStudentGradeSubjectsBar();
+                // ✅ امسح المعلمين من الخريطة لو المرحلة اتغيرت لاختيار فاضي
+                if (teachersLayer) teachersLayer.clearLayers();
+                closeTeacherInfoCard();
             }
             updateSearchBtnHint();
         }
@@ -1857,6 +1860,14 @@
             renderStudentGradeSubjectsBar();
             updateStudentSummary();
             updateSearchBtnHint();
+
+            // ✅ لو الصف أو المادة اتغيروا لاختيار فاضي — امسح المعلمين من الخريطة
+            const finalGrade = document.getElementById('s_grade').value;
+            const finalSubj = document.getElementById('s_subject').value;
+            if ((!finalGrade || !finalSubj) && teachersLayer) {
+                teachersLayer.clearLayers();
+                closeTeacherInfoCard();
+            }
         }
 
         function onSubjectSelectChange() {
@@ -1864,8 +1875,20 @@
             saveStudentData();
             updateStudentSummary();
             updateSearchBtnHint();
-            if (currentCenter && map) {
-                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+
+            // ✅ لو المادة اتغيرت لاختيار فاضي — امسح المعلمين
+            const curSubj = document.getElementById('s_subject').value;
+            if (!curSubj && teachersLayer) {
+                teachersLayer.clearLayers();
+                closeTeacherInfoCard();
+                return;
+            }
+
+            if (currentCenter && map && curSubj) {
+                const curGrade = document.getElementById('s_grade').value;
+                if (curGrade) {
+                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                }
             }
         }
 
@@ -1911,8 +1934,12 @@
             saveStudentData();
             updateStudentSummary();
             updateSearchBtnHint();
-            if (currentCenter && map) {
-                renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+
+            if (currentCenter && map && subjName) {
+                const curGrade = document.getElementById('s_grade').value;
+                if (curGrade) {
+                    renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                }
             }
         }
 
@@ -2029,6 +2056,15 @@
         }
 
         function onRadiusChangeEnd() {
+            // ✅ لو الصف أو المادة مش مختارين — امسح المعلمين
+            const gradeCheck = document.getElementById('s_grade').value;
+            const subjectCheck = document.getElementById('s_subject').value;
+            if (!gradeCheck || !subjectCheck) {
+                showToast("⚠️ اختر الصف والمادة أولاً عشان تظهر المعلمين!", true);
+                if (teachersLayer) teachersLayer.clearLayers();
+                closeTeacherInfoCard();
+                return;
+            }
             if (currentCenter && searchCircle) {
                 lastRenderRadius = parseInt(document.getElementById('search_radius').value);
                 renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius);
@@ -2182,7 +2218,14 @@
             document.querySelectorAll('input[name="pref_loc"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (currentCenter && map) {
-                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                        const g = document.getElementById('s_grade').value;
+                        const s = document.getElementById('s_subject').value;
+                        if (g && s) {
+                            renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                        } else if (teachersLayer) {
+                            teachersLayer.clearLayers();
+                            closeTeacherInfoCard();
+                        }
                     }
                 });
             });
@@ -2190,7 +2233,14 @@
             document.querySelectorAll('input[name="pref_teacher"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (currentCenter && map) {
-                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                        const g = document.getElementById('s_grade').value;
+                        const s = document.getElementById('s_subject').value;
+                        if (g && s) {
+                            renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                        } else if (teachersLayer) {
+                            teachersLayer.clearLayers();
+                            closeTeacherInfoCard();
+                        }
                     }
                 });
             });
@@ -2198,7 +2248,14 @@
             document.querySelectorAll('input[name="st_gender"]').forEach(radio => {
                 radio.addEventListener('change', () => {
                     if (currentCenter && map) {
-                        renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                        const g = document.getElementById('s_grade').value;
+                        const s = document.getElementById('s_subject').value;
+                        if (g && s) {
+                            renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
+                        } else if (teachersLayer) {
+                            teachersLayer.clearLayers();
+                            closeTeacherInfoCard();
+                        }
                     }
                 });
             });
@@ -2366,7 +2423,8 @@
 
         function loadSpecificLocation(index) {
             const subject = document.getElementById('s_subject').value;
-            if (!subject) { showToast("أكمل بيانات المادة أولاً!", true); return; }
+            const grade = document.getElementById('s_grade').value;
+            if (!subject || !grade) { showToast("أكمل بيانات الصف والمادة أولاً!", true); return; }
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
                 buildRadarMap(data.saved_locations[index].lat, data.saved_locations[index].lng);
@@ -3237,6 +3295,7 @@
             return false;
         }
 
+        // ✅ تم التعديل: منع عرض المعلمين لو الصف أو المادة مش مختارين
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3244,7 +3303,17 @@
             const nameCheck = document.getElementById('st_name').value.trim();
             const phoneCheck = document.getElementById('st_phone').value.trim();
 
-            if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck) {
+            // 🚫 شرط جديد: لو المرحلة أو الصف أو المادة مش مختارين — امسح المعلمين واخرج
+            if (!stageCheck || !gradeCheck || !subjectCheck) {
+                if (teachersLayer) teachersLayer.clearLayers();
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) liveIndicator.classList.remove('show');
+                closeTeacherInfoCard();
+                return;
+            }
+
+            if (!nameCheck || !phoneCheck) {
+                if (teachersLayer) teachersLayer.clearLayers();
                 const liveIndicator = document.getElementById('liveIndicator');
                 if (liveIndicator) liveIndicator.classList.remove('show');
                 return;
