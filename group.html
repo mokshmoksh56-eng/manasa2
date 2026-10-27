@@ -12,9 +12,8 @@
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
-
     <!-- ✅ مكتبة Geofire لحساب الـ Geohash -->
-    <script src="https://unpkg.com/geofire-common@5.1.0/dist/geofire-common.umd.js"></script>
+    <script src="https://unpkg.com/geofire-common@6.0.0/dist/geofire-common.js"></script>
 
     <style>
         * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
@@ -487,7 +486,6 @@
 
         .required-star { color: #EF4444; font-weight: 900; }
 
-        /* ✅ ستايل خاص لخانة اسم السنتر - مخفية/ظاهرة */
         #centerNameGroup {
             transition: all 0.3s ease;
         }
@@ -1728,13 +1726,13 @@
                         ? document.getElementById('g_center').value 
                         : '';
 
-                    // ✅ حساب الإحداثيات والـ Geohash
-                    let lat = (mapInitialized && marker) ? marker.getLatLng().lat : savedLat;
-                    let lng = (mapInitialized && marker) ? marker.getLatLng().lng : savedLng;
-                    let geohash = '';
-
-                    if (lat && lng && typeof geofire !== 'undefined') {
-                        geohash = geofire.geohashForLocation([lat, lng]);
+                    let latVal = (mapInitialized && marker) ? marker.getLatLng().lat : savedLat;
+                    let lngVal = (mapInitialized && marker) ? marker.getLatLng().lng : savedLng;
+                    
+                    // ✅ حساب الـ geohash باستخدام مكتبة geofire-common
+                    let geohashVal = null;
+                    if (latVal && lngVal && typeof geofire !== 'undefined' && geofire.geohashForLocation) {
+                        geohashVal = geofire.geohashForLocation([latVal, lngVal]);
                     }
 
                     const state = {
@@ -1762,9 +1760,9 @@
                         selectedSubjects: selectedSubjects,
                         m_address: document.getElementById('m_address').value,
                         g_publish_map: document.getElementById('g_publish_map') ? document.getElementById('g_publish_map').checked : true,
-                        lat: lat,
-                        lng: lng,
-                        geohash: geohash, // ✅ حفظ الـ Geohash
+                        lat: latVal,
+                        lng: lngVal,
+                        geohash: geohashVal, // ✅ حفظ الـ Geohash للفهرس الثاني
                         createdAt: new Date().toISOString().split('T')[0],
                         updatedAt: Date.now()
                     };
