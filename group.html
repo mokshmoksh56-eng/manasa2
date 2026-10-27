@@ -1732,8 +1732,8 @@
                     let finalLng = (mapInitialized && marker) ? marker.getLatLng().lng : savedLng;
                     let computedGeohash = null;
 
-                    if (finalLat !== null && finalLng !== null) {
-                        computedGeohash = geofire.geohashForLocation([parseFloat(finalLat), parseFloat(finalLng)]);
+                    if (finalLat !== null && finalLng !== null && !isNaN(finalLat) && !isNaN(finalLng)) {
+                        computedGeohash = geofirecommon.geohashForLocation([parseFloat(finalLat), parseFloat(finalLng)]);
                     }
                     // =========================
 
