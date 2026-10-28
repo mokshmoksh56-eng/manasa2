@@ -2510,7 +2510,7 @@
             localStorage.setItem('talep_data', JSON.stringify(existingData));
             renderSavedTeachersList(true); showToast("تم حفظ المعلم ⭐");
             saveTalepToFirebase(true);
-        };
+        }
 
         function renderSavedTeachersList(autoOpen = false) {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
@@ -2574,7 +2574,7 @@
             closeDeleteModal();
         }
 
-        // ✅ الاستعلام الجغرافي السريع باستخدام Geohash لجلب البيانات داخل الدائرة فقط
+        // ✅ الاستعلام الجغرافي السريع مع نظام احتياطي تلقائي (Fallback)
         async function getRegisteredTeachersFromFirebaseByRadius(centerPos, radiusInMeters) {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
@@ -2583,6 +2583,8 @@
             if (!window.db || !currentStage || !currentGrade || !centerPos) {
                 return { registeredList, hiddenCount: 0 };
             }
+
+            let fastQueryFailed = false;
 
             try {
                 const mod = await loadFirebaseModule();
@@ -2620,9 +2622,40 @@
                     }
                 }
             } catch (err) {
-                console.error("❌ فشل الجلب الجغرافي السريع:", err);
+                console.warn("⚠️ الفهرس المركب (Composite Index) غير موجود في Firebase، جاري تشغيل الجلب الاحتياطي...");
+                fastQueryFailed = true;
             }
 
+            // 💡 نظام الجلب الاحتياطي: يعمل تلقائياً إذا فشل الجلب السريع أو للبيانات القديمة
+            if (fastQueryFailed || registeredList.length === 0) {
+                try {
+                    const mod = await loadFirebaseModule();
+                    const fallbackQuery = mod.query(
+                        mod.collection(mod.db, "lessons"),
+                        mod.where("g_publish_map", "==", true),
+                        mod.where("s_stage", "==", currentStage),
+                        mod.where("s_grade", "==", currentGrade)
+                    );
+
+                    const snap = await mod.getDocs(fallbackQuery);
+                    snap.forEach(docSnap => {
+                        const state = docSnap.data();
+                        if (state.lat && state.lng) {
+                            const distanceInM = geofire.distanceBetween([state.lat, state.lng], centerPos) * 1000;
+                            if (distanceInM <= radiusInMeters) {
+                                // التأكد من عدم إضافة المعلم مرتين إذا تم جلبه في الاستعلام الجغرافي السريع
+                                if (!registeredList.some(t => t.lessonId === docSnap.id)) {
+                                    registeredList.push(parseTeacherDoc(docSnap));
+                                }
+                            }
+                        }
+                    });
+                } catch (fallbackErr) {
+                    console.error("❌ فشل الجلب الاحتياطي:", fallbackErr);
+                }
+            }
+
+            // إزالة التكرارات
             const uniqueTeachers = Array.from(new Map(registeredList.map(item => [item.lessonId, item])).values());
             return { registeredList: uniqueTeachers, hiddenCount: 0 };
         }
@@ -3171,7 +3204,7 @@
             });
         };
 
-        // ✅ رسم المعلمين بناءً على الجلب الجغرافي السريع 
+        // ✅ رسم المعلمين بناءً على الجلب الجغرافي السريع مع نظام Backup
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
