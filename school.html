@@ -981,6 +981,13 @@
             return { text: new Date(timeMs).toLocaleDateString('ar-EG'), isOnline: false, fullDate };
         }
 
+        function formatDate(timestamp) {
+            if (!timestamp) return '--';
+            const date = new Date(timestamp);
+            if (isNaN(date.getTime())) return '--';
+            return date.toLocaleDateString('ar-EG', { year: 'numeric', month: 'long', day: 'numeric' });
+        }
+
         function showToast(msg, isError = false) {
             const t = document.getElementById('toastMsg');
             t.textContent = msg;
@@ -1045,7 +1052,7 @@
         }
 
         function getCardKey(r) {
-            return String(r.docId || r.phone || r.teacherName || 'unknown').replace(/\\/g, '_').replace(/'/g, "\\'");
+            return String(r.docId || r.phone || r.teacherName || 'unknown').replace(/\/g, '_').replace(/'/g, "\'");
         }
 
         // ==========================================
@@ -1251,6 +1258,7 @@
                 const cardKey = getCardKey(r);
                 const isExpanded = expandedCards.has(cardKey);
                 const lastSeenObj = formatLastSeen(r.lastSeen);
+                const regDateFormatted = formatDate(r.regDate); // Format the registration date
 
                 let idOrStudentBadgeHTML = '';
                 if (r.deviceId !== 'غير متاح') {
@@ -1265,7 +1273,7 @@
                 const cleanPhone = String(r.phone || '').replace(/\D/g, '');
                 const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
                 const stateClass = r.isBlocked ? 'is-blocked' : 'is-allowed';
-                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
+                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\'");
                 const docIdSafe = r.docId || '';
                 const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
 
@@ -1274,7 +1282,7 @@
                     unifiedScheduleHTML = `<div class="space-y-2 mt-3">` + r.groups.map(g => {
                         let mapBtn = '';
                         if (g.lat && g.lng) {
-                            mapBtn = `<button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 shadow-sm mt-1">📍 عرض الخريطة</button>`;
+                            mapBtn = `<button onclick="openMapModal('${g.address.replace(/'/g, "\'")}', ${g.lat}, ${g.lng})" class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 shadow-sm mt-1">📍 عرض الخريطة</button>`;
                         }
                         return `
                         <div class="smart-card">
@@ -1317,6 +1325,7 @@
 
                 const statusBadgeHTML = r.isBlocked ? `<span class="status-pure-red">🚫 محظور يدوياً</span>` : `<span class="status-pure-green">✅ نشط</span>`;
                 const lsBadge = `<span class="badge-last-seen ${lastSeenObj.isOnline?'online-now':''}">${lastSeenObj.isOnline?'مباشر 🟢':`🕒 ${lastSeenObj.text}`}</span>`;
+                const regBadge = `<span class="badge-last-seen" style="background:#F3F4F6; border-color:#D1D5DB; color:#374151;">📅 سجل في: ${regDateFormatted}</span>`;
 
                 return `
                     <div class="record-card ${stateClass}" data-card-key="${cardKey}">
@@ -1338,6 +1347,7 @@
                                 ${ratingBadgeHTML}
                                 ${idOrStudentBadgeHTML}
                                 ${lsBadge}
+                                ${regBadge}
                             </div>
                         </div>
 
@@ -1467,7 +1477,20 @@
         // ==========================================
         window.deleteRecord = async function(lessonsStr, phone, teacherName, docId) {
             const lessonCount = lessonsStr ? lessonsStr.split(',').filter(l => l.trim()).length : 0;
-            const confirmMessage = `⚠️ حذف نهائي وشامل من Firebase\n\nهل أنت متأكد من حذف المعلم (${teacherName}) نهائياً؟\n\nسيتم حذف:\n• حساب المعلم من teachers\n• ${lessonCount} مجموعة/درس من lessons\n• سجل الجهاز من teacher_devices\n• كل تقييمات الطلاب من teacher_ratings\n• المعلم من قوائم الطلاب المفضلين\n\n⚠️ سيتم حظره نهائياً (البصمة السوداء) لمنع أي تسجيل جديد بنفس الرقم\n\n❌ لا يمكن التراجع عن هذا الإجراء!`;
+            const confirmMessage = `⚠️ حذف نهائي وشامل من Firebase
+
+هل أنت متأكد من حذف المعلم (${teacherName}) نهائياً؟
+
+سيتم حذف:
+• حساب المعلم من teachers
+• ${lessonCount} مجموعة/درس من lessons
+• سجل الجهاز من teacher_devices
+• كل تقييمات الطلاب من teacher_ratings
+• المعلم من قوائم الطلاب المفضلين
+
+⚠️ سيتم حظره نهائياً (البصمة السوداء) لمنع أي تسجيل جديد بنفس الرقم
+
+❌ لا يمكن التراجع عن هذا الإجراء!`;
             
             showCustomConfirm(confirmMessage, async () => {
                 if (!window.db) { showToast('⚠️ Firebase غير جاهز', true); return; }
@@ -1662,7 +1685,7 @@
                     let html = `<div class="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200"><p class="text-xs font-black text-amber-800">⚠️ هذه القائمة هي "البصمة السوداء" — أي رقم فيها لا يمكنه التسجيل حتى لو حذف حسابه</p></div><table class="w-full text-right border-collapse text-xs font-bold text-slate-700"><thead><tr class="bg-rose-50 border-b-2 border-rose-300"><th class="p-2.5 text-rose-800">الاسم</th><th class="p-2.5 text-rose-800">التليفون</th><th class="p-2.5 text-rose-800">السبب</th><th class="p-2.5 text-rose-800">إجراء</th></tr></thead><tbody>`;
                     snap.forEach(d => {
                         const data = d.data();
-                        html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black text-slate-800">${data.teacherName || 'بدون اسم'}</td><td class="p-2.5 font-black text-blue-700" dir="ltr" style="text-align:right;">${data.phone}</td><td class="p-2.5 text-slate-600">${data.reason || 'حظر إداري'}</td><td class="p-2.5"><button onclick="unblockPermanent('${data.phone}', '${(data.teacherName||'').replace(/'/g,"\\'")}')" class="action-chip bg-emerald-600 text-white px-3 py-1.5 text-[11px] shadow-sm">✅ إلغاء الحظر</button></td></tr>`;
+                        html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black text-slate-800">${data.teacherName || 'بدون اسم'}</td><td class="p-2.5 font-black text-blue-700" dir="ltr" style="text-align:right;">${data.phone}</td><td class="p-2.5 text-slate-600">${data.reason || 'حظر إداري'}</td><td class="p-2.5"><button onclick="unblockPermanent('${data.phone}', '${(data.teacherName||'').replace(/'/g,"\'")}')" class="action-chip bg-emerald-600 text-white px-3 py-1.5 text-[11px] shadow-sm">✅ إلغاء الحظر</button></td></tr>`;
                     });
                     html += `</tbody></table>`;
                     document.getElementById('summaryModalContent').innerHTML = html;
@@ -1916,15 +1939,15 @@
             gradesSection.classList.remove('hidden');
 
             if (sortedGrades.length > 0) {
-                gradeSelect.innerHTML = sortedGrades.map((g) => `<option value="${g.replace(/'/g, "\\'")}" ${g === activeGradeName ? 'selected' : ''}>${g}</option>`).join('');
+                gradeSelect.innerHTML = sortedGrades.map((g) => `<option value="${g.replace(/'/g, "\'")}" ${g === activeGradeName ? 'selected' : ''}>${g}</option>`).join('');
                 gradeSelect.disabled = false;
                 
                 const currentGradeIdx = sortedGrades.indexOf(activeGradeName);
                  gradeControlsContainer.innerHTML = `
                     <button class="order-btn" onclick="moveGrade(${currentGradeIdx}, -1)" ${currentGradeIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
                     <button class="order-btn" onclick="moveGrade(${currentGradeIdx}, 1)" ${currentGradeIdx === sortedGrades.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
-                    <button onclick="editGradeName('${activeGradeName.replace(/'/g, "\\'")}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
-                    <button onclick="deleteGradeItem('${activeGradeName.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
+                    <button onclick="editGradeName('${activeGradeName.replace(/'/g, "\'")}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
+                    <button onclick="deleteGradeItem('${activeGradeName.replace(/'/g, "\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
                 `;
             } else {
                  gradeSelect.innerHTML = `<option value="">-- لا توجد صفوف --</option>`;
@@ -1942,15 +1965,15 @@
                 }
                 
                 if (sortedSubjs.length > 0) {
-                     subjectSelect.innerHTML = sortedSubjs.map((s) => `<option value="${s.replace(/'/g, "\\'")}" ${s === activeSubjectName ? 'selected' : ''}>${s}</option>`).join('');
+                     subjectSelect.innerHTML = sortedSubjs.map((s) => `<option value="${s.replace(/'/g, "\'")}" ${s === activeSubjectName ? 'selected' : ''}>${s}</option>`).join('');
                      subjectSelect.disabled = false;
                      
                      const currentSubjIdx = sortedSubjs.indexOf(activeSubjectName);
                      subjectControlsContainer.innerHTML = `
                         <button class="order-btn" onclick="moveSubject(${currentSubjIdx}, -1)" ${currentSubjIdx === 0 ? 'disabled' : ''} title="تحريك لأعلى">⬆️</button>
                         <button class="order-btn" onclick="moveSubject(${currentSubjIdx}, 1)" ${currentSubjIdx === sortedSubjs.length - 1 ? 'disabled' : ''} title="تحريك لأسفل">⬇️</button>
-                        <button onclick="editSubjectName('${activeSubjectName.replace(/'/g, "\\'")}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
-                        <button onclick="deleteSubjectFromGrade('${activeSubjectName.replace(/'/g, "\\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
+                        <button onclick="editSubjectName('${activeSubjectName.replace(/'/g, "\'")}')" class="text-blue-600 font-bold ml-1 flex items-center justify-center bg-blue-100 w-6 h-6 rounded-md hover:bg-blue-200 transition-colors" title="تعديل الاسم">✏️</button>
+                        <button onclick="deleteSubjectFromGrade('${activeSubjectName.replace(/'/g, "\'")}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
                     `;
                 } else {
                     subjectSelect.innerHTML = `<option value="">-- لا توجد مواد --</option>`;
