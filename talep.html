@@ -833,6 +833,7 @@
                 <label>اسمك بالكامل</label>
                 <input type="text" id="st_name" class="form-control" placeholder="اكتب اسمك هنا...">
             </div>
+            
             <div class="grid-2-always">
                 <div class="form-group">
                     <label>عمرك</label>
@@ -840,16 +841,16 @@
                 </div>
                 <div class="form-group">
                     <label id="phone_label">📱 رقم الهاتف</label>
-                    
-                    <!-- تنبيه الواتساب للطالب -->
-                    <div style="background: rgba(255, 255, 255, 0.15); border: 1px dashed rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
-                        <span style="font-size: 16px;">💬</span> 
-                        <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.</span>
-                    </div>
-
                     <input type="tel" id="st_phone" class="form-control" placeholder="010XXXXXXXX">
                 </div>
             </div>
+            
+            <!-- ✅ التعديل هنا: تم إخراج التنبيه من العمودين ليكون أسفلهما بعرض الكارت كاملاً -->
+            <div style="background: rgba(255, 255, 255, 0.15); border: 1px dashed rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: -2px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                <span style="font-size: 16px;">💬</span> 
+                <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.</span>
+            </div>
+
             <p id="ageWarningMessage" style="display:none; font-size: 11px; background: rgba(255,255,255,0.2); padding: 5px; border-radius: 5px; color: white; font-weight: 800; margin-top: 5px;">
                 ⚠️ بما أن عمرك أقل من 13 عاماً، يجب أن يتم التسجيل واستخدام التطبيق وإدخال رقم الهاتف بواسطة ولي أمرك وتحت إشرافه المباشر.
             </p>
