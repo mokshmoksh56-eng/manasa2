@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>تسجيل الطالب - منصة احجزلى[span_2](start_span)[span_2](end_span)</title>
+    <title>تسجيل الطالب - منصة احجزلى</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
@@ -11,12 +11,12 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     
-    <!-- ✅ مكتبة تجميع الدبابيس (MarkerCluster)[span_3](start_span)[span_3](end_span) -->
+    <!-- ✅ مكتبة تجميع الدبابيس (MarkerCluster) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <!-- ✅ مكتبة Geofire (لدعم الفهرس الثاني)[span_4](start_span)[span_4](end_span)[span_5](start_span)[span_5](end_span) -->
+    <!-- ✅ مكتبة Geofire (لدعم الفهرس الثاني) -->
     <script src="https://unpkg.com/geofire-common@6.0.0/dist/geofire-common.js"></script>
 
     <style>
@@ -185,7 +185,7 @@
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: visible; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; border-radius: 12px; }
 
-        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس[span_6](start_span)[span_6](end_span) */
+        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
         .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
         .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
@@ -201,7 +201,7 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
-        /* ✅ مؤشر المزامنة اللحظية[span_7](start_span)[span_7](end_span) */
+        /* ✅ مؤشر المزامنة اللحظية */
         .live-indicator {
             position: absolute;
             top: 10px;
@@ -253,7 +253,7 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي)[span_8](start_span)[span_8](end_span) */
+        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -356,7 +356,7 @@
             margin-top: 4px; font-weight: 800;
         }
 
-        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة[span_9](start_span)[span_9](end_span) */
+        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
             display: none;
             position: absolute;
@@ -399,7 +399,7 @@
             max-height: 50vh;
         }
 
-        /* ✅ كارت بيانات المعلم العائم فوق الخريطة والجداول (مضغوط للموبايل)[span_10](start_span)[span_10](end_span) */
+        /* ✅ كارت بيانات المعلم العائم فوق الخريطة والجداول (مضغوط للموبايل) */
         .teacher-info-card {
             display: none;
             position: absolute;
@@ -475,7 +475,7 @@
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
-        /* ✅ العنوان التفصيلي في كارت المعلم[span_11](start_span)[span_11](end_span) */
+        /* ✅ العنوان التفصيلي في كارت المعلم */
         .teacher-info-address {
             display: flex;
             flex-direction: column;
@@ -521,7 +521,7 @@
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 2.5px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل)[span_12](start_span)[span_12](end_span) */
+        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل) */
         .teacher-rating-section {
             margin-top: 6px;
             padding: 6px;
@@ -654,7 +654,7 @@
             margin-top: 3px;
         }
 
-        /* ✅ تنسيقات مودال الشكاوى[span_13](start_span)[span_13](end_span) */
+        /* ✅ تنسيقات مودال الشكاوى */
         .complaint-teacher-btn {
             width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px;
             font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2;
@@ -676,7 +676,7 @@
         }
         .complaint-copy-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
 
-        /* 📢 شريط الشكاوى الصغير[span_14](start_span)[span_14](end_span) */
+        /* 📢 شريط الشكاوى الصغير */
         .mini-complaint-strip {
             display: flex;
             align-items: center;
@@ -723,18 +723,18 @@
             <div style="font-size: 36px; margin-bottom: 8px; text-align: center;">📍</div>
             <div class="custom-modal-title" style="text-align: center;">السماح بالوصول للموقع</div>
             <p style="font-size: 13px; color: #334155; margin-bottom: 10px; font-weight: 800;">
-                يطلب تطبيق <strong>احجزلي</strong> الوصول إلى موقعك الجغرافي (GPS) وذلك للقيام بـ:[span_15](start_span)[span_15](end_span)
+                يطلب تطبيق <strong>احجزلي</strong> الوصول إلى موقعك الجغرافي (GPS) وذلك للقيام بـ:
             </p>
             <ul>
-                <li>عرض المعلمين ومراكز الدروس الأقرب إليك على الخريطة.[span_16](start_span)[span_16](end_span)</li>
-                <li>تحديد مسافة البحث بدقة حسب النطاق الذي تحدده.[span_17](start_span)[span_17](end_span)</li>
+                <li>عرض المعلمين ومراكز الدروس الأقرب إليك على الخريطة.</li>
+                <li>تحديد مسافة البحث بدقة حسب النطاق الذي تحدده.</li>
             </ul>
             <p style="font-size: 11px; color: #64748B; margin-bottom: 15px; font-weight: 600; text-align: center;">
-                <em>ملاحظة: لا يتم تتبع موقعك في الخلفية، ويستخدم فقط أثناء طلب البحث.[span_18](start_span)[span_18](end_span)</em>
+                <em>ملاحظة: لا يتم تتبع موقعك في الخلفية، ويستخدم فقط أثناء طلب البحث.</em>
             </p>
             <div class="custom-modal-buttons">
-                <button class="custom-btn custom-btn-cancel clickable-element" onclick="declineLocation()">رفض[span_19](start_span)[span_19](end_span)</button>
-                <button class="custom-btn custom-btn-save clickable-element" onclick="acceptLocation()">موافق، السماح بالموقع[span_20](start_span)[span_20](end_span)</button>
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="declineLocation()">رفض</button>
+                <button class="custom-btn custom-btn-save clickable-element" onclick="acceptLocation()">موافق، السماح بالموقع</button>
             </div>
         </div>
     </div>
@@ -742,11 +742,11 @@
     <div id="saveLocModal" class="custom-modal-overlay">
         <div class="custom-modal-box">
             <div id="locModalEmoji" style="font-size: 36px; margin-bottom: 8px;">🏡</div>
-            <div id="locModalTitle" class="custom-modal-title">أعطِ اسماً مميزاً لهذا الموقع[span_21](start_span)[span_21](end_span)</div>
+            <div id="locModalTitle" class="custom-modal-title">أعطِ اسماً مميزاً لهذا الموقع</div>
             <input type="text" id="locNameInput" class="custom-modal-input" placeholder="مثال: بيتي، سنتر الأمل..." value="موقع جديد">
             <div class="custom-modal-buttons">
-                <button class="custom-btn custom-btn-cancel clickable-element" onclick="closeSaveLocModal()">إلغاء[span_22](start_span)[span_22](end_span)</button>
-                <button id="locModalSaveBtn" class="custom-btn custom-btn-save clickable-element" onclick="confirmSaveLocation()">حفظ 💾[span_23](start_span)[span_23](end_span)</button>
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="closeSaveLocModal()">إلغاء</button>
+                <button id="locModalSaveBtn" class="custom-btn custom-btn-save clickable-element" onclick="confirmSaveLocation()">حفظ 💾</button>
             </div>
         </div>
     </div>
@@ -754,11 +754,11 @@
     <div id="deleteModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 36px; margin-bottom: 8px;">🗑️</div>
-            <div class="custom-modal-title" style="color:#991B1B;">تأكيد الحذف[span_24](start_span)[span_24](end_span)</div>
-            <p style="font-size: 12px; color: #475569; margin-bottom: 12px; font-weight: 800;">هل أنت متأكد أنك تريد الحذف؟[span_25](start_span)[span_25](end_span)</p>
+            <div class="custom-modal-title" style="color:#991B1B;">تأكيد الحذف</div>
+            <p style="font-size: 12px; color: #475569; margin-bottom: 12px; font-weight: 800;">هل أنت متأكد أنك تريد الحذف؟</p>
             <div class="custom-modal-buttons">
-                <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 2.5px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع[span_26](start_span)[span_26](end_span)</button>
-                <button class="custom-btn custom-btn-cancel clickable-element" onclick="confirmDelete()">نعم، احذف[span_27](start_span)[span_27](end_span)</button>
+                <button class="custom-btn clickable-element" style="background: #E2E8F0; color: #475569; border-bottom: 2.5px solid #CBD5E1;" onclick="closeDeleteModal()">تراجع</button>
+                <button class="custom-btn custom-btn-cancel clickable-element" onclick="confirmDelete()">نعم، احذف</button>
             </div>
         </div>
     </div>
@@ -766,143 +766,143 @@
     <div id="deviceKickedModal" class="custom-modal-overlay">
         <div class="custom-modal-box" style="border-bottom-color: #EF4444;">
             <div style="font-size: 36px; margin-bottom: 8px;">🚪</div>
-            <div class="custom-modal-title" style="color:#991B1B;">تم تسجيل الخروج[span_28](start_span)[span_28](end_span)</div>
+            <div class="custom-modal-title" style="color:#991B1B;">تم تسجيل الخروج</div>
             <p style="font-size: 12px; color: #475569; margin-bottom: 12px; font-weight: 800; line-height: 1.6;">
                 تم تسجيل الدخول من جهاز آخر بنفس الحساب.<br>
-                جاري توجيهك لصفحة الدخول...[span_29](start_span)[span_29](end_span)
+                جاري توجيهك لصفحة الدخول...
             </p>
         </div>
     </div>
 
-    <!-- 📢 مودال الشكاوى[span_30](start_span)[span_30](end_span) -->
+    <!-- 📢 مودال الشكاوى -->
     <div id="complaintModal" class="custom-modal-overlay">
         <div class="custom-modal-box complaint-modal-box">
             <button onclick="closeComplaintModal()" style="position:absolute; top:8px; left:8px; width:26px; height:26px; border-radius:50%; background:#FEE2E2; color:#DC2626; border:1.5px solid #FCA5A5; font-weight:900; font-size:13px; cursor:pointer; z-index:10;">✕</button>
             <div style="text-align:center; font-size: 36px; margin-bottom: 6px;">📢</div>
-            <div class="custom-modal-title" style="text-align:center; color:#991B1B;">تقديم شكوى أو اقتراح[span_31](start_span)[span_31](end_span)</div>
+            <div class="custom-modal-title" style="text-align:center; color:#991B1B;">تقديم شكوى أو اقتراح</div>
             <p style="font-size:10.5px; color:#64748B; text-align:center; margin-bottom:10px; font-weight:800; line-height:1.5;">
-                سيتم إرسال رسالتك إلى الإدارة على البريد الرسمي <strong>mmoksh162@gmail.com</strong>[span_32](start_span)[span_32](end_span)
+                سيتم إرسال رسالتك إلى الإدارة على البريد الرسمي <strong>mmoksh162@gmail.com</strong>
             </p>
             <div class="form-group">
-                <label>نوع الرسالة[span_33](start_span)[span_33](end_span)</label>
+                <label>نوع الرسالة</label>
                 <select id="complaintType" class="form-control">
-                    <option value="شكوى عن مدرس">⚠️ شكوى عن مدرس[span_34](start_span)[span_34](end_span)</option>
-                    <option value="شكوى عن المنصة">📱 شكوى عن المنصة[span_35](start_span)[span_35](end_span)</option>
-                    <option value="اقتراح">💡 اقتراح[span_36](start_span)[span_36](end_span)</option>
-                    <option value="مشكلة تقنية">🔧 مشكلة تقنية[span_37](start_span)[span_37](end_span)</option>
+                    <option value="شكوى عن مدرس">⚠️ شكوى عن مدرس</option>
+                    <option value="شكوى عن المنصة">📱 شكوى عن المنصة</option>
+                    <option value="اقتراح">💡 اقتراح</option>
+                    <option value="مشكلة تقنية">🔧 مشكلة تقنية</option>
                 </select>
             </div>
             <div class="form-group">
-                <label>اسم المدرس (إن وجد)[span_38](start_span)[span_38](end_span)</label>
+                <label>اسم المدرس (إن وجد)</label>
                 <input type="text" id="complaintTeacherName" class="form-control" placeholder="اسم المدرس...">
             </div>
             <div class="form-group">
-                <label>تفاصيل الرسالة *[span_39](start_span)[span_39](end_span)</label>
+                <label>تفاصيل الرسالة *</label>
                 <textarea id="complaintDetails" class="form-control" placeholder="اكتب التفاصيل هنا..."></textarea>
             </div>
             <div class="form-group">
-                <label>رقم هاتفك للتواصل (اختياري)[span_40](start_span)[span_40](end_span)</label>
+                <label>رقم هاتفك للتواصل (اختياري)</label>
                 <input type="tel" id="complaintPhone" class="form-control" placeholder="010XXXXXXXX">
             </div>
             <div class="custom-modal-buttons" style="margin-top:8px;">
-                <button class="custom-btn clickable-element" style="background:#E2E8F0; color:#475569; border-bottom: 2.5px solid #CBD5E1;" onclick="closeComplaintModal()">إلغاء[span_41](start_span)[span_41](end_span)</button>
-                <button class="custom-btn clickable-element" style="background:#DC2626; border-bottom: 2.5px solid #991B1B;" onclick="submitComplaint()">📧 إرسال[span_42](start_span)[span_42](end_span)</button>
+                <button class="custom-btn clickable-element" style="background:#E2E8F0; color:#475569; border-bottom: 2.5px solid #CBD5E1;" onclick="closeComplaintModal()">إلغاء</button>
+                <button class="custom-btn clickable-element" style="background:#DC2626; border-bottom: 2.5px solid #991B1B;" onclick="submitComplaint()">📧 إرسال</button>
             </div>
-            <button class="complaint-copy-btn clickable-element" onclick="copyComplaintOnly()">📋 نسخ الشكوى (احتياطي)[span_43](start_span)[span_43](end_span)</button>
+            <button class="complaint-copy-btn clickable-element" onclick="copyComplaintOnly()">📋 نسخ الشكوى (احتياطي)</button>
         </div>
     </div>
 
     <section class="hero-banner">
         <div class="hero-content">
-            <div class="hero-brand">مرحباً بك <span class="accent">يا بطل! 🎓</span>[span_44](start_span)[span_44](end_span)</div>
-            <div class="hero-headline">ابحث عن أفضل المدرسين وابدأ رحلة التفوق[span_45](start_span)[span_45](end_span)</div>
+            <div class="hero-brand">مرحباً بك <span class="accent">يا بطل! 🎓</span></div>
+            <div class="hero-headline">ابحث عن أفضل المدرسين وابدأ رحلة التفوق</div>
         </div>
     </section>
 
     <div class="main-container">
         <div class="smart-card bg-green-solid">
-            <h3 class="section-title"><span>👤</span> بياناتك الشخصية[span_46](start_span)[span_46](end_span)</h3>
+            <h3 class="section-title"><span>👤</span> بياناتك الشخصية</h3>
             <div class="form-group">
-                <label>هل أنت؟[span_47](start_span)[span_47](end_span)</label>
+                <label>هل أنت؟</label>
                 <div class="radio-grid grid-2-always">
-                    <div><input type="radio" name="st_gender" id="st_boy" value="ولد" checked><label for="st_boy"><i>👨‍🎓</i> ولد[span_48](start_span)[span_48](end_span)</label></div>
-                    <div><input type="radio" name="st_gender" id="st_girl" value="بنت"><label for="st_girl"><i>👩‍🎓</i> بنت[span_49](start_span)[span_49](end_span)</label></div>
+                    <div><input type="radio" name="st_gender" id="st_boy" value="ولد" checked><label for="st_boy"><i>👨‍🎓</i> ولد</label></div>
+                    <div><input type="radio" name="st_gender" id="st_girl" value="بنت"><label for="st_girl"><i>👩‍🎓</i> بنت</label></div>
                 </div>
             </div>
             <div class="form-group">
-                <label>اسمك بالكامل[span_50](start_span)[span_50](end_span)</label>
+                <label>اسمك بالكامل</label>
                 <input type="text" id="st_name" class="form-control" placeholder="اكتب اسمك هنا...">
             </div>
             
             <div class="grid-2-always">
                 <div class="form-group">
-                    <label>عمرك[span_51](start_span)[span_51](end_span)</label>
+                    <label>عمرك</label>
                     <input type="number" id="st_age" class="form-control" placeholder="مثال: 14" oninput="checkAge()">
                 </div>
                 <div class="form-group">
-                    <label id="phone_label">📱 رقم الهاتف[span_52](start_span)[span_52](end_span)</label>
+                    <label id="phone_label">📱 رقم الهاتف</label>
                     <input type="tel" id="st_phone" class="form-control" placeholder="010XXXXXXXX">
                 </div>
             </div>
             
-            <!-- ✅ التعديل هنا: تم إخراج التنبيه من العمودين ليكون أسفلهما بعرض الكارت كاملاً[span_53](start_span)[span_53](end_span) -->
+            <!-- ✅ التعديل هنا: تم إخراج التنبيه من العمودين ليكون أسفلهما بعرض الكارت كاملاً -->
             <div style="background: rgba(255, 255, 255, 0.15); border: 1px dashed rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: -2px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <span style="font-size: 16px;">💬</span> 
-                <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.[span_54](start_span)[span_54](end_span)</span>
+                <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.</span>
             </div>
 
             <p id="ageWarningMessage" style="display:none; font-size: 11px; background: rgba(255,255,255,0.2); padding: 5px; border-radius: 5px; color: white; font-weight: 800; margin-top: 5px;">
-                ⚠️ بما أن عمرك أقل من 13 عاماً، يجب أن يتم التسجيل واستخدام التطبيق وإدخال رقم الهاتف بواسطة ولي أمرك وتحت إشرافه المباشر.[span_55](start_span)[span_55](end_span)
+                ⚠️ بما أن عمرك أقل من 13 عاماً، يجب أن يتم التسجيل واستخدام التطبيق وإدخال رقم الهاتف بواسطة ولي أمرك وتحت إشرافه المباشر.
             </p>
         </div>
 
         <div class="smart-card bg-yellow-solid">
-            <h3 class="section-title"><span>📚</span> دراستك والمادة[span_56](start_span)[span_56](end_span)</h3>
+            <h3 class="section-title"><span>📚</span> دراستك والمادة</h3>
             <div class="grid-2-always">
                 <div class="form-group">
-                    <label>المرحلة[span_57](start_span)[span_57](end_span)</label>
+                    <label>المرحلة</label>
                     <select id="s_stage" class="form-control" onchange="updateGrades()">
-                        <option value="">-- اختر --[span_58](start_span)[span_58](end_span)</option>
+                        <option value="">-- اختر --</option>
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>الصف[span_59](start_span)[span_59](end_span)</label>
+                    <label>الصف</label>
                     <select id="s_grade" class="form-control" disabled onchange="updateSubjects()">
-                        <option value="">-- أولاً --[span_60](start_span)[span_60](end_span)</option>
+                        <option value="">-- أولاً --</option>
                     </select>
                 </div>
             </div>
             <div class="form-group" style="margin-bottom: 0;">
-                <label>المادة التي تبحث عنها[span_61](start_span)[span_61](end_span)</label>
+                <label>المادة التي تبحث عنها</label>
                 <select id="s_subject" class="form-control" disabled onchange="onSubjectSelectChange()">
-                    <option value="">-- اختر الصف أولاً --[span_62](start_span)[span_62](end_span)</option>
+                    <option value="">-- اختر الصف أولاً --</option>
                 </select>
             </div>
 
             <div id="studentGradeSubjectsBox" class="student-grade-subjects-box">
                 <div id="studentGradeSubjectsTitle" style="font-size: 11px; font-weight: 900; color: #854D0E; margin-bottom: 6px;">
-                    📖 مواد الصف المتاحة (اضغط لاختيار المادة):[span_63](start_span)[span_63](end_span)
+                    📖 مواد الصف المتاحة (اضغط لاختيار المادة):
                 </div>
                 <div id="studentGradeSubjectsPills" style="display: flex; flex-wrap: wrap; gap: 5px;"></div>
             </div>
         </div>
 
         <div class="smart-card bg-offwhite-card">
-            <h3 class="section-title"><span>🔍</span> تفضيلات الدرس[span_64](start_span)[span_64](end_span)</h3>
+            <h3 class="section-title"><span>🔍</span> تفضيلات الدرس</h3>
             <div class="form-group">
-                <label>تفضل الدرس مع؟[span_65](start_span)[span_65](end_span)</label>
+                <label>تفضل الدرس مع؟</label>
                 <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div><input type="radio" name="pref_teacher" id="t_any" value="مستر او مس" checked><label for="t_any"><i>🤷‍♂️</i> مستر او مس[span_66](start_span)[span_66](end_span)</label></div>
-                    <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر[span_67](start_span)[span_67](end_span)</label></div>
-                    <div><input type="radio" name="pref_teacher" id="t_ms" value="مس"><label for="t_ms"><i>👩‍🏫</i> مس[span_68](start_span)[span_68](end_span)</label></div>
+                    <div><input type="radio" name="pref_teacher" id="t_any" value="مستر او مس" checked><label for="t_any"><i>🤷‍♂️</i> مستر او مس</label></div>
+                    <div><input type="radio" name="pref_teacher" id="t_mr" value="مستر"><label for="t_mr"><i>👨‍🏫</i> مستر</label></div>
+                    <div><input type="radio" name="pref_teacher" id="t_ms" value="مس"><label for="t_ms"><i>👩‍🏫</i> مس</label></div>
                 </div>
             </div>
             <div class="form-group">
-                <label>أين تفضل أخذ الدرس؟[span_69](start_span)[span_69](end_span)</label>
+                <label>أين تفضل أخذ الدرس؟</label>
                 <div class="radio-grid" style="grid-template-columns: repeat(3, 1fr);">
-                    <div><input type="radio" name="pref_loc" id="l_center" value="فى السنتر" checked><label for="l_center"><i>🏫</i> فى السنتر[span_70](start_span)[span_70](end_span)</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_teacher" value="عند المستر"><label for="l_teacher"><i>🏠</i> عند المستر[span_71](start_span)[span_71](end_span)</label></div>
-                    <div><input type="radio" name="pref_loc" id="l_home" value="فى منزلى"><label for="l_home"><i>🚗</i> فى منزلى[span_72](start_span)[span_72](end_span)</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_center" value="فى السنتر" checked><label for="l_center"><i>🏫</i> فى السنتر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_teacher" value="عند المستر"><label for="l_teacher"><i>🏠</i> عند المستر</label></div>
+                    <div><input type="radio" name="pref_loc" id="l_home" value="فى منزلى"><label for="l_home"><i>🚗</i> فى منزلى</label></div>
                 </div>
             </div>
 
@@ -911,7 +911,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 16px; height: 16px;">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-9-3.75h.008v.008H12V8.25z" />
                     </svg>
-                    تأكيد بيانات البحث[span_73](start_span)[span_73](end_span)
+                    تأكيد بيانات البحث
                 </div>
                 <div class="summary-badges-container">
                     <div class="summary-badge"><span>الطالب:</span><strong id="sum_name">--</strong></div>
@@ -927,28 +927,28 @@
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
                     <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
                 </svg>
-                <span id="searchBtnText">تحديد الموقع والبحث بالـ GPS[span_74](start_span)[span_74](end_span)</span>
+                <span id="searchBtnText">تحديد الموقع والبحث بالـ GPS</span>
             </button>
 
             <div class="radius-card-below-search">
                 <div class="radius-label-row">
-                    <span>🎯 نطاق البحث:[span_75](start_span)[span_75](end_span)</span>
-                    <span id="radius_val_display" class="radius-value-badge-display">3 كيلومتر[span_76](start_span)[span_76](end_span)</span>
+                    <span>🎯 نطاق البحث:</span>
+                    <span id="radius_val_display" class="radius-value-badge-display">3 كيلومتر</span>
                 </div>
                 <input type="range" id="search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplay()" onchange="onRadiusChangeEnd()">
                 <div class="radius-limits-row">
-                    <span>500 متر[span_77](start_span)[span_77](end_span)</span>
-                    <span>5 كيلو[span_78](start_span)[span_78](end_span)</span>
+                    <span>500 متر</span>
+                    <span>5 كيلو</span>
                 </div>
             </div>
             
             <div id="mapOuterWrapper" style="display: none; margin-top: 15px;">
-                <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته[span_79](start_span)[span_79](end_span)</div>
+                <div id="mapHint" class="map-hint">💡 اسحب النقطة الزرقاء واضغط على أيقونة المستر لعرض بياناته</div>
                 
                 <div class="map-container" id="mapWrapper" style="margin-top: 0; border-bottom: 0; border-bottom-left-radius: 0; border-bottom-right-radius: 0;">
                     <div id="liveIndicator" class="live-indicator">
                         <span class="dot"></span>
-                        <span>مباشر[span_80](start_span)[span_80](end_span)</span>
+                        <span>مباشر</span>
                     </div>
 
                     <button class="fullscreen-btn clickable-element" onclick="toggleMapFullscreen()" title="تكبير/تصغير الخريطة">
@@ -957,24 +957,24 @@
                     </button>
 
                     <button class="relocate-btn clickable-element" onclick="refreshMyLiveGPS()" title="تحديث موقعي الحالي بالـ GPS">
-                        🎯 موقعي الحالي[span_81](start_span)[span_81](end_span)
+                        🎯 موقعي الحالي
                     </button>
 
                     <div id="fullscreenRadiusContainer" class="fullscreen-radius-container">
                         <div class="radius-label-row">
-                            <span>🎯 نطاق البحث:[span_82](start_span)[span_82](end_span)</span>
-                            <span id="fs_radius_val_display" class="radius-value-badge-display">3 كيلومتر[span_83](start_span)[span_83](end_span)</span>
+                            <span>🎯 نطاق البحث:</span>
+                            <span id="fs_radius_val_display" class="radius-value-badge-display">3 كيلومتر</span>
                         </div>
                         <input type="range" id="fs_search_radius" min="500" max="5000" step="100" value="3000" class="styled-slider clickable-element" oninput="updateRadiusDisplayFS()" onchange="onRadiusChangeEnd()">
                         <div class="radius-limits-row">
-                            <span>500 متر[span_84](start_span)[span_84](end_span)</span>
-                            <span>5 كيلو[span_85](start_span)[span_85](end_span)</span>
+                            <span>500 متر</span>
+                            <span>5 كيلو</span>
                         </div>
                     </div>
 
                     <div id="map"></div>
 
-                    <!-- ✅ كارت بيانات المعلم العائم فوق الخريطة[span_86](start_span)[span_86](end_span) -->
+                    <!-- ✅ كارت بيانات المعلم العائم فوق الخريطة -->
                     <div id="teacherInfoCard" class="teacher-info-card">
                         <button class="teacher-info-close" onclick="closeTeacherInfoCard()">✕</button>
                         <div id="teacherInfoCardBody"></div>
@@ -985,7 +985,7 @@
                     
                     <div class="saved-sections-wrapper" style="margin-top: 0; margin-bottom: 10px;">
                         <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
-                            <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)[span_87](start_span)[span_87](end_span)</span>
+                            <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
                             <svg id="teachersIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                             </svg>
@@ -995,7 +995,7 @@
                         </div>
 
                         <button id="locationsDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('locationsListContainer', 'locationsIcon')">
-                            <span id="locationsCountTxt">📌 المواقع المحفوظة (0)[span_88](start_span)[span_88](end_span)</span>
+                            <span id="locationsCountTxt">📌 المواقع المحفوظة (0)</span>
                             <svg id="locationsIcon" class="dropdown-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 8.25l-7.5 7.5-7.5-7.5" />
                             </svg>
@@ -1006,18 +1006,18 @@
                     </div>
 
                     <button class="action-btn save-btn clickable-element" onclick="openSaveLocModal()">
-                        📌 إضافة هذا الموقع للمفضلة[span_89](start_span)[span_89](end_span)
+                        📌 إضافة هذا الموقع للمفضلة
                     </button>
                 </div>
             </div>
             
         </div>
 
-        <!-- 📢 شريط الشكاوى الصغير[span_90](start_span)[span_90](end_span) -->
+        <!-- 📢 شريط الشكاوى الصغير -->
         <div class="mini-complaint-strip clickable-element" onclick="openComplaintModal()">
             <span style="font-size: 14px;">📢</span>
-            <span style="font-size: 11px; font-weight: 900; color: #991B1B;">عندك شكوى أو اقتراح؟[span_91](start_span)[span_91](end_span)</span>
-            <span style="font-size: 10px; font-weight: 800; color: #DC2626; margin-right: auto;">اضغط هنا ›[span_92](start_span)[span_92](end_span)</span>
+            <span style="font-size: 11px; font-weight: 900; color: #991B1B;">عندك شكوى أو اقتراح؟</span>
+            <span style="font-size: 10px; font-weight: 800; color: #DC2626; margin-right: auto;">اضغط هنا ›</span>
         </div>
     </div>
 
@@ -1033,10 +1033,7 @@
           onSnapshot,
           getDoc,
           setDoc,
-          limit,
-          orderBy,
-          startAt,
-          endAt
+          limit
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -1056,21 +1053,18 @@
       window.getDocs = getDocs;
       window.query = query;
       window.where = where;
-      window.orderBy = orderBy;
-      window.startAt = startAt;
-      window.endAt = endAt;
       window.fsDoc = doc;
       window.fsOnSnapshot = onSnapshot;
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
       window.fsLimit = limit;
 
-      console.log("✅ Firebase + Firestore جاهز في talep.html[span_93](start_span)[span_93](end_span)");
+      console.log("✅ Firebase + Firestore جاهز في talep.html");
     </script>
 
     <script>
         // ==========================================
-        // 0. المتغيرات الأساسية[span_94](start_span)[span_94](end_span)
+        // 0. المتغيرات الأساسية
         // ==========================================
         let map = null; let teachersLayer = null; let studentMarker = null;
         let searchCircle = null; let currentCenter = null; let isMapFullscreen = false;
@@ -1087,6 +1081,7 @@
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
+        // ✅ كاش المعلمين — يمنع القراءات المتكررة من Firestore
         let cachedTeachersList = [];
         let cachedTeachersHiddenCount = 0;
         let cachedTeachersStageKey = '__init__';
@@ -1094,9 +1089,11 @@
         let cacheReady = false;
         let teacherRenderTimer = null;
 
+        // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
 
+        // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
 
@@ -1355,9 +1352,6 @@
                     getDocs: fs.getDocs,
                     query: fs.query,
                     where: fs.where,
-                    orderBy: fs.orderBy,
-                    startAt: fs.startAt,
-                    endAt: fs.endAt,
                     limit: fs.limit
                 };
                 return firebaseSyncModule;
@@ -1411,6 +1405,7 @@
                     };
 
                     await mod.setDoc(ref, payload, { merge: true });
+                    console.log("☁️ [talep] تم الحفظ في Firestore:", key);
                 } catch (e) {
                     console.warn("⚠️ [talep] فشل الحفظ في Firestore:", e);
                 } finally {
@@ -1425,6 +1420,95 @@
             }
         }
 
+        async function loadTalepFromFirebase() {
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) return false;
+
+                const key = getStudentId();
+                const ref = mod.doc(mod.db, "talep_data", key);
+                const snap = await mod.getDoc(ref);
+
+                if (!snap.exists()) {
+                    console.log("📭 [talep] لا توجد بيانات محفوظة لهذا الطالب");
+                    localStorage.removeItem('talep_data');
+                    localStorage.removeItem('location_consent_given');
+                    return false;
+                }
+
+                const d = snap.data() || {};
+                const localObj = {
+                    st_gender: d.st_gender || '',
+                    st_name: d.st_name || '',
+                    st_age: d.st_age || '',
+                    st_phone: d.st_phone || '',
+                    s_stage: d.s_stage || '',
+                    s_grade: d.s_grade || '',
+                    s_subject: d.s_subject || '',
+                    pref_teacher: d.pref_teacher || '',
+                    pref_loc: d.pref_loc || '',
+                    search_radius: d.search_radius || '3000',
+                    saved_locations: Array.isArray(d.saved_locations) ? d.saved_locations : [],
+                    saved_teachers: Array.isArray(d.saved_teachers) ? d.saved_teachers : []
+                };
+
+                localStorage.setItem('talep_data', JSON.stringify(localObj));
+                if (d.location_consent === true) {
+                    localStorage.setItem('location_consent_given', 'true');
+                } else {
+                    localStorage.removeItem('location_consent_given');
+                }
+
+                console.log("☁️ [talep] تم تحميل البيانات من Firestore");
+                return true;
+            } catch (e) {
+                console.warn("⚠️ [talep] فشل تحميل Firestore:", e);
+                return false;
+            }
+        }
+
+        function startTalepRealtimeListener() {
+            loadFirebaseModule().then(mod => {
+                if (!mod) return;
+                const key = getStudentId();
+                const ref = mod.doc(mod.db, "talep_data", key);
+                mod.onSnapshot(ref, (snap) => {
+                    if (!snap.exists()) return;
+                    const d = snap.data() || {};
+                    const localRaw = localStorage.getItem('talep_data');
+                    const localObj = localRaw ? JSON.parse(localRaw) : {};
+                    const newObj = {
+                        st_gender: d.st_gender || '',
+                        st_name: d.st_name || '',
+                        st_age: d.st_age || '',
+                        st_phone: d.st_phone || '',
+                        s_stage: d.s_stage || '',
+                        s_grade: d.s_grade || '',
+                        s_subject: d.s_subject || '',
+                        pref_teacher: d.pref_teacher || '',
+                        pref_loc: d.pref_loc || '',
+                        search_radius: d.search_radius || '3000',
+                        saved_locations: Array.isArray(d.saved_locations) ? d.saved_locations : [],
+                        saved_teachers: Array.isArray(d.saved_teachers) ? d.saved_teachers : []
+                    };
+                    if (JSON.stringify(newObj) !== JSON.stringify(localObj)) {
+                        localStorage.setItem('talep_data', JSON.stringify(newObj));
+                        if (d.location_consent === true) localStorage.setItem('location_consent_given', 'true');
+                        else localStorage.removeItem('location_consent_given');
+                        const activeTag = document.activeElement?.tagName;
+                        const hasLocalData = 
+                            document.getElementById('st_name').value.trim() !== '' ||
+                            document.getElementById('st_phone').value.trim() !== '' ||
+                            document.getElementById('s_stage').value !== '';
+                        if (!hasLocalData && activeTag !== 'INPUT' && activeTag !== 'SELECT' && activeTag !== 'TEXTAREA') {
+                            loadStudentData();
+                        }
+                    }
+                }, (err) => console.warn("⚠️ talep onSnapshot:", err));
+            });
+        }
+
+        // ✅ دالة تحويل doc لمعلم — تستخدم في onSnapshot وفي القراءة الاحتياطية
         function parseTeacherDoc(docSnap) {
             const state = docSnap.data();
             const lessonId = docSnap.id;
@@ -1485,71 +1569,12 @@
             };
         }
 
-        // ✅ التعديل الرئيسي: جلب المعلمين داخل النطاق الجغرافي باستخدام Geohash Query Bounds
-        async function getRegisteredTeachersFromFirebase(centerPos, radiusInMeters) {
-            const currentStage = (document.getElementById('s_stage').value || '').trim();
-            const currentGrade = (document.getElementById('s_grade').value || '').trim();
-            let hiddenCount = 0;
-            const registeredList = [];
-
-            if (!window.db || !centerPos || !currentStage || !currentGrade) {
-                return { registeredList, hiddenCount };
-            }
-
-            try {
-                const mod = await loadFirebaseModule();
-                if (!mod) return { registeredList, hiddenCount };
-
-                const bounds = geofire.geohashQueryBounds(centerPos, radiusInMeters);
-                const promises = [];
-
-                for (const b of bounds) {
-                    const q = mod.query(
-                        mod.collection(mod.db, "lessons"),
-                        mod.where("g_publish_map", "==", true),
-                        mod.where("s_stage", "==", currentStage),
-                        mod.where("s_grade", "==", currentGrade),
-                        mod.orderBy("geohash"),
-                        mod.startAt(b[0]),
-                        mod.endAt(b[1])
-                    );
-                    promises.push(mod.getDocs(q));
-                }
-
-                const snapshots = await Promise.all(promises);
-                const seenIds = new Set();
-
-                snapshots.forEach(snap => {
-                    snap.forEach(docSnap => {
-                        const state = docSnap.data();
-                        if (state.g_publish_map === false) {
-                            hiddenCount++;
-                            return;
-                        }
-                        
-                        if (!seenIds.has(docSnap.id)) {
-                            seenIds.add(docSnap.id);
-                            const teacherObj = parseTeacherDoc(docSnap);
-                            
-                            const distanceInMeters = map.distance(centerPos, [teacherObj.lat, teacherObj.lng]);
-                            if (distanceInMeters <= radiusInMeters) {
-                                registeredList.push(teacherObj);
-                            }
-                        }
-                    });
-                });
-
-            } catch (err) {
-                console.error("❌ خطأ في الاستعلام الجغرافي للـ Geohash:", err);
-            }
-
-            return { registeredList, hiddenCount };
-        }
-
-        function startTeachersRealtimeListener() {
+        // ✅ المزامنة اللحظية — تخزن في الكاش وترسم من الكاش
+        async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
 
+            // ✅ صفّر الكاش فوراً عند تغيير المرحلة/الصف
             cachedTeachersList = [];
             cachedTeachersHiddenCount = 0;
             cachedTeachersStageKey = stage;
@@ -1560,6 +1585,91 @@
                 if (teachersRealtimeUnsub) { teachersRealtimeUnsub(); teachersRealtimeUnsub = null; }
                 return;
             }
+
+            const mod = await loadFirebaseModule();
+            if (!mod) {
+                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
+                return;
+            }
+
+            if (teachersRealtimeUnsub) {
+                try { teachersRealtimeUnsub(); } catch(e) {}
+                teachersRealtimeUnsub = null;
+            }
+
+            console.log("🔴 بدء المزامنة اللحظية للمعلمين...");
+
+            // ✅ الاستعلام هنا متوافق تماماً مع الفهرس الثاني (لأنه بادئة له)
+            const q = mod.query(
+                mod.collection(mod.db, "lessons"),
+                mod.where("g_publish_map", "==", true),
+                mod.where("s_stage", "==", stage),
+                mod.where("s_grade", "==", grade)
+            );
+
+            teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
+                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
+
+                // ✅ خزّن البيانات في الكاش
+                cachedTeachersList = [];
+                cachedTeachersHiddenCount = 0;
+
+                snapshot.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) {
+                        cachedTeachersHiddenCount++;
+                        return;
+                    }
+                    cachedTeachersList.push(parseTeacherDoc(docSnap));
+                });
+
+                cachedTeachersStageKey = stage;
+                cachedTeachersGrade = grade;
+                cacheReady = true;
+
+                const liveIndicator = document.getElementById('liveIndicator');
+
+                // ✅ الرسم فقط إذا الخريطة جاهزة
+                if (!currentCenter || !map) {
+                    isFirstTeachersSnapshot = false;
+                    return;
+                }
+
+                const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
+                if (cardOpen && !isFirstTeachersSnapshot) {
+                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
+                    return;
+                }
+
+                if (liveIndicator) {
+                    liveIndicator.classList.add('show');
+                    if (!isFirstTeachersSnapshot) {
+                        liveIndicator.classList.add('updating');
+                        const textEl = liveIndicator.querySelector('span:last-child');
+                        if (textEl) textEl.textContent = 'جاري التحديث...';
+                        
+                        setTimeout(() => {
+                            liveIndicator.classList.remove('updating');
+                            if (textEl) textEl.textContent = 'مباشر';
+                        }, 1500);
+                    }
+                }
+
+                // ✅ الرسم من الكاش (بدون قراءة إضافية)
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+
+                if (!isFirstTeachersSnapshot) {
+                    showToast(`🔄 تم تحديث المعلمين على الخريطة`);
+                }
+                isFirstTeachersSnapshot = false;
+
+            }, (error) => {
+                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) {
+                    liveIndicator.classList.remove('show');
+                }
+            });
         }
 
         function toggleMapFullscreen() {
@@ -1622,11 +1732,11 @@
             const ageWarning = document.getElementById('ageWarningMessage');
             
             if (ageInput !== "" && parseInt(ageInput) < 13) {
-                phoneLabel.innerHTML = "📱 رقم ولي الأمر <span class='age-warning-text'>(-13 سنة)</span>[span_95](start_span)[span_95](end_span)";
+                phoneLabel.innerHTML = "📱 رقم ولي الأمر <span class='age-warning-text'>(-13 سنة)</span>";
                 phoneInput.placeholder = "رقم ولي الأمر...";
                 ageWarning.style.display = "block";
             } else {
-                phoneLabel.innerHTML = "📱 رقم الهاتف[span_96](start_span)[span_96](end_span)";
+                phoneLabel.innerHTML = "📱 رقم الهاتف";
                 phoneInput.placeholder = "010XXXXXXXX";
                 ageWarning.style.display = "none";
             }
@@ -1640,9 +1750,9 @@
             if (!btnText) return;
             
             if (!stage || !grade || !subject) {
-                btnText.textContent = '⚠️ اختر المرحلة والصف والمادة أولاً[span_97](start_span)[span_97](end_span)';
+                btnText.textContent = '⚠️ اختر المرحلة والصف والمادة أولاً';
             } else {
-                btnText.textContent = 'تحديد الموقع والبحث بالـ GPS[span_98](start_span)[span_98](end_span)';
+                btnText.textContent = 'تحديد الموقع والبحث بالـ GPS';
             }
         }
 
@@ -1786,7 +1896,7 @@
                 }
             });
             
-            currObj.main_order = currObj.main_order.filter(k => curr[k]);
+            currObj.main_order = currObj.main_order.filter(k => currObj[k]);
 
             return currObj;
         }
@@ -1982,10 +2092,10 @@
 
             const subjs = getSubjectsForGrade(stage, grade);
             box.classList.add('show');
-            title.textContent = `📖 المواد المقررة لـ (${grade}) — اضغط لاختيار المادة:[span_99](start_span)[span_99](end_span)`;
+            title.textContent = `📖 المواد المقررة لـ (${grade}) — اضغط لاختيار المادة:`;
 
             if (subjs.length === 0) {
-                pills.innerHTML = `<span style="font-size:11px; color:#854D0E; font-weight:800;">لا توجد مواد مضافة لهذا الصف حالياً[span_100](start_span)[span_100](end_span)</span>`;
+                pills.innerHTML = `<span style="font-size:11px; color:#854D0E; font-weight:800;">لا توجد مواد مضافة لهذا الصف حالياً</span>`;
                 return;
             }
 
@@ -2031,6 +2141,7 @@
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+                    console.log("⚡ [talep] تم جلب المنهج من Firebase");
                     return true;
                 } else {
                     try {
@@ -2042,35 +2153,41 @@
                         localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                         return true;
                     } catch (e) {
+                        console.warn("⚠️ فشل رفع الافتراضي:", e);
                         return false;
                     }
                 }
             } catch (err) {
+                console.warn("⚠️ [talep] getDoc فشلت:", err);
                 return false;
             }
         }
 
-        function startCurriculumRealtimeListener() {
-            loadFirebaseModule().then(mod => {
-                if (!mod) return;
-                const ref = mod.doc(mod.db, "curriculum", "main");
-                curriculumUnsubscribe = mod.onSnapshot(ref, (snap) => {
-                    if (snap.exists()) {
-                        const data = snap.data() || {};
-                        delete data.updatedAt;
-                        curriculumCache = normalizeCurriculum(data);
-                        localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
-                        localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+        async function startCurriculumRealtimeListener() {
+            const mod = await loadFirebaseModule();
+            if (!mod) return;
 
-                        populateStagesDropdown(true);
-                        updateStudentSummary();
+            if (curriculumUnsubscribe) curriculumUnsubscribe();
 
-                        if (!isFirstCurriculumSnapshot) {
-                            showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة[span_101](start_span)[span_101](end_span)");
-                        }
-                        isFirstCurriculumSnapshot = false;
+            const ref = mod.doc(mod.db, "curriculum", "main");
+            curriculumUnsubscribe = mod.onSnapshot(ref, (snap) => {
+                if (snap.exists()) {
+                    const data = snap.data() || {};
+                    delete data.updatedAt;
+                    curriculumCache = normalizeCurriculum(data);
+                    localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
+                    localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
+
+                    populateStagesDropdown(true);
+                    updateStudentSummary();
+
+                    if (!isFirstCurriculumSnapshot) {
+                        showToast("🔄 تم تحديث المراحل والصفوف والمواد من السحابة");
                     }
-                }, (err) => {});
+                    isFirstCurriculumSnapshot = false;
+                }
+            }, (err) => {
+                console.warn("⚠️ [talep] onSnapshot فشل:", err);
             });
         }
 
@@ -2084,7 +2201,7 @@
                     }
                     populateStagesDropdown(true);
                     updateStudentSummary();
-                    showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة[span_102](start_span)[span_102](end_span)");
+                    showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً من الإدارة");
                 }
             };
         }
@@ -2094,11 +2211,11 @@
             const display = document.getElementById('radius_val_display');
             
             let text = "";
-            if (val < 1000) { text = val + " متر[span_103](start_span)[span_103](end_span)"; }
+            if (val < 1000) { text = val + " متر"; }
             else {
                 let kmVal = (val / 1000).toFixed(1);
                 if (kmVal.endsWith('.0')) kmVal = kmVal.slice(0, -2);
-                text = kmVal + " كم[span_104](start_span)[span_104](end_span)";
+                text = kmVal + " كم";
             }
             
             display.innerText = text;
@@ -2126,7 +2243,7 @@
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
             if (!gradeCheck || !subjectCheck) {
-                showToast("⚠️ اختر الصف والمادة أولاً عشان تظهر المعلمين[span_105](start_span)[span_105](end_span)!", true);
+                showToast("⚠️ اختر الصف والمادة أولاً عشان تظهر المعلمين!", true);
                 if (teachersLayer) teachersLayer.clearLayers();
                 closeTeacherInfoCard();
                 return;
@@ -2148,10 +2265,10 @@
 
             if (grade && subject) {
                 document.getElementById('studentSummaryCard').style.display = 'block';
-                document.getElementById('sum_name').innerText = name || 'بدون اسم[span_106](start_span)[span_106](end_span)';
+                document.getElementById('sum_name').innerText = name || 'بدون اسم';
                 document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : '--';
                 document.getElementById('sum_subject').innerText = subject || '--';
-                document.getElementById('sum_teacher_pref').innerText = prefTeacher || 'أي منهما[span_107](start_span)[span_107](end_span)';
+                document.getElementById('sum_teacher_pref').innerText = prefTeacher || 'أي منهما';
                 document.getElementById('sum_loc').innerText = prefLoc || '--';
             } else {
                 document.getElementById('studentSummaryCard').style.display = 'none';
@@ -2227,6 +2344,7 @@
             const savedLessonsOwner_talep = localStorage.getItem(lessonsOwnerKey_talep);
 
             if (savedLessonsOwner_talep && currentKey_talep && savedLessonsOwner_talep !== currentKey_talep) {
+                console.log(`🧹 [talep] معلم مختلف — تنظيف حصص قديمة`);
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
@@ -2323,7 +2441,34 @@
                 });
             });
 
+            window.addEventListener('storage', (e) => {
+                if (e.key === 'app_curriculum' || e.key === 'app_curriculum_updated_at') {
+                    try {
+                        const saved = localStorage.getItem('app_curriculum');
+                        if (saved) curriculumCache = normalizeCurriculum(JSON.parse(saved));
+                    } catch (err) {}
+                    populateStagesDropdown(true);
+                    updateStudentSummary();
+                    showToast("🔄 تم تحديث المراحل والصفوف والمواد لحظياً");
+                }
+            });
+
+            window.addEventListener('focus', () => {
+                try {
+                    const saved = localStorage.getItem('app_curriculum');
+                    if (saved) {
+                        const parsed = JSON.parse(saved);
+                        if (parsed && JSON.stringify(parsed) !== JSON.stringify(curriculumCache)) {
+                            curriculumCache = normalizeCurriculum(parsed);
+                            populateStagesDropdown(true);
+                            updateStudentSummary();
+                        }
+                    }
+                } catch (e) {}
+            });
+
             startCurriculumRealtimeListener();
+            startTalepRealtimeListener();
             startTeachersRealtimeListener();
         };
 
@@ -2335,11 +2480,11 @@
             const phone = document.getElementById('st_phone').value.trim();
 
             const missing = [];
-            if (!name) missing.push("اسمك[span_108](start_span)[span_108](end_span)");
-            if (!phone) missing.push("رقم الهاتف[span_109](start_span)[span_109](end_span)");
-            if (!stage) missing.push("المرحلة الدراسية[span_110](start_span)[span_110](end_span)");
-            if (!grade) missing.push("الصف[span_111](start_span)[span_111](end_span)");
-            if (!subject) missing.push("المادة[span_112](start_span)[span_112](end_span)");
+            if (!name) missing.push("اسمك");
+            if (!phone) missing.push("رقم الهاتف");
+            if (!stage) missing.push("المرحلة الدراسية");
+            if (!grade) missing.push("الصف");
+            if (!subject) missing.push("المادة");
 
             if (missing.length > 0) {
                 alertMissingData(missing);
@@ -2361,7 +2506,7 @@
 
         function declineLocation() {
             document.getElementById('locationDisclosureModal').classList.remove('active');
-            showToast("لن نتمكن من تحديد المعلمين حولك بدون الوصول لموقعك.[span_113](start_span)[span_113](end_span)", true);
+            showToast("لن نتمكن من تحديد المعلمين حولك بدون الوصول لموقعك.", true);
         }
 
         function acceptLocation() {
@@ -2372,12 +2517,12 @@
         }
 
         function openSaveLocModal() {
-            if (!currentCenter) { showToast("يرجى تحديد موقع أولاً[span_114](start_span)[span_114](end_span)!", true); return; }
+            if (!currentCenter) { showToast("يرجى تحديد موقع أولاً!", true); return; }
             editingLocationIndex = -1;
-            document.getElementById('locModalTitle').innerText = "إضافة هذا الموقع للمفضلة[span_115](start_span)[span_115](end_span)";
+            document.getElementById('locModalTitle').innerText = "إضافة هذا الموقع للمفضلة";
             document.getElementById('locModalEmoji').innerText = "📌";
             document.getElementById('locNameInput').value = 'موقع جديد';
-            document.getElementById('locModalSaveBtn').innerText = "حفظ 💾[span_116](start_span)[span_116](end_span)";
+            document.getElementById('locModalSaveBtn').innerText = "حفظ 💾";
             document.getElementById('saveLocModal').classList.add('active');
         }
 
@@ -2385,10 +2530,10 @@
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
                 editingLocationIndex = index;
-                document.getElementById('locModalTitle').innerText = "تعديل اسم الموقع[span_117](start_span)[span_117](end_span)";
+                document.getElementById('locModalTitle').innerText = "تعديل اسم الموقع";
                 document.getElementById('locModalEmoji').innerText = "✏️";
                 document.getElementById('locNameInput').value = data.saved_locations[index].name;
-                document.getElementById('locModalSaveBtn').innerText = "تحديث ✏️[span_118](start_span)[span_118](end_span)";
+                document.getElementById('locModalSaveBtn').innerText = "تحديث ✏️";
                 document.getElementById('saveLocModal').classList.add('active');
             }
         }
@@ -2399,7 +2544,7 @@
         }
 
         function confirmSaveLocation() {
-            const locName = document.getElementById('locNameInput').value.trim() || 'موقع بدون اسم[span_119](start_span)[span_119](end_span)';
+            const locName = document.getElementById('locNameInput').value.trim() || 'موقع بدون اسم';
             const existingData = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (!existingData.saved_locations) existingData.saved_locations = [];
 
@@ -2408,13 +2553,13 @@
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
                 renderSavedLocationsList();
                 closeSaveLocModal();
-                showToast("تم تحديث اسم الموقع! ✏️[span_120](start_span)[span_120](end_span)");
+                showToast("تم تحديث اسم الموقع! ✏️");
             } else {
                 existingData.saved_locations.unshift({ name: locName, lat: currentCenter[0], lng: currentCenter[1] });
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
                 renderSavedLocationsList(true);
                 closeSaveLocModal();
-                showToast("تمت إضافة الموقع للمفضلة! 📌[span_121](start_span)[span_121](end_span)");
+                showToast("تمت إضافة الموقع للمفضلة! 📌");
             }
             saveTalepToFirebase(true);
         }
@@ -2430,7 +2575,7 @@
             const countTxt = document.getElementById('locationsCountTxt');
             
             if (data.saved_locations && data.saved_locations.length > 0) {
-                btn.style.display = 'flex'; countTxt.innerText = `📌 المواقع المحفوظة (${data.saved_locations.length})[span_122](start_span)[span_122](end_span)`;
+                btn.style.display = 'flex'; countTxt.innerText = `📌 المواقع المحفوظة (${data.saved_locations.length})`;
                 let html = '';
                 data.saved_locations.forEach((loc, index) => {
                     html += `
@@ -2460,7 +2605,7 @@
         function loadSpecificLocation(index) {
             const subject = document.getElementById('s_subject').value;
             const grade = document.getElementById('s_grade').value;
-            if (!subject || !grade) { showToast("أكمل بيانات الصف والمادة أولاً[span_123](start_span)[span_123](end_span)!", true); return; }
+            if (!subject || !grade) { showToast("أكمل بيانات الصف والمادة أولاً!", true); return; }
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
             if (data.saved_locations && data.saved_locations[index]) {
                 buildRadarMap(data.saved_locations[index].lat, data.saved_locations[index].lng);
@@ -2475,13 +2620,13 @@
                 existingData.saved_teachers[existingIdx].phone = phone;
                 localStorage.setItem('talep_data', JSON.stringify(existingData));
                 renderSavedTeachersList(true);
-                showToast("تم تحديث بيانات المعلم المحفوظ ⭐[span_124](start_span)[span_124](end_span)");
+                showToast("تم تحديث بيانات المعلم المحفوظ ⭐");
                 saveTalepToFirebase(true);
                 return;
             }
             existingData.saved_teachers.unshift({ name, subject, grade, locType, phone, gender, groupName });
             localStorage.setItem('talep_data', JSON.stringify(existingData));
-            renderSavedTeachersList(true); showToast("تم حفظ المعلم ⭐[span_125](start_span)[span_125](end_span)");
+            renderSavedTeachersList(true); showToast("تم حفظ المعلم ⭐");
             saveTalepToFirebase(true);
         };
 
@@ -2492,11 +2637,11 @@
             const countTxt = document.getElementById('teachersCountTxt');
 
             if (data.saved_teachers && data.saved_teachers.length > 0) {
-                btn.style.display = 'flex'; countTxt.innerText = `⭐ المعلمون المفضلون (${data.saved_teachers.length})[span_126](start_span)[span_126](end_span)`;
+                btn.style.display = 'flex'; countTxt.innerText = `⭐ المعلمون المفضلون (${data.saved_teachers.length})`;
                 let html = '';
                 data.saved_teachers.forEach((t, index) => {
                     const iconEmoji = t.gender === 'مس' ? '👩‍🏫' : '👨‍🏫';
-                    const displayPhone = t.phone ? t.phone : 'غير مسجل[span_127](start_span)[span_127](end_span)';
+                    const displayPhone = t.phone ? t.phone : 'غير مسجل';
                     html += `
                         <div class="loc-item" style="flex-direction: column; align-items: flex-start; gap: 8px;">
                             <div style="display: flex; justify-content: space-between; width: 100%; align-items: center;">
@@ -2513,8 +2658,8 @@
                                 </button>
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
-                                <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة[span_128](start_span)[span_128](end_span)</button>
-                                <button class="action-btn clickable-element" onclick="openTeacherWhatsApp('${t.phone || ''}', '${t.name}', '${t.subject}', '${t.grade}', '${t.groupName || ''}')" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px;">💬 واتساب[span_129](start_span)[span_129](end_span)</button>
+                                <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
+                                <button class="action-btn clickable-element" onclick="openTeacherWhatsApp('${t.phone || ''}', '${t.name}', '${t.subject}', '${t.grade}', '${t.groupName || ''}')" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px;">💬 واتساب</button>
                             </div>
                         </div>
                     `;
@@ -2534,17 +2679,66 @@
                     existingData.saved_locations.splice(deleteIndexToConfirm, 1);
                     localStorage.setItem('talep_data', JSON.stringify(existingData));
                     renderSavedLocationsList();
-                    showToast("تم إزالة الموقع 🗑️[span_130](start_span)[span_130](end_span)");
+                    showToast("تم إزالة الموقع 🗑️");
                 }
                 else if (deleteType === 'teacher') {
                     existingData.saved_teachers.splice(deleteIndexToConfirm, 1);
                     localStorage.setItem('talep_data', JSON.stringify(existingData));
                     renderSavedTeachersList();
-                    showToast("تم إزالة المعلم 🗑️[span_131](start_span)[span_131](end_span)");
+                    showToast("تم إزالة المعلم 🗑️");
                 }
                 saveTalepToFirebase(true);
             }
             closeDeleteModal();
+        }
+
+        // ✅ قراءة من الكاش — القراءة الاحتياطية فقط لو الكاش لسه ما امتلأش
+        async function getRegisteredTeachersFromFirebase() {
+            const currentStage = (document.getElementById('s_stage').value || '').trim();
+            const currentGrade = (document.getElementById('s_grade').value || '').trim();
+
+            // ✅ لو الكاش جاهز ومطابق للاختيار الحالي — ارجع فوراً بدون أي قراءة
+            if (cacheReady
+                && cachedTeachersStageKey === currentStage
+                && cachedTeachersGrade === currentGrade) {
+                return {
+                    registeredList: cachedTeachersList,
+                    hiddenCount: cachedTeachersHiddenCount
+                };
+            }
+
+            // ⚠️ Fallback نادر: الكاش لسه ما امتلأش
+            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
+
+            const registeredList = [];
+            let hiddenCount = 0;
+
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
+                return { registeredList, hiddenCount };
+            }
+
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) return { registeredList, hiddenCount };
+
+                const constraints = [mod.where("g_publish_map", "==", true)];
+                if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
+                if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
+
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const snap = await mod.getDocs(q);
+
+                snap.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) { hiddenCount++; return; }
+                    registeredList.push(parseTeacherDoc(docSnap));
+                });
+            } catch (err) {
+                console.error("❌ فشل القراءة الاحتياطية:", err);
+            }
+
+            return { registeredList, hiddenCount };
         }
 
         function getStageNameByKey(stageKey) {
@@ -2584,7 +2778,7 @@
         }
 
         function fetchLiveCoordinates(onSuccess, onError) {
-            if (!navigator.geolocation) { onError("الجهاز لا يدعم GPS[span_132](start_span)[span_132](end_span)"); return; }
+            if (!navigator.geolocation) { onError("الجهاز لا يدعم GPS"); return; }
 
             navigator.geolocation.getCurrentPosition(
                 (pos) => { onSuccess(pos.coords.latitude, pos.coords.longitude); },
@@ -2602,7 +2796,7 @@
         function startSmartSearch() {
             const btn = document.getElementById('searchBtn');
             const originalBtnHTML = btn.innerHTML;
-            btn.innerHTML = "⏳ جاري تحديد موقعك الحالي...[span_133](start_span)[span_133](end_span)";
+            btn.innerHTML = "⏳ جاري تحديد موقعك الحالي...";
             btn.classList.add('loading');
 
             fetchLiveCoordinates(
@@ -2617,19 +2811,19 @@
                     const fallbackLat = currentCenter ? currentCenter[0] : 31.0409;
                     const fallbackLng = currentCenter ? currentCenter[1] : 31.3785;
                     buildRadarMap(fallbackLat, fallbackLng);
-                    showToast("تم فتح الخريطة، تأكد من تفعيل الموقع بالهاتف أو حرّك النقطة الزرقاء يدوياً 📍[span_134](start_span)[span_134](end_span)", true);
+                    showToast("تم فتح الخريطة، تأكد من تفعيل الموقع بالهاتف أو حرّك النقطة الزرقاء يدوياً 📍", true);
                 }
             );
         }
 
         function refreshMyLiveGPS() {
-            showToast("⏳ جاري تحديث موقعك الحالي بالـ GPS...[span_135](start_span)[span_135](end_span)");
+            showToast("⏳ جاري تحديث موقعك الحالي بالـ GPS...");
             fetchLiveCoordinates(
                 (lat, lng) => {
                     buildRadarMap(lat, lng);
-                    showToast("تم تحديث موقعك الحالي بنجاح 🎯[span_136](start_span)[span_136](end_span)");
+                    showToast("تم تحديث موقعك الحالي بنجاح 🎯");
                 },
-                () => { showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح[span_137](start_span)[span_137](end_span)!", true); }
+                () => { showToast("تعذر التقاط إشارة الـ GPS، تأكد من تفعيل الموقع وصلاحية المتصفح!", true); }
             );
         }
 
@@ -2642,11 +2836,11 @@
             
             if (!stageCheck || !gradeCheck || !subjectCheck || !nameCheck || !phoneCheck) {
                 const missing = [];
-                if (!nameCheck) missing.push("اسمك[span_138](start_span)[span_138](end_span)");
-                if (!phoneCheck) missing.push("رقم الهاتف[span_139](start_span)[span_139](end_span)");
-                if (!stageCheck) missing.push("المرحلة[span_140](start_span)[span_140](end_span)");
-                if (!gradeCheck) missing.push("الصف[span_141](start_span)[span_141](end_span)");
-                if (!subjectCheck) missing.push("المادة[span_142](start_span)[span_142](end_span)");
+                if (!nameCheck) missing.push("اسمك");
+                if (!phoneCheck) missing.push("رقم الهاتف");
+                if (!stageCheck) missing.push("المرحلة");
+                if (!gradeCheck) missing.push("الصف");
+                if (!subjectCheck) missing.push("المادة");
                 alertMissingData(missing);
                 highlightMissingField('st_name', !nameCheck);
                 highlightMissingField('st_phone', !phoneCheck);
@@ -2678,6 +2872,7 @@
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
 
+            // ✅ Debounce: انتظر 250ms قبل الرسم عشان مايتكررش مع كل حركة سريعة
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
@@ -2704,7 +2899,7 @@
 
         window.submitTeacherRating = async function(lessonId, teacherName, teacherPhone) {
             if (currentSelectedStars === 0) {
-                showToast("⚠️ يرجى اختيار عدد النجوم أولاً[span_143](start_span)[span_143](end_span)!", true);
+                showToast("⚠️ يرجى اختيار عدد النجوم أولاً!", true);
                 return;
             }
 
@@ -2714,29 +2909,29 @@
 
             if (submitBtn) {
                 submitBtn.disabled = true;
-                submitBtn.innerHTML = '⏳ جاري الحفظ...[span_144](start_span)[span_144](end_span)';
+                submitBtn.innerHTML = '⏳ جاري الحفظ...';
             }
 
             try {
                 const mod = await loadFirebaseModule();
-                if (!mod) throw new Error("Firebase غير جاهز[span_145](start_span)[span_145](end_span)");
+                if (!mod) throw new Error("Firebase غير جاهز");
 
                 const studentId = getStudentId();
-                const studentName = document.getElementById('st_name').value.trim() || 'طالب[span_146](start_span)[span_146](end_span)';
+                const studentName = document.getElementById('st_name').value.trim() || 'طالب';
                 
                 const cleanPhone = String(teacherPhone || '').replace(/\D/g, '');
                 const safeLessonId = String(lessonId).replace(/[\/\s]+/g, '_');
-                const safeTeacherName = String(teacherName || 'معلم[span_147](start_span)[span_147](end_span)').replace(/undefined/g, 'معلم');
+                const safeTeacherName = String(teacherName || 'معلم').replace(/undefined/g, 'معلم');
                 const ratingId = `${safeLessonId}_${studentId}`;
 
                 const ref = mod.doc(mod.db, "teacher_ratings", ratingId);
 
                 const existing = await mod.getDoc(ref);
                 if (existing.exists()) {
-                    showToast("⚠️ لقد قمت بتقييم هذا المعلم مسبقاً[span_148](start_span)[span_148](end_span)!", true);
+                    showToast("⚠️ لقد قمت بتقييم هذا المعلم مسبقاً!", true);
                     if (submitBtn) {
                         submitBtn.disabled = false;
-                        submitBtn.innerHTML = '⭐ إرسال التقييم[span_149](start_span)[span_149](end_span)';
+                        submitBtn.innerHTML = '⭐ إرسال التقييم';
                     }
                     return;
                 }
@@ -2754,7 +2949,11 @@
 
                 await mod.setDoc(ref, payload);
 
-                showToast("شكراً لك! تم إرسال تقييمك ⭐[span_150](start_span)[span_150](end_span)");
+                if (cleanPhone && globalRatingCache[cleanPhone]) {
+                    delete globalRatingCache[cleanPhone];
+                }
+
+                showToast("شكراً لك! تم إرسال تقييمك ⭐");
                 vibrateSuccess();
 
                 currentSelectedStars = 0;
@@ -2764,10 +2963,16 @@
 
             } catch (err) {
                 console.error("❌ خطأ في حفظ التقييم:", err);
-                showToast("حدث خطأ، حاول مرة أخرى[span_151](start_span)[span_151](end_span)!", true);
+                
+                let errMsg = "حدث خطأ، حاول مرة أخرى!";
+                if (err.code === 'permission-denied' || String(err).includes('permissions')) {
+                    errMsg = "صلاحيات الحفظ غير كافية! يرجى تعديل قواعد Firestore.";
+                }
+                
+                showToast(errMsg, true);
                 if (submitBtn) {
                     submitBtn.disabled = false;
-                    submitBtn.innerHTML = '⭐ إرسال التقييم[span_152](start_span)[span_152](end_span)';
+                    submitBtn.innerHTML = '⭐ إرسال التقييم';
                 }
             }
         };
@@ -2813,6 +3018,7 @@
                     distribution: distribution
                 };
             } catch (err) {
+                console.warn("⚠️ فشل تحميل التقييمات:", err);
                 return { avg: 0, count: 0, reviews: [], hasRated: false, distribution: {} };
             }
         }
@@ -2834,9 +3040,9 @@
             const diffMs = now - d;
             const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
             
-            if (diffDays === 0) return 'اليوم[span_153](start_span)[span_153](end_span)';
-            if (diffDays === 1) return 'أمس[span_154](start_span)[span_154](end_span)';
-            if (diffDays < 7) return `منذ ${diffDays} أيام[span_155](start_span)[span_155](end_span)`;
+            if (diffDays === 0) return 'اليوم';
+            if (diffDays === 1) return 'أمس';
+            if (diffDays < 7) return `منذ ${diffDays} أيام`;
             return d.toLocaleDateString('ar-EG', { day: 'numeric', month: 'short' });
         }
 
@@ -2859,35 +3065,35 @@
             body.innerHTML = `
                 <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
-                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${t.grade || 'غير محدد[span_156](start_span)[span_156](end_span)'}</span></div>
+                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${t.grade || 'غير محدد'}</span></div>
                 <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
-                <div class="teacher-info-row"><span>🎂 العمر</span><span>${t.age} ${t.age !== 'غير محدد[span_157](start_span)[span_157](end_span)' ? 'سنة[span_158](start_span)[span_158](end_span)' : ''}</span></div>
+                <div class="teacher-info-row"><span>🎂 العمر</span><span>${t.age} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
                 <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
                 <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
                 
                 <div class="teacher-info-address">
-                    <span class="addr-label">🏠 العنوان التفصيلي[span_159](start_span)[span_159](end_span)</span>
-                    <span class="addr-value">${t.address || 'غير محدد[span_160](start_span)[span_160](end_span)'}</span>
+                    <span class="addr-label">🏠 العنوان التفصيلي</span>
+                    <span class="addr-value">${t.address || 'غير محدد'}</span>
                 </div>
                 
                 <div class="teacher-info-row" style="background:#ECFDF5; border:1px solid #A7F3D0;">
-                    <span>📱 التليفون[span_161](start_span)[span_161](end_span)</span>
+                    <span>📱 التليفون</span>
                     ${t.phone 
                         ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:11px;" dir="ltr">📞 ${t.phone}</a>` 
-                        : `<span style="color:#EF4444;">غير مسجل[span_162](start_span)[span_162](end_span)</span>`}
+                        : `<span style="color:#EF4444;">غير مسجل</span>`}
                 </div>
                 
                 <div id="ratingBlock_${lessonId}">
-                    <div class="reviews-empty">⏳ جاري تحميل التقييمات...[span_163](start_span)[span_163](end_span)</div>
+                    <div class="reviews-empty">⏳ جاري تحميل التقييمات...</div>
                 </div>
 
                 <div class="teacher-info-actions">
-                    <button class="teacher-info-btn-save" onclick="saveTeacher('${t.teacherName}', '${t.subject}', '${t.grade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')">⭐ حفظ[span_164](start_span)[span_164](end_span)</button>
-                    <button class="teacher-info-btn-wa" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${t.subject}', '${t.grade}', '${t.groupName}')">💬 واتساب[span_165](start_span)[span_165](end_span)</button>
+                    <button class="teacher-info-btn-save" onclick="saveTeacher('${t.teacherName}', '${t.subject}', '${t.grade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')">⭐ حفظ</button>
+                    <button class="teacher-info-btn-wa" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${t.subject}', '${t.grade}', '${t.groupName}')">💬 واتساب</button>
                 </div>
                 <button class="complaint-teacher-btn" onclick="openComplaintForTeacher('${String(t.teacherName).replace(/'/g, "\\'")}', '${String(t.subject).replace(/'/g, "\\'")}', '${String(t.groupName).replace(/'/g, "\\'")}')">
-                    ⚠️ الإبلاغ عن مشكلة مع هذا المدرس[span_166](start_span)[span_166](end_span)
+                    ⚠️ الإبلاغ عن مشكلة مع هذا المدرس
                 </button>
             `;
 
@@ -2908,7 +3114,7 @@
             const topBadge = isTopRated ? `
                 <div style="text-align:center; margin-bottom:3px;">
                     <span style="background:linear-gradient(135deg,#FBBF24,#F59E0B); color:#fff; padding:1px 8px; border-radius:99px; font-size:9px; font-weight:900; box-shadow:0 2px 4px rgba(251,191,36,0.4); display:inline-flex; align-items:center; gap:4px;">
-                        🏆 معلم مميز[span_167](start_span)[span_167](end_span)
+                        🏆 معلم مميز
                     </span>
                 </div>
             ` : '';
@@ -2952,20 +3158,20 @@
                 reviewsHtml = `
                     <div style="text-align:center; padding:4px; background:linear-gradient(135deg,#FEF3C7,#FDE68A); border-radius:4px; border:1px dashed #FBBF24;">
                         <div style="font-size:14px; margin-bottom:1px;">🌟</div>
-                        <div style="font-size:9px; color:#92400E; font-weight:900;">كن أول من يقيّم[span_168](start_span)[span_168](end_span)!</div>
+                        <div style="font-size:9px; color:#92400E; font-weight:900;">كن أول من يقيّم!</div>
                     </div>
                 `;
             }
 
             const ratingFormHtml = ratings.hasRated
-                ? `<div class="rating-already-rated">✅ لقد قمت بتقييم هذا المعلم مسبقاً[span_169](start_span)[span_169](end_span)</div>`
+                ? `<div class="rating-already-rated">✅ لقد قمت بتقييم هذا المعلم مسبقاً</div>`
                 : `
                     <div class="stars-input" id="starsInput_${lessonId}">
                         ${[1,2,3,4,5].map(i => `<button class="star-btn" onclick="selectStar(${i})" data-star="${i}">★</button>`).join('')}
                     </div>
-                    <textarea id="ratingComment_${lessonId}" class="rating-comment-input" placeholder="تعليق (اختياري)...[span_170](start_span)[span_170](end_span)" rows="1"></textarea>
+                    <textarea id="ratingComment_${lessonId}" class="rating-comment-input" placeholder="تعليق (اختياري)..." rows="1"></textarea>
                     <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${String(lessonId).replace(/'/g, "\\'")}', '${String(t.teacherName).replace(/'/g, "\\'")}', '${String(t.phone || '').replace(/'/g, "\\'")}')">
-                        ⭐ إرسال التقييم[span_171](start_span)[span_171](end_span)
+                        ⭐ إرسال التقييم
                     </button>
                 `;
 
@@ -2981,7 +3187,7 @@
                             <div style="font-size:8px; color:#F59E0B; direction:ltr; margin-top:1px;">${starsDisplay}</div>
                         </div>
                         <div style="flex:1;">
-                            ${distributionBars || '<div style="font-size:8px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات[span_172](start_span)[span_172](end_span)</div>'}
+                            ${distributionBars || '<div style="font-size:8px; color:#B45309; text-align:center; font-weight:800;">لا توجد تقييمات</div>'}
                         </div>
                     </div>
 
@@ -3082,7 +3288,7 @@
             });
         };
 
-        // ✅ استدعاء الدالة المحدثة مع تمرير إحداثيات مركز الطالب ونطاق البحث
+        // ✅ دالة عرض المعلمين — تقرأ من الكاش وتفلتر داخل الدائرة فقط
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3106,12 +3312,12 @@
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
-            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase(centerPos, radiusInMeters);
+            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
             teachersLayer.clearLayers();
 
             if (registeredList.length === 0) {
-                showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒[span_173](start_span)[span_173](end_span)" : "لا يوجد معلم مسجل حالياً في هذا النطاق[span_174](start_span)[span_174](end_span)!", true);
+                showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم مسجل حالياً في النظام!", true);
                 return;
             }
 
@@ -3142,17 +3348,31 @@
 
             if (matched.length === 0) {
                 const noMatchMsg = prefLocValue
-                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) في هذا النطاق[span_175](start_span)[span_175](end_span)!`
-                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) في هذا النطاق[span_176](start_span)[span_176](end_span)!`;
+                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
+                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
                 showToast(noMatchMsg, true);
                 return;
             }
 
-            matched.forEach(t => {
+            // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة
+            const matchedInRadius = matched.filter(t => {
+                const d = map.distance(centerPos, [t.lat, t.lng]);
+                return d <= radiusInMeters;
+            });
+
+            if (matchedInRadius.length === 0) {
+                showToast(
+                    `🔍 لا يوجد أي معلم داخل هذا النطاق لـ (${selectedSubject} - ${selectedGrade}) — وسّع النطاق أو حرّك النقطة الزرقاء!`,
+                    true
+                );
+                return;
+            }
+
+            matchedInRadius.forEach(t => {
                 t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
             });
 
-            matched.sort((a, b) => {
+            matchedInRadius.sort((a, b) => {
                 if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
                 if (b.ratingSummary.count === 0) return -1;
                 if (a.ratingSummary.count === 0) return 1;
@@ -3161,7 +3381,7 @@
 
             let shownCount = 0;
 
-            matched.forEach(t => {
+            matchedInRadius.forEach(t => {
                 shownCount++;
 
                 const isMs = (t.gender === 'مس');
@@ -3218,9 +3438,12 @@
             });
 
             vibrateSuccess();
-            showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})[span_177](start_span)[span_177](end_span)`);
+            showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})`);
         }
 
+        // ══════════════════════════════════════════
+        // 📢 نظام الشكاوى والاقتراحات
+        // ══════════════════════════════════════════
         const COMPLAINT_EMAIL = 'mmoksh162@gmail.com';
 
         window.openComplaintModal = function() {
@@ -3235,7 +3458,7 @@
             document.getElementById('complaintTeacherName').value = teacherName || '';
             const detailsEl = document.getElementById('complaintDetails');
             if (!detailsEl.value.trim()) {
-                detailsEl.value = `شكوى بخصوص المدرس: ${teacherName || 'غير محدد[span_178](start_span)[span_178](end_span)'}\nالمادة: ${subject || 'غير محدد[span_179](start_span)[span_179](end_span)'}\nالمجموعة: ${groupName || 'غير محدد[span_180](start_span)[span_180](end_span)'}\n\nالتفاصيل:\n`;
+                detailsEl.value = `شكوى بخصوص المدرس: ${teacherName || 'غير محدد'}\nالمادة: ${subject || 'غير محدد'}\nالمجموعة: ${groupName || 'غير محدد'}\n\nالتفاصيل:\n`;
                 detailsEl.focus();
                 detailsEl.setSelectionRange(detailsEl.value.length, detailsEl.value.length);
             }
@@ -3254,7 +3477,7 @@
             const teacherName = document.getElementById('complaintTeacherName').value.trim();
             const details = document.getElementById('complaintDetails').value.trim();
             const phone = document.getElementById('complaintPhone').value.trim();
-            const studentName = document.getElementById('st_name').value.trim() || 'طالب غير معروف[span_181](start_span)[span_181](end_span)';
+            const studentName = document.getElementById('st_name').value.trim() || 'طالب غير معروف';
 
             const subject = `[احجزلي - شكوى] ${type}${teacherName ? ' - ' + teacherName : ''}`;
             const body =
@@ -3262,9 +3485,9 @@
 
 ━━━━━━━━━━━━━━━━━━━━
 نوع الرسالة: ${type}
-اسم المدرس: ${teacherName || 'غير محدد[span_182](start_span)[span_182](end_span)'}
+اسم المدرس: ${teacherName || 'غير محدد'}
 اسم الطالب: ${studentName}
-رقم التواصل: ${phone || 'غير مسجل[span_183](start_span)[span_183](end_span)'}
+رقم التواصل: ${phone || 'غير مسجل'}
 التاريخ: ${new Date().toLocaleString('ar-EG')}
 ━━━━━━━━━━━━━━━━━━━━
 
@@ -3272,7 +3495,7 @@
 ${details}
 
 ━━━━━━━━━━━━━━━━━━━━
-تم الإرسال من: منصة احجزلي - صفحة الطالب[span_184](start_span)[span_184](end_span)
+تم الإرسال من: منصة احجزلي - صفحة الطالب
 البريد الرسمي للإدارة: ${COMPLAINT_EMAIL}`;
 
             return { subject, body, details };
@@ -3281,7 +3504,7 @@ ${details}
         window.submitComplaint = function() {
             const { subject, body, details } = buildComplaintContent();
             if (!details) {
-                showToast("⚠️ يرجى كتابة تفاصيل الشكوى[span_185](start_span)[span_185](end_span)!", true);
+                showToast("⚠️ يرجى كتابة تفاصيل الشكوى!", true);
                 const el = document.getElementById('complaintDetails');
                 if (el) {
                     el.style.borderColor = '#EF4444';
@@ -3308,7 +3531,7 @@ ${details}
                 window.location.href = mailtoLink;
             }
 
-            showToast("✅ جاري فتح تطبيق البريد لإرسال الشكوى...[span_186](start_span)[span_186](end_span)");
+            showToast("✅ جاري فتح تطبيق البريد لإرسال الشكوى...");
             vibrateSuccess();
 
             setTimeout(() => {
@@ -3321,19 +3544,19 @@ ${details}
         window.copyComplaintOnly = function() {
             const { subject, body, details } = buildComplaintContent();
             if (!details) {
-                showToast("⚠️ يرجى كتابة تفاصيل الشكوى أولاً[span_187](start_span)[span_187](end_span)!", true);
+                showToast("⚠️ يرجى كتابة تفاصيل الشكوى أولاً!", true);
                 return;
             }
             const fullText = `إلى: ${COMPLAINT_EMAIL}\n\nالموضوع: ${subject}\n\n${body}`;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(fullText).then(() => {
-                    showToast("📋 تم نسخ الشكوى — الصقها في بريدك وأرسلها لـ mmoksh162@gmail.com[span_188](start_span)[span_188](end_span)");
+                    showToast("📋 تم نسخ الشكوى — الصقها في بريدك وأرسلها لـ mmoksh162@gmail.com");
                     vibrateSuccess();
                 }).catch(() => {
-                    showToast("⚠️ تعذر النسخ — استخدم متصفح أحدث[span_189](start_span)[span_189](end_span)", true);
+                    showToast("⚠️ تعذر النسخ — استخدم متصفح أحدث", true);
                 });
             } else {
-                showToast("⚠️ النسخ التلقائي غير مدعوم — استخدم خيار الإرسال[span_190](start_span)[span_190](end_span)", true);
+                showToast("⚠️ النسخ التلقائي غير مدعوم — استخدم خيار الإرسال", true);
             }
         };
     </script>
