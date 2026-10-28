@@ -11,12 +11,10 @@
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
     
-    <!-- ✅ مكتبة تجميع الدبابيس (MarkerCluster) -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
     <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
 
-    <!-- ✅ مكتبة Geofire (لدعم الفهرس الثاني) -->
     <script src="https://unpkg.com/geofire-common@6.0.0/dist/geofire-common.js"></script>
 
     <style>
@@ -185,7 +183,6 @@
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: visible; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; border-radius: 12px; }
 
-        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
         .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
         .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
@@ -201,43 +198,16 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
-        /* ✅ مؤشر المزامنة اللحظية */
         .live-indicator {
-            position: absolute;
-            top: 10px;
-            right: 50%;
-            transform: translateX(50%);
-            background: #10B981;
-            color: white;
-            padding: 4px 12px;
-            border-radius: 99px;
-            font-size: 10px;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4);
-            z-index: 100001;
-            border: 1.5px solid white;
-            opacity: 0;
-            transition: opacity 0.3s;
+            position: absolute; top: 10px; right: 50%; transform: translateX(50%);
+            background: #10B981; color: white; padding: 4px 12px; border-radius: 99px;
+            font-size: 10px; font-weight: 900; display: flex; align-items: center; gap: 5px;
+            box-shadow: 0 3px 10px rgba(16, 185, 129, 0.4); z-index: 100001;
+            border: 1.5px solid white; opacity: 0; transition: opacity 0.3s;
         }
-
         .live-indicator.show { opacity: 1; }
-
-        .live-indicator .dot {
-            width: 7px;
-            height: 7px;
-            background: white;
-            border-radius: 50%;
-            animation: livePulse 1.5s infinite;
-        }
-
-        @keyframes livePulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(1.3); }
-        }
-
+        .live-indicator .dot { width: 7px; height: 7px; background: white; border-radius: 50%; animation: livePulse 1.5s infinite; }
+        @keyframes livePulse { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: 0.5; transform: scale(1.3); } }
         .live-indicator.updating { background: #F59E0B; }
 
         .map-container.is-fullscreen {
@@ -253,24 +223,11 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
-            border-radius: 12px;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-            border-bottom: 3px solid #0F2D5C;
-            max-height: 340px;
-            overflow-y: auto;
-            overflow-x: hidden;
+            border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-bottom: 3px solid #0F2D5C; max-height: 340px; overflow-y: auto; overflow-x: hidden;
         }
-        .leaflet-popup-content {
-            font-family: 'Cairo', sans-serif;
-            text-align: center;
-            line-height: 1.5;
-            font-size: 11px;
-            margin: 10px 8px;
-            min-width: 215px;
-            max-width: 260px;
-        }
+        .leaflet-popup-content { font-family: 'Cairo', sans-serif; text-align: center; line-height: 1.5; font-size: 11px; margin: 10px 8px; min-width: 215px; max-width: 260px; }
         .leaflet-popup { z-index: 100000 !important; }
         .leaflet-control-zoom { z-index: 100001 !important; }
 
@@ -356,305 +313,95 @@
             margin-top: 4px; font-weight: 800;
         }
 
-        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
-            display: none;
-            position: absolute;
-            bottom: 30px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
-            max-width: 400px;
-            background: rgba(255, 255, 255, 0.95);
-            padding: 12px;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-            z-index: 99999;
-            border: 2px solid #10B981;
+            display: none; position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 400px; background: rgba(255, 255, 255, 0.95);
+            padding: 12px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            z-index: 99999; border: 2px solid #10B981;
         }
-
-        .map-container.is-fullscreen .fullscreen-radius-container {
-            display: block;
-        }
-
-        .fullscreen-radius-container .radius-label-row {
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;
-        }
+        .map-container.is-fullscreen .fullscreen-radius-container { display: block; }
+        .fullscreen-radius-container .radius-label-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
         .fullscreen-radius-container .radius-label-row span:first-child { font-size: 13px; font-weight: 900; color: #1E293B; }
-        .fullscreen-radius-container .radius-value-badge-display {
-            color: #10B981; font-weight: 900; font-size: 13px; background: #D1FAE5;
-            padding: 2px 10px; border-radius: 20px;
-        }
-        .fullscreen-radius-container .radius-limits-row {
-            display: flex; justify-content: space-between; font-size: 10px; color: #64748B;
-            margin-top: 4px; font-weight: 800;
-        }
-        
-        .map-container.is-fullscreen .leaflet-bottom.leaflet-right {
-            bottom: 130px !important;
-            transition: bottom 0.3s ease;
-        }
+        .fullscreen-radius-container .radius-value-badge-display { color: #10B981; font-weight: 900; font-size: 13px; background: #D1FAE5; padding: 2px 10px; border-radius: 20px; }
+        .fullscreen-radius-container .radius-limits-row { display: flex; justify-content: space-between; font-size: 10px; color: #64748B; margin-top: 4px; font-weight: 800; }
+        .map-container.is-fullscreen .leaflet-bottom.leaflet-right { bottom: 130px !important; transition: bottom 0.3s ease; }
+        .map-container.is-fullscreen .leaflet-popup-content-wrapper { max-height: 50vh; }
 
-        .map-container.is-fullscreen .leaflet-popup-content-wrapper {
-            max-height: 50vh;
-        }
-
-        /* ✅ كارت بيانات المعلم العائم فوق الخريطة والجداول (مضغوط للموبايل) */
         .teacher-info-card {
-            display: none;
-            position: absolute;
-            top: 60px;
-            left: 10px;
-            right: 10px;
-            max-width: 380px;
-            margin: 0 auto;
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.25);
-            border: 2px solid #10B981;
-            border-bottom: 4px solid #059669;
-            z-index: 100002;
-            max-height: 65vh;
-            overflow-y: auto;
-            padding: 10px;
+            display: none; position: absolute; top: 60px; left: 10px; right: 10px; max-width: 380px;
+            margin: 0 auto; background: #ffffff; border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.25); border: 2px solid #10B981; border-bottom: 4px solid #059669;
+            z-index: 100002; max-height: 65vh; overflow-y: auto; padding: 10px;
             animation: cardSlideIn 0.25s ease-out;
         }
-
         .teacher-info-card.show { display: block; }
-
-        @keyframes cardSlideIn {
-            from { opacity: 0; transform: translateY(-15px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes cardSlideIn { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
 
         .teacher-info-close {
-            position: absolute;
-            top: 6px;
-            left: 6px;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: #FEE2E2;
-            color: #EF4444;
-            border: 1.5px solid #FCA5A5;
-            font-weight: 900;
-            font-size: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
+            position: absolute; top: 6px; left: 6px; width: 24px; height: 24px;
+            border-radius: 50%; background: #FEE2E2; color: #EF4444;
+            border: 1.5px solid #FCA5A5; font-weight: 900; font-size: 12px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center; z-index: 10;
         }
         .teacher-info-close:active { transform: scale(0.92); }
 
         .teacher-info-title {
-            font-size: 13px;
-            font-weight: 900;
-            color: #0F2D5C;
-            text-align: center;
-            padding-bottom: 6px;
-            margin-bottom: 6px;
-            border-bottom: 1.5px dashed #E2E8F0;
-            padding-left: 25px;
-            padding-right: 25px;
+            font-size: 13px; font-weight: 900; color: #0F2D5C; text-align: center;
+            padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0;
+            padding-left: 25px; padding-right: 25px;
         }
 
         .teacher-info-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 11px;
-            font-weight: 800;
-            color: #334155;
-            background: #F8FAFC;
-            padding: 4px 8px;
-            border-radius: 6px;
-            margin-bottom: 3px;
-            gap: 6px;
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 11px; font-weight: 800; color: #334155;
+            background: #F8FAFC; padding: 4px 8px; border-radius: 6px;
+            margin-bottom: 3px; gap: 6px;
         }
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
-        /* ✅ العنوان التفصيلي في كارت المعلم */
         .teacher-info-address {
-            display: flex;
-            flex-direction: column;
-            align-items: stretch;
-            background: #F0FDF4;
-            border: 1.5px solid #A7F3D0;
-            border-radius: 8px;
-            padding: 6px 8px;
-            margin-bottom: 3px;
-            gap: 3px;
+            display: flex; flex-direction: column; align-items: stretch;
+            background: #F0FDF4; border: 1.5px solid #A7F3D0; border-radius: 8px;
+            padding: 6px 8px; margin-bottom: 3px; gap: 3px;
         }
-        .teacher-info-address .addr-label {
-            color: #64748B;
-            font-size: 9.5px;
-            font-weight: 900;
-        }
-        .teacher-info-address .addr-value {
-            color: #065F46;
-            font-weight: 900;
-            text-align: right;
-            width: 100%;
-            line-height: 1.45;
-            font-size: 11px;
-            word-break: break-word;
-        }
+        .teacher-info-address .addr-label { color: #64748B; font-size: 9.5px; font-weight: 900; }
+        .teacher-info-address .addr-value { color: #065F46; font-weight: 900; text-align: right; width: 100%; line-height: 1.45; font-size: 11px; word-break: break-word; }
 
-        .teacher-info-actions {
-            display: flex;
-            gap: 6px;
-            margin-top: 8px;
-        }
-        .teacher-info-actions button {
-            flex: 1;
-            padding: 6px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-weight: 900;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
+        .teacher-info-actions { display: flex; gap: 6px; margin-top: 8px; }
+        .teacher-info-actions button { flex: 1; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 900; color: #fff; border: none; cursor: pointer; }
         .teacher-info-btn-save { background: #F59E0B; border-bottom: 2.5px solid #B45309; }
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 2.5px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل) */
         .teacher-rating-section {
-            margin-top: 6px;
-            padding: 6px;
-            background: #FFFBEB;
-            border: 1.5px solid #FDE68A;
-            border-bottom: 2px solid #F59E0B;
-            border-radius: 8px;
+            margin-top: 6px; padding: 6px; background: #FFFBEB;
+            border: 1.5px solid #FDE68A; border-bottom: 2px solid #F59E0B; border-radius: 8px;
         }
-
-        .stars-input {
-            display: flex;
-            justify-content: center;
-            gap: 3px;
-            margin-bottom: 3px;
-            direction: ltr;
-        }
-
-        .star-btn {
-            background: none;
-            border: none;
-            font-size: 18px;
-            cursor: pointer;
-            color: #D1D5DB;
-            transition: all 0.15s;
-            padding: 0;
-            line-height: 1;
-        }
-
-        .star-btn:hover, .star-btn.active {
-            color: #FBBF24;
-            transform: scale(1.1);
-            text-shadow: 0 2px 4px rgba(251, 191, 36, 0.4);
-        }
-
+        .stars-input { display: flex; justify-content: center; gap: 3px; margin-bottom: 3px; direction: ltr; }
+        .star-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #D1D5DB; transition: all 0.15s; padding: 0; line-height: 1; }
+        .star-btn:hover, .star-btn.active { color: #FBBF24; transform: scale(1.1); text-shadow: 0 2px 4px rgba(251, 191, 36, 0.4); }
         .rating-comment-input {
-            width: 100%;
-            padding: 4px 6px;
-            border: 1.5px solid #FDE68A;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 700;
-            font-family: 'Cairo', sans-serif;
-            outline: none;
-            resize: none;
-            min-height: 24px;
-            color: #1E293B;
-            background: #FFFFFF;
-            margin-bottom: 3px;
+            width: 100%; padding: 4px 6px; border: 1.5px solid #FDE68A; border-radius: 6px;
+            font-size: 10px; font-weight: 700; font-family: 'Cairo', sans-serif; outline: none;
+            resize: none; min-height: 24px; color: #1E293B; background: #FFFFFF; margin-bottom: 3px;
         }
-
         .rating-submit-btn {
-            width: 100%;
-            padding: 4px;
-            border-radius: 6px;
-            font-size: 10px;
-            font-weight: 900;
-            color: white;
-            background: linear-gradient(135deg, #F59E0B, #D97706);
-            border: none;
-            border-bottom: 2px solid #B45309;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 4px;
+            width: 100%; padding: 4px; border-radius: 6px; font-size: 10px; font-weight: 900;
+            color: white; background: linear-gradient(135deg, #F59E0B, #D97706);
+            border: none; border-bottom: 2px solid #B45309; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
         }
-
         .rating-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .reviews-list { max-height: 75px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; margin-top: 4px; padding-top: 4px; border-top: 1px dashed #FDE68A; }
+        .review-item { background: #FFFFFF; border: 1px solid #FEF3C7; border-radius: 5px; padding: 3px 6px; font-size: 9px; }
+        .review-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px; }
+        .review-item-name { font-weight: 900; color: #0F2D5C; font-size: 9px; }
+        .review-item-stars { color: #FBBF24; font-size: 9px; direction: ltr; }
+        .review-item-comment { color: #475569; font-weight: 700; line-height: 1.2; word-break: break-word; }
+        .review-item-date { font-size: 7px; color: #94A3B8; font-weight: 600; margin-top: 1px; }
+        .rating-already-rated { text-align: center; font-size: 9px; font-weight: 900; color: #059669; background: #D1FAE5; padding: 4px; border-radius: 5px; margin-top: 3px; }
 
-        .reviews-list {
-            max-height: 75px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            margin-top: 4px;
-            padding-top: 4px;
-            border-top: 1px dashed #FDE68A;
-        }
-
-        .review-item {
-            background: #FFFFFF;
-            border: 1px solid #FEF3C7;
-            border-radius: 5px;
-            padding: 3px 6px;
-            font-size: 9px;
-        }
-
-        .review-item-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1px;
-        }
-
-        .review-item-name {
-            font-weight: 900;
-            color: #0F2D5C;
-            font-size: 9px;
-        }
-
-        .review-item-stars {
-            color: #FBBF24;
-            font-size: 9px;
-            direction: ltr;
-        }
-
-        .review-item-comment {
-            color: #475569;
-            font-weight: 700;
-            line-height: 1.2;
-            word-break: break-word;
-        }
-
-        .review-item-date {
-            font-size: 7px;
-            color: #94A3B8;
-            font-weight: 600;
-            margin-top: 1px;
-        }
-
-        .rating-already-rated {
-            text-align: center;
-            font-size: 9px;
-            font-weight: 900;
-            color: #059669;
-            background: #D1FAE5;
-            padding: 4px;
-            border-radius: 5px;
-            margin-top: 3px;
-        }
-
-        /* ✅ تنسيقات مودال الشكاوى */
         .complaint-teacher-btn {
             width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px;
             font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2;
@@ -662,40 +409,20 @@
             display: flex; align-items: center; justify-content: center; gap: 4px;
         }
         .complaint-teacher-btn:active { transform: translateY(1.5px); border-bottom-width: 1.5px; }
-        .complaint-modal-box {
-            max-width: 400px !important; text-align: right !important;
-            border-bottom-color: #DC2626 !important; max-height: 88vh; overflow-y: auto;
-            position: relative;
-        }
+        .complaint-modal-box { max-width: 400px !important; text-align: right !important; border-bottom-color: #DC2626 !important; max-height: 88vh; overflow-y: auto; position: relative; }
         .complaint-modal-box .form-group label { font-size: 11px; font-weight: 900; color: #1E293B; margin-bottom: 3px; }
         .complaint-modal-box .form-control { font-size: 12px !important; padding: 7px 9px !important; font-weight: 800; }
         .complaint-modal-box textarea.form-control { min-height: 75px; resize: vertical; }
-        .complaint-copy-btn {
-            width: 100%; margin-top: 6px; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 900;
-            background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; border-bottom: 2px solid #94A3B8; cursor: pointer;
-        }
+        .complaint-copy-btn { width: 100%; margin-top: 6px; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 900; background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; border-bottom: 2px solid #94A3B8; cursor: pointer; }
         .complaint-copy-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
 
-        /* 📢 شريط الشكاوى الصغير */
         .mini-complaint-strip {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 12px;
-            background: #FEF2F2;
-            border: 1.5px solid #FECACA;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: 4px;
-            margin-bottom: 8px;
+            display: flex; align-items: center; gap: 6px; padding: 8px 12px;
+            background: #FEF2F2; border: 1.5px solid #FECACA; border-radius: 10px;
+            cursor: pointer; transition: all 0.2s; margin-top: 4px; margin-bottom: 8px;
             box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
         }
-        .mini-complaint-strip:active {
-            transform: scale(0.98);
-            background: #FEE2E2;
-            border-color: #FCA5A5;
-        }
+        .mini-complaint-strip:active { transform: scale(0.98); background: #FEE2E2; border-color: #FCA5A5; }
 
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
@@ -774,7 +501,6 @@
         </div>
     </div>
 
-    <!-- 📢 مودال الشكاوى -->
     <div id="complaintModal" class="custom-modal-overlay">
         <div class="custom-modal-box complaint-modal-box">
             <button onclick="closeComplaintModal()" style="position:absolute; top:8px; left:8px; width:26px; height:26px; border-radius:50%; background:#FEE2E2; color:#DC2626; border:1.5px solid #FCA5A5; font-weight:900; font-size:13px; cursor:pointer; z-index:10;">✕</button>
@@ -845,7 +571,6 @@
                 </div>
             </div>
             
-            <!-- ✅ التعديل هنا: تم إخراج التنبيه من العمودين ليكون أسفلهما بعرض الكارت كاملاً -->
             <div style="background: rgba(255, 255, 255, 0.15); border: 1px dashed rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: -2px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <span style="font-size: 16px;">💬</span> 
                 <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.</span>
@@ -974,7 +699,6 @@
 
                     <div id="map"></div>
 
-                    <!-- ✅ كارت بيانات المعلم العائم فوق الخريطة -->
                     <div id="teacherInfoCard" class="teacher-info-card">
                         <button class="teacher-info-close" onclick="closeTeacherInfoCard()">✕</button>
                         <div id="teacherInfoCardBody"></div>
@@ -983,6 +707,20 @@
                 
                 <div class="map-actions-wrapper" style="padding: 10px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-top: none; border-bottom: 4px solid #334155; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                     
+                    <!-- ✅ زر عرض المزيد من المعلمين -->
+                    <button id="loadMoreTeachersBtn" class="action-btn clickable-element" 
+                        style="display:none; background: linear-gradient(135deg, #F59E0B, #D97706); border-bottom: 3px solid #B45309; margin-bottom: 8px; font-size: 13px;" 
+                        onclick="loadMoreTeachers()">
+                        ➕ عرض المزيد من المعلمين (<span id="remainingTeachersCount">0</span> متبقي)
+                    </button>
+
+                    <!-- ✅ زر التحديث اليدوي -->
+                    <button class="action-btn clickable-element" 
+                        style="background: #6366F1; border-bottom: 3px solid #4338CA; margin-bottom: 8px; font-size: 13px;"
+                        onclick="forceRefreshTeachers()">
+                        🔄 تحديث قائمة المعلمين
+                    </button>
+
                     <div class="saved-sections-wrapper" style="margin-top: 0; margin-bottom: 10px;">
                         <button id="teachersDropdownBtn" class="dropdown-btn clickable-element" style="display:none;" onclick="toggleDropdown('teachersListContainer', 'teachersIcon')">
                             <span id="teachersCountTxt">⭐ المعلمون المفضلون (0)</span>
@@ -1013,7 +751,6 @@
             
         </div>
 
-        <!-- 📢 شريط الشكاوى الصغير -->
         <div class="mini-complaint-strip clickable-element" onclick="openComplaintModal()">
             <span style="font-size: 14px;">📢</span>
             <span style="font-size: 11px; font-weight: 900; color: #991B1B;">عندك شكوى أو اقتراح؟</span>
@@ -1081,7 +818,6 @@
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
-        // ✅ كاش المعلمين — يمنع القراءات المتكررة من Firestore
         let cachedTeachersList = [];
         let cachedTeachersHiddenCount = 0;
         let cachedTeachersStageKey = '__init__';
@@ -1089,13 +825,27 @@
         let cacheReady = false;
         let teacherRenderTimer = null;
 
-        // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
 
-        // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
+
+        // ✅ Pagination للمعلمين
+        const TEACHERS_PAGE_SIZE = 100;
+        let currentDisplayLimit = 100;
+
+        // ✅ كاش التقييمات
+        const RATINGS_CACHE_KEY = 'ratings_cache_v1';
+        const RATINGS_CACHE_TTL = 30 * 60 * 1000;
+
+        function getRatingsCache() {
+            try { return JSON.parse(localStorage.getItem(RATINGS_CACHE_KEY) || '{}'); }
+            catch(e) { return {}; }
+        }
+        function setRatingsCache(cache) {
+            try { localStorage.setItem(RATINGS_CACHE_KEY, JSON.stringify(cache)); } catch(e) {}
+        }
 
         function getStudentId() {
             let stId = localStorage.getItem('student_unique_id');
@@ -1508,7 +1258,6 @@
             });
         }
 
-        // ✅ دالة تحويل doc لمعلم — تستخدم في onSnapshot وفي القراءة الاحتياطية
         function parseTeacherDoc(docSnap) {
             const state = docSnap.data();
             const lessonId = docSnap.id;
@@ -1569,12 +1318,14 @@
             };
         }
 
-        // ✅ المزامنة اللحظية — تخزن في الكاش وترسم من الكاش
+        // ✅ كاش المعلمين — TTL 20 دقيقة
+        const TEACHERS_CACHE_KEY = 'teachers_cache_v1';
+        const TEACHERS_CACHE_TTL = 20 * 60 * 1000;
+
         async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
 
-            // ✅ صفّر الكاش فوراً عند تغيير المرحلة/الصف
             cachedTeachersList = [];
             cachedTeachersHiddenCount = 0;
             cachedTeachersStageKey = stage;
@@ -1586,31 +1337,50 @@
                 return;
             }
 
+            // ✅ 1) تحقق من الكاش أولاً — صفر قراءات من Firestore
+            try {
+                const raw = localStorage.getItem(TEACHERS_CACHE_KEY);
+                if (raw) {
+                    const cache = JSON.parse(raw);
+                    if (cache.stage === stage && cache.grade === grade &&
+                        (Date.now() - cache.ts) < TEACHERS_CACHE_TTL) {
+                        console.log("💾 استخدام كاش المعلمين المحلي — 0 قراءة");
+                        cachedTeachersList = cache.list || [];
+                        cachedTeachersHiddenCount = cache.hidden || 0;
+                        cacheReady = true;
+
+                        if (currentCenter && map) {
+                            renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+                        }
+                        const liveIndicator = document.getElementById('liveIndicator');
+                        if (liveIndicator) liveIndicator.classList.add('show');
+                        return;
+                    }
+                }
+            } catch (e) {}
+
             const mod = await loadFirebaseModule();
-            if (!mod) {
-                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
-                return;
-            }
+            if (!mod) return;
 
             if (teachersRealtimeUnsub) {
                 try { teachersRealtimeUnsub(); } catch(e) {}
                 teachersRealtimeUnsub = null;
             }
 
-            console.log("🔴 بدء المزامنة اللحظية للمعلمين...");
+            console.log("🔴 قراءة من Firestore (كاش منتهي أو جديد)...");
 
-            // ✅ الاستعلام هنا متوافق تماماً مع الفهرس الثاني (لأنه بادئة له)
+            // ✅ 2) limit(300) — الحد الأقصى للقراءة
             const q = mod.query(
                 mod.collection(mod.db, "lessons"),
                 mod.where("g_publish_map", "==", true),
                 mod.where("s_stage", "==", stage),
-                mod.where("s_grade", "==", grade)
+                mod.where("s_grade", "==", grade),
+                mod.limit(300)
             );
 
             teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
-                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
+                console.log(`🔄 [Realtime] عدد الحصص المنشورة: ${snapshot.size}`);
 
-                // ✅ خزّن البيانات في الكاش
                 cachedTeachersList = [];
                 cachedTeachersHiddenCount = 0;
 
@@ -1627,9 +1397,18 @@
                 cachedTeachersGrade = grade;
                 cacheReady = true;
 
-                const liveIndicator = document.getElementById('liveIndicator');
+                // ✅ 3) خزّن في الكاش المحلي
+                try {
+                    localStorage.setItem(TEACHERS_CACHE_KEY, JSON.stringify({
+                        stage: stage,
+                        grade: grade,
+                        list: cachedTeachersList,
+                        hidden: cachedTeachersHiddenCount,
+                        ts: Date.now()
+                    }));
+                } catch (e) {}
 
-                // ✅ الرسم فقط إذا الخريطة جاهزة
+                const liveIndicator = document.getElementById('liveIndicator');
                 if (!currentCenter || !map) {
                     isFirstTeachersSnapshot = false;
                     return;
@@ -1655,7 +1434,6 @@
                     }
                 }
 
-                // ✅ الرسم من الكاش (بدون قراءة إضافية)
                 renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
 
                 if (!isFirstTeachersSnapshot) {
@@ -1671,6 +1449,13 @@
                 }
             });
         }
+
+        // ✅ زر تحديث يدوي — يمسح الكاش ويقرأ من جديد
+        window.forceRefreshTeachers = function() {
+            try { localStorage.removeItem(TEACHERS_CACHE_KEY); } catch (e) {}
+            showToast("🔄 جاري التحديث من الخادم...");
+            startTeachersRealtimeListener();
+        };
 
         function toggleMapFullscreen() {
             if (!isMapFullscreen) {
@@ -2056,6 +1841,7 @@
         }
 
         function onSubjectSelectChange() {
+            currentDisplayLimit = 100; // ✅ reset pagination
             renderStudentGradeSubjectsBar();
             saveStudentData();
             updateStudentSummary();
@@ -2112,6 +1898,7 @@
         }
 
         function pickStudentSubjectPill(subjName) {
+            currentDisplayLimit = 100; // ✅ reset pagination
             const sSelect = document.getElementById('s_subject');
             sSelect.value = subjName;
             renderStudentGradeSubjectsBar();
@@ -2240,6 +2027,7 @@
         }
 
         function onRadiusChangeEnd() {
+            currentDisplayLimit = 100; // ✅ reset pagination
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
             if (!gradeCheck || !subjectCheck) {
@@ -2400,6 +2188,7 @@
 
             document.querySelectorAll('input[name="pref_loc"]').forEach(radio => {
                 radio.addEventListener('change', () => {
+                    currentDisplayLimit = 100; // ✅ reset
                     if (currentCenter && map) {
                         const g = document.getElementById('s_grade').value;
                         const s = document.getElementById('s_subject').value;
@@ -2415,6 +2204,7 @@
 
             document.querySelectorAll('input[name="pref_teacher"]').forEach(radio => {
                 radio.addEventListener('change', () => {
+                    currentDisplayLimit = 100; // ✅ reset
                     if (currentCenter && map) {
                         const g = document.getElementById('s_grade').value;
                         const s = document.getElementById('s_subject').value;
@@ -2430,6 +2220,7 @@
 
             document.querySelectorAll('input[name="st_gender"]').forEach(radio => {
                 radio.addEventListener('change', () => {
+                    currentDisplayLimit = 100; // ✅ reset
                     if (currentCenter && map) {
                         const g = document.getElementById('s_grade').value;
                         const s = document.getElementById('s_subject').value;
@@ -2603,6 +2394,7 @@
         }
 
         function loadSpecificLocation(index) {
+            currentDisplayLimit = 100; // ✅ reset
             const subject = document.getElementById('s_subject').value;
             const grade = document.getElementById('s_grade').value;
             if (!subject || !grade) { showToast("أكمل بيانات الصف والمادة أولاً!", true); return; }
@@ -2692,12 +2484,10 @@
             closeDeleteModal();
         }
 
-        // ✅ قراءة من الكاش — القراءة الاحتياطية فقط لو الكاش لسه ما امتلأش
         async function getRegisteredTeachersFromFirebase() {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
 
-            // ✅ لو الكاش جاهز ومطابق للاختيار الحالي — ارجع فوراً بدون أي قراءة
             if (cacheReady
                 && cachedTeachersStageKey === currentStage
                 && cachedTeachersGrade === currentGrade) {
@@ -2707,7 +2497,6 @@
                 };
             }
 
-            // ⚠️ Fallback نادر: الكاش لسه ما امتلأش
             console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
 
             const registeredList = [];
@@ -2722,7 +2511,10 @@
                 const mod = await loadFirebaseModule();
                 if (!mod) return { registeredList, hiddenCount };
 
-                const constraints = [mod.where("g_publish_map", "==", true)];
+                const constraints = [
+                    mod.where("g_publish_map", "==", true),
+                    mod.limit(300)  // ✅
+                ];
                 if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
                 if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
 
@@ -2760,7 +2552,6 @@
                 map = L.map('map', { zoomControl: false, maxZoom: 18 });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 
-                // ✅ استبدال خريطة OpenStreetMap بخريطة Mapbox المعربة
                 L.tileLayer('https://api.mapbox.com/styles/v1/mokshmoksh/cmvse1evw003r01sbgobebl0l/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A', {
                     maxZoom: 18,
                     attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
@@ -2833,6 +2624,7 @@
         }
 
         function buildRadarMap(lat, lng) {
+            currentDisplayLimit = 100; // ✅ reset pagination
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
             const subjectCheck = document.getElementById('s_subject').value;
@@ -2877,8 +2669,8 @@
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
 
-            // ✅ Debounce: انتظر 250ms قبل الرسم عشان مايتكررش مع كل حركة سريعة
             studentMarker.on('dragend', function(e) {
+                currentDisplayLimit = 100; // ✅ reset pagination
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
 
@@ -2954,9 +2746,10 @@
 
                 await mod.setDoc(ref, payload);
 
-                if (cleanPhone && globalRatingCache[cleanPhone]) {
-                    delete globalRatingCache[cleanPhone];
-                }
+                // ✅ امسح كاش التقييمات لهذا المعلم
+                const cache = getRatingsCache();
+                delete cache[lessonId];
+                setRatingsCache(cache);
 
                 showToast("شكراً لك! تم إرسال تقييمك ⭐");
                 vibrateSuccess();
@@ -2983,6 +2776,13 @@
         };
 
         async function loadTeacherRatings(lessonId) {
+            // ✅ كاش التقييمات — صفر قراءات متكررة
+            const cache = getRatingsCache();
+            const hit = cache[lessonId];
+            if (hit && (Date.now() - hit.ts) < RATINGS_CACHE_TTL) {
+                return hit.data;
+            }
+
             try {
                 const mod = await loadFirebaseModule();
                 if (!mod) return { avg: 0, count: 0, reviews: [], hasRated: false, distribution: {} };
@@ -3015,13 +2815,18 @@
 
                 reviews.sort((a, b) => b.createdAt - a.createdAt);
 
-                return {
+                const result = {
                     avg: reviews.length > 0 ? (sum / reviews.length) : 0,
                     count: reviews.length,
                     reviews: reviews,
                     hasRated: hasRated,
                     distribution: distribution
                 };
+
+                cache[lessonId] = { ts: Date.now(), data: result };
+                setRatingsCache(cache);
+
+                return result;
             } catch (err) {
                 console.warn("⚠️ فشل تحميل التقييمات:", err);
                 return { avg: 0, count: 0, reviews: [], hasRated: false, distribution: {} };
@@ -3293,7 +3098,15 @@
             });
         };
 
-        // ✅ دالة عرض المعلمين — تقرأ من الكاش وتفلتر داخل الدائرة فقط
+        // ✅ زر عرض المزيد
+        window.loadMoreTeachers = function() {
+            currentDisplayLimit += TEACHERS_PAGE_SIZE;
+            if (currentCenter && map) {
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+            }
+        };
+
+        // ✅ دالة عرض المعلمين — تقرأ من الكاش + pagination 100
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3373,20 +3186,33 @@
                 return;
             }
 
+            // ✅ حساب المسافة + الترتيب من الأقرب للأبعد
             matchedInRadius.forEach(t => {
                 t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
+                t._distance = map.distance(centerPos, [t.lat, t.lng]);
             });
 
-            matchedInRadius.sort((a, b) => {
-                if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
-                if (b.ratingSummary.count === 0) return -1;
-                if (a.ratingSummary.count === 0) return 1;
-                return b.ratingSummary.avg - a.ratingSummary.avg;
-            });
+            matchedInRadius.sort((a, b) => a._distance - b._distance);
+
+            const totalInsideRadius = matchedInRadius.length;
+            const finalList = matchedInRadius.slice(0, currentDisplayLimit);
+            const remaining = Math.max(0, totalInsideRadius - currentDisplayLimit);
+
+            // ✅ تحديث زر "عرض المزيد"
+            const loadMoreBtn = document.getElementById('loadMoreTeachersBtn');
+            const remainingSpan = document.getElementById('remainingTeachersCount');
+            if (loadMoreBtn && remainingSpan) {
+                if (remaining > 0) {
+                    remainingSpan.textContent = remaining;
+                    loadMoreBtn.style.display = 'flex';
+                } else {
+                    loadMoreBtn.style.display = 'none';
+                }
+            }
 
             let shownCount = 0;
 
-            matchedInRadius.forEach(t => {
+            finalList.forEach((t, idx) => {
                 shownCount++;
 
                 const isMs = (t.gender === 'مس');
@@ -3429,7 +3255,7 @@
 
                 const marker = L.marker([t.lat, t.lng], {
                     icon: customIcon,
-                    zIndexOffset: rating.avg >= 4.5 ? 500 : (rating.avg >= 3.5 ? 200 : 0)
+                    zIndexOffset: (finalList.length - idx) * 10
                 });
 
                 marker._teacherData = t;
@@ -3443,7 +3269,11 @@
             });
 
             vibrateSuccess();
-            showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})`);
+            if (remaining > 0) {
+                showToast(`✨ عرضنا أقرب ${shownCount} معلم من أصل ${totalInsideRadius} — اضغط "عرض المزيد" لرؤية الباقي`);
+            } else {
+                showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})`);
+            }
         }
 
         // ══════════════════════════════════════════
