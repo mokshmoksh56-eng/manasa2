@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="notranslate">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="google" content="notranslate">
+    <title>إدارة المنصة والاشتراكات الشاملة</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-950:#0A1E3F; --primary-900:#0F2D5C; --primary-600:#2563EB;
+            --emerald-900:#064E3B; --emerald-600:#10B981;
+            --pure-red:#DC2626; --pure-green:#16A34A;
+        }
+        * { font-family: 'Cairo', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: #F1F5F9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+            margin: 0;
+        }
+
+        .hero-banner {
+            position: relative;
+            width: 100%;
+            background: linear-gradient(135deg, #0A1E3F 0%, #0F2D5C 50%, #1E40AF 100%);
+            color: white;
+            padding: 28px 20px 65px;
+            border-bottom-left-radius: 36px;
+            border-bottom-right-radius: 36px;
+            box-shadow: 0 12px 30px rgba(15, 45, 92, 0.2);
+        }
+
+        .top-nav {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-nav {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(6px);
+            color: #FFFFFF;
+            padding: 8px 16px;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: 13px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            border: 1.5px solid rgba(255, 255, 255, 0.25);
+            transition: all 0.25s ease;
+            cursor: pointer;
+        }
+        .btn-nav:hover {
+            background: #FFFFFF;
+            color: var(--primary-900);
+            transform: translateY(-2px);
+        }
+        .btn-nav.highlight-btn {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-color: #34D399;
+            color: #fff;
+            box-shadow: 0 6px 15px rgba(16, 185, 129, 0.35);
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: -45px auto 20px;
+            padding: 0 15px;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+        }
+
+        .stat-card {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 16px;
+            box-shadow: 0 10px 25px -10px rgba(0,0,0,0.08);
+            border: 2px solid #E2E8F0;
+            border-bottom: 5px solid var(--primary-600);
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            transition: transform 0.25s ease;
+        }
+        .stat-card:hover { transform: translateY(-4px); }
+
+        .stat-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .filter-bar {
+            background: #FFFFFF;
+            border-radius: 20px;
+            padding: 16px;
+            border: 2px solid #E2E8F0;
+            border-bottom: 4px solid #CBD5E1;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.03);
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid #E2E8F0;
+            border-bottom: 3px solid #94A3B8;
+            border-radius: 12px;
+            font-size: 13.5px;
+            font-weight: 800;
+            color: #1E293B;
+            background: #F8FAFC;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .form-input:focus {
+            border-color: var(--primary-600);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 3px #DBEAFE;
+        }
+
+        .record-card {
+            background: #FFFFFF;
+            border-radius: 22px;
+            border: 2px solid #E2E8F0;
+            padding: 18px;
+            box-shadow: 0 10px 25px -12px rgba(0,0,0,0.08);
+            transition: all 0.25s ease;
+            position: relative;
+        }
+        .record-card:hover { box-shadow: 0 18px 35px -12px rgba(0,0,0,0.12); }
+
+        .status-active { border-bottom: 6px solid #10B981; }
+        .status-expired { border-bottom: 6px solid #DC2626; background: #FEF2F2; }
+        .status-warning { border-bottom: 6px solid #F59E0B; }
+
+        .action-chip {
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 900;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .action-chip:active { transform: translateY(2px); }
+
+        .sub-btn-3 { background: #DBEAFE; color: #1E40AF; border: 1px solid #93C5FD; }
+        .sub-btn-6 { background: #E0E7FF; color: #3730A3; border: 1px solid #A5B4FC; }
+        .sub-btn-12 { background: #FEF3C7; color: #92400E; border: 1px solid #FCD34D; }
+        
+        .sub-btn-3:hover { background: #BFDBFE; }
+        .sub-btn-6:hover { background: #C7D2FE; }
+        .sub-btn-12:hover { background: #FDE68A; }
+
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 99999;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.25s ease;
+            padding: 15px;
+        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
+        
+        .modal-box {
+            background: #FFFFFF;
+            width: 100%;
+            max-width: 500px;
+            border-radius: 24px;
+            padding: 24px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            border-bottom: 6px solid var(--primary-600);
+            max-height: 92vh;
+            overflow-y: auto;
+            transform: scale(0.95);
+            transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+
+        .custom-toast {
+            position: fixed;
+            bottom: 20px; left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: #10B981; color: white;
+            padding: 10px 22px; border-radius: 999px;
+            font-weight: 900; font-size: 13px;
+            z-index: 999999;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            opacity: 0;
+            border-bottom: 3px solid #059669;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
+        }
+        .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
+        
+        .info-pill {
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 12px;
+            padding: 8px 12px;
+            font-size: 12.5px;
+            font-weight: 800;
+            color: #334155;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+        .info-pill .label { color: #64748B; font-weight: 900; white-space: nowrap; }
+
+        /* Cloud Status Badge */
+        .cloud-status-badge {
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 900;
+            border: 1.5px solid; transition: all 0.3s;
+        }
+        .cloud-status-badge.syncing { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
+        .cloud-status-badge.synced { background: #D1FAE5; color: #065F46; border-color: #6EE7B7; }
+        .cloud-status-badge.offline { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
+        
+        /* Toggle Switch */
+        .switch {
+          position: relative;
+          display: inline-block;
+          width: 46px;
+          height: 24px;
+        }
+        .switch input { 
+          opacity: 0;
+          width: 0;
+          height: 0;
+        }
+        .slider {
+          position: absolute;
+          cursor: pointer;
+          top: 0; left: 0; right: 0; bottom: 0;
+          background-color: #cbd5e1;
+          transition: .4s;
+          border-radius: 24px;
+        }
+        .slider:before {
+          position: absolute;
+          content: "";
+          height: 18px;
+          width: 18px;
+          left: 3px;
+          bottom: 3px;
+          background-color: white;
+          transition: .4s;
+          border-radius: 50%;
+        }
+        input:checked + .slider {
+          background-color: #10b981;
+        }
+        input:focus + .slider {
+          box-shadow: 0 0 1px #10b981;
+        }
+        input:checked + .slider:before {
+          transform: translateX(22px);
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="toastMsg" class="custom-toast">✨ تمت العملية بنجاح</div>
+
+    <header class="hero-banner">
+        <div class="top-nav">
+            <div class="flex items-center gap-3">
+                <div class="w-12 h-12 rounded-2xl bg-amber-500 flex items-center justify-center text-3xl shadow-lg">👑</div>
+                <div>
+                    <h1 class="text-2xl font-black tracking-tight">إدارة اشتراكات <span class="text-amber-400">المنصة الشاملة</span></h1>
+                    <p class="text-xs text-slate-300 font-bold mt-1">التحكم في وصول المعلمين لمنصة احجزلى (قاعدة بيانات Firebase) بناءً على الاشتراكات</p>
+                </div>
+            </div>
+
+            <div class="nav-links flex gap-2">
+                <span id="cloudStatusBadge" class="cloud-status-badge syncing" title="حالة المزامنة مع السحابة">
+                    ⏳ جاري الاتصال...
+                </span>
+                <button onclick="openAddSubscriptionModal()" class="btn-nav highlight-btn">
+                    ➕ اشتراك جديد
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <section class="stats-container">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+            <div class="stat-card" style="border-bottom-color: #2563EB;">
+                <div class="stat-icon bg-blue-100 text-blue-700">👨‍🏫</div>
+                <div>
+                    <div class="text-xs font-extrabold text-slate-400">إجمالي المعلمين</div>
+                    <div id="statTotal" class="text-2xl font-black text-slate-800">0</div>
+                </div>
+            </div>
+            <div class="stat-card" style="border-bottom-color: #10B981;">
+                <div class="stat-icon bg-emerald-100 text-emerald-700">✅</div>
+                <div>
+                    <div class="text-xs font-extrabold text-slate-400">اشتراكات نشطة</div>
+                    <div id="statActive" class="text-2xl font-black text-slate-800">0</div>
+                </div>
+            </div>
+            <div class="stat-card" style="border-bottom-color: #DC2626;">
+                <div class="stat-icon bg-red-100 text-red-700">🚫</div>
+                <div>
+                    <div class="text-xs font-extrabold text-slate-400">اشتراكات منتهية/محظورة</div>
+                    <div id="statExpired" class="text-2xl font-black text-slate-800">0</div>
+                </div>
+            </div>
+            <div class="stat-card" style="border-bottom-color: #F59E0B;">
+                <div class="stat-icon bg-amber-100 text-amber-600">💰</div>
+                <div>
+                    <div class="text-xs font-extrabold text-slate-400">إجمالي إيرادات النظام</div>
+                    <div id="statRevenue" class="text-2xl font-black text-slate-800">0 ج.م</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
+        <div class="filter-bar">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-black text-slate-600 mb-1">🔍 بحث برقم الهاتف أو الاسم</label>
+                    <input type="text" id="searchInput" class="form-input" placeholder="اكتب للبحث عن معلم..." oninput="renderTeachers()">
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-600 mb-1">🏷️ حالة الاشتراك</label>
+                    <select id="statusFilter" class="form-input" onchange="renderTeachers()">
+                        <option value="all">جميع الحالات</option>
+                        <option value="active">✅ نشط</option>
+                        <option value="warning">⚠️ قارب على الانتهاء</option>
+                        <option value="expired">🚫 منتهي / محظور</option>
+                    </select>
+                </div>
+            </div>
+            <div class="mt-4 pt-4 border-t border-slate-200">
+                <div class="flex items-center gap-3 bg-amber-50 border border-amber-200 p-3 rounded-xl">
+                    <div class="text-2xl">⚠️</div>
+                    <div class="text-xs font-bold text-amber-800">
+                        ملاحظة: هذا النظام متصل بقاعدة بيانات Firebase (مجموعة <code>teachers</code>). عند حظر معلم أو انتهاء اشتراكه دون تجديد، يتم تحويل حالة <code>isBlocked</code> الخاصة به إلى <code>true</code> في قاعدة البيانات مما يمنع ظهوره للمستخدمين.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="teachersGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            <!-- Teachers will be injected here -->
+        </div>
+    </main>
+
+    <!-- Modal: إضافة اشتراك -->
+    <div id="addSubscriptionModal" class="modal-overlay" onclick="closeModal('addSubscriptionModal')">
+        <div class="modal-box" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <h3 class="text-lg font-black text-slate-800">➕ تفعيل اشتراك جديد</h3>
+                <button onclick="closeModal('addSubscriptionModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
+            </div>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-black text-slate-600 mb-1">اللقب والاسم</label>
+                    <div class="flex gap-2">
+                         <select id="newTeacherTitle" class="form-input w-28">
+                             <option value="مستر">👨‍🏫 مستر</option>
+                             <option value="مس">👩‍🏫 مس</option>
+                         </select>
+                         <input type="text" id="newTeacherName" class="form-input flex-1" placeholder="مثال: أحمد محمود...">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-black text-slate-600 mb-1">رقم الهاتف (يجب أن يكون مسجلاً في Firebase أو سيتم إضافته)</label>
+                    <input type="text" id="newTeacherPhone" class="form-input" placeholder="01XXXXXXXXX" dir="ltr" style="text-align: right;">
+                </div>
+                
+                <div class="pt-4 border-t border-slate-200">
+                    <label class="block text-xs font-black text-slate-800 mb-2">اختر خطة الاشتراك المبدئية:</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="selectInitialPlan(3, 1000)" id="planBtn-3" class="action-chip bg-slate-100 text-slate-600 border border-slate-300 flex-col py-2"><span class="block">3 شهور</span><span class="text-[10px] opacity-75">1000 ج</span></button>
+                        <button onclick="selectInitialPlan(6, 1800)" id="planBtn-6" class="action-chip bg-slate-100 text-slate-600 border border-slate-300 flex-col py-2"><span class="block">6 شهور</span><span class="text-[10px] opacity-75">1800 ج</span></button>
+                        <button onclick="selectInitialPlan(12, 3200)" id="planBtn-12" class="action-chip bg-slate-100 text-slate-600 border border-slate-300 flex-col py-2"><span class="block">سنة</span><span class="text-[10px] opacity-75">3200 ج</span></button>
+                    </div>
+                </div>
+                <input type="hidden" id="selectedPlanMonths" value="0">
+                <input type="hidden" id="selectedPlanPrice" value="0">
+            </div>
+
+            <div class="flex justify-end mt-6 pt-4 border-t border-slate-200 gap-2">
+                <button onclick="closeModal('addSubscriptionModal')" class="action-chip bg-slate-200 text-slate-700 px-6 py-2.5">إلغاء</button>
+                <button onclick="saveNewSubscription()" class="action-chip bg-blue-600 text-white px-8 py-2.5 shadow-md" id="btnSaveSub">تفعيل وحفظ ☁️</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 🌟 Firebase Scripts 🌟 -->
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
+      import {
+          getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc, updateDoc, increment,
+          getCountFromServer, query, limit, orderBy, where
+      } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
+      import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+
+      const firebaseConfig = {
+        apiKey: "AIzaSyC1f2XMmMdKrsCQHhAil4kWGvEy7cc7bY0",
+        authDomain: "ehgezly-ea5dd.firebaseapp.com",
+        projectId: "ehgezly-ea5dd",
+        storageBucket: "ehgezly-ea5dd.firebasestorage.app",
+        messagingSenderId: "472216348338",
+        appId: "1:472216348338:web:db726630ef6781301e0bab"
+      };
+
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const auth = getAuth(app); 
+
+      window.db = db;
+      window.fsDoc = doc;
+      window.fsSetDoc = setDoc;
+      window.fsGetDoc = getDoc;
+      window.fsCollection = collection;
+      window.fsGetDocs = getDocs;
+      window.fsUpdateDoc = updateDoc;
+      
+      // Auto anonymous sign in logic if needed, or rely on admin already being logged in.
+      // For this isolated module we assume it has write access or uses rules that allow it.
+      
+      // Load data once DB is ready
+      setTimeout(() => {
+          if (window.db) {
+              loadDataFromFirebase();
+          } else {
+             setCloudStatus('offline', '⚠️ فشل الاتصال بقاعدة البيانات');
+          }
+      }, 1000);
+      
+    </script>
+
+    <script>
+        // Pricing logic for Subscriptions
+        const PRICING = {
+            3: 1000,
+            6: 1800,
+            12: 3200
+        };
+
+        // Data Management
+        let unifiedTeachers = []; 
+        let totalSystemRevenue = parseInt(localStorage.getItem('sys_revenue')) || 0;
+
+        function setCloudStatus(status, text) {
+            const b = document.getElementById('cloudStatusBadge');
+            if (!b) return;
+            b.className = 'cloud-status-badge ' + status;
+            b.textContent = text;
+        }
+
+        async function loadDataFromFirebase() {
+            setCloudStatus('syncing', '⏳ جاري الاتصال وجلب البيانات...');
+            if (!window.db) return;
+            try {
+                const querySnapshot = await window.fsGetDocs(window.fsCollection(window.db, "teachers"));
+                const records = [];
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    // Clean phone number for consistency
+                    let cleanPhone = String(data.phone || doc.id).replace(/\D/g, '');
+                    records.push({
+                        docId: doc.id,
+                        phone: cleanPhone,
+                        name: data.teacherName || data.name || data.fullName || 'بدون اسم',
+                        title: data.title || 'مستر',
+                        isBlocked: data.isBlocked === true,
+                        subStartDate: data.subStartDate || null,
+                        subEndDate: data.subEndDate || null,
+                        createdAt: data.createdAt || 0
+                    });
+                });
+                unifiedTeachers = records;
+                
+                // Now check expiration status for all
+                await verifyAndSyncExpirations();
+                
+                updateStats();
+                renderTeachers();
+                setCloudStatus('synced', '☁️ متزامن ومحدث');
+            } catch(e) {
+                console.error("Error loading teachers:", e);
+                setCloudStatus('offline', '⚠️ فشل الاتصال بقاعدة البيانات');
+            }
+        }
+        
+        async function verifyAndSyncExpirations() {
+            const now = new Date();
+            let updatesNeeded = [];
+            
+            unifiedTeachers.forEach(t => {
+                if (t.subEndDate) {
+                    const endDate = new Date(t.subEndDate);
+                    if (endDate < now && !t.isBlocked) {
+                        // Subscription expired but account is not blocked -> Need to block
+                        t.isBlocked = true;
+                        updatesNeeded.push(t);
+                    } else if (endDate >= now && t.isBlocked) {
+                         // Subscription active but account is blocked -> Need to unblock
+                         t.isBlocked = false;
+                         updatesNeeded.push(t);
+                    }
+                } else {
+                    // No subscription data -> Block by default if not already
+                    if (!t.isBlocked) {
+                        t.isBlocked = true;
+                        updatesNeeded.push(t);
+                    }
+                }
+            });
+            
+            if (updatesNeeded.length > 0 && window.db) {
+                setCloudStatus('syncing', `⏳ جاري تحديث حالة ${updatesNeeded.length} معلم...`);
+                try {
+                    const promises = updatesNeeded.map(t => {
+                         return window.fsSetDoc(window.fsDoc(window.db, "teachers", t.docId), {
+                            isBlocked: t.isBlocked,
+                            updatedAt: Date.now()
+                        }, { merge: true });
+                    });
+                    await Promise.allSettled(promises);
+                } catch(e) {
+                    console.error("Error updating expirations:", e);
+                }
+            }
+        }
+
+        function updateStats() {
+            const now = new Date();
+            let active = 0;
+            let expired = 0;
+
+            unifiedTeachers.forEach(t => {
+                if (t.subEndDate && !t.isBlocked) {
+                    const endDate = new Date(t.subEndDate);
+                    if (endDate > now) active++;
+                    else expired++;
+                } else {
+                    expired++;
+                }
+            });
+
+            document.getElementById('statTotal').innerText = unifiedTeachers.length;
+            document.getElementById('statActive').innerText = active;
+            document.getElementById('statExpired').innerText = expired;
+            document.getElementById('statRevenue').innerText = totalSystemRevenue + " ج.م";
+            
+            localStorage.setItem('sys_revenue', totalSystemRevenue.toString());
+        }
+
+        function getSubscriptionStatus(t) {
+            if (t.isBlocked || !t.subEndDate) {
+                 return { key: 'expired', text: 'محظور / منتهي 🚫', class: 'status-expired', color: 'text-red-700' };
+            }
+            
+            const end = new Date(t.subEndDate);
+            const now = new Date();
+            const diffDays = Math.ceil((end - now) / (1000 * 60 * 60 * 24));
+
+            if (diffDays < 0) return { key: 'expired', text: 'منتهي الصلاحية 🚫', class: 'status-expired', color: 'text-red-700' };
+            if (diffDays <= 15) return { key: 'warning', text: `ينتهي قريباً (${diffDays} أيام) ⚠️`, class: 'status-warning', color: 'text-amber-600' };
+            return { key: 'active', text: 'ساري ونشط ✅', class: 'status-active', color: 'text-emerald-700' };
+        }
+
+        // Render Grid
+        function renderTeachers() {
+            const grid = document.getElementById('teachersGrid');
+            const searchQ = document.getElementById('searchInput').value.toLowerCase();
+            const statusF = document.getElementById('statusFilter').value;
+
+            grid.innerHTML = '';
+
+            let filtered = unifiedTeachers.filter(t => {
+                const matchSearch = t.name.toLowerCase().includes(searchQ) || t.phone.includes(searchQ);
+                const status = getSubscriptionStatus(t).key;
+                const matchStatus = statusF === 'all' || status === statusF;
+                return matchSearch && matchStatus;
+            });
+
+            // Sort by end date ascending (closest to expire first)
+            filtered.sort((a, b) => {
+                const aDate = a.subEndDate ? new Date(a.subEndDate).getTime() : 0;
+                const bDate = b.subEndDate ? new Date(b.subEndDate).getTime() : 0;
+                return aDate - bDate;
+            });
+
+            if(filtered.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-10 font-bold text-slate-500 bg-white rounded-2xl border border-slate-200">لا يوجد معلمون مطابقون للبحث.</div>`;
+                return;
+            }
+
+            filtered.forEach(t => {
+                const status = getSubscriptionStatus(t);
+                const startFormatted = t.subStartDate ? new Date(t.subStartDate).toLocaleDateString('ar-EG') : 'غير متوفر';
+                const endFormatted = t.subEndDate ? new Date(t.subEndDate).toLocaleDateString('ar-EG') : 'غير متوفر';
+                const badgeHTML = t.title === 'مس' ? `<span class="bg-pink-100 text-pink-800 text-[10px] px-2 py-1 rounded-full font-bold border border-pink-200">👩‍🏫 مس</span>` : `<span class="bg-blue-100 text-blue-800 text-[10px] px-2 py-1 rounded-full font-bold border border-blue-200">👨‍🏫 مستر</span>`;
+                const blockStatusHTML = t.isBlocked ? `<span class="bg-red-600 text-white text-[10px] px-2 py-0.5 rounded shadow-sm font-bold">🚫 محظور في المنصة</span>` : `<span class="bg-emerald-600 text-white text-[10px] px-2 py-0.5 rounded shadow-sm font-bold">✅ نشط ومرئي</span>`;
+                
+                grid.innerHTML += `
+                    <div class="record-card ${status.class}">
+                        <div class="flex justify-between items-start mb-3 border-b border-dashed border-slate-200 pb-3">
+                            <div>
+                                <div class="flex items-center gap-2 mb-1">
+                                     ${badgeHTML}
+                                     <h3 class="font-black text-lg text-slate-800">${t.name}</h3>
+                                </div>
+                                <div class="text-blue-700 font-black text-sm mt-1 tracking-wider" dir="ltr">${t.phone}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            ${blockStatusHTML}
+                        </div>
+                        
+                        <div class="space-y-2 mb-4">
+                            <div class="info-pill"><span class="label">📅 البداية:</span><span class="font-bold">${startFormatted}</span></div>
+                            <div class="info-pill"><span class="label">⌛ النهاية:</span><span class="font-black ${status.color}">${endFormatted}</span></div>
+                            <div class="info-pill"><span class="label">🏷️ الحالة:</span><span class="font-black ${status.color}">${status.text}</span></div>
+                        </div>
+
+                        <div class="pt-3 border-t border-slate-200">
+                            <p class="text-[11px] font-black text-slate-500 mb-2 text-center">تجديد الاشتراك (يفك الحظر تلقائياً)</p>
+                            <div class="flex gap-2 justify-center">
+                                <button onclick="renewSubscription('${t.docId}', 3)" class="action-chip sub-btn-3 flex-1">3 شهور</button>
+                                <button onclick="renewSubscription('${t.docId}', 6)" class="action-chip sub-btn-6 flex-1">6 شهور</button>
+                                <button onclick="renewSubscription('${t.docId}', 12)" class="action-chip sub-btn-12 flex-1">سنة</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+        }
+
+        // Add Logic
+        function openAddSubscriptionModal() {
+            document.getElementById('newTeacherName').value = '';
+            document.getElementById('newTeacherPhone').value = '';
+            document.getElementById('newTeacherTitle').value = 'مستر';
+            selectInitialPlan(0, 0);
+            document.getElementById('addSubscriptionModal').classList.add('active');
+        }
+
+        function selectInitialPlan(months, price) {
+            document.getElementById('selectedPlanMonths').value = months;
+            document.getElementById('selectedPlanPrice').value = price;
+            
+            [3, 6, 12].forEach(m => {
+                const btn = document.getElementById(`planBtn-${m}`);
+                if(btn) {
+                    if(m === months) {
+                        btn.classList.remove('bg-slate-100', 'text-slate-600', 'border-slate-300');
+                        btn.classList.add('bg-blue-600', 'text-white', 'border-blue-700', 'shadow-md');
+                    } else {
+                        btn.classList.add('bg-slate-100', 'text-slate-600', 'border-slate-300');
+                        btn.classList.remove('bg-blue-600', 'text-white', 'border-blue-700', 'shadow-md');
+                    }
+                }
+            });
+        }
+
+        async function saveNewSubscription() {
+            const name = document.getElementById('newTeacherName').value.trim();
+            let phone = document.getElementById('newTeacherPhone').value.trim();
+            const title = document.getElementById('newTeacherTitle').value;
+            const planMonths = parseInt(document.getElementById('selectedPlanMonths').value);
+            const planPrice = parseInt(document.getElementById('selectedPlanPrice').value);
+            
+            phone = phone.replace(/\D/g, '');
+
+            if(!name || !phone) {
+                showToast("⚠️ يرجى إدخال الاسم ورقم الهاتف", true);
+                return;
+            }
+
+            if(planMonths === 0) {
+                showToast("⚠️ يرجى اختيار خطة اشتراك مبدئية", true);
+                return;
+            }
+            
+            if (!window.db) {
+                showToast("⚠️ لا يوجد اتصال بقاعدة البيانات", true);
+                return;
+            }
+
+            const btn = document.getElementById('btnSaveSub');
+            btn.innerText = '⏳ جاري الحفظ...';
+            btn.disabled = true;
+
+            const now = new Date();
+            const endDate = new Date(now);
+            endDate.setMonth(endDate.getMonth() + planMonths);
+
+            try {
+                // Determine docId. Try to find existing by phone.
+                let targetDocId = phone;
+                let existingRecord = unifiedTeachers.find(t => t.phone === phone || t.docId === phone);
+                
+                if (existingRecord) {
+                    targetDocId = existingRecord.docId;
+                }
+
+                // Push to Firebase
+                await window.fsSetDoc(window.fsDoc(window.db, "teachers", targetDocId), {
+                    teacherName: name,
+                    phone: phone,
+                    title: title,
+                    isBlocked: false, // Automatically unblock upon subscription
+                    subStartDate: now.toISOString(),
+                    subEndDate: endDate.toISOString(),
+                    updatedAt: Date.now()
+                }, { merge: true });
+
+                totalSystemRevenue += planPrice;
+                
+                // Update local state instead of full reload to save reads
+                if (existingRecord) {
+                    existingRecord.isBlocked = false;
+                    existingRecord.subStartDate = now.toISOString();
+                    existingRecord.subEndDate = endDate.toISOString();
+                    existingRecord.name = name;
+                    existingRecord.title = title;
+                } else {
+                    unifiedTeachers.push({
+                        docId: targetDocId,
+                        phone: phone,
+                        name: name,
+                        title: title,
+                        isBlocked: false,
+                        subStartDate: now.toISOString(),
+                        subEndDate: endDate.toISOString(),
+                        createdAt: Date.now()
+                    });
+                }
+                
+                updateStats();
+                renderTeachers();
+                
+                closeModal('addSubscriptionModal');
+                showToast("✨ تم تفعيل الاشتراك ورفع الحظر بنجاح");
+
+            } catch (e) {
+                console.error("Save Sub Error:", e);
+                showToast("⚠️ حدث خطأ أثناء الحفظ", true);
+            } finally {
+                btn.innerText = 'تفعيل وحفظ ☁️';
+                btn.disabled = false;
+            }
+        }
+
+        // Renew Logic
+        async function renewSubscription(docId, months) {
+            const teacherIndex = unifiedTeachers.findIndex(t => t.docId === docId);
+            if(teacherIndex === -1) return;
+            
+            if (!window.db) {
+                showToast("⚠️ لا يوجد اتصال بالسحابة", true);
+                return;
+            }
+
+            const teacher = unifiedTeachers[teacherIndex];
+            const price = PRICING[months];
+            
+            const currentEndDate = teacher.subEndDate ? new Date(teacher.subEndDate) : new Date();
+            const now = new Date();
+            
+            // If subscription is already expired, start from today. Otherwise, add to existing end date.
+            const baseDate = currentEndDate > now ? currentEndDate : now;
+            baseDate.setMonth(baseDate.getMonth() + months);
+            
+            const newEndDateIso = baseDate.toISOString();
+            
+            setCloudStatus('syncing', '⏳ جاري التجديد...');
+            
+            try {
+                await window.fsSetDoc(window.fsDoc(window.db, "teachers", docId), {
+                    subEndDate: newEndDateIso,
+                    isBlocked: false, // Automatically unblock on renewal
+                    updatedAt: Date.now()
+                }, { merge: true });
+                
+                totalSystemRevenue += price;
+                
+                // Update local state
+                teacher.subEndDate = newEndDateIso;
+                teacher.isBlocked = false;
+                
+                updateStats();
+                renderTeachers();
+                setCloudStatus('synced', '☁️ تم التحديث');
+                showToast(`💳 تم تجديد الاشتراك ورفع الحظر لـ ${months} شهور بنجاح`);
+                
+            } catch(e) {
+                console.error("Renew error:", e);
+                setCloudStatus('offline', '⚠️ فشل التجديد');
+                showToast("⚠️ حدث خطأ أثناء الاتصال", true);
+            }
+        }
+
+        // Utils
+        function showToast(msg, isError = false) {
+            const t = document.getElementById('toastMsg');
+            t.textContent = msg;
+            t.style.background = isError ? '#EF4444' : '#10B981';
+            t.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
+            t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 3200);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+        }
+
+    </script>
+</body>
+</html>
