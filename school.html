@@ -209,7 +209,6 @@
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
-        /* ✅ ستايل شارة آخر ظهور */
         .badge-last-seen {
             background: #F8FAFC;
             color: #475569;
@@ -222,6 +221,7 @@
             align-items: center;
             gap: 4px;
             box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+            white-space: nowrap;
         }
         .badge-last-seen.online-now {
             background: #DCFCE7;
@@ -270,14 +270,9 @@
             color: #064E3B !important;
         }
 
-        .record-card.is-blocked .smart-card {
-            border-color: #FCA5A5;
-        }
-        .record-card.is-allowed .smart-card {
-            border-color: #86EFAC;
-        }
+        .record-card.is-blocked .smart-card { border-color: #FCA5A5; }
+        .record-card.is-allowed .smart-card { border-color: #86EFAC; }
 
-        /* ====== Card header (clickable) ====== */
         .card-header {
             cursor: pointer;
             user-select: none;
@@ -286,9 +281,7 @@
             padding: 4px 6px;
             margin: -4px -6px;
         }
-        .card-header:hover {
-            background: rgba(0,0,0,0.03);
-        }
+        .card-header:hover { background: rgba(0,0,0,0.03); }
         .expand-arrow {
             display: inline-flex;
             align-items: center;
@@ -302,21 +295,11 @@
             font-weight: 900;
             transition: transform 0.25s ease, background 0.2s;
         }
-        .record-card.is-blocked .expand-arrow {
-            background: rgba(220, 38, 38, 0.12);
-            color: #991B1B;
-        }
-        .record-card.is-allowed .expand-arrow {
-            background: rgba(22, 163, 74, 0.12);
-            color: #065F46;
-        }
-        .card-header:hover .expand-arrow {
-            transform: scale(1.08);
-        }
+        .record-card.is-blocked .expand-arrow { background: rgba(220, 38, 38, 0.12); color: #991B1B; }
+        .record-card.is-allowed .expand-arrow { background: rgba(22, 163, 74, 0.12); color: #065F46; }
+        .card-header:hover .expand-arrow { transform: scale(1.08); }
 
-        .card-details {
-            animation: slideDownFade 0.22s ease-out;
-        }
+        .card-details { animation: slideDownFade 0.22s ease-out; }
 
         .info-pill {
             background: #F8FAFC;
@@ -331,11 +314,7 @@
             gap: 8px;
             line-height: 1.5;
         }
-        .info-pill .label {
-            color: #64748B;
-            font-weight: 900;
-            white-space: nowrap;
-        }
+        .info-pill .label { color: #64748B; font-weight: 900; white-space: nowrap; }
 
         .smart-card {
             background: #fff;
@@ -382,10 +361,7 @@
             transition: all 0.25s ease;
             padding: 15px;
         }
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
+        .modal-overlay.active { opacity: 1; visibility: visible; }
         .modal-box {
             background: #FFFFFF;
             width: 100%;
@@ -399,46 +375,21 @@
             transform: scale(0.95);
             transition: all 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .modal-overlay.active .modal-box {
-            transform: scale(1);
-        }
-        .modal-box.wide-modal {
-            max-width: 820px;
-            border-bottom-color: #F59E0B;
-        }
+        .modal-overlay.active .modal-box { transform: scale(1); }
+        .modal-box.wide-modal { max-width: 820px; border-bottom-color: #F59E0B; }
 
-        .stage-select-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            width: 100%;
-        }
-
+        .stage-select-container { display: flex; gap: 10px; align-items: center; width: 100%; }
         .stage-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #F8FAFC;
-            padding: 6px;
-            border-radius: 12px;
+            display: flex; align-items: center; gap: 6px;
+            background: #F8FAFC; padding: 6px; border-radius: 12px;
             border: 1.5px solid #E2E8F0;
         }
-
         .grade-select-container, .subject-select-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            width: 100%;
-            margin-bottom: 12px;
+            display: flex; gap: 10px; align-items: center; width: 100%; margin-bottom: 12px;
         }
-
         .grade-controls, .subject-controls {
-             display: flex;
-            align-items: center;
-            gap: 6px;
-            background: #F8FAFC;
-            padding: 6px;
-            border-radius: 12px;
+            display: flex; align-items: center; gap: 6px;
+            background: #F8FAFC; padding: 6px; border-radius: 12px;
             border: 1.5px solid #E2E8F0;
         }
 
@@ -457,119 +408,63 @@
         }
 
         .order-btn {
-            width: 24px;
-            height: 24px;
-            border-radius: 6px;
-            background: #EFF6FF;
-            color: #1E40AF;
+            width: 24px; height: 24px; border-radius: 6px;
+            background: #EFF6FF; color: #1E40AF;
             border: 1.5px solid #93C5FD;
-            font-size: 11px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.15s;
-            padding: 0;
-            line-height: 1;
-            flex-shrink: 0;
+            font-size: 11px; font-weight: 900;
+            display: inline-flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.15s;
+            padding: 0; line-height: 1; flex-shrink: 0;
         }
-        .order-btn:hover {
-            background: #2563EB;
-            color: #fff;
-            border-color: #1D4ED8;
-            transform: scale(1.1);
-        }
-        .order-btn:active {
-            transform: scale(0.95);
-        }
+        .order-btn:hover { background: #2563EB; color: #fff; border-color: #1D4ED8; transform: scale(1.1); }
+        .order-btn:active { transform: scale(0.95); }
         .order-btn:disabled {
-            opacity: 0.35;
-            cursor: not-allowed;
-            background: #F1F5F9;
-            color: #94A3B8;
-            border-color: #CBD5E1;
-            transform: none;
+            opacity: 0.35; cursor: not-allowed;
+            background: #F1F5F9; color: #94A3B8; border-color: #CBD5E1; transform: none;
         }
 
         .custom-toast {
             position: fixed;
-            bottom: 20px;
-            left: 50%;
+            bottom: 20px; left: 50%;
             transform: translateX(-50%) translateY(100px);
-            background: #10B981;
-            color: white;
-            padding: 10px 22px;
-            border-radius: 999px;
-            font-weight: 900;
-            font-size: 13px;
+            background: #10B981; color: white;
+            padding: 10px 22px; border-radius: 999px;
+            font-weight: 900; font-size: 13px;
             z-index: 999999;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             opacity: 0;
             border-bottom: 3px solid #059669;
             box-shadow: 0 10px 25px rgba(16, 185, 129, 0.35);
         }
-        .custom-toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-        }
+        .custom-toast.show { transform: translateX(-50%) translateY(0); opacity: 1; }
 
         .cloud-status-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 4px 10px;
-            border-radius: 999px;
-            font-size: 11px;
-            font-weight: 900;
-            border: 1.5px solid;
-            transition: all 0.3s;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 4px 10px; border-radius: 999px;
+            font-size: 11px; font-weight: 900;
+            border: 1.5px solid; transition: all 0.3s;
         }
         .cloud-status-badge.syncing { background: #FEF3C7; color: #92400E; border-color: #FCD34D; }
         .cloud-status-badge.synced { background: #D1FAE5; color: #065F46; border-color: #6EE7B7; }
         .cloud-status-badge.offline { background: #FEE2E2; color: #991B1B; border-color: #FCA5A5; }
 
         .status-pure-red {
-            background: #DC2626 !important;
-            color: #FFFFFF !important;
+            background: #DC2626 !important; color: #FFFFFF !important;
             border: 2px solid #991B1B !important;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            padding: 4px 12px; border-radius: 999px;
+            font-size: 12px; font-weight: 900;
+            display: inline-flex; align-items: center; gap: 4px;
             box-shadow: 0 3px 8px rgba(220, 38, 38, 0.4);
         }
         .status-pure-green {
-            background: #16A34A !important;
-            color: #FFFFFF !important;
+            background: #16A34A !important; color: #FFFFFF !important;
             border: 2px solid #15803D !important;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            padding: 4px 12px; border-radius: 999px;
+            font-size: 12px; font-weight: 900;
+            display: inline-flex; align-items: center; gap: 4px;
             box-shadow: 0 3px 8px rgba(22, 163, 74, 0.4);
         }
 
-        .status-pure-amber {
-            background: #F59E0B !important;
-            color: #FFFFFF !important;
-            border: 2px solid #B45309 !important;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            box-shadow: 0 3px 8px rgba(245, 158, 11, 0.45);
-            animation: softPulse 1.8s ease-in-out infinite;
-        }
         @keyframes softPulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.82; }
@@ -578,25 +473,17 @@
         .card-count-badge {
             background: linear-gradient(135deg, #0F2D5C, #2563EB);
             color: #FFFFFF;
-            padding: 8px 18px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 900;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
+            padding: 8px 18px; border-radius: 999px;
+            font-size: 14px; font-weight: 900;
+            display: inline-flex; align-items: center; gap: 8px;
             box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3);
             border: 2px solid #60A5FA;
         }
         .card-count-badge .count-num {
-            background: #FFFFFF;
-            color: #0F2D5C;
-            padding: 1px 10px;
-            border-radius: 999px;
-            font-size: 14px;
-            font-weight: 900;
-            min-width: 32px;
-            text-align: center;
+            background: #FFFFFF; color: #0F2D5C;
+            padding: 1px 10px; border-radius: 999px;
+            font-size: 14px; font-weight: 900;
+            min-width: 32px; text-align: center;
         }
 
         .phone-number-big {
@@ -611,10 +498,7 @@
             text-shadow: 0 1px 0 rgba(255,255,255,0.6);
         }
 
-        #adminLoginModal {
-            background: #0A1E3F !important;
-            z-index: 9999999;
-        }
+        #adminLoginModal { background: #0A1E3F !important; z-index: 9999999; }
         #adminLoginModal .modal-box {
             border-bottom: 6px solid #F59E0B;
             background: #ffffff;
@@ -661,6 +545,9 @@
                 <span id="cloudStatusBadge" class="cloud-status-badge syncing" title="حالة المزامنة مع السحابة">
                     ⏳ جاري التحقق...
                 </span>
+                <button onclick="showBlockedList()" class="btn-nav" style="background: rgba(220, 38, 38, 0.15); border-color: rgba(220, 38, 38, 0.4); color: #fff;">
+                    🚫 المحظورين
+                </button>
                 <button onclick="openCurriculumModal()" class="btn-nav highlight-btn">
                     📚 المناهج والصفوف
                 </button>
@@ -673,8 +560,12 @@
 
     <section class="stats-container">
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-4">
-            <div class="stat-card" style="border-bottom-color: #8B5CF6;" title="عدد الطلاب الذين دخلوا صفحة البحث">
-                <div class="stat-icon bg-purple-100 text-purple-700">👨‍🎓</div>
+            
+            <div class="stat-card" style="border-bottom-color: #8B5CF6;" onclick="openSuspiciousModal()" title="اضغط لعرض الطلاب المتطابقين مع المعلمين">
+                <div class="stat-icon bg-purple-100 text-purple-700 relative">
+                    👨‍🎓
+                    <span id="suspiciousAlertIcon" class="absolute -top-2 -right-2 bg-rose-600 text-white text-[10px] font-black w-5 h-5 flex items-center justify-center rounded-full border-2 border-white shadow-sm" style="display: none;">0</span>
+                </div>
                 <div>
                     <div class="text-xs font-extrabold text-slate-400">إجمالي الطلاب 🔍</div>
                     <div id="statStudentsCount" class="text-2xl font-black text-slate-800">0</div>
@@ -718,9 +609,12 @@
     <main class="max-w-7xl mx-auto w-full px-4 pb-16 flex-1">
         <div class="filter-bar">
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
-                <div class="md:col-span-2">
-                    <label class="block text-xs font-black text-slate-600 mb-1">🔍 بحث شامل (الاسم، رقم التليفون، العنوان، المادة)</label>
-                    <input type="text" id="searchInput" oninput="renderAllRecords()" class="form-input" placeholder="ابحث باسم المستر/المس أو رقم التليفون أو الشارع...">
+                <div class="md:col-span-2 flex gap-2 items-end">
+                    <div class="flex-1">
+                        <label class="block text-xs font-black text-slate-600 mb-1">🔍 بحث برقم التليفون (للبحث الدقيق في قاعدة البيانات)</label>
+                        <input type="text" id="searchInput" class="form-input" placeholder="اكتب رقم التليفون المكون من 11 رقم..." onkeypress="if(event.key === 'Enter') executeServerSearch()">
+                    </div>
+                    <button onclick="executeServerSearch()" class="action-chip bg-blue-600 text-white px-4 h-[42px] mb-[2px] shadow-sm">بحث 🔍</button>
                 </div>
 
                 <div>
@@ -755,7 +649,24 @@
         <div id="recordsGrid" class="grid grid-cols-1 md:grid-cols-2 gap-5"></div>
     </main>
 
-    <!-- Modals -->
+    <!-- Modal: المتطابقين / المشتبه بهم -->
+    <div id="suspiciousStudentsModal" class="modal-overlay" onclick="closeModal('suspiciousStudentsModal')">
+        <div class="modal-box wide-modal" onclick="event.stopPropagation()">
+            <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
+                <div>
+                    <h3 class="text-lg font-black text-rose-700">🕵️‍♂️ طلاب يستخدمون أجهزة معلمين</h3>
+                    <p class="text-xs font-bold text-slate-500 mt-0.5">قائمة بحسابات الطلاب التي تتطابق أجهزتها مع أجهزة معلمين مسجلين</p>
+                </div>
+                <button onclick="closeModal('suspiciousStudentsModal')" class="w-8 h-8 rounded-full bg-rose-100 text-rose-600 font-black">✕</button>
+            </div>
+            <div id="suspiciousStudentsContent" class="overflow-x-auto"></div>
+            <div class="flex justify-end mt-5 pt-3 border-t border-slate-200">
+                <button onclick="closeModal('suspiciousStudentsModal')" class="action-chip bg-slate-800 text-white px-6 py-2.5 text-sm">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: ملخص المعلمين -->
     <div id="teachersSummaryModal" class="modal-overlay" onclick="closeModal('teachersSummaryModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-4">
@@ -772,6 +683,7 @@
         </div>
     </div>
 
+    <!-- Modal: منهج وصفوف -->
     <div id="curriculumModal" class="modal-overlay" onclick="closeModal('curriculumModal')">
         <div class="modal-box wide-modal" onclick="event.stopPropagation()">
             <div class="flex flex-wrap items-center justify-between gap-2 border-b border-slate-200 pb-3 mb-4">
@@ -883,6 +795,7 @@
         </div>
     </div>
 
+    <!-- Modal: الخريطة -->
     <div id="mapModal" class="modal-overlay" onclick="closeModal('mapModal')">
         <div class="modal-box" onclick="event.stopPropagation()">
             <div class="flex items-center justify-between border-b border-slate-200 pb-3 mb-3">
@@ -898,18 +811,20 @@
         </div>
     </div>
 
+    <!-- Modal: تأكيد -->
     <div id="customConfirmModal" class="modal-overlay" onclick="closeModal('customConfirmModal')" style="z-index: 999999;">
         <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 380px; border-bottom-color: #EF4444; text-align: center;">
             <div class="text-5xl mb-3">⚠️</div>
-            <h3 class="text-lg font-black text-slate-800 mb-2">تأكيد الحذف</h3>
+            <h3 class="text-lg font-black text-slate-800 mb-2">تأكيد العملية</h3>
             <p id="customConfirmMessage" class="text-sm font-bold text-slate-600 mb-6">هل أنت متأكد؟</p>
             <div class="flex gap-3 justify-center">
-                <button id="btnConfirmYes" class="action-chip bg-rose-600 text-white px-6 py-2.5 flex-1 text-sm shadow-md">نعم، متأكد 🗑️</button>
+                <button id="btnConfirmYes" class="action-chip bg-rose-600 text-white px-6 py-2.5 flex-1 text-sm shadow-md">نعم، متأكد ✅</button>
                 <button onclick="closeModal('customConfirmModal')" class="action-chip bg-slate-200 text-slate-700 px-6 py-2.5 flex-1 text-sm">إلغاء وتراجع</button>
             </div>
         </div>
     </div>
 
+    <!-- Modal: إدخال نص (Prompt) -->
     <div id="customPromptModal" class="modal-overlay" onclick="closeModal('customPromptModal')" style="z-index: 999999;">
         <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 420px; border-bottom-color: #2563EB; text-align: center;">
             <div class="text-5xl mb-3">✏️</div>
@@ -923,10 +838,12 @@
         </div>
     </div>
 
+    <!-- 🌟 Firebase Scripts 🌟 -->
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
-          getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc, updateDoc, increment
+          getFirestore, doc, setDoc, getDoc, collection, getDocs, onSnapshot, deleteDoc, updateDoc, increment,
+          getCountFromServer, query, limit, orderBy, where
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
       import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
 
@@ -943,6 +860,7 @@
       const db = getFirestore(app);
       const auth = getAuth(app); 
 
+      // Maps to global window for accessibility
       window.db = db;
       window.auth = auth;
       window.fsSignIn = signInWithEmailAndPassword;
@@ -953,10 +871,17 @@
       window.fsGetDoc = getDoc;
       window.fsCollection = collection;
       window.fsGetDocs = getDocs;
-      window.fsOnSnapshot = onSnapshot;
       window.fsDeleteDoc = deleteDoc;
       window.fsUpdateDoc = updateDoc;
       window.fsIncrement = increment;
+      window.fsOnSnapshot = onSnapshot; 
+      
+      // الدوال الخاصة بالسحب المحدود (للأداء العالي)
+      window.fsGetCountFromServer = getCountFromServer;
+      window.fsQuery = query;
+      window.fsLimit = limit;
+      window.fsOrderBy = orderBy;
+      window.fsWhere = where;
 
       let isAppInitialized = false;
 
@@ -965,9 +890,7 @@
           if (user) {
               if (loginModal) loginModal.classList.remove('active');
               if (!isAppInitialized) {
-                  if (typeof populateGradeFilter === 'function') populateGradeFilter();
-                  if (typeof loadCurriculumFromFirebase === 'function') loadCurriculumFromFirebase();
-                  if (typeof setupRealtimeListeners === 'function') setupRealtimeListeners();
+                  initAdminData();
                   isAppInitialized = true;
               }
           } else {
@@ -977,6 +900,18 @@
     </script>
 
     <script>
+        let currentUnifiedRecords = [];
+        const expandedCards = new Set();
+        let curriculumCache = null;
+        let curriculumUnsubscribe = null;
+        let isFirstSnapshot = true;
+        let activeStageKey = null;
+        let activeGradeName = null;
+        let activeSubjectName = null;
+
+        // ==========================================
+        // 🛠️ الأساسيات و UI
+        // ==========================================
         function adminLogin() {
             const email = document.getElementById('adminEmail').value;
             const pass = document.getElementById('adminPass').value;
@@ -993,10 +928,10 @@
             btn.disabled = true;
             err.classList.add('hidden');
 
-            window.fsSignIn(window.auth, email, pass).then((userCredential) => {
+            window.fsSignIn(window.auth, email, pass).then(() => {
                 btn.innerText = 'دخول آمن 🔒';
                 btn.disabled = false;
-            }).catch((error) => {
+            }).catch(() => {
                 btn.innerText = 'دخول آمن 🔒';
                 btn.disabled = false;
                 err.classList.remove('hidden');
@@ -1014,37 +949,6 @@
             });
         }
 
-        let touchStartY = 0;
-        let pullDistance = 0;
-        const ptrIndicator = document.getElementById('pullToRefreshIndicator');
-
-        window.addEventListener('touchstart', (e) => {
-            if (window.scrollY === 0) touchStartY = e.touches[0].clientY;
-            else touchStartY = 0;
-        }, { passive: true });
-
-        window.addEventListener('touchmove', (e) => {
-            if (touchStartY === 0) return;
-            pullDistance = e.touches[0].clientY - touchStartY;
-            if (pullDistance > 0 && window.scrollY === 0) {
-                const translateVal = Math.min(pullDistance * 0.4, 75);
-                ptrIndicator.style.transform = `translateY(${translateVal}px)`;
-                ptrIndicator.textContent = translateVal > 50 ? 'اتركه لتحديث الصفحة 🔄' : '🔄 اسحب للأسفل للتحديث...';
-            }
-        }, { passive: true });
-
-        window.addEventListener('touchend', () => {
-            if (touchStartY === 0) return;
-            if (pullDistance * 0.4 > 50) {
-                ptrIndicator.style.transform = `translateY(60px)`;
-                ptrIndicator.textContent = '⏳ جاري التحديث...';
-                setTimeout(() => location.reload(), 400);
-            } else {
-                ptrIndicator.style.transform = `translateY(0px)`;
-            }
-            touchStartY = 0; pullDistance = 0;
-        });
-
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
         function playClickSound() {
             if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -1060,6 +964,23 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
+        function formatLastSeen(timestamp) {
+            if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: '' };
+            const timeMs = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
+            if (isNaN(timeMs)) return { text: 'غير محدد', isOnline: false, fullDate: '' };
+            const diffMs = Date.now() - timeMs;
+            const diffMin = Math.floor(diffMs / 60000);
+            const diffHours = Math.floor(diffMin / 60);
+            const diffDays = Math.floor(diffHours / 24);
+            const fullDate = new Date(timeMs).toLocaleString('ar-EG');
+            if (diffMin < 5) return { text: 'مباشر', isOnline: true, fullDate };
+            if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
+            if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
+            if (diffDays === 1) return { text: 'منذ يوم', isOnline: false, fullDate };
+            if (diffDays < 30) return { text: `منذ ${diffDays} يوم`, isOnline: false, fullDate };
+            return { text: new Date(timeMs).toLocaleDateString('ar-EG'), isOnline: false, fullDate };
+        }
+
         function showToast(msg, isError = false) {
             const t = document.getElementById('toastMsg');
             t.textContent = msg;
@@ -1067,6 +988,13 @@
             t.style.borderBottomColor = isError ? '#B91C1C' : '#059669';
             t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 3200);
+        }
+
+        function setCloudStatus(status, text) {
+            const b = document.getElementById('cloudStatusBadge');
+            if (!b) return;
+            b.className = 'cloud-status-badge ' + status;
+            b.textContent = text;
         }
 
         function closeModal(id) { document.getElementById(id).classList.remove('active'); }
@@ -1079,10 +1007,7 @@
         }
         document.getElementById('btnConfirmYes').addEventListener('click', () => {
             closeModal('customConfirmModal');
-            if (confirmActionCallback) {
-                confirmActionCallback();
-                confirmActionCallback = null;
-            }
+            if (confirmActionCallback) { confirmActionCallback(); confirmActionCallback = null; }
         });
 
         let promptActionCallback = null;
@@ -1095,45 +1020,356 @@
             document.getElementById('customPromptModal').classList.add('active');
             setTimeout(() => { input.focus(); input.select(); }, 150);
         }
-
+        
         document.addEventListener('DOMContentLoaded', () => {
             const btnPrompt = document.getElementById('btnPromptConfirm');
             if (btnPrompt) {
                 btnPrompt.addEventListener('click', () => {
                     const val = document.getElementById('promptInput').value.trim();
-                    if (!val) {
-                        showToast('⚠️ الاسم لا يمكن أن يكون فارغاً', true);
-                        return;
-                    }
+                    if (!val) { showToast('⚠️ الاسم لا يمكن أن يكون فارغاً', true); return; }
                     closeModal('customPromptModal');
-                    if (promptActionCallback) {
-                        promptActionCallback(val);
-                        promptActionCallback = null;
-                    }
+                    if (promptActionCallback) { promptActionCallback(val); promptActionCallback = null; }
                 });
             }
-
             const promptInput = document.getElementById('promptInput');
             if (promptInput) {
                 promptInput.addEventListener('keypress', (e) => {
-                    if (e.key === 'Enter') {
-                        e.preventDefault();
-                        document.getElementById('btnPromptConfirm').click();
-                    }
+                    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('btnPromptConfirm').click(); }
                 });
             }
         });
 
-        const expandedCards = new Set();
-
-        function getCardKey(r) {
-            return String(r.docId || r.phone || r.teacherName || 'unknown')
-                .replace(/\\/g, '_').replace(/'/g, "\\'");
+        function cleanTeacherName(rawName) {
+            if (!rawName) return '';
+            return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
         }
 
-        function toggleCardExpand(cardKey, headerEl) {
+        function getCardKey(r) {
+            return String(r.docId || r.phone || r.teacherName || 'unknown').replace(/\\/g, '_').replace(/'/g, "\\'");
+        }
+
+        // ==========================================
+        // 🚀 نظام الأداء العالي: التهيئة و جلب البيانات
+        // ==========================================
+        async function initAdminData() {
+            setCloudStatus('syncing', '⏳ جاري الاتصال بالسيرفر...');
+            loadCurriculumFromFirebase(); 
+            await updateDashboardStats();
+            await collectAllAppData();
+            populateGradeFilter();
+            setCloudStatus('synced', '☁️ تم تحميل البيانات بنجاح');
+        }
+
+        // 1. استخدام Server-side Counts
+        async function updateDashboardStats() {
+            if (!window.db) return;
+            try {
+                const stSnap = await window.fsGetCountFromServer(window.fsCollection(window.db, "talep_data"));
+                document.getElementById('statStudentsCount').textContent = stSnap.data().count;
+
+                const lSnap = await window.fsGetCountFromServer(window.fsCollection(window.db, "lessons"));
+                document.getElementById('statLessonsCount').textContent = lSnap.data().count;
+
+                const tSnap = await window.fsGetCountFromServer(window.fsCollection(window.db, "teachers"));
+                document.getElementById('statAccountsCount').textContent = tSnap.data().count;
+
+                const mrSnap = await window.fsGetCountFromServer(window.fsQuery(window.fsCollection(window.db, "teachers"), window.fsWhere("title", "==", "مستر")));
+                document.getElementById('statMrCount').textContent = mrSnap.data().count;
+
+                const msSnap = await window.fsGetCountFromServer(window.fsQuery(window.fsCollection(window.db, "teachers"), window.fsWhere("title", "==", "مس")));
+                document.getElementById('statMsCount').textContent = msSnap.data().count;
+            } catch(e) { console.error("Stats Error:", e); }
+        }
+
+        // 2. استخدام limit() / where() لتوفير القراءات
+        async function collectAllAppData(forceQueryPhone = null) {
+            if (!window.db) return;
+
+            let tQuery, lQuery, rQuery, dQuery;
+            
+            if (forceQueryPhone) {
+                tQuery = window.fsQuery(window.fsCollection(window.db, "teachers"), window.fsWhere("phone", "==", forceQueryPhone));
+                lQuery = window.fsQuery(window.fsCollection(window.db, "lessons"), window.fsWhere("g_phone", "==", forceQueryPhone));
+                rQuery = window.fsQuery(window.fsCollection(window.db, "teacher_ratings"), window.fsWhere("teacherPhone", "==", forceQueryPhone));
+                dQuery = window.fsQuery(window.fsCollection(window.db, "teacher_devices"), window.fsWhere("phone", "==", forceQueryPhone));
+            } else {
+                tQuery = window.fsQuery(window.fsCollection(window.db, "teachers"), window.fsOrderBy("updatedAt", "desc"), window.fsLimit(50));
+                lQuery = window.fsQuery(window.fsCollection(window.db, "lessons"), window.fsOrderBy("updatedAt", "desc"), window.fsLimit(150));
+                rQuery = window.fsQuery(window.fsCollection(window.db, "teacher_ratings"), window.fsOrderBy("createdAt", "desc"), window.fsLimit(100));
+                dQuery = window.fsQuery(window.fsCollection(window.db, "teacher_devices"), window.fsOrderBy("lastLogin", "desc"), window.fsLimit(50));
+            }
+
+            try {
+                const [tSnap, lSnap, rSnap, dSnap] = await Promise.all([
+                    window.fsGetDocs(tQuery), window.fsGetDocs(lQuery),
+                    window.fsGetDocs(rQuery), window.fsGetDocs(dQuery)
+                ]);
+
+                const firebaseTeachers = []; tSnap.forEach(d => firebaseTeachers.push({id: d.id, ...d.data()}));
+                const firebaseLessons = []; lSnap.forEach(d => firebaseLessons.push({id: d.id, ...d.data()}));
+                const firebaseRatings = []; rSnap.forEach(d => firebaseRatings.push({id: d.id, ...d.data()}));
+                const firebaseDevices = []; dSnap.forEach(d => firebaseDevices.push({id: d.id, ...d.data()}));
+
+                const unifiedMap = new Map();
+
+                firebaseTeachers.forEach(t => {
+                    const phone = t.phone || 'غير مسجل';
+                    const cleanName = cleanTeacherName(t.teacherName || t.name || t.fullName) || 'بدون اسم';
+                    const targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${cleanName}`;
+                    
+                    const matchingDevice = firebaseDevices.find(d => d.id === phone || d.phone === phone);
+
+                    unifiedMap.set(targetKey, {
+                        type: 'account_only', docId: t.id, lessonIds: [], title: t.title || 'مستر',
+                        teacherName: cleanName, phone: phone, regDate: t.createdAt || new Date().toISOString().split('T')[0],
+                        lastSeen: t.lastSeen || t.updatedAt, currentActiveTab: matchingDevice ? matchingDevice.currentActiveTab : 'teacher',
+                        groupName: 'لم يُنشئ مجموعة', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
+                        locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
+                        isPublished: false, waClicks: t.waClicks || 0, groups: [], phoneType: t.phoneType || '',
+                        isBlocked: t.isBlocked === true
+                    });
+                });
+
+                firebaseLessons.forEach(lesson => {
+                    const state = lesson;
+                    const phone = state.g_phone || 'غير مسجل';
+                    const teacherName = cleanTeacherName(state.g_teacher);
+                    let targetKey = null;
+                    
+                    for (const [k, v] of unifiedMap.entries()) {
+                        if ((phone !== 'غير مسجل' && v.phone === phone) || (cleanTeacherName(v.teacherName) === teacherName)) {
+                            targetKey = k; break;
+                        }
+                    }
+
+                    if (!targetKey) {
+                        targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${teacherName}`;
+                        unifiedMap.set(targetKey, { 
+                            type: 'lesson', docId: (phone !== 'غير مسجل') ? phone : teacherName, lessonIds: [],
+                            title: state.t_gender || (teacherName.startsWith('مس') ? 'مس' : 'مستر'),
+                            teacherName: teacherName || 'بدون اسم', phone: phone, regDate: state.createdAt || '--',
+                            waClicks: 0, groups: [], isBlocked: false
+                        });
+                    }
+                    
+                    const entry = unifiedMap.get(targetKey);
+                    entry.lessonIds.push(lesson.id);
+                    if (entry.phone === 'غير مسجل' && phone !== 'غير مسجل') entry.phone = phone;
+
+                    const groupObj = {
+                        lessonId: lesson.id, groupName: state.g_name || `مجموعة ${lesson.id}`,
+                        grade: state.s_grade || 'غير محدد',
+                        subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.split(' - ')[1] || s).join('، ') : 'غير محدد',
+                        locType: state.g_loc === 'l_teach' ? 'بيت المستر' : (state.g_loc === 'l_stud' ? 'منزل الطالب' : 'السنتر'),
+                        address: state.m_address || 'لم يتم تحديد العنوان', lat: state.lat || null, lng: state.lng || null,
+                        days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
+                        timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
+                        timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
+                        isPublished: state.g_publish_map !== false,
+                    };
+                    entry.groups.push(groupObj);
+                    entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
+                    entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
+                    entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
+                    entry.locType = entry.groups[0].locType; entry.address = entry.groups[0].address;
+                    entry.isPublished = entry.groups.some(g => g.isPublished);
+                    entry.lat = entry.groups[0].lat; entry.lng = entry.groups[0].lng;
+                });
+
+                const unifiedRecords = Array.from(unifiedMap.values());
+
+                unifiedRecords.forEach(r => {
+                    const cleanPhone = String(r.phone || '').replace(/\D/g, '');
+                    const matchingDevice = firebaseDevices.find(d => d.id === cleanPhone || d.phone === cleanPhone);
+                    r.deviceId = matchingDevice ? matchingDevice.deviceId : 'غير متاح';
+
+                    const tRatings = firebaseRatings.filter(rt => String(rt.teacherPhone || '').replace(/\D/g, '') === cleanPhone);
+                    let sum = 0; tRatings.forEach(rt => sum += (rt.stars || 0));
+                    r.ratingCount = tRatings.length;
+                    r.ratingAvg = r.ratingCount > 0 ? (sum / r.ratingCount) : 0;
+                    r.reviews = tRatings.sort((a,b) => b.createdAt - a.createdAt);
+                });
+
+                currentUnifiedRecords = unifiedRecords.sort((a, b) => {
+                    const dateA = new Date(a.regDate || 0).getTime() || 0;
+                    const dateB = new Date(b.regDate || 0).getTime() || 0;
+                    return dateB - dateA;
+                });
+
+                renderAllRecords();
+
+            } catch (e) {
+                console.error("Fetch Data Error:", e);
+                showToast("⚠️ حدث خطأ أثناء سحب البيانات", true);
+            }
+        }
+
+        window.executeServerSearch = async function() {
+            const q = document.getElementById('searchInput').value.trim();
+            if (!q) {
+                setCloudStatus('syncing', '⏳ جاري استعادة العرض الافتراضي...');
+                await collectAllAppData(null);
+                setCloudStatus('synced', '☁️ تم التحديث');
+                return;
+            }
+
+            if (/^\d{10,11}$/.test(q)) {
+                setCloudStatus('syncing', '⏳ جاري البحث المباشر في السيرفر...');
+                await collectAllAppData(q);
+                setCloudStatus('synced', '☁️ اكتمل البحث');
+            } else {
+                renderAllRecords();
+            }
+        }
+
+        // ==========================================
+        // 📊 العرض والتفاعل للبطاقات
+        // ==========================================
+        window.renderAllRecords = function() {
+            const q = document.getElementById('searchInput').value.trim().toLowerCase();
+            const titleFilter = document.getElementById('filterTitle').value;
+            const gradeFilter = document.getElementById('filterGrade').value;
+
+            const filtered = currentUnifiedRecords.filter(r => {
+                if (titleFilter !== 'all' && r.title !== titleFilter) return false;
+                if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
+                if (q && !/^\d{10,11}$/.test(q) && !`${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects} ${r.address}`.toLowerCase().includes(q)) return false;
+                return true;
+            });
+
+            const container = document.getElementById('recordsGrid');
+            document.getElementById('resultsCounter').textContent = filtered.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `<div class="col-span-full bg-white rounded-3xl p-10 text-center font-bold text-slate-500 shadow-sm border border-slate-200">لا توجد سجلات مطابقة. حاول البحث برقم التليفون مباشرة بدلاً من الاسم.</div>`;
+                return;
+            }
+
+            container.innerHTML = filtered.map(r => {
+                const isMs = r.title === 'مس';
+                const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
+                const cardKey = getCardKey(r);
+                const isExpanded = expandedCards.has(cardKey);
+                const lastSeenObj = formatLastSeen(r.lastSeen);
+
+                let idOrStudentBadgeHTML = '';
+                if (r.deviceId !== 'غير متاح') {
+                    const shortDeviceId = r.deviceId.includes('_') ? r.deviceId.split('_')[2].substring(0, 6) : r.deviceId.substring(0, 6);
+                    idOrStudentBadgeHTML = `<span class="badge-last-seen" style="background:#F3E8FF; border-color:#E9D5FF; color:#7E22CE; letter-spacing:1px; font-weight:900;" dir="ltr">📱 ${shortDeviceId}</span>`;
+                }
+
+                const ratingBadgeHTML = r.ratingCount > 0 
+                    ? `<span class="badge-last-seen" style="background:#FFFBEB; border-color:#FDE68A; color:#B45309;">⭐ ${r.ratingAvg.toFixed(1)}</span>` 
+                    : `<span class="badge-last-seen" style="background:#F8FAFC; border-color:#E2E8F0; color:#94A3B8;">⭐ جديد</span>`;
+
+                const cleanPhone = String(r.phone || '').replace(/\D/g, '');
+                const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
+                const stateClass = r.isBlocked ? 'is-blocked' : 'is-allowed';
+                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
+                const docIdSafe = r.docId || '';
+                const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
+
+                let unifiedScheduleHTML = '';
+                if (r.groups && r.groups.length > 0) {
+                    unifiedScheduleHTML = `<div class="space-y-2 mt-3">` + r.groups.map(g => {
+                        let mapBtn = '';
+                        if (g.lat && g.lng) {
+                            mapBtn = `<button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 shadow-sm mt-1">📍 عرض الخريطة</button>`;
+                        }
+                        return `
+                        <div class="smart-card">
+                            <div class="flex items-center justify-between mb-2 pb-2 border-b border-dashed border-slate-300">
+                                <h4 class="font-black text-slate-800 text-sm">👥 ${g.groupName}</h4>
+                                <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${g.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">${g.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
+                            </div>
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                <div class="info-pill"><span class="label">👑 الصف:</span><span class="font-black text-emerald-700">${g.grade}</span></div>
+                                <div class="info-pill"><span class="label">📚 المواد:</span><span class="font-black text-emerald-700">${g.subjects}</span></div>
+                                <div class="info-pill"><span class="label">⏰ الأيام:</span><span class="font-black text-slate-700">${g.days}</span></div>
+                                <div class="info-pill"><span class="label">🕐 الوقت:</span><span class="font-black text-slate-700">${g.timeFrom} - ${g.timeTo}</span></div>
+                                <div class="info-pill sm:col-span-2 flex-wrap">
+                                    <span class="label">📍 العنوان:</span><span class="font-black text-slate-700">[${g.locType}] ${g.address}</span>
+                                    ${mapBtn}
+                                </div>
+                            </div>
+                        </div>`;
+                    }).join('') + `</div>`;
+                } else {
+                    unifiedScheduleHTML = `<div class="smart-card text-center text-slate-500 font-bold p-4 mt-3">لا توجد مجموعات مسجلة</div>`;
+                }
+
+                let reviewsHtml = '';
+                if (r.ratingCount > 0) {
+                    const topReviews = r.reviews.slice(0, 3).map(rev => `
+                        <div style="background: #FFFFFF; border: 1px solid #FDE68A; border-radius: 8px; padding: 8px; margin-bottom: 6px;">
+                            <div style="display:flex; justify-content: space-between; align-items:center; margin-bottom: 4px;">
+                                <span style="font-size:11.5px; font-weight:900; color:#92400E;">${rev.studentName}</span>
+                                <span style="color:#F59E0B; font-size:11px; direction:ltr;">${'★'.repeat(rev.stars)}</span>
+                            </div>
+                            ${rev.comment ? `<div style="font-size:11.5px; color:#475569; font-weight:800;">"${rev.comment}"</div>` : ''}
+                        </div>
+                    `).join('');
+                    reviewsHtml = `<div class="info-pill flex flex-col gap-2" style="background:#FFFBEB; border-color:#FDE68A; margin-top: 8px;">
+                                    <div class="font-black text-amber-700">⭐ تقييمات الطلاب (${r.ratingCount}):</div>
+                                    ${topReviews}
+                                  </div>`;
+                }
+
+                const statusBadgeHTML = r.isBlocked ? `<span class="status-pure-red">🚫 محظور يدوياً</span>` : `<span class="status-pure-green">✅ نشط</span>`;
+                const lsBadge = `<span class="badge-last-seen ${lastSeenObj.isOnline?'online-now':''}">${lastSeenObj.isOnline?'مباشر 🟢':`🕒 ${lastSeenObj.text}`}</span>`;
+
+                return `
+                    <div class="record-card ${stateClass}" data-card-key="${cardKey}">
+                        <div class="card-header flex flex-col gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
+                            <div class="flex items-start justify-between gap-2 w-full">
+                                <div class="flex items-center gap-2 flex-1">
+                                    <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-1.5">
+                                            <h3 class="text-base sm:text-lg font-black text-slate-800 leading-tight">${r.teacherName}</h3>
+                                        </div>
+                                        <div class="text-xs font-black text-blue-700 mt-0.5 tracking-wider" dir="ltr" style="text-align: right;">${r.phone}</div>
+                                    </div>
+                                </div>
+                                <div class="shrink-0 pl-1"><span class="expand-arrow shrink-0">${isExpanded ? '▲' : '▼'}</span></div>
+                            </div>
+                            <div class="flex flex-wrap items-center justify-start gap-1.5 w-full">
+                                ${statusBadgeHTML}
+                                ${ratingBadgeHTML}
+                                ${idOrStudentBadgeHTML}
+                                ${lsBadge}
+                            </div>
+                        </div>
+
+                        <div class="card-details mt-3" style="display:${isExpanded ? 'block' : 'none'};">
+                            <div class="space-y-2">
+                                <div class="info-pill flex flex-col gap-2" style="background:#F8FAFC; border-color:#CBD5E1;">
+                                    <div class="flex items-center justify-between w-full">
+                                        <span class="label text-slate-600">🛡️ حالة الحساب:</span>
+                                        <span class="text-[11px] font-black ${r.isBlocked ? 'text-rose-600' : 'text-emerald-700'}">${r.isBlocked ? '🚫 محظور' : '✅ نشط ومتاح'}</span>
+                                    </div>
+                                    <button onclick="toggleBlock('${docIdSafe}', '${r.phone}', '${safeTeacherName}', ${r.isBlocked})" class="action-chip w-full py-2 text-xs font-black shadow-md ${r.isBlocked ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">
+                                        ${r.isBlocked ? '✅ إلغاء الحظر' : '🚫 حظر الحساب (إخفاء المجموعات)'}
+                                    </button>
+                                </div>
+                                ${reviewsHtml}
+                                ${unifiedScheduleHTML}
+                            </div>
+                            <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
+                                <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
+                                <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-red-700 hover:bg-red-800 text-white font-black shadow-md border border-red-900 transition-colors">🔥 حذف نهائي</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // ==========================================
+        // باقي دوال التحكم والأزرار (طي / فتح / حظر / حذف)
+        // ==========================================
+        window.toggleCardExpand = function(cardKey, headerEl) {
             const card = headerEl.closest('.record-card');
-            if (!card) return;
             const body = card.querySelector('.card-details');
             const arrow = card.querySelector('.expand-arrow');
             if (expandedCards.has(cardKey)) {
@@ -1147,7 +1383,7 @@
             }
         }
 
-        function expandAllCards() {
+        window.expandAllCards = function() {
             document.querySelectorAll('.record-card').forEach(card => {
                 const key = card.getAttribute('data-card-key');
                 if (key) expandedCards.add(key);
@@ -1159,7 +1395,7 @@
             showToast('📖 تم فتح جميع الكروت');
         }
 
-        function collapseAllCards() {
+        window.collapseAllCards = function() {
             document.querySelectorAll('.record-card').forEach(card => {
                 const key = card.getAttribute('data-card-key');
                 if (key) expandedCards.delete(key);
@@ -1171,11 +1407,298 @@
             showToast('📕 تم إغلاق جميع الكروت');
         }
 
+        function populateGradeFilter() {
+            const gradeSelect = document.getElementById('filterGrade');
+            if (!gradeSelect) return;
+            const grades = new Set();
+            currentUnifiedRecords.forEach(r => {
+                if(r.groups) r.groups.forEach(g => { if(g.grade) grades.add(g.grade); });
+            });
+            gradeSelect.innerHTML = `<option value="all">جميع الصفوف الدراسية</option>`;
+            Array.from(grades).forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
+        }
+
+        window.toggleBlock = async function(docId, phone, teacherName, isBlocked) {
+            const cleanPhone = String(phone || '').replace(/\D/g, '');
+            const newState = !isBlocked;
+
+            showCustomConfirm(newState ? `⚠️ حظر (${teacherName}) نهائياً وإخفاء مجموعاته؟` : `✅ إلغاء الحظر عن (${teacherName})؟`, async () => {
+                try {
+                    setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
+                    const safeDocId = docId || cleanPhone;
+                    
+                    await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
+                        isBlocked: newState, updatedAt: Date.now()
+                    }, { merge: true });
+
+                    if (cleanPhone) {
+                        if (newState) {
+                            await window.fsSetDoc(window.fsDoc(window.db, "blocked_teachers", cleanPhone), {
+                                phone: cleanPhone, teacherName: teacherName, blockedAt: Date.now(), reason: 'حظر إداري'
+                            });
+                        } else {
+                            try { await window.fsDeleteDoc(window.fsDoc(window.db, "blocked_teachers", cleanPhone)); } catch(e) {}
+                        }
+                    }
+                    
+                    const record = currentUnifiedRecords.find(r => r.phone === phone || r.docId === safeDocId);
+                    if (record) record.isBlocked = newState;
+                    renderAllRecords();
+
+                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+                    showToast(newState ? '🚫 تم الحظر بنجاح' : '✅ تم إلغاء الحظر');
+                } catch (error) {
+                    setCloudStatus('offline', '⚠️ فشل التحديث');
+                    showToast("⚠️ فشل الاتصال بالسحابة", true);
+                }
+            });
+        }
+
+        window.recordWaClick = async function(docId, phone, teacherName) {
+            const targetId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
+            if (!targetId || !window.db) return;
+            try {
+                await window.fsUpdateDoc(window.fsDoc(window.db, "teachers", targetId), { waClicks: window.fsIncrement(1) });
+            } catch (e) {}
+        }
+
+        // ==========================================
+        // 🔥 الحذف الكامل والشامل بـ 6 خطوات
+        // ==========================================
+        window.deleteRecord = async function(lessonsStr, phone, teacherName, docId) {
+            const lessonCount = lessonsStr ? lessonsStr.split(',').filter(l => l.trim()).length : 0;
+            const confirmMessage = `⚠️ حذف نهائي وشامل من Firebase\n\nهل أنت متأكد من حذف المعلم (${teacherName}) نهائياً؟\n\nسيتم حذف:\n• حساب المعلم من teachers\n• ${lessonCount} مجموعة/درس من lessons\n• سجل الجهاز من teacher_devices\n• كل تقييمات الطلاب من teacher_ratings\n• المعلم من قوائم الطلاب المفضلين\n\n⚠️ سيتم حظره نهائياً (البصمة السوداء) لمنع أي تسجيل جديد بنفس الرقم\n\n❌ لا يمكن التراجع عن هذا الإجراء!`;
+            
+            showCustomConfirm(confirmMessage, async () => {
+                if (!window.db) { showToast('⚠️ Firebase غير جاهز', true); return; }
+                
+                setCloudStatus('syncing', '⏳ جاري الحذف والحظر الشامل...');
+                const targetDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
+                const cleanPhone = String(phone || '').replace(/\D/g, '');
+                const lessonIds = lessonsStr ? lessonsStr.split(',').map(l => l.trim()).filter(Boolean) : [];
+                
+                const result = { errors: [] };
+
+                if (cleanPhone) {
+                    try {
+                        await window.fsSetDoc(window.fsDoc(window.db, "blocked_teachers", cleanPhone), {
+                            phone: cleanPhone, teacherName: cleanTeacherName(teacherName), blockedAt: Date.now(),
+                            blockedBy: (window.auth && window.auth.currentUser) ? window.auth.currentUser.email : 'admin', reason: 'حذف نهائي + حظر دائم', wasDeleted: true
+                        });
+                    } catch (e) { result.errors.push('blocked: ' + e.message); }
+                }
+
+                if (targetDocId) {
+                    try { await window.fsDeleteDoc(window.fsDoc(window.db, "teachers", targetDocId)); expandedCards.delete(targetDocId); }
+                    catch (e) { result.errors.push('teacher: ' + e.message); }
+                }
+
+                if (cleanPhone) {
+                    try { await window.fsDeleteDoc(window.fsDoc(window.db, "teacher_devices", cleanPhone)); }
+                    catch (e) {}
+                }
+
+                for (const lId of lessonIds) {
+                    try { await window.fsDeleteDoc(window.fsDoc(window.db, "lessons", lId)); }
+                    catch (e) { result.errors.push(`lesson ${lId}: ` + e.message); }
+                }
+
+                if (cleanPhone && window.fsGetDocs) {
+                    try {
+                        const ratingsSnap = await window.fsGetDocs(window.fsCollection(window.db, "teacher_ratings"));
+                        const ratingDeletes = [];
+                        ratingsSnap.forEach(rDoc => {
+                            const rData = rDoc.data() || {};
+                            const rPhone = String(rData.teacherPhone || '').replace(/\D/g, '');
+                            if (rPhone === cleanPhone || lessonIds.includes(String(rData.lessonId || ''))) {
+                                ratingDeletes.push(window.fsDeleteDoc(window.fsDoc(window.db, "teacher_ratings", rDoc.id)));
+                            }
+                        });
+                        if (ratingDeletes.length > 0) await Promise.allSettled(ratingDeletes);
+                    } catch (e) { result.errors.push('ratings: ' + e.message); }
+                }
+
+                if (cleanPhone && window.fsGetDocs) {
+                    try {
+                        const studentsSnap = await window.fsGetDocs(window.fsCollection(window.db, "talep_data"));
+                        const studentUpdates = [];
+                        studentsSnap.forEach(sDoc => {
+                            const sData = sDoc.data() || {};
+                            const savedTeachers = Array.isArray(sData.saved_teachers) ? sData.saved_teachers : [];
+                            const filtered = savedTeachers.filter(st => String(st.phone || '').replace(/\D/g, '') !== cleanPhone);
+                            if (filtered.length !== savedTeachers.length) {
+                                studentUpdates.push(window.fsSetDoc(window.fsDoc(window.db, "talep_data", sDoc.id), { saved_teachers: filtered, updatedAt: Date.now() }, { merge: true }));
+                            }
+                        });
+                        if (studentUpdates.length > 0) await Promise.allSettled(studentUpdates);
+                    } catch (e) { result.errors.push('students: ' + e.message); }
+                }
+
+                if (result.errors.length > 0) {
+                    setCloudStatus('offline', '⚠️ حذف جزئي — راجع الكونسول');
+                    showToast(`⚠️ حذف جزئي: بعض العمليات فشلت`, true);
+                } else {
+                    setCloudStatus('synced', '☁️ تم الحذف والحظر النهائي بنجاح');
+                    showToast(`🗑️🚫 تم الحذف والحظر الشامل لـ ${teacherName}`);
+                }
+                
+                currentUnifiedRecords = currentUnifiedRecords.filter(r => r.phone !== phone && r.docId !== targetDocId);
+                renderAllRecords();
+            });
+        }
+
+        // ==========================================
+        // 🗺️ الخريطة والبحث عن متطابقين
+        // ==========================================
+        let adminMap = null, adminMarker = null;
+        window.openMapModal = function(address, lat, lng) {
+            document.getElementById('mapModalAddress').textContent = address;
+            document.getElementById('googleMapsExternalLink').href = `https://www.google.com/maps?q=${lat},${lng}`;
+            document.getElementById('mapModal').classList.add('active');
+
+            if (!adminMap) {
+                adminMap = L.map('adminLeafletMap').setView([lat, lng], 15);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(adminMap);
+                adminMarker = L.marker([lat, lng]).addTo(adminMap);
+            } else {
+                adminMap.setView([lat, lng], 15);
+                adminMarker.setLatLng([lat, lng]);
+            }
+            setTimeout(() => { adminMap.invalidateSize(); }, 200);
+        }
+
+        window.openSuspiciousModal = async function() {
+            setCloudStatus('syncing', '⏳ جاري فحص التطابق...');
+            try {
+                const dSnap = await window.fsGetDocs(window.fsCollection(window.db, "teacher_devices"));
+                const sSnap = await window.fsGetDocs(window.fsCollection(window.db, "talep_data"));
+                
+                const devices = []; dSnap.forEach(d => devices.push({id: d.id, ...d.data()}));
+                const students = []; sSnap.forEach(d => students.push({id: d.id, ...d.data()}));
+                
+                let suspicious = [];
+                students.forEach(student => {
+                    if (student.deviceId && student.deviceId !== 'غير متاح') {
+                        const matchingTeacher = devices.find(t => t.deviceId === student.deviceId);
+                        if (matchingTeacher) {
+                            suspicious.push({
+                                studentName: student.st_name || 'بدون اسم',
+                                studentPhone: student.st_phone || 'غير مسجل',
+                                teacherName: matchingTeacher.teacherName || 'غير مسجل',
+                                teacherPhone: matchingTeacher.phone || matchingTeacher.id,
+                                lastActivity: Math.max(student.updatedAt || 0, matchingTeacher.lastLogin || 0)
+                            });
+                        }
+                    }
+                });
+                
+                const content = document.getElementById('suspiciousStudentsContent');
+                if (suspicious.length === 0) {
+                    content.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">لا يوجد تطابق بين أجهزة الطلاب والمعلمين.</div>`;
+                } else {
+                    let html = `<table class="w-full text-right border-collapse text-xs font-bold text-slate-700">
+                        <thead>
+                            <tr class="bg-rose-50 border-b-2 border-rose-200">
+                                <th class="p-2.5 text-rose-800">اسم الطالب</th>
+                                <th class="p-2.5 text-rose-800">تليفون الطالب</th>
+                                <th class="p-2.5 text-rose-800">المستر / المس</th>
+                                <th class="p-2.5 text-rose-800">تليفون المعلم</th>
+                                <th class="p-2.5 text-rose-800">آخر نشاط</th>
+                            </tr>
+                        </thead>
+                        <tbody>`;
+                    suspicious.forEach(item => {
+                        const lastSeenInfo = formatLastSeen(item.lastActivity);
+                        html += `
+                            <tr class="border-b border-slate-200 hover:bg-slate-50">
+                                <td class="p-2.5">${item.studentName}</td>
+                                <td class="p-2.5" dir="ltr" style="text-align: right; color:#475569;">${item.studentPhone}</td>
+                                <td class="p-2.5 font-black text-blue-700">${item.teacherName}</td>
+                                <td class="p-2.5" dir="ltr" style="text-align: right; color:#1E40AF;">${item.teacherPhone}</td>
+                                <td class="p-2.5 font-bold" style="color:#991B1B;">${lastSeenInfo.text}</td>
+                            </tr>
+                        `;
+                    });
+                    html += `</tbody></table>`;
+                    content.innerHTML = html;
+                }
+                document.getElementById('suspiciousStudentsModal').classList.add('active');
+                setCloudStatus('synced', '☁️ اكتمل الفحص');
+            } catch(e) {
+                setCloudStatus('offline', '⚠️ فشل الفحص');
+                console.error(e);
+            }
+        }
+
+        window.openTeachersSummaryModal = async function(titleType) {
+            const modalTitle = document.getElementById('summaryModalTitle');
+            const modalContent = document.getElementById('summaryModalContent');
+            modalTitle.textContent = titleType === 'مستر' ? '👨‍🏫 تفاصيل المستر (الذكور المعروضين)' : '👩‍🏫 تفاصيل المس (الإناث المعروضات)';
+
+            const filtered = currentUnifiedRecords.filter(r => r.title === titleType);
+
+            if (filtered.length === 0) {
+                modalContent.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">لا توجد سجلات مسجلة حالياً في العرض السريع.</div>`;
+            } else {
+                let html = `<table class="w-full text-right border-collapse text-xs font-bold text-slate-700"><thead><tr class="bg-slate-100 border-b-2 border-slate-300"><th class="p-2.5">الاسم</th><th class="p-2.5">التليفون / الواتس</th><th class="p-2.5">المجموعات</th><th class="p-2.5 text-center">واتساب</th></tr></thead><tbody>`;
+                filtered.forEach(r => {
+                    const cleanPhone = String(r.phone || '').replace(/\D/g, '');
+                    const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
+                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr" style="font-size: 15px; font-weight: 900; color: #1E40AF;">${r.phone}</td><td class="p-2.5">${r.groupName}</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${r.docId || ''}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
+                });
+                html += `</tbody></table>`;
+                modalContent.innerHTML = html;
+            }
+            document.getElementById('teachersSummaryModal').classList.add('active');
+        }
+
+        window.showBlockedList = async function() {
+            if (!window.fsGetDocs) return;
+            try {
+                const snap = await window.fsGetDocs(window.fsCollection(window.db, "blocked_teachers"));
+                if (snap.empty) {
+                    document.getElementById('summaryModalContent').innerHTML = `<div class="text-center py-10"><div class="text-5xl mb-3">✅</div><p class="font-black text-slate-600">لا يوجد معلمون محظورون حالياً</p></div>`;
+                } else {
+                    let html = `<div class="mb-3 p-3 rounded-xl bg-amber-50 border border-amber-200"><p class="text-xs font-black text-amber-800">⚠️ هذه القائمة هي "البصمة السوداء" — أي رقم فيها لا يمكنه التسجيل حتى لو حذف حسابه</p></div><table class="w-full text-right border-collapse text-xs font-bold text-slate-700"><thead><tr class="bg-rose-50 border-b-2 border-rose-300"><th class="p-2.5 text-rose-800">الاسم</th><th class="p-2.5 text-rose-800">التليفون</th><th class="p-2.5 text-rose-800">السبب</th><th class="p-2.5 text-rose-800">إجراء</th></tr></thead><tbody>`;
+                    snap.forEach(d => {
+                        const data = d.data();
+                        html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black text-slate-800">${data.teacherName || 'بدون اسم'}</td><td class="p-2.5 font-black text-blue-700" dir="ltr" style="text-align:right;">${data.phone}</td><td class="p-2.5 text-slate-600">${data.reason || 'حظر إداري'}</td><td class="p-2.5"><button onclick="unblockPermanent('${data.phone}', '${(data.teacherName||'').replace(/'/g,"\\'")}')" class="action-chip bg-emerald-600 text-white px-3 py-1.5 text-[11px] shadow-sm">✅ إلغاء الحظر</button></td></tr>`;
+                    });
+                    html += `</tbody></table>`;
+                    document.getElementById('summaryModalContent').innerHTML = html;
+                }
+                document.getElementById('summaryModalTitle').textContent = '🚫 قائمة المحظورين نهائياً (البصمة السوداء)';
+                document.getElementById('teachersSummaryModal').classList.add('active');
+            } catch (e) { showToast('⚠️ فشل جلب القائمة', true); }
+        }
+
+        window.unblockPermanent = async function(phone, teacherName) {
+            showCustomConfirm(`إلغاء الحظر النهائي والسماح لـ (${teacherName}) بالتسجيل مجدداً؟`, async () => {
+                try {
+                    setCloudStatus('syncing', '⏳ جاري فك الحظر...');
+                    await window.fsDeleteDoc(window.fsDoc(window.db, "blocked_teachers", phone));
+                    try { await window.fsSetDoc(window.fsDoc(window.db, "teachers", phone), { isBlocked: false, updatedAt: Date.now() }, { merge: true }); } catch(e) {}
+                    
+                    const record = currentUnifiedRecords.find(r => r.phone === phone);
+                    if (record) record.isBlocked = false;
+                    renderAllRecords();
+
+                    setCloudStatus('synced', '☁️ تم التحديث');
+                    showToast('✅ تم إلغاء الحظر');
+                    closeModal('teachersSummaryModal');
+                } catch (e) {
+                    showToast('⚠️ فشل إلغاء الحظر', true);
+                }
+            });
+        }
+
+        // ==========================================
+        // 📚 إدارة المناهج (Curriculum)
+        // ==========================================
         const defaultCurriculum = {
             main_order: ['primary', 'prep', 'secondary'], 
             primary: {
-                name: '🎒 المرحلة الابتدائية',
-                grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
+                name: '🎒 المرحلة الابتدائية', grades: ['الأول', 'الثاني', 'الثالث', 'الرابع', 'الخامس', 'السادس'],
                 gradeOrder: { 'الأول': 1, 'الثاني': 2, 'الثالث': 3, 'الرابع': 4, 'الخامس': 5, 'السادس': 6 },
                 gradeSubjects: {
                     'الأول': ['عربي', 'إنجليزي', 'رياضيات', 'تربية دينية', 'اكتشف'],
@@ -1196,8 +1719,7 @@
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             prep: {
-                name: '📐 المرحلة الإعدادية',
-                grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
+                name: '📐 المرحلة الإعدادية', grades: ['الأول الإعدادي', 'الثاني الإعدادي', 'الثالث الإعدادي'],
                 gradeOrder: { 'الأول الإعدادي': 1, 'الثاني الإعدادي': 2, 'الثالث الإعدادي': 3 },
                 gradeSubjects: {
                     'الأول الإعدادي': ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات', 'حاسب آلي'],
@@ -1212,8 +1734,7 @@
                 subjs: ['عربي', 'إنجليزي', 'رياضيات', 'علوم', 'دراسات']
             },
             secondary: {
-                name: '🎓 المرحلة الثانوية',
-                grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
+                name: '🎓 المرحلة الثانوية', grades: ['الأول الثانوي', 'الثاني الثانوي', 'الثالث الثانوي'],
                 gradeOrder: { 'الأول الثانوي': 1, 'الثاني الثانوي': 2, 'الثالث الثانوي': 3 },
                 gradeSubjects: {
                     'الأول الثانوي': ['عربي', 'إنجليزي', 'لغة ثانية', 'رياضيات', 'علوم متكاملة', 'تاريخ', 'فلسفة ومنطق'],
@@ -1236,21 +1757,15 @@
             if (!currObj.main_order || !Array.isArray(currObj.main_order)) {
                 currObj.main_order = Object.keys(currObj).filter(k => k !== 'main_order' && k !== 'updatedAt');
             }
-            
             Object.keys(currObj).forEach(stageKey => {
                 if (stageKey === 'main_order' || stageKey === 'updatedAt' || stageKey === 'id') return;
-                
                 if (!currObj[stageKey] || typeof currObj[stageKey] !== 'object') {
                     if (defaultCurriculum[stageKey]) currObj[stageKey] = JSON.parse(JSON.stringify(defaultCurriculum[stageKey]));
                     return;
                 }
-                
                 const st = currObj[stageKey];
                 const defStage = defaultCurriculum[stageKey] || {};
-                
-                if (!Array.isArray(st.grades)) {
-                    st.grades = defStage.grades ? [...defStage.grades] : [];
-                }
+                if (!Array.isArray(st.grades)) st.grades = defStage.grades ? [...defStage.grades] : [];
                 if (!Array.isArray(st.subjs)) st.subjs = [];
                 if (!st.gradeSubjects || typeof st.gradeSubjects !== 'object' || Array.isArray(st.gradeSubjects)) {
                     st.gradeSubjects = defStage.gradeSubjects ? JSON.parse(JSON.stringify(defStage.gradeSubjects)) : {};
@@ -1261,73 +1776,24 @@
                 if (!st.subjectOrder || typeof st.subjectOrder !== 'object' || Array.isArray(st.subjectOrder)) {
                     st.subjectOrder = defStage.subjectOrder ? JSON.parse(JSON.stringify(defStage.subjectOrder)) : {};
                 }
-        
-                st.grades.forEach((g, i) => {
-                    if (typeof st.gradeOrder[g] !== 'number') st.gradeOrder[g] = i + 1;
-                });
-        
+                st.grades.forEach((g, i) => { if (typeof st.gradeOrder[g] !== 'number') st.gradeOrder[g] = i + 1; });
                 st.grades.forEach(g => {
                     if (!Array.isArray(st.gradeSubjects[g])) {
-                        if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) {
-                            st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
-                        } else {
-                            st.gradeSubjects[g] = [...st.subjs];
-                        }
+                        if (defStage.gradeSubjects && Array.isArray(defStage.gradeSubjects[g])) st.gradeSubjects[g] = [...defStage.gradeSubjects[g]];
+                        else st.gradeSubjects[g] = [...st.subjs];
                     }
-        
                     if (!st.subjectOrder[g] || typeof st.subjectOrder[g] !== 'object' || Array.isArray(st.subjectOrder[g])) {
-                        if (defStage.subjectOrder && typeof defStage.subjectOrder[g] === 'object') {
-                            st.subjectOrder[g] = { ...defStage.subjectOrder[g] };
-                        } else {
-                            st.subjectOrder[g] = {};
-                        }
+                        if (defStage.subjectOrder && typeof defStage.subjectOrder[g] === 'object') st.subjectOrder[g] = { ...defStage.subjectOrder[g] };
+                        else st.subjectOrder[g] = {};
                     }
-                    
-                    st.gradeSubjects[g].forEach((s, i) => {
-                        if (typeof st.subjectOrder[g][s] !== 'number') st.subjectOrder[g][s] = i + 1;
-                    });
-        
-                    Object.keys(st.subjectOrder[g]).forEach(s => {
-                        if (!st.gradeSubjects[g].includes(s)) delete st.subjectOrder[g][s];
-                    });
+                    st.gradeSubjects[g].forEach((s, i) => { if (typeof st.subjectOrder[g][s] !== 'number') st.subjectOrder[g][s] = i + 1; });
+                    Object.keys(st.subjectOrder[g]).forEach(s => { if (!st.gradeSubjects[g].includes(s)) delete st.subjectOrder[g][s]; });
                 });
-        
-                Object.keys(st.gradeOrder).forEach(g => {
-                    if (!st.grades.includes(g)) delete st.gradeOrder[g];
-                });
-                
+                Object.keys(st.gradeOrder).forEach(g => { if (!st.grades.includes(g)) delete st.gradeOrder[g]; });
                 if (!currObj.main_order.includes(stageKey)) currObj.main_order.push(stageKey);
             });
-            
             currObj.main_order = currObj.main_order.filter(k => currObj[k]);
             return currObj;
-        }
-
-        const CURRICULUM_DOC_PATH = { collection: 'curriculum', id: 'main' };
-        let curriculumCache = null;
-        let curriculumUnsubscribe = null;
-        let isFirstSnapshot = true;
-        let firebaseReady = false;
-
-        let lessonsCache = [];
-        let teachersCache = [];
-        let lessonsUnsubscribe = null;
-        let teachersUnsubscribe = null;
-        let studentsUnsubscribe = null; 
-        let isFirstLessonsSnapshot = true;
-        let isFirstTeachersSnapshot = true;
-
-        let renderTimeout = null;
-        function scheduleRender(delay = 200) {
-            clearTimeout(renderTimeout);
-            renderTimeout = setTimeout(() => { renderAllRecords(); }, delay);
-        }
-
-        function setCloudStatus(status, text) {
-            const b = document.getElementById('cloudStatusBadge');
-            if (!b) return;
-            b.className = 'cloud-status-badge ' + status;
-            b.textContent = text;
         }
 
         function getCurriculum() {
@@ -1346,11 +1812,7 @@
             const curr = getCurriculum();
             const st = curr[stageKey];
             if (!st) return [];
-            return [...(st.grades || [])].sort((a, b) => {
-                const oa = st.gradeOrder?.[a] ?? 999;
-                const ob = st.gradeOrder?.[b] ?? 999;
-                return oa - ob;
-            });
+            return [...(st.grades || [])].sort((a, b) => (st.gradeOrder?.[a] ?? 999) - (st.gradeOrder?.[b] ?? 999));
         }
 
         function getSortedSubjects(stageKey, gradeName) {
@@ -1359,11 +1821,7 @@
             if (!st) return [];
             const subjs = st.gradeSubjects?.[gradeName] || [];
             const order = st.subjectOrder?.[gradeName] || {};
-            return [...subjs].sort((a, b) => {
-                const oa = order[a] ?? 999;
-                const ob = order[b] ?? 999;
-                return oa - ob;
-            });
+            return [...subjs].sort((a, b) => (order[a] ?? 999) - (order[b] ?? 999));
         }
 
         async function saveCurriculumAndBroadcast(currObj, toastText) {
@@ -1379,125 +1837,34 @@
 
             if (window.db && window.fsDoc && window.fsSetDoc) {
                 try {
-                    setCloudStatus('syncing', '⏳ جاري الرفع للسحابة...');
-                    await window.fsSetDoc(
-                        window.fsDoc(window.db, CURRICULUM_DOC_PATH.collection, CURRICULUM_DOC_PATH.id),
-                        { ...curriculumCache, updatedAt: Date.now() }
-                    );
-                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                } catch (err) {
-                    setCloudStatus('offline', '⚠️ فشل الرفع للسحابة');
-                    showToast("⚠️ فشل الاتصال بقاعدة البيانات", true);
-                }
+                    await window.fsSetDoc(window.fsDoc(window.db, "curriculum", "main"), { ...curriculumCache, updatedAt: Date.now() });
+                } catch (err) { showToast("⚠️ فشل الاتصال بقاعدة البيانات", true); }
             }
-            populateGradeFilter();
-            await renderAllRecords();
             if (toastText) showToast(toastText);
         }
 
         function loadCurriculumFromFirebase() {
-            if (!window.db || !window.fsDoc || !window.fsOnSnapshot) {
-                setCloudStatus('syncing', '⏳ انتظار Firebase...');
-                setTimeout(loadCurriculumFromFirebase, 500);
-                return;
-            }
-            firebaseReady = true;
+            if (!window.db || !window.fsOnSnapshot) return;
             if (curriculumUnsubscribe) curriculumUnsubscribe();
-            const ref = window.fsDoc(window.db, CURRICULUM_DOC_PATH.collection, CURRICULUM_DOC_PATH.id);
-
-            curriculumUnsubscribe = window.fsOnSnapshot(ref, (snap) => {
+            
+            curriculumUnsubscribe = window.fsOnSnapshot(window.fsDoc(window.db, "curriculum", "main"), (snap) => {
                 if (snap.exists()) {
                     const data = snap.data() || {};
                     delete data.updatedAt;
                     curriculumCache = normalizeCurriculum(data);
-
-                    if (isFirstSnapshot) {
-                        isFirstSnapshot = false;
-                        setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                        populateGradeFilter();
-                        renderAllRecords();
-                    } else {
-                        setCloudStatus('synced', '☁️ تم التحديث لحظياً');
-                        populateGradeFilter();
-                        renderAllRecords();
-                        showToast("🔄 تم تحديث المنهج لحظياً من السحابة");
-                    }
+                    if (isFirstSnapshot) isFirstSnapshot = false;
+                    else showToast("🔄 تم تحديث المنهج لحظياً من السحابة");
                 } else {
                     const defaultCopy = JSON.parse(JSON.stringify(defaultCurriculum));
                     curriculumCache = defaultCopy;
-                    window.fsSetDoc(ref, { ...defaultCopy, updatedAt: Date.now() })
-                        .then(() => setCloudStatus('synced', '☁️ تم إنشاء المنهج الافتراضي'))
-                        .catch(err => setCloudStatus('offline', '⚠️ تعذر إنشاء المستند'));
-                    populateGradeFilter();
-                    renderAllRecords();
+                    window.fsSetDoc(window.fsDoc(window.db, "curriculum", "main"), { ...defaultCopy, updatedAt: Date.now() });
                 }
-            }, (error) => {
-                setCloudStatus('offline', '⚠️ غير متصل بالسحابة');
-                showToast("⚠️ تعذر الاتصال بالسحابة", true);
-            });
+            }, (error) => console.warn("Curriculum Error", error));
         }
 
-        function setupRealtimeListeners() {
-            if (!window.db || !window.fsCollection || !window.fsOnSnapshot) {
-                setTimeout(setupRealtimeListeners, 500);
-                return;
-            }
-
-            if (lessonsUnsubscribe) lessonsUnsubscribe();
-            lessonsUnsubscribe = window.fsOnSnapshot(
-                window.fsCollection(window.db, "lessons"),
-                (snapshot) => {
-                    lessonsCache = [];
-                    snapshot.forEach((docSnap) => {
-                        lessonsCache.push({ id: docSnap.id, ...docSnap.data() });
-                    });
-                    if (isFirstLessonsSnapshot) isFirstLessonsSnapshot = false;
-                    else showToast("🔄 تم تحديث الدروس لحظياً");
-                    scheduleRender();
-                },
-                (error) => {
-                    showToast("⚠️ تعذر المزامنة اللحظية للدروس", true);
-                }
-            );
-
-            if (teachersUnsubscribe) teachersUnsubscribe();
-            teachersUnsubscribe = window.fsOnSnapshot(
-                window.fsCollection(window.db, "teachers"),
-                (snapshot) => {
-                    teachersCache = [];
-                    snapshot.forEach((docSnap) => {
-                        teachersCache.push({ id: docSnap.id, ...docSnap.data() });
-                    });
-                    if (isFirstTeachersSnapshot) isFirstTeachersSnapshot = false;
-                    else showToast("🔄 تم تحديث بيانات المعلمين لحظياً");
-                    scheduleRender();
-                },
-                (error) => {
-                    showToast("⚠️ تعذر المزامنة اللحظية للمعلمين", true);
-                }
-            );
-
-            if (studentsUnsubscribe) studentsUnsubscribe();
-            studentsUnsubscribe = window.fsOnSnapshot(
-                window.fsCollection(window.db, "talep_data"),
-                (snapshot) => {
-                    const countEl = document.getElementById('statStudentsCount');
-                    if (countEl) countEl.textContent = snapshot.size;
-                },
-                (error) => {}
-            );
-
-            setCloudStatus('synced', '☁️ مزامنة لحظية نشطة');
-        }
-
-        let activeStageKey = null;
-        let activeGradeName = null;
-        let activeSubjectName = null;
-
-        function openCurriculumModal(targetStageKey = null, targetGradeName = null) {
+        window.openCurriculumModal = function(targetStageKey = null, targetGradeName = null) {
             const curr = getCurriculum();
             const sortedStages = getSortedStages();
-            
             activeStageKey = targetStageKey && curr[targetStageKey] ? targetStageKey : (sortedStages[0] || null);
             if (activeStageKey) {
                 const sortedGrades = getSortedGrades(activeStageKey);
@@ -1505,7 +1872,7 @@
             }
             renderCurriculumManager();
             document.getElementById('curriculumModal').classList.add('active');
-        }
+        };
 
         function renderCurriculumManager() {
             const curr = getCurriculum();
@@ -1528,7 +1895,6 @@
             }
             
             if (!activeStageKey || !curr[activeStageKey]) activeStageKey = sortedStages[0];
-
             const stageObj = curr[activeStageKey];
             const sortedGrades = getSortedGrades(activeStageKey);
             
@@ -1536,9 +1902,7 @@
                 activeGradeName = sortedGrades[0] || null;
             }
 
-            stageSelect.innerHTML = sortedStages.map((k, idx) => `
-                <option value="${k}" ${k === activeStageKey ? 'selected' : ''}>${curr[k].name}</option>
-            `).join('');
+            stageSelect.innerHTML = sortedStages.map((k) => `<option value="${k}" ${k === activeStageKey ? 'selected' : ''}>${curr[k].name}</option>`).join('');
 
             const currentStageIdx = sortedStages.indexOf(activeStageKey);
             stageControlsContainer.innerHTML = `
@@ -1548,14 +1912,11 @@
                 <button onclick="deleteStage('${activeStageKey}')" class="text-rose-600 font-bold ml-1 flex items-center justify-center bg-rose-100 w-6 h-6 rounded-md hover:bg-rose-200 transition-colors" title="حذف">🗑️</button>
             `;
 
-            const newGradeInput = document.getElementById('newGradeInput');
-            newGradeInput.placeholder = `أضف صفاً لـ (${curr[activeStageKey].name.replace(/^[🎒📐🎓🏫📚📖✏️📝🚌🏛️🔬🧪💻🥇🧩🕌🕋⛪🌙📿🏢🏠📍⭐💡]\s*/, '')})...`;
+            document.getElementById('newGradeInput').placeholder = `أضف صفاً لـ (${curr[activeStageKey].name.replace(/^[🎒📐🎓🏫📚📖✏️📝🚌🏛️🔬🧪💻🥇🧩🕌🕋⛪🌙📿🏢🏠📍⭐💡]\s*/, '')})...`;
             gradesSection.classList.remove('hidden');
 
             if (sortedGrades.length > 0) {
-                gradeSelect.innerHTML = sortedGrades.map((g, idx) => `
-                     <option value="${g.replace(/'/g, "\\'")}" ${g === activeGradeName ? 'selected' : ''}>${g}</option>
-                `).join('');
+                gradeSelect.innerHTML = sortedGrades.map((g) => `<option value="${g.replace(/'/g, "\\'")}" ${g === activeGradeName ? 'selected' : ''}>${g}</option>`).join('');
                 gradeSelect.disabled = false;
                 
                 const currentGradeIdx = sortedGrades.indexOf(activeGradeName);
@@ -1573,8 +1934,7 @@
 
             if (activeGradeName) {
                 subjectsPanel.classList.remove('hidden');
-                const newSubjectInput = document.getElementById('newSubjectInput');
-                newSubjectInput.placeholder = `أضف مادة لـ (${activeGradeName})...`;
+                document.getElementById('newSubjectInput').placeholder = `أضف مادة لـ (${activeGradeName})...`;
                  
                 const sortedSubjs = getSortedSubjects(activeStageKey, activeGradeName);
                 if(!activeSubjectName || !sortedSubjs.includes(activeSubjectName)){
@@ -1582,9 +1942,7 @@
                 }
                 
                 if (sortedSubjs.length > 0) {
-                     subjectSelect.innerHTML = sortedSubjs.map((s, idx) => `
-                        <option value="${s.replace(/'/g, "\\'")}" ${s === activeSubjectName ? 'selected' : ''}>${s}</option>
-                     `).join('');
+                     subjectSelect.innerHTML = sortedSubjs.map((s) => `<option value="${s.replace(/'/g, "\\'")}" ${s === activeSubjectName ? 'selected' : ''}>${s}</option>`).join('');
                      subjectSelect.disabled = false;
                      
                      const currentSubjIdx = sortedSubjs.indexOf(activeSubjectName);
@@ -1604,28 +1962,26 @@
             }
         }
 
-        function selectStageFromDropdown() {
+        window.selectStageFromDropdown = function() {
             const selectEl = document.getElementById('stageSelect');
             if(selectEl.value) {
                 activeStageKey = selectEl.value;
-                const sorted = getSortedGrades(activeStageKey);
-                activeGradeName = sorted[0] || null;
+                activeGradeName = getSortedGrades(activeStageKey)[0] || null;
                 activeSubjectName = null; 
                 renderCurriculumManager();
             }
         }
         
-        function selectGradeFromDropdown() {
+        window.selectGradeFromDropdown = function() {
              const selectEl = document.getElementById('gradeSelect');
             if(selectEl.value) {
                 activeGradeName = selectEl.value;
-                const sorted = getSortedSubjects(activeStageKey, activeGradeName);
-                activeSubjectName = sorted[0] || null; 
+                activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null; 
                 renderCurriculumManager();
             }
         }
         
-        function selectSubjectFromDropdown() {
+        window.selectSubjectFromDropdown = function() {
             const selectEl = document.getElementById('subjectSelect');
             if(selectEl.value) {
                 activeSubjectName = selectEl.value;
@@ -1633,7 +1989,7 @@
             }
         }
 
-        function addNewStage() {
+        window.addNewStage = function() {
             const nameInput = document.getElementById('newStageNameInput').value.trim();
             if (!nameInput) return;
             const iconSelect = document.getElementById('newStageIconSelect');
@@ -1645,30 +2001,23 @@
             const firstGrade = 'الصف الأول';
             
             curr[newKey] = {
-                name: finalStageName, 
-                grades: [firstGrade],
-                gradeOrder: { [firstGrade]: 1 },
-                gradeSubjects: { [firstGrade]: ['مادة عامة'] },
-                subjectOrder: { [firstGrade]: { 'مادة عامة': 1 } },
-                subjs: ['مادة عامة']
+                name: finalStageName, grades: [firstGrade],
+                gradeOrder: { [firstGrade]: 1 }, gradeSubjects: { [firstGrade]: ['مادة عامة'] },
+                subjectOrder: { [firstGrade]: { 'مادة عامة': 1 } }, subjs: ['مادة عامة']
             };
             curr.main_order.push(newKey);
             
             document.getElementById('newStageNameInput').value = '';
             if(iconSelect) iconSelect.value = ''; 
 
-            activeStageKey = newKey;
-            activeGradeName = firstGrade;
-            activeSubjectName = 'مادة عامة';
-            
+            activeStageKey = newKey; activeGradeName = firstGrade; activeSubjectName = 'مادة عامة';
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة المرحلة بنجاح');
             renderCurriculumManager();
         }
 
-        function deleteStage(stageKey) {
+        window.deleteStage = function(stageKey) {
             const curr = getCurriculum();
-            const stageName = curr[stageKey].name;
-            showCustomConfirm(`هل أنت متأكد من إلغاء وحذف (${stageName}) وجميع الصفوف والمواد التابعة لها نهائياً؟`, () => {
+            showCustomConfirm(`هل أنت متأكد من إلغاء وحذف (${curr[stageKey].name}) نهائياً؟`, () => {
                 delete curr[stageKey];
                 curr.main_order = curr.main_order.filter(k => k !== stageKey);
                 
@@ -1677,50 +2026,38 @@
                         activeStageKey = curr.main_order[0];
                         activeGradeName = getSortedGrades(activeStageKey)[0] || null;
                         activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
-                    } else {
-                        activeStageKey = null;
-                        activeGradeName = null;
-                        activeSubjectName = null;
-                    }
+                    } else { activeStageKey = null; activeGradeName = null; activeSubjectName = null; }
                 }
                 saveCurriculumAndBroadcast(curr, '🗑️ تم إلغاء المرحلة بنجاح');
                 renderCurriculumManager();
             });
         }
 
-        function addNewGrade() {
+        window.addNewGrade = function() {
             const val = document.getElementById('newGradeInput').value.trim();
             if (!val || !activeStageKey) return;
             const curr = getCurriculum();
             const st = curr[activeStageKey];
-            if (st.grades.includes(val)) {
-                showToast('⚠️ هذا الصف موجود بالفعل', true);
-                return;
-            }
+            if (st.grades.includes(val)) { showToast('⚠️ هذا الصف موجود بالفعل', true); return; }
             st.grades.push(val);
-            st.gradeOrder = st.gradeOrder || {};
-            const maxOrder = Math.max(0, ...Object.values(st.gradeOrder));
+            const maxOrder = Math.max(0, ...Object.values(st.gradeOrder || {}));
             st.gradeOrder[val] = maxOrder + 1;
-            if (!st.gradeSubjects) st.gradeSubjects = {};
-            st.gradeSubjects[val] = [];
-            if (!st.subjectOrder) st.subjectOrder = {};
-            st.subjectOrder[val] = {};
+            st.gradeSubjects[val] = []; st.subjectOrder[val] = {};
             document.getElementById('newGradeInput').value = '';
-            activeGradeName = val;
-            activeSubjectName = null;
+            activeGradeName = val; activeSubjectName = null;
             saveCurriculumAndBroadcast(curr, '✨ تمت إضافة الصف');
             renderCurriculumManager();
         }
 
-        function deleteGradeItem(gradeName) {
+        window.deleteGradeItem = function(gradeName) {
             const curr = getCurriculum();
-            showCustomConfirm(`هل أنت متأكد من حذف (${gradeName}) وجميع المواد التابعة له نهائياً؟`, () => {
+            showCustomConfirm(`هل أنت متأكد من حذف (${gradeName}) نهائياً؟`, () => {
                 const st = curr[activeStageKey];
                 const idx = st.grades.indexOf(gradeName);
                 if (idx > -1) st.grades.splice(idx, 1);
-                if (st.gradeSubjects && st.gradeSubjects[gradeName]) delete st.gradeSubjects[gradeName];
-                if (st.gradeOrder && st.gradeOrder[gradeName]) delete st.gradeOrder[gradeName];
-                if (st.subjectOrder && st.subjectOrder[gradeName]) delete st.subjectOrder[gradeName];
+                if (st.gradeSubjects[gradeName]) delete st.gradeSubjects[gradeName];
+                if (st.gradeOrder[gradeName]) delete st.gradeOrder[gradeName];
+                if (st.subjectOrder[gradeName]) delete st.subjectOrder[gradeName];
                 
                 if (activeGradeName === gradeName) {
                     activeGradeName = getSortedGrades(activeStageKey)[0] || null;
@@ -1731,18 +2068,14 @@
             });
         }
 
-        function addNewSubjectToGrade() {
+        window.addNewSubjectToGrade = function() {
             const val = document.getElementById('newSubjectInput').value.trim();
             if (!val || !activeStageKey || !activeGradeName) return;
             const curr = getCurriculum();
             const st = curr[activeStageKey];
             if (!st.gradeSubjects[activeGradeName]) st.gradeSubjects[activeGradeName] = [];
-            if (st.gradeSubjects[activeGradeName].includes(val)) {
-                showToast('⚠️ هذه المادة موجودة بالفعل لهذا الصف', true);
-                return;
-            }
+            if (st.gradeSubjects[activeGradeName].includes(val)) { showToast('⚠️ المادة موجودة', true); return; }
             st.gradeSubjects[activeGradeName].push(val);
-            if (!st.subjectOrder) st.subjectOrder = {};
             if (!st.subjectOrder[activeGradeName]) st.subjectOrder[activeGradeName] = {};
             const maxOrder = Math.max(0, ...Object.values(st.subjectOrder[activeGradeName]));
             st.subjectOrder[activeGradeName][val] = maxOrder + 1;
@@ -1752,14 +2085,13 @@
             renderCurriculumManager();
         }
 
-        function deleteSubjectFromGrade(subjectName) {
+        window.deleteSubjectFromGrade = function(subjectName) {
             const curr = getCurriculum();
             showCustomConfirm(`هل أنت متأكد من حذف مادة (${subjectName}) من ${activeGradeName}؟`, () => {
-                const st = curr[activeStageKey];
-                const arr = st.gradeSubjects[activeGradeName] || [];
+                const arr = curr[activeStageKey].gradeSubjects[activeGradeName] || [];
                 const idx = arr.indexOf(subjectName);
                 if (idx > -1) arr.splice(idx, 1);
-                if (st.subjectOrder && st.subjectOrder[activeGradeName]) delete st.subjectOrder[activeGradeName][subjectName];
+                if (curr[activeStageKey].subjectOrder[activeGradeName]) delete curr[activeStageKey].subjectOrder[activeGradeName][subjectName];
                 
                 if (activeSubjectName === subjectName) {
                      activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
@@ -1769,560 +2101,104 @@
             });
         }
 
-        function moveStage(sortedIdx, direction) {
+        window.moveStage = function(sortedIdx, direction) {
             const curr = getCurriculum();
             const sorted = getSortedStages();
             const newIdx = sortedIdx + direction;
             if (newIdx < 0 || newIdx >= sorted.length) return;
-
             [sorted[sortedIdx], sorted[newIdx]] = [sorted[newIdx], sorted[sortedIdx]];
             curr.main_order = [...sorted];
-
-            saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب المراحل');
+            saveCurriculumAndBroadcast(curr, '✅ تم تحديث الترتيب');
             renderCurriculumManager();
         }
 
-        function moveGrade(sortedIdx, direction) {
+        window.moveGrade = function(sortedIdx, direction) {
             const curr = getCurriculum();
             const st = curr[activeStageKey];
             const sorted = getSortedGrades(activeStageKey);
             const newIdx = sortedIdx + direction;
             if (newIdx < 0 || newIdx >= sorted.length) return;
-
             [sorted[sortedIdx], sorted[newIdx]] = [sorted[newIdx], sorted[sortedIdx]];
-
             st.gradeOrder = {};
             sorted.forEach((g, i) => { st.gradeOrder[g] = i + 1; });
             st.grades = [...sorted];
-
-            saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب الصفوف');
+            saveCurriculumAndBroadcast(curr, '✅ تم تحديث الترتيب');
             renderCurriculumManager();
         }
 
-        function moveSubject(sortedIdx, direction) {
+        window.moveSubject = function(sortedIdx, direction) {
             const curr = getCurriculum();
             const st = curr[activeStageKey];
-            if (!st.subjectOrder) st.subjectOrder = {};
-            if (!st.subjectOrder[activeGradeName]) st.subjectOrder[activeGradeName] = {};
             const sorted = getSortedSubjects(activeStageKey, activeGradeName);
             const newIdx = sortedIdx + direction;
             if (newIdx < 0 || newIdx >= sorted.length) return;
-
             [sorted[sortedIdx], sorted[newIdx]] = [sorted[newIdx], sorted[sortedIdx]];
-
             st.subjectOrder[activeGradeName] = {};
             sorted.forEach((s, i) => { st.subjectOrder[activeGradeName][s] = i + 1; });
             st.gradeSubjects[activeGradeName] = [...sorted];
-
-            saveCurriculumAndBroadcast(curr, '✅ تم تحديث ترتيب المواد');
+            saveCurriculumAndBroadcast(curr, '✅ تم تحديث الترتيب');
             renderCurriculumManager();
         }
 
-        function editStageName(stageKey) {
+        window.editStageName = function(stageKey) {
             const curr = getCurriculum();
-            const st = curr[stageKey];
-            if (!st) return;
-            
-            showCustomPrompt(
-                '✏️ تعديل اسم المرحلة',
-                'اكتب الاسم الجديد (يمكنك تغيير الأيقونة أيضاً):',
-                st.name,
-                (newName) => {
-                    st.name = newName;
-                    saveCurriculumAndBroadcast(curr, '✅ تم تعديل اسم المرحلة بنجاح');
-                    renderCurriculumManager();
-                    populateGradeFilter();
-                }
-            );
+            showCustomPrompt('✏️ تعديل اسم المرحلة', 'اكتب الاسم الجديد:', curr[stageKey].name, (newName) => {
+                curr[stageKey].name = newName;
+                saveCurriculumAndBroadcast(curr, '✅ تم التعديل');
+                renderCurriculumManager();
+            });
         }
 
-        function editGradeName(oldGradeName) {
+        window.editGradeName = function(oldGradeName) {
             const curr = getCurriculum();
             const st = curr[activeStageKey];
-            if (!st || !st.grades.includes(oldGradeName)) return;
-            
-            showCustomPrompt(
-                '✏️ تعديل اسم الصف',
-                'سيتم تحديث اسم الصف في المنهج وفي جميع المجموعات المرتبطة به تلقائياً.',
-                oldGradeName,
-                async (newGradeName) => {
-                    if (newGradeName === oldGradeName) return;
-                    if (st.grades.includes(newGradeName)) {
-                        showToast('⚠️ هذا الصف موجود بالفعل', true);
-                        return;
-                    }
-                    
-                    const idx = st.grades.indexOf(oldGradeName);
-                    if (idx > -1) st.grades[idx] = newGradeName;
-                    
-                    if (st.gradeOrder && st.gradeOrder[oldGradeName] !== undefined) {
-                        st.gradeOrder[newGradeName] = st.gradeOrder[oldGradeName];
-                        delete st.gradeOrder[oldGradeName];
-                    }
-                    if (st.gradeSubjects && st.gradeSubjects[oldGradeName] !== undefined) {
-                        st.gradeSubjects[newGradeName] = st.gradeSubjects[oldGradeName];
-                        delete st.gradeSubjects[oldGradeName];
-                    }
-                    if (st.subjectOrder && st.subjectOrder[oldGradeName] !== undefined) {
-                        st.subjectOrder[newGradeName] = st.subjectOrder[oldGradeName];
-                        delete st.subjectOrder[oldGradeName];
-                    }
-                    
-                    if (activeGradeName === oldGradeName) activeGradeName = newGradeName;
-                    
-                    saveCurriculumAndBroadcast(curr, '✅ تم تعديل اسم الصف');
-                    renderCurriculumManager();
-                    populateGradeFilter();
-                    
-                    setCloudStatus('syncing', '⏳ جاري تحديث المجموعات المرتبطة...');
-                    const updated = await migrateLessonsForGrade(activeStageKey, oldGradeName, newGradeName);
-                    if (updated > 0) showToast(`✅ تم تحديث ${updated} مجموعة بالاسم الجديد`);
-                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                }
-            );
+            showCustomPrompt('✏️ تعديل اسم الصف', 'سيتم تحديثه في المنهج (ملاحظة: المجموعات الحالية ستحتاج تعديل يدوي).', oldGradeName, (newGradeName) => {
+                if (st.grades.includes(newGradeName)) return showToast('⚠️ موجود بالفعل', true);
+                const idx = st.grades.indexOf(oldGradeName);
+                if (idx > -1) st.grades[idx] = newGradeName;
+                if (st.gradeOrder[oldGradeName] !== undefined) { st.gradeOrder[newGradeName] = st.gradeOrder[oldGradeName]; delete st.gradeOrder[oldGradeName]; }
+                if (st.gradeSubjects[oldGradeName] !== undefined) { st.gradeSubjects[newGradeName] = st.gradeSubjects[oldGradeName]; delete st.gradeSubjects[oldGradeName]; }
+                if (st.subjectOrder[oldGradeName] !== undefined) { st.subjectOrder[newGradeName] = st.subjectOrder[oldGradeName]; delete st.subjectOrder[oldGradeName]; }
+                if (activeGradeName === oldGradeName) activeGradeName = newGradeName;
+                saveCurriculumAndBroadcast(curr, '✅ تم التعديل');
+                renderCurriculumManager();
+            });
         }
 
-        function editSubjectName(oldSubjectName) {
+        window.editSubjectName = function(oldSubjectName) {
             const curr = getCurriculum();
-            const st = curr[activeStageKey];
-            if (!st || !activeGradeName) return;
-            const arr = st.gradeSubjects[activeGradeName] || [];
-            if (!arr.includes(oldSubjectName)) return;
-            
-            showCustomPrompt(
-                '✏️ تعديل اسم المادة',
-                'سيتم تحديث اسم المادة في المنهج وفي جميع المجموعات المرتبطة بها تلقائياً.',
-                oldSubjectName,
-                async (newSubjectName) => {
-                    if (newSubjectName === oldSubjectName) return;
-                    if (arr.includes(newSubjectName)) {
-                        showToast('⚠️ هذه المادة موجودة بالفعل لهذا الصف', true);
-                        return;
-                    }
-                    
-                    const idx = arr.indexOf(oldSubjectName);
-                    if (idx > -1) arr[idx] = newSubjectName;
-                    
-                    if (st.subjectOrder && st.subjectOrder[activeGradeName] &&
-                        st.subjectOrder[activeGradeName][oldSubjectName] !== undefined) {
-                        st.subjectOrder[activeGradeName][newSubjectName] = st.subjectOrder[activeGradeName][oldSubjectName];
-                        delete st.subjectOrder[activeGradeName][oldSubjectName];
-                    }
-                    
-                    if (activeSubjectName === oldSubjectName) activeSubjectName = newSubjectName;
-                    
-                    saveCurriculumAndBroadcast(curr, '✅ تم تعديل اسم المادة');
-                    renderCurriculumManager();
-                    
-                    setCloudStatus('syncing', '⏳ جاري تحديث المجموعات المرتبطة...');
-                    const updated = await migrateLessonsForSubject(oldSubjectName, newSubjectName);
-                    if (updated > 0) showToast(`✅ تم تحديث ${updated} مجموعة بالمادة الجديدة`);
-                    setCloudStatus('synced', '☁️ متزامن مع السحابة');
+            const arr = curr[activeStageKey].gradeSubjects[activeGradeName];
+            showCustomPrompt('✏️ تعديل اسم المادة', 'سيتم تحديثها في المنهج فقط.', oldSubjectName, (newSubjectName) => {
+                if (arr.includes(newSubjectName)) return showToast('⚠️ موجودة بالفعل', true);
+                const idx = arr.indexOf(oldSubjectName);
+                if (idx > -1) arr[idx] = newSubjectName;
+                if (curr[activeStageKey].subjectOrder[activeGradeName][oldSubjectName] !== undefined) {
+                    curr[activeStageKey].subjectOrder[activeGradeName][newSubjectName] = curr[activeStageKey].subjectOrder[activeGradeName][oldSubjectName];
+                    delete curr[activeStageKey].subjectOrder[activeGradeName][oldSubjectName];
                 }
-            );
+                if (activeSubjectName === oldSubjectName) activeSubjectName = newSubjectName;
+                saveCurriculumAndBroadcast(curr, '✅ تم التعديل');
+                renderCurriculumManager();
+            });
         }
 
-        async function migrateLessonsForGrade(stageKey, oldGradeName, newGradeName) {
-            if (!window.db || !window.fsGetDocs || !window.fsCollection || !window.fsSetDoc) return 0;
-            try {
-                const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                const updates = [];
-                snap.forEach((docSnap) => {
-                    const data = docSnap.data() || {};
-                    if (String(data.s_stage || '') === String(stageKey) &&
-                        String(data.s_grade || '').trim() === oldGradeName.trim()) {
-                        updates.push(window.fsSetDoc(
-                            window.fsDoc(window.db, "lessons", docSnap.id),
-                            { s_grade: newGradeName },
-                            { merge: true }
-                        ));
-                    }
-                });
-                if (updates.length > 0) await Promise.all(updates);
-                return updates.length;
-            } catch (e) {
-                return 0;
-            }
-        }
-
-        async function migrateLessonsForSubject(oldSubjectName, newSubjectName) {
-            if (!window.db || !window.fsGetDocs || !window.fsCollection || !window.fsSetDoc) return 0;
-            try {
-                const snap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                const updates = [];
-                snap.forEach((docSnap) => {
-                    const data = docSnap.data() || {};
-                    const subjects = data.selectedSubjects;
-                    if (!Array.isArray(subjects)) return;
-                    
-                    let changed = false;
-                    const newSubjects = subjects.map(s => {
-                        const str = String(s);
-                        if (str.includes(' - ')) {
-                            const parts = str.split(' - ');
-                            if (parts.slice(1).join(' - ').trim() === oldSubjectName.trim()) {
-                                changed = true;
-                                return parts[0] + ' - ' + newSubjectName;
-                            }
-                            return str;
-                        }
-                        if (str.trim() === oldSubjectName.trim()) {
-                            changed = true;
-                            return newSubjectName;
-                        }
-                        return str;
-                    });
-                    
-                    if (changed) {
-                        updates.push(window.fsSetDoc(
-                            window.fsDoc(window.db, "lessons", docSnap.id),
-                            { selectedSubjects: newSubjects },
-                            { merge: true }
-                        ));
-                    }
-                });
-                if (updates.length > 0) await Promise.all(updates);
-                return updates.length;
-            } catch (e) {
-                return 0;
-            }
-        }
-
-        function resetCurriculumToDefault() {
-            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي الكامل؟ سيتم رفع النسخة الافتراضية إلى السحابة ومسح التعديلات.', () => {
+        window.resetCurriculumToDefault = function() {
+            showCustomConfirm('هل أنت متأكد من استعادة المنهج الافتراضي؟', () => {
                 const copy = JSON.parse(JSON.stringify(defaultCurriculum));
-                saveCurriculumAndBroadcast(copy, '✨ تم استعادة المنهج الافتراضي الكامل');
+                saveCurriculumAndBroadcast(copy, '✨ تم الاستعادة');
                 activeStageKey = copy.main_order[0];
                 activeGradeName = getSortedGrades(activeStageKey)[0] || null;
                 activeSubjectName = getSortedSubjects(activeStageKey, activeGradeName)[0] || null;
                 renderCurriculumManager();
-                populateGradeFilter();
             });
         }
-
-        function cleanTeacherName(rawName) {
-            if (!rawName) return '';
-            return String(rawName).replace(/^(مستر|مس|أستاذ|أستاذه|استاذ|استاذه|م\.|أ\.)\s+/i, '').replace(/^\/\s*/, '').trim();
-        }
-
-        function calculateExpiration(regDateStr, plan, isFree = false) {
-            if (isFree) return { expired: false, text: '♾️ مجاني - غير محدود' };
-            if (plan === 'حظر') return { expired: true, text: 'محظور نهائياً' };
-            if (!regDateStr) return { expired: false, text: 'تاريخ غير معروف' };
-            let days = 30;
-            if (plan === '30 يوم تجريبي') days = 30;
-            else if (plan === '3 شهور') days = 90;
-            else if (plan === '6 شهور') days = 180;
-            else if (plan === 'سنة واحدة') days = 365;
-            else if (plan === '5 سنوات') days = 1825;
-            const regDate = new Date(regDateStr);
-            if (isNaN(regDate)) return { expired: false, text: 'تاريخ غير صالح' };
-            const expiryDate = new Date(regDate.getTime() + days * 24 * 60 * 60 * 1000);
-            const today = new Date();
-            today.setHours(0, 0, 0, 0);
-            expiryDate.setHours(0, 0, 0, 0);
-            const diffTime = expiryDate - today;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-            if (diffDays <= 0) return { expired: true, text: '🔴 الباقة منتهية' };
-            return { expired: false, text: `🟢 متبقي ${diffDays} يوم` };
-        }
-
-        function fetchLessonsFromFirebase() { return lessonsCache; }
-        function fetchTeachersFromFirebase() { return teachersCache; }
-        
-        // ✅ دالة حساب وتنسيق آخر ظهور للمعلم
-        function formatLastSeen(timestamp) {
-            if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: 'لم يسجل ظهور بعد' };
-            
-            const timeMs = typeof timestamp === 'number' ? timestamp : new Date(timestamp).getTime();
-            if (isNaN(timeMs)) return { text: 'غير محدد', isOnline: false, fullDate: '' };
-
-            const diffMs = Date.now() - timeMs;
-            const diffMin = Math.floor(diffMs / 60000);
-            const diffHours = Math.floor(diffMin / 60);
-            const diffDays = Math.floor(diffHours / 24);
-
-            const fullDate = new Date(timeMs).toLocaleString('ar-EG', {
-                dateStyle: 'medium',
-                timeStyle: 'short'
-            });
-
-            if (diffMin < 5) return { text: 'مباشر 🟢', isOnline: true, fullDate };
-            if (diffMin < 60) return { text: `منذ ${diffMin} دقيقة`, isOnline: false, fullDate };
-            if (diffHours < 24) return { text: `منذ ${diffHours} ساعة`, isOnline: false, fullDate };
-            if (diffDays === 1) return { text: 'أمس', isOnline: false, fullDate };
-            if (diffDays < 30) return { text: `منذ ${diffDays} يوم`, isOnline: false, fullDate };
-
-            return { text: new Date(timeMs).toLocaleDateString('ar-EG'), isOnline: false, fullDate };
-        }
-
-        async function collectAllAppData() {
-            const validPlans = ['30 يوم تجريبي', 'حظر', '3 شهور', '6 شهور', 'سنة واحدة', '5 سنوات'];
-            const firebaseLessons = fetchLessonsFromFirebase();
-            const firebaseTeachers = fetchTeachersFromFirebase();
-            const unifiedMap = new Map();
-
-            firebaseTeachers.forEach(t => {
-                const phone = t.phone || 'غير مسجل';
-                const cleanName = cleanTeacherName(t.teacherName || t.name || t.fullName) || 'بدون اسم';
-                const targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${cleanName}`;
-                let verifRaw = t.verification || '30 يوم تجريبي';
-                if (!validPlans.includes(verifRaw)) verifRaw = '30 يوم تجريبي';
-
-                const lastSeenTs = t.lastSeen || t.updatedAt || (t.createdAt ? new Date(t.createdAt).getTime() : null);
-
-                unifiedMap.set(targetKey, {
-                    type: 'account_only', docId: t.id, lessonIds: [], title: t.title || 'مستر',
-                    teacherName: cleanName, phone: phone, regDate: t.createdAt || new Date().toISOString().split('T')[0],
-                    lastSeen: lastSeenTs, 
-                    groupName: 'لم يُنشئ مجموعة بعد', grade: 'غير محدد', stageKey: 'primary', subjects: 'غير محدد',
-                    locType: '--', address: '--', lat: null, lng: null, days: '--', timeFrom: '--', timeTo: '--',
-                    isPublished: false, waClicks: t.waClicks || 0, groups: [], phoneType: t.phoneType || '',
-                    verification: verifRaw, isBlocked: t.isBlocked || false, isFree: t.isFree || false
-                });
-            });
-
-            firebaseLessons.forEach(lesson => {
-                const state = lesson;
-                const phone = state.g_phone || 'غير مسجل';
-                const teacherName = cleanTeacherName(state.g_teacher);
-                let targetKey = null;
-                for (const [k, v] of unifiedMap.entries()) {
-                    if ((phone !== 'غير مسجل' && v.phone === phone) || (cleanTeacherName(v.teacherName) === teacherName)) {
-                        targetKey = k; break;
-                    }
-                }
-                
-                const lsTs = state.lastSeen || state.updatedAt || (state.createdAt ? new Date(state.createdAt).getTime() : null);
-
-                if (!targetKey) {
-                    targetKey = (phone !== 'غير مسجل') ? `phone_${phone}` : `name_${teacherName}`;
-                    unifiedMap.set(targetKey, { 
-                        type: 'lesson', docId: (phone !== 'غير مسجل') ? phone : teacherName, lessonIds: [],
-                        title: state.t_gender || (teacherName.startsWith('مس') ? 'مس' : 'مستر'),
-                        teacherName: teacherName || 'بدون اسم', phone: phone,
-                        lastSeen: lsTs,
-                        regDate: state.createdAt || new Date().toISOString().split('T')[0],
-                        waClicks: 0, groups: [], verification: '30 يوم تجريبي', isBlocked: false, isFree: false
-                    });
-                }
-                
-                const entry = unifiedMap.get(targetKey);
-                entry.type = 'lesson'; entry.lessonIds.push(lesson.id);
-                if (entry.phone === 'غير مسجل' && phone !== 'غير مسجل') entry.phone = phone;
-                if (!entry.phoneType && state.phoneType) entry.phoneType = state.phoneType;
-                
-                if (lsTs && (!entry.lastSeen || lsTs > entry.lastSeen)) {
-                    entry.lastSeen = lsTs;
-                }
-
-                const groupObj = {
-                    lessonId: lesson.id, groupName: state.g_name || `مجموعة رقم ${lesson.id}`,
-                    grade: state.s_grade || 'غير محدد', stageKey: state.s_stage || 'primary',
-                    subjects: Array.isArray(state.selectedSubjects) ? state.selectedSubjects.map(s => s.includes(' - ') ? s.split(' - ')[1] : s).join('، ') : 'غير محدد',
-                    locType: state.g_loc === 'l_teach' ? 'بيت المستر' : (state.g_loc === 'l_stud' ? 'منزل الطالب' : 'السنتر'),
-                    address: state.m_address || 'لم يتم تحديد العنوان', lat: state.lat || null, lng: state.lng || null,
-                    days: Array.isArray(state.g_days) && state.g_days.length ? state.g_days.join('، ') : 'غير محدد',
-                    timeFrom: (state.start_hour && state.start_min) ? `${state.start_hour}:${state.start_min} ${state.start_ampm || ''}` : '--:--',
-                    timeTo: (state.end_hour && state.end_min) ? `${state.end_hour}:${state.end_min} ${state.end_ampm || ''}` : '--:--',
-                    isPublished: state.g_publish_map !== false,
-                };
-                entry.groups.push(groupObj);
-                entry.groupName = entry.groups.map(g => g.groupName).join(' + ');
-                entry.grade = [...new Set(entry.groups.map(g => g.grade))].join('، ');
-                entry.subjects = [...new Set(entry.groups.map(g => g.subjects))].join('، ');
-                entry.locType = entry.groups[0].locType; entry.address = entry.groups[0].address;
-                entry.lat = entry.groups[0].lat; entry.lng = entry.groups[0].lng; entry.days = entry.groups[0].days; 
-                entry.timeFrom = entry.groups[0].timeFrom; entry.timeTo = entry.groups[0].timeTo;
-                entry.isPublished = entry.groups.some(g => g.isPublished);
-            });
-
-            const unifiedRecords = Array.from(unifiedMap.values()).map(entry => {
-                entry.expiryInfo = calculateExpiration(entry.regDate, entry.verification, entry.isFree);
-                if (entry.isFree) entry.isBlocked = false;
-                else if (entry.verification === 'حظر' || entry.expiryInfo.expired) entry.isBlocked = true;
-                return entry;
-            });
-            return { records: unifiedRecords, totalLessonsCount: firebaseLessons.length };
-        }
-
-        async function updateVerification(docId, phone, val, teacherName = '') {
-            const cleanName = cleanTeacherName(teacherName);
-            const isBlocked = (val === 'حظر');
-            const regDate = new Date().toISOString().split('T')[0];
-            const expiryInfo = calculateExpiration(regDate, val);
-            const shouldBlock = isBlocked || expiryInfo.expired;
-
-            if (!window.db || !window.fsDoc || !window.fsSetDoc) {
-                showToast("⚠️ Firebase غير جاهز", true); return;
-            }
-
-            try {
-                setCloudStatus('syncing', '⏳ جاري التحديث السحابي...');
-                const safeDocId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanName);
-                const teacherKey = String(phone || '').replace(/\D/g, '');
-
-                await window.fsSetDoc(window.fsDoc(window.db, "teachers", safeDocId), {
-                    phone: phone, teacherName: cleanName, verification: val, isBlocked: shouldBlock,
-                    verificationUpdatedAt: Date.now(), verificationExpiry: expiryInfo.expired ? Date.now() : null,
-                    updatedAt: Date.now()
-                }, { merge: true });
-
-                if (teacherKey && window.fsGetDocs && window.fsCollection) {
-                    const lessonsSnap = await window.fsGetDocs(window.fsCollection(window.db, "lessons"));
-                    const updates = [];
-                    lessonsSnap.forEach((lessonDoc) => {
-                        const data = lessonDoc.data() || {};
-                        const lessonPhone = String(data.g_phone || '').replace(/\D/g, '');
-                        const lessonTeacher = cleanTeacherName(data.g_teacher || '');
-                        if ((teacherKey && lessonPhone && lessonPhone === teacherKey) || (cleanName && lessonTeacher && lessonTeacher === cleanName)) {
-                            updates.push(window.fsSetDoc(window.fsDoc(window.db, "lessons", lessonDoc.id), { g_publish_map: !shouldBlock, blockedByAdmin: shouldBlock }, { merge: true }));
-                        }
-                    });
-                    await Promise.all(updates);
-                }
-
-                setCloudStatus('synced', '☁️ متزامن مع السحابة');
-                if (phone && phone !== 'غير مسجل') {
-                    if (shouldBlock) localStorage.setItem('teacherBlocked_' + teacherKey, 'true');
-                    else localStorage.removeItem('teacherBlocked_' + teacherKey);
-                }
-
-                await renderAllRecords();
-                if (shouldBlock && val !== 'حظر') showToast(`⛔ الباقة (${val}) منتهية — تم حظر الحساب وإخفاء المجموعات`, true);
-                else if (shouldBlock) showToast(`🚫 تم حظر الحساب وإخفاء كل مجموعاته`, true);
-                else showToast(`✅ تم تفعيل الباقة (${val}) — المجموعات ظاهرة للطلاب`);
-            } catch (error) {
-                setCloudStatus('offline', '⚠️ فشل التحديث');
-                showToast("⚠️ فشل الاتصال بالسحابة", true);
-            }
-        }
-
-        async function recordWaClick(docId, phone, teacherName) {
-            const targetId = docId || ((phone && phone !== 'غير مسجل') ? phone : cleanTeacherName(teacherName));
-            if (!targetId || !window.db || !window.fsUpdateDoc || !window.fsIncrement) return;
-            try {
-                const ref = window.fsDoc(window.db, "teachers", targetId);
-                await window.fsUpdateDoc(ref, { waClicks: window.fsIncrement(1) });
-            } catch (e) {}
-        }
-
-        async function openTeachersSummaryModal(titleType) {
-            const { records } = await collectAllAppData();
-            const filtered = records.filter(r => r.title === titleType);
-            const modalTitle = document.getElementById('summaryModalTitle');
-            const modalContent = document.getElementById('summaryModalContent');
-            modalTitle.textContent = titleType === 'مستر' ? '👨‍🏫 تفاصيل المستر (الذكور)' : '👩‍🏫 تفاصيل المس (الإناث)';
-
-            if (filtered.length === 0) {
-                modalContent.innerHTML = `<div class="text-center py-8 text-slate-500 font-bold">لا توجد سجلات مسجلة.</div>`;
-            } else {
-                let html = `<table class="w-full text-right border-collapse text-xs font-bold text-slate-700"><thead><tr class="bg-slate-100 border-b-2 border-slate-300"><th class="p-2.5">الاسم</th><th class="p-2.5">التليفون / الواتس</th><th class="p-2.5">المجموعات والصفوف</th><th class="p-2.5 text-center">واتساب</th></tr></thead><tbody>`;
-                filtered.forEach(r => {
-                    const cleanPhone = String(r.phone || '').replace(/\D/g, '');
-                    const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                    const docIdSafe = r.docId || '';
-                    html += `<tr class="border-b border-slate-200"><td class="p-2.5 font-black">${r.teacherName}</td><td class="p-2.5" dir="ltr" style="font-size: 15px; font-weight: 900; color: #1E40AF;">${r.phone}</td><td class="p-2.5">${r.groupName} (${r.grade} - ${r.subjects})</td><td class="p-2.5 text-center">${cleanPhone ? `<a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${r.teacherName}')" class="action-chip bg-emerald-600 text-white px-2.5 py-1 text-[11px]">💬 واتساب</a>` : '--'}</td></tr>`;
-                });
-                html += `</tbody></table>`;
-                modalContent.innerHTML = html;
-            }
-            document.getElementById('teachersSummaryModal').classList.add('active');
-        }
-
-        function populateGradeFilter() {
-            const curr = getCurriculum();
-            const gradeSelect = document.getElementById('filterGrade');
-            let allGrades = [];
-            const sortedStages = getSortedStages();
-            sortedStages.forEach(stageKey => {
-                const sortedGrades = getSortedGrades(stageKey);
-                sortedGrades.forEach(g => { if (!allGrades.includes(g)) allGrades.push(g); });
-            });
-            gradeSelect.innerHTML = `<option value="all">جميع الصفوف الدراسية</option>`;
-            allGrades.forEach(g => gradeSelect.innerHTML += `<option value="${g}">${g}</option>`);
-        }
-
-        function getRemainingDays(expiryText) {
-            if (!expiryText) return null;
-            const match = String(expiryText).match(/متبقي\s+(\d+)\s+يوم/);
-            return match ? parseInt(match[1], 10) : null;
-        }
-
-        async function renderAllRecords() {
-            const { records, totalLessonsCount } = await collectAllAppData();
-            const uniqueMrSet = new Set(), uniqueMsSet = new Set();
-            records.forEach(r => r.title === 'مس' ? uniqueMsSet.add(r.phone !== 'غير مسجل' ? r.phone : r.teacherName) : uniqueMrSet.add(r.phone !== 'غير مسجل' ? r.phone : r.teacherName));
-
-            document.getElementById('statMrCount').textContent = uniqueMrSet.size;
-            document.getElementById('statMsCount').textContent = uniqueMsSet.size;
-            document.getElementById('statLessonsCount').textContent = totalLessonsCount;
-            document.getElementById('statAccountsCount').textContent = records.length;
-
-            const q = document.getElementById('searchInput').value.trim().toLowerCase();
-            const titleFilter = document.getElementById('filterTitle').value;
-            const gradeFilter = document.getElementById('filterGrade').value;
-
-            const filtered = records.filter(r => {
-                if (titleFilter !== 'all' && r.title !== titleFilter) return false;
-                if (gradeFilter !== 'all' && !String(r.grade || '').includes(gradeFilter)) return false;
-                if (q && !`${r.title} ${r.teacherName} ${r.phone} ${r.groupName} ${r.grade} ${r.subjects} ${r.address}`.toLowerCase().includes(q)) return false;
-                return true;
-            });
-
-            document.getElementById('resultsCounter').textContent = filtered.length;
-            const container = document.getElementById('recordsGrid');
-
-            if (filtered.length === 0) {
-                container.innerHTML = `<div class="col-span-full bg-white rounded-3xl p-10 text-center font-bold text-slate-500">لا توجد سجلات مطابقة حالياً</div>`;
-                return;
-            }
-
-            const curr = getCurriculum();
-
-            container.innerHTML = filtered.map(r => {
-                const isMs = r.title === 'مس';
-                const badgeHTML = isMs ? `<span class="badge-ms">👩‍🏫 مس</span>` : `<span class="badge-mr">👨‍🏫 مستر</span>`;
-                const cardKey = getCardKey(r);
-                const isExpanded = expandedCards.has(cardKey);
-
-                let iconOnlyPhoneBadge = '';
-                if (r.phoneType) {
-                    const emojiMatch = r.phoneType.match(/[\p{Emoji}\u200d]+/gu);
-                    const iconChar = emojiMatch ? emojiMatch[0] : '📱';
-                    iconOnlyPhoneBadge = `<span class="badge-device" style="padding: 2px 6px; border-radius: 6px; font-size: 12px; border: 1.5px solid #CBD5E1; box-shadow: 0 1px 2px rgba(0,0,0,0.05); cursor: help;" title="${r.phoneType}">${iconChar}</span>`;
-                }
-
-                const lastSeenObj = formatLastSeen(r.lastSeen);
-                const lastSeenBadgeHTML = `
-                    <span class="badge-last-seen ${lastSeenObj.isOnline ? 'online-now' : ''}" title="وقت آخر ظهور: ${lastSeenObj.fullDate}">
-                        ${lastSeenObj.isOnline ? '🟢' : '🕒'} ${lastSeenObj.text}
-                    </span>
-                `;
-
-                const cleanPhone = String(r.phone || '').replace(/\D/g, '');
-                const waPhone = cleanPhone.startsWith('01') && cleanPhone.length === 11 ? '2' + cleanPhone : cleanPhone;
-                const stateClass = r.isBlocked ? 'is-blocked' : 'is-allowed';
-                const safeTeacherName = (r.teacherName || '').replace(/'/g, "\\'");
-                const docIdSafe = r.docId || '';
-                const lessonsArrayStr = r.lessonIds ? r.lessonIds.join(',') : '';
-
-                let unifiedScheduleHTML = '';
-                if (r.groups && r.groups.length > 0) {
-                    const cardsHTML = r.groups.map(g => {
-                        let stageName = g.stageKey;
-                        if (curr[g.stageKey] && curr[g.stageKey].name) {
-                            stageName = curr[g.stageKey].name.replace(/^[🎒📐🎓🏫📚📖✏️📝🚌🏛️🔬🧪💻🥇🧩🕌🕋⛪🌙📿🏢🏠📍⭐💡]\s*/, '');
-                        }
-
-                        let mapBtn = '';
-                        if (g.lat && g.lng) {
-                            mapBtn = `<button onclick="openMapModal('${g.address.replace(/'/g, "\\'")}', ${g.lat}, ${g.lng})" 
-                                       class="action-chip bg-indigo-50 text-indigo-700 border border-indigo-200 text-[10px] px-2 py-1 shadow-sm mt-1">📍 عرض على الخريطة (GPS)</button>`;
+    </script>
+</body>
+</html>er border-indigo-200 text-[10px] px-2 py-1 shadow-sm mt-1">📍 عرض على الخريطة (GPS)</button>`;
                         }
 
                         return `
-                        <div class="smart-card" style="--c-main: #2563EB; --c-dark: #1D4ED8; --c-light: #EFF6FF; --c-border: #93C5FD;">
+                        <div class="smart-card" style="--c-main: #2563EB;">
                             <div class="flex items-center justify-between mb-2 pb-2 border-b border-dashed border-slate-300">
                                 <h4 class="font-black text-slate-800 text-sm">👥 ${g.groupName}</h4>
                                 <span class="px-2 py-0.5 rounded-full text-[10px] font-black ${g.isPublished ? 'bg-emerald-100 text-emerald-800' : 'bg-rose-100 text-rose-800'}">
@@ -2363,7 +2239,7 @@
                     unifiedScheduleHTML = `<div class="space-y-2 mt-3">${cardsHTML}</div>`;
                 } else {
                     unifiedScheduleHTML = `
-                        <div class="smart-card" style="--c-main: #94A3B8; --c-dark: #64748B; --c-light: #F8FAFC; --c-border: #CBD5E1; text-align: center; padding: 20px; margin-top: 12px;">
+                        <div class="smart-card" style="text-align: center; padding: 20px; margin-top: 12px;">
                             <div class="text-4xl mb-2">📭</div>
                             <p class="font-black text-slate-500 text-sm">لا توجد مجموعات مسجّلة حتى الآن</p>
                             <p class="text-xs font-bold text-slate-400 mt-1">سيتم تحديث الجدول عند إضافة المعلم لمجموعاته</p>
@@ -2371,52 +2247,44 @@
                     `;
                 }
 
-                let statusBadgeHTML = '';
-                if (r.isBlocked) {
-                    statusBadgeHTML = `<span class="status-pure-red">🚫 ${r.verification === 'حظر' ? 'محظور' : 'منتهي الصلاحية'}</span>`;
-                } else if (r.isFree) {
-                    statusBadgeHTML = `<span class="status-pure-green">🎁 مجاني ♾️</span>`;
-                } else {
-                    const remainingText = (r.expiryInfo && r.expiryInfo.text) ? r.expiryInfo.text : '✅ نشط';
-                    const remainingDays = getRemainingDays(remainingText);
-                    const isExpiringSoon = (remainingDays !== null && remainingDays <= 7);
-
-                    if (isExpiringSoon) {
-                        statusBadgeHTML = `<span class="status-pure-amber" title="الباقة على وشك الانتهاء">⏳ ${remainingText}</span>`;
-                    } else {
-                        statusBadgeHTML = `<span class="status-pure-green">${remainingText}</span>`;
-                    }
-                }
+                const statusBadgeHTML = r.isBlocked
+                    ? `<span class="status-pure-red">🚫 محظور يدوياً</span>`
+                    : `<span class="status-pure-green">✅ نشط</span>`;
 
                 return `
                     <div class="record-card ${isMs ? 'is-ms' : 'is-mr'} ${stateClass}" data-card-key="${cardKey}">
-                        <!-- الهيدر الموحد: سطر واحد، مع رقم التليفون تحت الاسم -->
-                        <div class="card-header flex items-center justify-between gap-2 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
+                        
+                        <!-- ✅ تعديل هنا لمنع تداخل الكلام واستخدام flex-wrap -->
+                        <div class="card-header flex flex-col gap-3 pb-3 border-b border-dashed border-slate-300" onclick="toggleCardExpand('${cardKey}', this)">
                             
-                            <!-- الجزء الأيمن: اللقب، الاسم، ورقم التليفون، والمجموعة -->
-                            <div class="flex items-center gap-2 min-w-0 flex-1">
-                                <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
-                                
-                                <div class="flex flex-col min-w-0">
-                                    <div class="flex items-center gap-1.5 min-w-0">
-                                        <h3 class="text-base sm:text-lg font-black text-slate-800 shrink-0 whitespace-nowrap leading-tight">${r.teacherName}</h3>
-                                        <span class="text-[10px] sm:text-xs font-bold text-slate-500 truncate leading-tight" title="${r.groupName}">(${r.groupName})</span>
+                            <!-- الطابق العلوي: الاسم والتليفون والصورة -->
+                            <div class="flex items-start justify-between gap-2 w-full">
+                                <div class="flex items-center gap-2 min-w-0 flex-1">
+                                    <div class="shrink-0 flex items-center h-full">${badgeHTML}</div>
+                                    <div class="flex flex-col min-w-0">
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <h3 class="text-base sm:text-lg font-black text-slate-800 shrink-0 whitespace-nowrap leading-tight">${r.teacherName}</h3>
+                                            <span class="text-[10px] sm:text-xs font-bold text-slate-500 truncate leading-tight" title="${r.groupName}">(${r.groupName})</span>
+                                        </div>
+                                        <div class="text-xs font-black text-blue-700 mt-0.5 tracking-wider" dir="ltr" style="text-align: right;">${r.phone}</div>
                                     </div>
-                                    <div class="text-xs font-black text-blue-700 mt-0.5 tracking-wider" dir="ltr" style="text-align: right;">${r.phone}</div>
+                                </div>
+                                <div class="shrink-0 pl-1">
+                                    <span class="expand-arrow shrink-0" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
                                 </div>
                             </div>
                             
-                            <!-- الجزء الأيسر: الشارات (لا تنزل لسطر جديد) -->
-                            <div class="flex items-center gap-1 sm:gap-1.5 shrink-0">
-                                ${lastSeenBadgeHTML}
-                                ${iconOnlyPhoneBadge}
+                            <!-- الطابق السفلي: البادجات فقط وتلتف للسطر التالي إذا زادت -->
+                            <div class="flex flex-wrap items-center justify-start gap-1.5 w-full">
                                 ${statusBadgeHTML}
                                 <span class="px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-xs font-black shrink-0 ${r.isPublished ? 'bg-emerald-100 text-emerald-800 border border-emerald-400' : 'bg-rose-100 text-rose-800 border border-rose-400'}">${r.isPublished ? '🟢 ظاهر' : '🔴 مخفي'}</span>
-                                <span class="expand-arrow shrink-0" title="اضغط للطي / الفتح">${isExpanded ? '▲' : '▼'}</span>
+                                ${ratingBadgeHTML}
+                                ${idOrStudentBadgeHTML}
+                                ${lastSeenBadgeHTML}
+                                ${iconOnlyPhoneBadge}
                             </div>
                         </div>
 
-                        <!-- تفاصيل الكارت -->
                         <div class="card-details mt-3" style="display:${isExpanded ? 'block' : 'none'};">
                             <div class="space-y-2">
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -2426,31 +2294,24 @@
                                     </div>
                                     <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
                                 </div>
-                                
-                                <div class="info-pill flex flex-col gap-2" style="background:${r.isFree ? '#F1F5F9' : '#FEF3C7'}; border-color:${r.isFree ? '#CBD5E1' : '#FCD34D'};">
-                                    <div class="flex items-center justify-between w-full">
-                                        <span class="label ${r.isFree ? 'text-slate-500' : 'text-amber-900'}">🛡️ خطة وتوثيق الحساب:</span>
-                                        <span class="text-[11px] font-black ${r.isFree ? 'text-emerald-700' : (r.expiryInfo.expired ? 'text-rose-600' : 'text-emerald-700')}">${r.expiryInfo.text}</span>
-                                    </div>
-                                    <select 
-                                        ${r.isFree ? 'disabled' : ''} 
-                                        onchange="updateVerification('${docIdSafe}', '${r.phone}', this.value, '${safeTeacherName}')" 
-                                        class="form-input py-1.5 text-xs font-black w-full ${r.isFree ? 'text-slate-400 bg-slate-100 border-slate-300 cursor-not-allowed' : 'text-amber-950 bg-white border-amber-300 cursor-pointer'}"
-                                        style="${r.isFree ? 'opacity:0.6;' : ''}">
-                                        <option value="30 يوم تجريبي" ${r.verification === '30 يوم تجريبي' ? 'selected' : ''}>30 يوم تجريبي</option>
-                                        <option value="3 شهور" ${r.verification === '3 شهور' ? 'selected' : ''}>3 شهور</option>
-                                        <option value="6 شهور" ${r.verification === '6 شهور' ? 'selected' : ''}>6 شهور</option>
-                                        <option value="سنة واحدة" ${r.verification === 'سنة واحدة' ? 'selected' : ''}>سنة واحدة</option>
-                                        <option value="5 سنوات" ${r.verification === '5 سنوات' ? 'selected' : ''}>5 سنوات</option>
-                                        <option value="حظر" ${r.verification === 'حظر' ? 'selected' : ''}>حظر (إيقاف الحساب)</option>
-                                    </select>
-                                </div>
 
+                                <div class="info-pill flex flex-col gap-2" style="background:#F8FAFC; border-color:#CBD5E1;">
+                                    <div class="flex items-center justify-between w-full">
+                                        <span class="label text-slate-600">🛡️ حالة الحساب:</span>
+                                        <span class="text-[11px] font-black ${r.isBlocked ? 'text-rose-600' : 'text-emerald-700'}">${r.isBlocked ? '🚫 محظور' : '✅ نشط ومتاح للطلاب'}</span>
+                                    </div>
+                                    <button onclick="toggleBlock('${docIdSafe}', '${r.phone}', '${safeTeacherName}', ${r.isBlocked})"
+                                            class="action-chip w-full py-2 text-xs font-black shadow-md ${r.isBlocked ? 'bg-emerald-600 text-white' : 'bg-rose-600 text-white'}">
+                                        ${r.isBlocked ? '✅ إلغاء الحظر (إظهار للمعلم)' : '🚫 حظر الحساب (إخفاء عن الطلاب)'}
+                                    </button>
+                                </div>
+                                
+                                ${reviewsHtml}
                                 ${unifiedScheduleHTML}
                             </div>
                             <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
                                 <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
-                                <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-rose-600 text-white font-black shadow-md border border-rose-700">🗑️ حذف المعلم</button>
+                                <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-red-700 hover:bg-red-800 text-white font-black shadow-md border border-red-900 transition-colors">🔥 حذف نهائي من Firebase</button>
                             </div>
                         </div>
                     </div>
@@ -2459,7 +2320,9 @@
         }
 
         function deleteRecord(lessonsStr, phone, teacherName, docId) {
-            showCustomConfirm(`هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً من قاعدة البيانات السحابية؟`, async () => {
+            const confirmMessage = `هل أنت متأكد من حذف حساب المعلم (${teacherName}) وجميع دروسه نهائياً من قاعدة البيانات السحابية (Firebase)؟ لا يمكن التراجع عن هذا الإجراء!`;
+            
+            showCustomConfirm(confirmMessage, async () => {
                 if (!window.db || !window.fsDeleteDoc) return;
                 
                 setCloudStatus('syncing', '⏳ جاري الحذف من السحابة...');
