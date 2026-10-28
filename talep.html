@@ -253,6 +253,7 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
+        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -273,6 +274,9 @@
         .leaflet-popup { z-index: 100000 !important; }
         .leaflet-control-zoom { z-index: 100001 !important; }
 
+        .teacher-popup-title { font-weight: 900; color: #0F2D5C; font-size: 13px; margin-bottom: 6px; border-bottom: 1.5px dashed #E2E8F0; padding-bottom: 6px; display: flex; align-items: center; justify-content: center; gap: 4px;}
+        .teacher-popup-detail { display: flex; justify-content: space-between; align-items: center; font-weight: 800; color: #475569; font-size: 10.5px; margin-bottom: 4px; background: #F8FAFC; padding: 4px 6px; border-radius: 5px; gap: 6px;}
+        
         .registered-teacher-marker {
             background-color: #10B981; color: white; border-radius: 50%;
             width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
@@ -352,6 +356,7 @@
             margin-top: 4px; font-weight: 800;
         }
 
+        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
             display: none;
             position: absolute;
@@ -470,6 +475,7 @@
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
+        /* ✅ العنوان التفصيلي في كارت المعلم */
         .teacher-info-address {
             display: flex;
             flex-direction: column;
@@ -481,44 +487,215 @@
             margin-bottom: 3px;
             gap: 3px;
         }
-        .teacher-info-address .addr-label { color: #64748B; font-size: 9.5px; font-weight: 900; }
-        .teacher-info-address .addr-value { color: #065F46; font-weight: 900; text-align: right; width: 100%; line-height: 1.45; font-size: 11px; word-break: break-word; }
+        .teacher-info-address .addr-label {
+            color: #64748B;
+            font-size: 9.5px;
+            font-weight: 900;
+        }
+        .teacher-info-address .addr-value {
+            color: #065F46;
+            font-weight: 900;
+            text-align: right;
+            width: 100%;
+            line-height: 1.45;
+            font-size: 11px;
+            word-break: break-word;
+        }
 
-        .teacher-info-actions { display: flex; gap: 6px; margin-top: 8px; }
-        .teacher-info-actions button { flex: 1; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 900; color: #fff; border: none; cursor: pointer; }
+        .teacher-info-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+        .teacher-info-actions button {
+            flex: 1;
+            padding: 6px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-weight: 900;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
         .teacher-info-btn-save { background: #F59E0B; border-bottom: 2.5px solid #B45309; }
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 2.5px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ تنسيقات نظام التقييمات */
-        .teacher-rating-section { margin-top: 6px; padding: 6px; background: #FFFBEB; border: 1.5px solid #FDE68A; border-bottom: 2px solid #F59E0B; border-radius: 8px; }
-        .stars-input { display: flex; justify-content: center; gap: 3px; margin-bottom: 3px; direction: ltr; }
-        .star-btn { background: none; border: none; font-size: 18px; cursor: pointer; color: #D1D5DB; transition: all 0.15s; padding: 0; line-height: 1; }
-        .star-btn:hover, .star-btn.active { color: #FBBF24; transform: scale(1.1); text-shadow: 0 2px 4px rgba(251, 191, 36, 0.4); }
-        .rating-comment-input { width: 100%; padding: 4px 6px; border: 1.5px solid #FDE68A; border-radius: 6px; font-size: 10px; font-weight: 700; font-family: 'Cairo', sans-serif; outline: none; resize: none; min-height: 24px; color: #1E293B; background: #FFFFFF; margin-bottom: 3px; }
-        .rating-submit-btn { width: 100%; padding: 4px; border-radius: 6px; font-size: 10px; font-weight: 900; color: white; background: linear-gradient(135deg, #F59E0B, #D97706); border: none; border-bottom: 2px solid #B45309; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل) */
+        .teacher-rating-section {
+            margin-top: 6px;
+            padding: 6px;
+            background: #FFFBEB;
+            border: 1.5px solid #FDE68A;
+            border-bottom: 2px solid #F59E0B;
+            border-radius: 8px;
+        }
+
+        .stars-input {
+            display: flex;
+            justify-content: center;
+            gap: 3px;
+            margin-bottom: 3px;
+            direction: ltr;
+        }
+
+        .star-btn {
+            background: none;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            color: #D1D5DB;
+            transition: all 0.15s;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .star-btn:hover, .star-btn.active {
+            color: #FBBF24;
+            transform: scale(1.1);
+            text-shadow: 0 2px 4px rgba(251, 191, 36, 0.4);
+        }
+
+        .rating-comment-input {
+            width: 100%;
+            padding: 4px 6px;
+            border: 1.5px solid #FDE68A;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 700;
+            font-family: 'Cairo', sans-serif;
+            outline: none;
+            resize: none;
+            min-height: 24px;
+            color: #1E293B;
+            background: #FFFFFF;
+            margin-bottom: 3px;
+        }
+
+        .rating-submit-btn {
+            width: 100%;
+            padding: 4px;
+            border-radius: 6px;
+            font-size: 10px;
+            font-weight: 900;
+            color: white;
+            background: linear-gradient(135deg, #F59E0B, #D97706);
+            border: none;
+            border-bottom: 2px solid #B45309;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+        }
+
         .rating-submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-        .reviews-list { max-height: 75px; overflow-y: auto; display: flex; flex-direction: column; gap: 3px; margin-top: 4px; padding-top: 4px; border-top: 1px dashed #FDE68A; }
-        .review-item { background: #FFFFFF; border: 1px solid #FEF3C7; border-radius: 5px; padding: 3px 6px; font-size: 9px; }
-        .review-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1px; }
-        .review-item-name { font-weight: 900; color: #0F2D5C; font-size: 9px; }
-        .review-item-stars { color: #FBBF24; font-size: 9px; direction: ltr; }
-        .review-item-comment { color: #475569; font-weight: 700; line-height: 1.2; word-break: break-word; }
-        .review-item-date { font-size: 7px; color: #94A3B8; font-weight: 600; margin-top: 1px; }
-        .rating-already-rated { text-align: center; font-size: 9px; font-weight: 900; color: #059669; background: #D1FAE5; padding: 4px; border-radius: 5px; margin-top: 3px; }
+
+        .reviews-list {
+            max-height: 75px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            margin-top: 4px;
+            padding-top: 4px;
+            border-top: 1px dashed #FDE68A;
+        }
+
+        .review-item {
+            background: #FFFFFF;
+            border: 1px solid #FEF3C7;
+            border-radius: 5px;
+            padding: 3px 6px;
+            font-size: 9px;
+        }
+
+        .review-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1px;
+        }
+
+        .review-item-name {
+            font-weight: 900;
+            color: #0F2D5C;
+            font-size: 9px;
+        }
+
+        .review-item-stars {
+            color: #FBBF24;
+            font-size: 9px;
+            direction: ltr;
+        }
+
+        .review-item-comment {
+            color: #475569;
+            font-weight: 700;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .review-item-date {
+            font-size: 7px;
+            color: #94A3B8;
+            font-weight: 600;
+            margin-top: 1px;
+        }
+
+        .rating-already-rated {
+            text-align: center;
+            font-size: 9px;
+            font-weight: 900;
+            color: #059669;
+            background: #D1FAE5;
+            padding: 4px;
+            border-radius: 5px;
+            margin-top: 3px;
+        }
 
         /* ✅ تنسيقات مودال الشكاوى */
-        .complaint-teacher-btn { width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2; border: 1.5px solid #FCA5A5; border-bottom: 2.5px solid #F87171; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; }
+        .complaint-teacher-btn {
+            width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px;
+            font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2;
+            border: 1.5px solid #FCA5A5; border-bottom: 2.5px solid #F87171; cursor: pointer;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
+        }
         .complaint-teacher-btn:active { transform: translateY(1.5px); border-bottom-width: 1.5px; }
-        .complaint-modal-box { max-width: 400px !important; text-align: right !important; border-bottom-color: #DC2626 !important; max-height: 88vh; overflow-y: auto; position: relative; }
+        .complaint-modal-box {
+            max-width: 400px !important; text-align: right !important;
+            border-bottom-color: #DC2626 !important; max-height: 88vh; overflow-y: auto;
+            position: relative;
+        }
         .complaint-modal-box .form-group label { font-size: 11px; font-weight: 900; color: #1E293B; margin-bottom: 3px; }
         .complaint-modal-box .form-control { font-size: 12px !important; padding: 7px 9px !important; font-weight: 800; }
         .complaint-modal-box textarea.form-control { min-height: 75px; resize: vertical; }
-        .complaint-copy-btn { width: 100%; margin-top: 6px; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 900; background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; border-bottom: 2px solid #94A3B8; cursor: pointer; }
+        .complaint-copy-btn {
+            width: 100%; margin-top: 6px; padding: 6px; border-radius: 6px; font-size: 11px; font-weight: 900;
+            background: #F1F5F9; color: #475569; border: 1.5px solid #CBD5E1; border-bottom: 2px solid #94A3B8; cursor: pointer;
+        }
         .complaint-copy-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
 
-        .mini-complaint-strip { display: flex; align-items: center; gap: 6px; padding: 8px 12px; background: #FEF2F2; border: 1.5px solid #FECACA; border-radius: 10px; cursor: pointer; transition: all 0.2s; margin-top: 4px; margin-bottom: 8px; box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08); }
-        .mini-complaint-strip:active { transform: scale(0.98); background: #FEE2E2; border-color: #FCA5A5; }
+        /* 📢 شريط الشكاوى الصغير */
+        .mini-complaint-strip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #FEF2F2;
+            border: 1.5px solid #FECACA;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 4px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(220, 38, 38, 0.08);
+        }
+        .mini-complaint-strip:active {
+            transform: scale(0.98);
+            background: #FEE2E2;
+            border-color: #FCA5A5;
+        }
 
         @media (max-width: 380px) {
             .hero-banner { min-height: 100px; padding: 5px; }
@@ -668,6 +845,7 @@
                 </div>
             </div>
             
+            <!-- ✅ التعديل هنا: تم إخراج التنبيه من العمودين ليكون أسفلهما بعرض الكارت كاملاً -->
             <div style="background: rgba(255, 255, 255, 0.15); border: 1px dashed rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: -2px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <span style="font-size: 16px;">💬</span> 
                 <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.</span>
@@ -846,7 +1024,16 @@
     <script type="module">
       import { initializeApp, getApps } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
-          getFirestore, collection, getDocs, query, where, doc, onSnapshot, getDoc, setDoc, limit
+          getFirestore,
+          collection,
+          getDocs,
+          query,
+          where,
+          doc,
+          onSnapshot,
+          getDoc,
+          setDoc,
+          limit
       } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
       const firebaseConfig = {
@@ -889,11 +1076,22 @@
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
 
+        let teachersRealtimeUnsub = null;
+        let isFirstTeachersSnapshot = true;
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
+
+        // ✅ كاش المعلمين — يمنع القراءات المتكررة من Firestore
+        let cachedTeachersList = [];
+        let cachedTeachersHiddenCount = 0;
+        let cachedTeachersStageKey = '__init__';
+        let cachedTeachersGrade = '__init__';
+        let cacheReady = false;
         let teacherRenderTimer = null;
 
+        // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
+        let lastRenderedTeachersHash = '';
 
         // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
@@ -1163,46 +1361,62 @@
             }
         }
 
+        let _talepSaveTimer = null;
+        let _talepSavePending = false;
+
         async function saveTalepToFirebase(immediate = false) {
-            // 🚀 تعمل فقط عند استدعائها صراحة، لمنع إغراق الخادم
-            try {
-                const mod = await loadFirebaseModule();
-                if (!mod) return;
+            if (_talepSaveTimer) clearTimeout(_talepSaveTimer);
 
-                const key = getStudentId();
-                const ref = mod.doc(mod.db, "talep_data", key);
+            const doSave = async () => {
+                if (_talepSavePending) return;
+                _talepSavePending = true;
+                try {
+                    const mod = await loadFirebaseModule();
+                    if (!mod) return;
 
-                const raw = JSON.parse(localStorage.getItem('talep_data') || '{}');
-                const consent = localStorage.getItem('location_consent_given') === 'true';
+                    const key = getStudentId();
+                    const ref = mod.doc(mod.db, "talep_data", key);
 
-                const payload = {
-                    owner_phone: key,
-                    owner_name: (() => {
-                        try {
-                            const t = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}');
-                            return String(t.name || '').trim();
-                        } catch(e) { return ''; }
-                    })(),
-                    st_gender: raw.st_gender || '',
-                    st_name: raw.st_name || '',
-                    st_age: raw.st_age || '',
-                    st_phone: raw.st_phone || '',
-                    s_stage: raw.s_stage || '',
-                    s_grade: raw.s_grade || '',
-                    s_subject: raw.s_subject || '',
-                    pref_teacher: raw.pref_teacher || '',
-                    pref_loc: raw.pref_loc || '',
-                    search_radius: raw.search_radius || '3000',
-                    location_consent: consent,
-                    saved_locations: Array.isArray(raw.saved_locations) ? raw.saved_locations : [],
-                    saved_teachers: Array.isArray(raw.saved_teachers) ? raw.saved_teachers : [],
-                    updatedAt: Date.now()
-                };
+                    const raw = JSON.parse(localStorage.getItem('talep_data') || '{}');
+                    const consent = localStorage.getItem('location_consent_given') === 'true';
 
-                await mod.setDoc(ref, payload, { merge: true });
-                console.log("☁️ [talep] تم الحفظ في Firestore:", key);
-            } catch (e) {
-                console.warn("⚠️ [talep] فشل الحفظ في Firestore:", e);
+                    const payload = {
+                        owner_phone: key,
+                        owner_name: (() => {
+                            try {
+                                const t = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}');
+                                return String(t.name || '').trim();
+                            } catch(e) { return ''; }
+                        })(),
+                        st_gender: raw.st_gender || '',
+                        st_name: raw.st_name || '',
+                        st_age: raw.st_age || '',
+                        st_phone: raw.st_phone || '',
+                        s_stage: raw.s_stage || '',
+                        s_grade: raw.s_grade || '',
+                        s_subject: raw.s_subject || '',
+                        pref_teacher: raw.pref_teacher || '',
+                        pref_loc: raw.pref_loc || '',
+                        search_radius: raw.search_radius || '3000',
+                        location_consent: consent,
+                        saved_locations: Array.isArray(raw.saved_locations) ? raw.saved_locations : [],
+                        saved_teachers: Array.isArray(raw.saved_teachers) ? raw.saved_teachers : [],
+                        updatedAt: Date.now()
+                    };
+
+                    await mod.setDoc(ref, payload, { merge: true });
+                    console.log("☁️ [talep] تم الحفظ في Firestore:", key);
+                } catch (e) {
+                    console.warn("⚠️ [talep] فشل الحفظ في Firestore:", e);
+                } finally {
+                    _talepSavePending = false;
+                }
+            };
+
+            if (immediate) {
+                await doSave();
+            } else {
+                _talepSaveTimer = setTimeout(doSave, 600);
             }
         }
 
@@ -1253,6 +1467,48 @@
             }
         }
 
+        function startTalepRealtimeListener() {
+            loadFirebaseModule().then(mod => {
+                if (!mod) return;
+                const key = getStudentId();
+                const ref = mod.doc(mod.db, "talep_data", key);
+                mod.onSnapshot(ref, (snap) => {
+                    if (!snap.exists()) return;
+                    const d = snap.data() || {};
+                    const localRaw = localStorage.getItem('talep_data');
+                    const localObj = localRaw ? JSON.parse(localRaw) : {};
+                    const newObj = {
+                        st_gender: d.st_gender || '',
+                        st_name: d.st_name || '',
+                        st_age: d.st_age || '',
+                        st_phone: d.st_phone || '',
+                        s_stage: d.s_stage || '',
+                        s_grade: d.s_grade || '',
+                        s_subject: d.s_subject || '',
+                        pref_teacher: d.pref_teacher || '',
+                        pref_loc: d.pref_loc || '',
+                        search_radius: d.search_radius || '3000',
+                        saved_locations: Array.isArray(d.saved_locations) ? d.saved_locations : [],
+                        saved_teachers: Array.isArray(d.saved_teachers) ? d.saved_teachers : []
+                    };
+                    if (JSON.stringify(newObj) !== JSON.stringify(localObj)) {
+                        localStorage.setItem('talep_data', JSON.stringify(newObj));
+                        if (d.location_consent === true) localStorage.setItem('location_consent_given', 'true');
+                        else localStorage.removeItem('location_consent_given');
+                        const activeTag = document.activeElement?.tagName;
+                        const hasLocalData = 
+                            document.getElementById('st_name').value.trim() !== '' ||
+                            document.getElementById('st_phone').value.trim() !== '' ||
+                            document.getElementById('s_stage').value !== '';
+                        if (!hasLocalData && activeTag !== 'INPUT' && activeTag !== 'SELECT' && activeTag !== 'TEXTAREA') {
+                            loadStudentData();
+                        }
+                    }
+                }, (err) => console.warn("⚠️ talep onSnapshot:", err));
+            });
+        }
+
+        // ✅ دالة تحويل doc لمعلم — تستخدم في onSnapshot وفي القراءة الاحتياطية
         function parseTeacherDoc(docSnap) {
             const state = docSnap.data();
             const lessonId = docSnap.id;
@@ -1313,63 +1569,107 @@
             };
         }
 
-        // 🚀 الجلب الجغرافي الذكي: لا نستخدم onSnapshot الكارثي للجميع
-        async function getRegisteredTeachersFromFirebase(centerPos, radiusInMeters) {
-            const currentStage = (document.getElementById('s_stage').value || '').trim();
-            const currentGrade = (document.getElementById('s_grade').value || '').trim();
+        // ✅ المزامنة اللحظية — تخزن في الكاش وترسم من الكاش
+        async function startTeachersRealtimeListener() {
+            const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
 
-            if (!currentStage || !currentGrade || !centerPos) {
-                return { registeredList: [], hiddenCount: 0 };
+            // ✅ صفّر الكاش فوراً عند تغيير المرحلة/الصف
+            cachedTeachersList = [];
+            cachedTeachersHiddenCount = 0;
+            cachedTeachersStageKey = stage;
+            cachedTeachersGrade = grade;
+            cacheReady = false;
+
+            if (!stage || !grade) {
+                if (teachersRealtimeUnsub) { teachersRealtimeUnsub(); teachersRealtimeUnsub = null; }
+                return;
             }
 
-            const registeredList = [];
-            let hiddenCount = 0;
-
-            if (!window.db) {
-                console.warn("⚠️ Firebase لم يتصل بعد");
-                return { registeredList, hiddenCount };
+            const mod = await loadFirebaseModule();
+            if (!mod) {
+                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
+                return;
             }
 
-            try {
-                const mod = await loadFirebaseModule();
-                if (!mod) return { registeredList, hiddenCount };
+            if (teachersRealtimeUnsub) {
+                try { teachersRealtimeUnsub(); } catch(e) {}
+                teachersRealtimeUnsub = null;
+            }
 
-                // 🚀 استخدام الفهرس الجغرافي geohash لجلب المعلمين في النطاق فقط
-                const bounds = geofire.geohashQueryBounds([centerPos[0], centerPos[1]], radiusInMeters);
-                const promises = [];
+            console.log("🔴 بدء المزامنة اللحظية للمعلمين...");
 
-                for (const b of bounds) {
-                    const q = mod.query(
-                        mod.collection(mod.db, "lessons"),
-                        mod.where("g_publish_map", "==", true),
-                        mod.where("s_stage", "==", currentStage),
-                        mod.where("s_grade", "==", currentGrade),
-                        mod.where("geohash", ">=", b[0]),
-                        mod.where("geohash", "<=", b[1])
-                    );
-                    promises.push(mod.getDocs(q));
-                }
+            // ✅ الاستعلام هنا متوافق تماماً مع الفهرس الثاني (لأنه بادئة له)
+            const q = mod.query(
+                mod.collection(mod.db, "lessons"),
+                mod.where("g_publish_map", "==", true),
+                mod.where("s_stage", "==", stage),
+                mod.where("s_grade", "==", grade)
+            );
 
-                const snapshots = await Promise.all(promises);
-                const teachersMap = new Map();
+            teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
+                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
 
-                snapshots.forEach(snap => {
-                    snap.forEach(docSnap => {
-                        if (!teachersMap.has(docSnap.id)) {
-                            teachersMap.set(docSnap.id, parseTeacherDoc(docSnap));
-                        }
-                    });
+                // ✅ خزّن البيانات في الكاش
+                cachedTeachersList = [];
+                cachedTeachersHiddenCount = 0;
+
+                snapshot.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) {
+                        cachedTeachersHiddenCount++;
+                        return;
+                    }
+                    cachedTeachersList.push(parseTeacherDoc(docSnap));
                 });
-                
-                for (let teacher of teachersMap.values()) {
-                    registeredList.push(teacher);
+
+                cachedTeachersStageKey = stage;
+                cachedTeachersGrade = grade;
+                cacheReady = true;
+
+                const liveIndicator = document.getElementById('liveIndicator');
+
+                // ✅ الرسم فقط إذا الخريطة جاهزة
+                if (!currentCenter || !map) {
+                    isFirstTeachersSnapshot = false;
+                    return;
                 }
 
-            } catch (err) {
-                console.error("❌ فشل جلب المعلمين عبر Geohash:", err);
-            }
+                const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
+                if (cardOpen && !isFirstTeachersSnapshot) {
+                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
+                    return;
+                }
 
-            return { registeredList, hiddenCount };
+                if (liveIndicator) {
+                    liveIndicator.classList.add('show');
+                    if (!isFirstTeachersSnapshot) {
+                        liveIndicator.classList.add('updating');
+                        const textEl = liveIndicator.querySelector('span:last-child');
+                        if (textEl) textEl.textContent = 'جاري التحديث...';
+                        
+                        setTimeout(() => {
+                            liveIndicator.classList.remove('updating');
+                            if (textEl) textEl.textContent = 'مباشر';
+                        }, 1500);
+                    }
+                }
+
+                // ✅ الرسم من الكاش (بدون قراءة إضافية)
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+
+                if (!isFirstTeachersSnapshot) {
+                    showToast(`🔄 تم تحديث المعلمين على الخريطة`);
+                }
+                isFirstTeachersSnapshot = false;
+
+            }, (error) => {
+                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) {
+                    liveIndicator.classList.remove('show');
+                }
+            });
         }
 
         function toggleMapFullscreen() {
@@ -1741,6 +2041,8 @@
                 sSelect.disabled = true;
             }
             
+            startTeachersRealtimeListener();
+
             renderStudentGradeSubjectsBar();
             updateStudentSummary();
             updateSearchBtnHint();
@@ -1991,9 +2293,7 @@
             localStorage.setItem('talep_data', JSON.stringify(studentData));
             updateStudentSummary();
             updateSearchBtnHint();
-            
-            // 🚀 تم إيقاف الحفظ السحابي التلقائي مع كل حرف لتخفيف الضغط على Firestore
-            // saveTalepToFirebase(false); 
+            saveTalepToFirebase(false);
         }
 
         function loadStudentData() {
@@ -2168,6 +2468,8 @@
             });
 
             startCurriculumRealtimeListener();
+            startTalepRealtimeListener();
+            startTeachersRealtimeListener();
         };
 
         function triggerLocationFlow() {
@@ -2196,8 +2498,6 @@
 
             const hasConsented = localStorage.getItem('location_consent_given');
             if (hasConsented === 'true') {
-                // 🚀 الحفظ السحابي يتم فقط عند الضغط على زر البحث لتخفيف الضغط
-                saveTalepToFirebase(true); 
                 startSmartSearch();
             } else {
                 document.getElementById('locationDisclosureModal').classList.add('active');
@@ -2392,6 +2692,55 @@
             closeDeleteModal();
         }
 
+        // ✅ قراءة من الكاش — القراءة الاحتياطية فقط لو الكاش لسه ما امتلأش
+        async function getRegisteredTeachersFromFirebase() {
+            const currentStage = (document.getElementById('s_stage').value || '').trim();
+            const currentGrade = (document.getElementById('s_grade').value || '').trim();
+
+            // ✅ لو الكاش جاهز ومطابق للاختيار الحالي — ارجع فوراً بدون أي قراءة
+            if (cacheReady
+                && cachedTeachersStageKey === currentStage
+                && cachedTeachersGrade === currentGrade) {
+                return {
+                    registeredList: cachedTeachersList,
+                    hiddenCount: cachedTeachersHiddenCount
+                };
+            }
+
+            // ⚠️ Fallback نادر: الكاش لسه ما امتلأش
+            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
+
+            const registeredList = [];
+            let hiddenCount = 0;
+
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
+                return { registeredList, hiddenCount };
+            }
+
+            try {
+                const mod = await loadFirebaseModule();
+                if (!mod) return { registeredList, hiddenCount };
+
+                const constraints = [mod.where("g_publish_map", "==", true)];
+                if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
+                if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
+
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const snap = await mod.getDocs(q);
+
+                snap.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) { hiddenCount++; return; }
+                    registeredList.push(parseTeacherDoc(docSnap));
+                });
+            } catch (err) {
+                console.error("❌ فشل القراءة الاحتياطية:", err);
+            }
+
+            return { registeredList, hiddenCount };
+        }
+
         function getStageNameByKey(stageKey) {
             if (!stageKey) return '';
             if (stageKey === 'primary') return 'المرحلة الابتدائية';
@@ -2410,13 +2759,7 @@
             if (!map) {
                 map = L.map('map', { zoomControl: false, maxZoom: 18 });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
-                
-                // 🚀 استخدام CartoDB Voyager المجانية لتحمل الضغط العالي بدون حظر
-                L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', { 
-                    maxZoom: 19,
-                    subdomains: 'abcd',
-                    attribution: '&copy; OpenStreetMap, &copy; CARTO'
-                }).addTo(map);
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 18 }).addTo(map);
                 
                 teachersLayer = L.markerClusterGroup({
                     maxClusterRadius: 40,
@@ -2529,7 +2872,7 @@
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
 
-            // 🚀 Debounce طويل لتقليل عدد مرات قراءة السحابة أثناء تحريك الخريطة
+            // ✅ Debounce: انتظر 250ms قبل الرسم عشان مايتكررش مع كل حركة سريعة
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
@@ -2537,7 +2880,7 @@
                 if (teacherRenderTimer) clearTimeout(teacherRenderTimer);
                 teacherRenderTimer = setTimeout(() => {
                     renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
-                }, 800);
+                }, 250);
             });
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
@@ -2945,7 +3288,7 @@
             });
         };
 
-        // 🚀 الرسم من النظام الجغرافي فقط بعد جلب البيانات الذكي
+        // ✅ دالة عرض المعلمين — تقرأ من الكاش وتفلتر داخل الدائرة فقط
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -2961,13 +3304,6 @@
                 return;
             }
 
-            const liveIndicator = document.getElementById('liveIndicator');
-            if (liveIndicator) {
-                liveIndicator.classList.add('show', 'updating');
-                const textEl = liveIndicator.querySelector('span:last-child');
-                if (textEl) textEl.textContent = 'جاري البحث...';
-            }
-
             const selectedSubject = (document.getElementById('s_subject').value || '').trim();
             const selectedGrade = (document.getElementById('s_grade').value || '').trim();
             const selectedStageKey = (document.getElementById('s_stage').value || '').trim();
@@ -2976,18 +3312,12 @@
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
-            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase(centerPos, radiusInMeters);
+            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
             teachersLayer.clearLayers();
 
-            if (liveIndicator) {
-                liveIndicator.classList.remove('updating');
-                const textEl = liveIndicator.querySelector('span:last-child');
-                if (textEl) textEl.textContent = 'مباشر';
-            }
-
             if (registeredList.length === 0) {
-                showToast("لا يوجد معلم مسجل يطابق بحثك داخل هذا النطاق حالياً!", true);
+                showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم مسجل حالياً في النظام!", true);
                 return;
             }
 
@@ -3024,6 +3354,7 @@
                 return;
             }
 
+            // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة
             const matchedInRadius = matched.filter(t => {
                 const d = map.distance(centerPos, [t.lat, t.lng]);
                 return d <= radiusInMeters;
