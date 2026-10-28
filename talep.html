@@ -253,6 +253,7 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
+        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -844,6 +845,7 @@
                 </div>
             </div>
             
+            <!-- ✅ التعديل هنا: تم إخراج التنبيه من العمودين ليكون أسفلهما بعرض الكارت كاملاً -->
             <div style="background: rgba(255, 255, 255, 0.15); border: 1px dashed rgba(255, 255, 255, 0.4); color: #ffffff; padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 800; margin-top: -2px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 6px;">
                 <span style="font-size: 16px;">💬</span> 
                 <span>سجل برقم عليه <b style="color: #6EE7B7;">واتساب</b> عشان المستر يقدر يتواصل معاك.</span>
@@ -1074,8 +1076,18 @@
         let isFirstCurriculumSnapshot = true;
         let deviceWatchUnsub = null;
 
+        let teachersRealtimeUnsub = null;
+        let isFirstTeachersSnapshot = true;
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
+
+        // ✅ كاش المعلمين — يمنع القراءات المتكررة من Firestore
+        let cachedTeachersList = [];
+        let cachedTeachersHiddenCount = 0;
+        let cachedTeachersStageKey = '__init__';
+        let cachedTeachersGrade = '__init__';
+        let cacheReady = false;
+        let teacherRenderTimer = null;
 
         // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
@@ -1496,7 +1508,7 @@
             });
         }
 
-        // ✅ دالة تحويل doc لمعلم — تستخدم في القراءة
+        // ✅ دالة تحويل doc لمعلم — تستخدم في onSnapshot وفي القراءة الاحتياطية
         function parseTeacherDoc(docSnap) {
             const state = docSnap.data();
             const lessonId = docSnap.id;
@@ -1555,6 +1567,109 @@
                 ratingAvg: state.ratingAvg || 0,
                 ratingCount: state.ratingCount || 0
             };
+        }
+
+        // ✅ المزامنة اللحظية — تخزن في الكاش وترسم من الكاش
+        async function startTeachersRealtimeListener() {
+            const stage = document.getElementById('s_stage').value;
+            const grade = document.getElementById('s_grade').value;
+
+            // ✅ صفّر الكاش فوراً عند تغيير المرحلة/الصف
+            cachedTeachersList = [];
+            cachedTeachersHiddenCount = 0;
+            cachedTeachersStageKey = stage;
+            cachedTeachersGrade = grade;
+            cacheReady = false;
+
+            if (!stage || !grade) {
+                if (teachersRealtimeUnsub) { teachersRealtimeUnsub(); teachersRealtimeUnsub = null; }
+                return;
+            }
+
+            const mod = await loadFirebaseModule();
+            if (!mod) {
+                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
+                return;
+            }
+
+            if (teachersRealtimeUnsub) {
+                try { teachersRealtimeUnsub(); } catch(e) {}
+                teachersRealtimeUnsub = null;
+            }
+
+            console.log("🔴 بدء المزامنة اللحظية للمعلمين...");
+
+            // ✅ الاستعلام هنا متوافق تماماً مع الفهرس الثاني (لأنه بادئة له)
+            const q = mod.query(
+                mod.collection(mod.db, "lessons"),
+                mod.where("g_publish_map", "==", true),
+                mod.where("s_stage", "==", stage),
+                mod.where("s_grade", "==", grade)
+            );
+
+            teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
+                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
+
+                // ✅ خزّن البيانات في الكاش
+                cachedTeachersList = [];
+                cachedTeachersHiddenCount = 0;
+
+                snapshot.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) {
+                        cachedTeachersHiddenCount++;
+                        return;
+                    }
+                    cachedTeachersList.push(parseTeacherDoc(docSnap));
+                });
+
+                cachedTeachersStageKey = stage;
+                cachedTeachersGrade = grade;
+                cacheReady = true;
+
+                const liveIndicator = document.getElementById('liveIndicator');
+
+                // ✅ الرسم فقط إذا الخريطة جاهزة
+                if (!currentCenter || !map) {
+                    isFirstTeachersSnapshot = false;
+                    return;
+                }
+
+                const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
+                if (cardOpen && !isFirstTeachersSnapshot) {
+                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
+                    return;
+                }
+
+                if (liveIndicator) {
+                    liveIndicator.classList.add('show');
+                    if (!isFirstTeachersSnapshot) {
+                        liveIndicator.classList.add('updating');
+                        const textEl = liveIndicator.querySelector('span:last-child');
+                        if (textEl) textEl.textContent = 'جاري التحديث...';
+                        
+                        setTimeout(() => {
+                            liveIndicator.classList.remove('updating');
+                            if (textEl) textEl.textContent = 'مباشر';
+                        }, 1500);
+                    }
+                }
+
+                // ✅ الرسم من الكاش (بدون قراءة إضافية)
+                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+
+                if (!isFirstTeachersSnapshot) {
+                    showToast(`🔄 تم تحديث المعلمين على الخريطة`);
+                }
+                isFirstTeachersSnapshot = false;
+
+            }, (error) => {
+                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
+                const liveIndicator = document.getElementById('liveIndicator');
+                if (liveIndicator) {
+                    liveIndicator.classList.remove('show');
+                }
+            });
         }
 
         function toggleMapFullscreen() {
@@ -1926,6 +2041,8 @@
                 sSelect.disabled = true;
             }
             
+            startTeachersRealtimeListener();
+
             renderStudentGradeSubjectsBar();
             updateStudentSummary();
             updateSearchBtnHint();
@@ -2352,6 +2469,7 @@
 
             startCurriculumRealtimeListener();
             startTalepRealtimeListener();
+            startTeachersRealtimeListener();
         };
 
         function triggerLocationFlow() {
@@ -2510,7 +2628,7 @@
             localStorage.setItem('talep_data', JSON.stringify(existingData));
             renderSavedTeachersList(true); showToast("تم حفظ المعلم ⭐");
             saveTalepToFirebase(true);
-        }
+        };
 
         function renderSavedTeachersList(autoOpen = false) {
             const data = JSON.parse(localStorage.getItem('talep_data') || '{}');
@@ -2574,90 +2692,53 @@
             closeDeleteModal();
         }
 
-        // ✅ الاستعلام الجغرافي السريع مع نظام احتياطي تلقائي (Fallback)
-        async function getRegisteredTeachersFromFirebaseByRadius(centerPos, radiusInMeters) {
+        // ✅ قراءة من الكاش — القراءة الاحتياطية فقط لو الكاش لسه ما امتلأش
+        async function getRegisteredTeachersFromFirebase() {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
-            const registeredList = [];
 
-            if (!window.db || !currentStage || !currentGrade || !centerPos) {
-                return { registeredList, hiddenCount: 0 };
+            // ✅ لو الكاش جاهز ومطابق للاختيار الحالي — ارجع فوراً بدون أي قراءة
+            if (cacheReady
+                && cachedTeachersStageKey === currentStage
+                && cachedTeachersGrade === currentGrade) {
+                return {
+                    registeredList: cachedTeachersList,
+                    hiddenCount: cachedTeachersHiddenCount
+                };
             }
 
-            let fastQueryFailed = false;
+            // ⚠️ Fallback نادر: الكاش لسه ما امتلأش
+            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
+
+            const registeredList = [];
+            let hiddenCount = 0;
+
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
+                return { registeredList, hiddenCount };
+            }
 
             try {
                 const mod = await loadFirebaseModule();
-                if (!mod) return { registeredList, hiddenCount: 0 };
+                if (!mod) return { registeredList, hiddenCount };
 
-                const bounds = geofire.geohashQueryBounds(centerPos, radiusInMeters);
-                const promises = [];
+                const constraints = [mod.where("g_publish_map", "==", true)];
+                if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
+                if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
 
-                for (const b of bounds) {
-                    const q = mod.query(
-                        mod.collection(mod.db, "lessons"),
-                        mod.where("g_publish_map", "==", true),
-                        mod.where("s_stage", "==", currentStage),
-                        mod.where("s_grade", "==", currentGrade),
-                        mod.where("geohash", ">=", b[0]),
-                        mod.where("geohash", "<=", b[1])
-                    );
-                    promises.push(mod.getDocs(q));
-                }
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const snap = await mod.getDocs(q);
 
-                const snapshots = await Promise.all(promises);
-                
-                for (const snap of snapshots) {
-                    for (const docSnap of snap.docs) {
-                        const state = docSnap.data();
-                        
-                        if (state.lat && state.lng) {
-                            const distanceInKm = geofire.distanceBetween([state.lat, state.lng], centerPos);
-                            const distanceInM = distanceInKm * 1000;
-                            
-                            if (distanceInM <= radiusInMeters) {
-                                registeredList.push(parseTeacherDoc(docSnap));
-                            }
-                        }
-                    }
-                }
+                snap.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) { hiddenCount++; return; }
+                    registeredList.push(parseTeacherDoc(docSnap));
+                });
             } catch (err) {
-                console.warn("⚠️ الفهرس المركب (Composite Index) غير موجود في Firebase، جاري تشغيل الجلب الاحتياطي...");
-                fastQueryFailed = true;
+                console.error("❌ فشل القراءة الاحتياطية:", err);
             }
 
-            // 💡 نظام الجلب الاحتياطي: يعمل تلقائياً إذا فشل الجلب السريع أو للبيانات القديمة
-            if (fastQueryFailed || registeredList.length === 0) {
-                try {
-                    const mod = await loadFirebaseModule();
-                    const fallbackQuery = mod.query(
-                        mod.collection(mod.db, "lessons"),
-                        mod.where("g_publish_map", "==", true),
-                        mod.where("s_stage", "==", currentStage),
-                        mod.where("s_grade", "==", currentGrade)
-                    );
-
-                    const snap = await mod.getDocs(fallbackQuery);
-                    snap.forEach(docSnap => {
-                        const state = docSnap.data();
-                        if (state.lat && state.lng) {
-                            const distanceInM = geofire.distanceBetween([state.lat, state.lng], centerPos) * 1000;
-                            if (distanceInM <= radiusInMeters) {
-                                // التأكد من عدم إضافة المعلم مرتين إذا تم جلبه في الاستعلام الجغرافي السريع
-                                if (!registeredList.some(t => t.lessonId === docSnap.id)) {
-                                    registeredList.push(parseTeacherDoc(docSnap));
-                                }
-                            }
-                        }
-                    });
-                } catch (fallbackErr) {
-                    console.error("❌ فشل الجلب الاحتياطي:", fallbackErr);
-                }
-            }
-
-            // إزالة التكرارات
-            const uniqueTeachers = Array.from(new Map(registeredList.map(item => [item.lessonId, item])).values());
-            return { registeredList: uniqueTeachers, hiddenCount: 0 };
+            return { registeredList, hiddenCount };
         }
 
         function getStageNameByKey(stageKey) {
@@ -2791,18 +2872,21 @@
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
 
-            let renderTimer;
+            // ✅ Debounce: انتظر 250ms قبل الرسم عشان مايتكررش مع كل حركة سريعة
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
 
-                if (renderTimer) clearTimeout(renderTimer);
-                renderTimer = setTimeout(() => {
+                if (teacherRenderTimer) clearTimeout(teacherRenderTimer);
+                teacherRenderTimer = setTimeout(() => {
                     renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value));
                 }, 250);
             });
 
             renderRegisteredTeachersFromEnd(currentCenter, searchRadius);
+
+            const liveIndicator = document.getElementById('liveIndicator');
+            if (liveIndicator) liveIndicator.classList.add('show');
 
             setTimeout(() => {
                 map.invalidateSize();
@@ -3204,7 +3288,7 @@
             });
         };
 
-        // ✅ رسم المعلمين بناءً على الجلب الجغرافي السريع مع نظام Backup
+        // ✅ دالة عرض المعلمين — تقرأ من الكاش وتفلتر داخل الدائرة فقط
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3228,25 +3312,12 @@
             const prefLocValue = document.querySelector('input[name="pref_loc"]:checked')?.value || '';
             const studentGender = document.querySelector('input[name="st_gender"]:checked')?.value || 'ولد';
 
-            const liveIndicator = document.getElementById('liveIndicator');
-            if (liveIndicator) {
-                liveIndicator.classList.add('show', 'updating');
-                const textEl = liveIndicator.querySelector('span:last-child');
-                if (textEl) textEl.textContent = 'جاري البحث...';
-            }
-
-            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebaseByRadius(centerPos, radiusInMeters);
-
-            if (liveIndicator) {
-                liveIndicator.classList.remove('updating');
-                const textEl = liveIndicator.querySelector('span:last-child');
-                if (textEl) textEl.textContent = 'مباشر';
-            }
+            const { registeredList, hiddenCount } = await getRegisteredTeachersFromFirebase();
 
             teachersLayer.clearLayers();
 
             if (registeredList.length === 0) {
-                showToast("لا يوجد معلم مسجل حالياً داخل هذا النطاق!", true);
+                showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم مسجل حالياً في النظام!", true);
                 return;
             }
 
@@ -3277,17 +3348,31 @@
 
             if (matched.length === 0) {
                 const noMatchMsg = prefLocValue
-                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) في النطاق الجغرافي!`
-                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) في النطاق الجغرافي!`;
+                    ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
+                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
                 showToast(noMatchMsg, true);
                 return;
             }
 
-            matched.forEach(t => {
+            // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة
+            const matchedInRadius = matched.filter(t => {
+                const d = map.distance(centerPos, [t.lat, t.lng]);
+                return d <= radiusInMeters;
+            });
+
+            if (matchedInRadius.length === 0) {
+                showToast(
+                    `🔍 لا يوجد أي معلم داخل هذا النطاق لـ (${selectedSubject} - ${selectedGrade}) — وسّع النطاق أو حرّك النقطة الزرقاء!`,
+                    true
+                );
+                return;
+            }
+
+            matchedInRadius.forEach(t => {
                 t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
             });
 
-            matched.sort((a, b) => {
+            matchedInRadius.sort((a, b) => {
                 if (b.ratingSummary.count === 0 && a.ratingSummary.count === 0) return 0;
                 if (b.ratingSummary.count === 0) return -1;
                 if (a.ratingSummary.count === 0) return 1;
@@ -3296,7 +3381,7 @@
 
             let shownCount = 0;
 
-            matched.forEach(t => {
+            matchedInRadius.forEach(t => {
                 shownCount++;
 
                 const isMs = (t.gender === 'مس');
