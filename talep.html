@@ -2759,7 +2759,13 @@
             if (!map) {
                 map = L.map('map', { zoomControl: false, maxZoom: 18 });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
-                L.tileLayer('https://api.mapbox.com/styles/v1/mokshmoksh/cmvse1evw003r01sbgobebl0l/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A', { maxZoom: 18, tileSize: 512, zoomOffset: -1, attribution: '© Mapbox' }).addTo(map);
+                
+                L.tileLayer('https://api.mapbox.com/styles/v1/mokshmoksh/cmvse1evw003r01sbgobebl0l/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A', {
+                    maxZoom: 18,
+                    tileSize: 512,
+                    zoomOffset: -1,
+                    attribution: '© Mapbox'
+                }).addTo(map);
                 
                 teachersLayer = L.markerClusterGroup({
                     maxClusterRadius: 40,
@@ -3458,7 +3464,7 @@
             document.getElementById('complaintTeacherName').value = teacherName || '';
             const detailsEl = document.getElementById('complaintDetails');
             if (!detailsEl.value.trim()) {
-                detailsEl.value = `شكوى بخصوص المدرس: ${teacherName || 'غير محدد'}\\nالمادة: ${subject || 'غير محدد'}\\nالمجموعة: ${groupName || 'غير محدد'}\\n\\nالتفاصيل:\\n`;
+                detailsEl.value = `شكوى بخصوص المدرس: ${teacherName || 'غير محدد'}\nالمادة: ${subject || 'غير محدد'}\nالمجموعة: ${groupName || 'غير محدد'}\n\nالتفاصيل:\n`;
                 detailsEl.focus();
                 detailsEl.setSelectionRange(detailsEl.value.length, detailsEl.value.length);
             }
@@ -3517,7 +3523,7 @@ ${details}
             const mailtoLink = `mailto:${COMPLAINT_EMAIL}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
             if (navigator.clipboard) {
-                navigator.clipboard.writeText(`إلى: ${COMPLAINT_EMAIL}\\n\\nالموضوع: ${subject}\\n\\n${body}`).catch(() => {});
+                navigator.clipboard.writeText(`إلى: ${COMPLAINT_EMAIL}\n\nالموضوع: ${subject}\n\n${body}`).catch(() => {});
             }
 
             try {
@@ -3547,7 +3553,7 @@ ${details}
                 showToast("⚠️ يرجى كتابة تفاصيل الشكوى أولاً!", true);
                 return;
             }
-            const fullText = `إلى: ${COMPLAINT_EMAIL}\\n\\nالموضوع: ${subject}\\n\\n${body}`;
+            const fullText = `إلى: ${COMPLAINT_EMAIL}\n\nالموضوع: ${subject}\n\n${body}`;
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(fullText).then(() => {
                     showToast("📋 تم نسخ الشكوى — الصقها في بريدك وأرسلها لـ mmoksh162@gmail.com");
