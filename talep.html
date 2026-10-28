@@ -185,7 +185,6 @@
         .map-container { position: relative; width: 100%; border-radius: 12px; border: 1.5px solid #CBD5E1; border-bottom: 4px solid #334155; overflow: visible; z-index: 1; transition: all 0.3s; }
         #map { width: 100%; height: 300px; border-radius: 12px; }
 
-        /* ✅ تنسيق ألوان دوائر تجميع الدبابيس */
         .marker-cluster-small, .marker-cluster-medium, .marker-cluster-large { background-color: rgba(16, 185, 129, 0.6); }
         .marker-cluster-small div, .marker-cluster-medium div, .marker-cluster-large div { background-color: rgba(16, 185, 129, 0.9); color: white; font-family: 'Cairo', sans-serif; font-weight: 900; font-size: 14px; }
 
@@ -201,7 +200,6 @@
         }
         .relocate-btn:active { transform: translateY(1px); border-bottom-width: 2px; }
 
-        /* ✅ مؤشر المزامنة اللحظية */
         .live-indicator {
             position: absolute;
             top: 10px;
@@ -253,7 +251,6 @@
         .student-radar::after { content: ''; position: absolute; top: -8px; left: -8px; right: -8px; bottom: -8px; border-radius: 50%; border: 1.5px solid #3B82F6; animation: radar-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite; pointer-events: none; }
         @keyframes radar-ping { 75%, 100% { transform: scale(2.5); opacity: 0; } }
 
-        /* ✅ تنسيق popup المعلم (يستخدم فقط في وضع احتياطي) */
         .leaflet-popup-content-wrapper {
             border-radius: 12px;
             box-shadow: 0 8px 25px rgba(0,0,0,0.15);
@@ -356,7 +353,6 @@
             margin-top: 4px; font-weight: 800;
         }
 
-        /* ✅ شريط النطاق الخاص بوضع ملء الشاشة */
         .fullscreen-radius-container {
             display: none;
             position: absolute;
@@ -399,7 +395,6 @@
             max-height: 50vh;
         }
 
-        /* ✅ كارت بيانات المعلم العائم فوق الخريطة والجداول (مضغوط للموبايل) */
         .teacher-info-card {
             display: none;
             position: absolute;
@@ -475,7 +470,6 @@
         .teacher-info-row span:first-child { color: #64748B; font-size: 10px; }
         .teacher-info-row span:last-child { color: #0F2D5C; font-weight: 900; text-align: left; }
 
-        /* ✅ العنوان التفصيلي في كارت المعلم */
         .teacher-info-address {
             display: flex;
             flex-direction: column;
@@ -521,7 +515,6 @@
         .teacher-info-btn-wa { background: #22C55E; border-bottom: 2.5px solid #16A34A; flex: 1.5 !important; }
         .teacher-info-actions button:active { transform: translateY(2px); border-bottom-width: 1px; }
 
-        /* ✅ تنسيقات نظام التقييمات (مضغوطة جداً للموبايل) */
         .teacher-rating-section {
             margin-top: 6px;
             padding: 6px;
@@ -654,7 +647,6 @@
             margin-top: 3px;
         }
 
-        /* ✅ تنسيقات مودال الشكاوى */
         .complaint-teacher-btn {
             width: 100%; margin-top: 5px; padding: 5px 8px; border-radius: 6px;
             font-size: 10px; font-weight: 900; color: #DC2626; background: #FEE2E2;
@@ -676,7 +668,6 @@
         }
         .complaint-copy-btn:active { transform: translateY(1px); border-bottom-width: 1px; }
 
-        /* 📢 شريط الشكاوى الصغير */
         .mini-complaint-strip {
             display: flex;
             align-items: center;
@@ -774,7 +765,6 @@
         </div>
     </div>
 
-    <!-- 📢 مودال الشكاوى -->
     <div id="complaintModal" class="custom-modal-overlay">
         <div class="custom-modal-box complaint-modal-box">
             <button onclick="closeComplaintModal()" style="position:absolute; top:8px; left:8px; width:26px; height:26px; border-radius:50%; background:#FEE2E2; color:#DC2626; border:1.5px solid #FCA5A5; font-weight:900; font-size:13px; cursor:pointer; z-index:10;">✕</button>
@@ -840,7 +830,12 @@
                 </div>
                 <div class="form-group">
                     <label id="phone_label">📱 رقم الهاتف</label>
-                    <input type="tel" id="st_phone" class="form-control" placeholder="010XXXXXXXX">
+                    <div style="display: flex; gap: 6px;">
+                        <input type="tel" id="st_phone" class="form-control" placeholder="010XXXXXXXX" style="flex: 1;">
+                        <button type="button" class="clickable-element" onclick="verifyViaWhatsApp()" style="background: #25D366; color: white; border: none; border-radius: 8px; padding: 0 10px; font-weight: 900; font-size: 11px; cursor: pointer; white-space: nowrap; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 2px 5px rgba(37,211,102,0.3);">
+                            💬 واتساب
+                        </button>
+                    </div>
                 </div>
             </div>
             <p id="ageWarningMessage" style="display:none; font-size: 11px; background: rgba(255,255,255,0.2); padding: 5px; border-radius: 5px; color: white; font-weight: 800; margin-top: 5px;">
@@ -966,7 +961,6 @@
 
                     <div id="map"></div>
 
-                    <!-- ✅ كارت بيانات المعلم العائم فوق الخريطة -->
                     <div id="teacherInfoCard" class="teacher-info-card">
                         <button class="teacher-info-close" onclick="closeTeacherInfoCard()">✕</button>
                         <div id="teacherInfoCardBody"></div>
@@ -1005,7 +999,6 @@
             
         </div>
 
-        <!-- 📢 شريط الشكاوى الصغير -->
         <div class="mini-complaint-strip clickable-element" onclick="openComplaintModal()">
             <span style="font-size: 14px;">📢</span>
             <span style="font-size: 11px; font-weight: 900; color: #991B1B;">عندك شكوى أو اقتراح؟</span>
@@ -1055,9 +1048,6 @@
     </script>
 
     <script>
-        // ==========================================
-        // 0. المتغيرات الأساسية
-        // ==========================================
         let map = null; let teachersLayer = null; let studentMarker = null;
         let searchCircle = null; let currentCenter = null; let isMapFullscreen = false;
         let deleteType = ''; let deleteIndexToConfirm = -1;
@@ -1073,7 +1063,6 @@
         let lastRenderCenter = null;
         let lastRenderRadius = 3000;
 
-        // ✅ كاش المعلمين — يمنع القراءات المتكررة من Firestore
         let cachedTeachersList = [];
         let cachedTeachersHiddenCount = 0;
         let cachedTeachersStageKey = '__init__';
@@ -1081,11 +1070,9 @@
         let cacheReady = false;
         let teacherRenderTimer = null;
 
-        // ✅ لحفظ الـ popup المفتوح حاليًا
         let openPopupLessonId = null;
         let lastRenderedTeachersHash = '';
 
-        // ⭐ متغيرات نظام التقييمات
         let currentRatingLessonId = null;
         let currentSelectedStars = 0;
 
@@ -1097,6 +1084,26 @@
             }
             return stId;
         }
+
+        // ✅ وظيفة التحقق والتأكيد عبر واتساب
+        window.verifyViaWhatsApp = function() {
+            const studentName = document.getElementById('st_name').value.trim();
+            const studentPhone = document.getElementById('st_phone').value.trim();
+            
+            if (!studentName) {
+                showToast("⚠️ يرجى كتابة اسمك بالكامل أولاً قبل التوثيق عبر واتساب!", true);
+                highlightMissingField('st_name', true);
+                return;
+            }
+
+            const platformWhatsAppNumber = "201000000000"; // استبدل هذا برقم واتساب المنصة أو الدعم الفني
+            const uniqueId = getStudentId();
+            const message = `مرحباً، أرغب في تأكيد وتوثيق رقم هاتفي على منصة احجزلي.\n\n👤 اسم الطالب: ${studentName}\n📱 رقم الهاتف: ${studentPhone || 'غير مدخل'}\n🔑 كود التوثيق: ${uniqueId}`;
+            
+            const waUrl = `https://wa.me/${platformWhatsAppNumber}?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+            showToast("✅ تم توجيهك إلى واتساب لإرسال كود التوثيق");
+        };
 
         function getCurrentTeacherKey() {
             try {
@@ -1142,14 +1149,11 @@
                 if (snap.exists()) {
                     const registeredDeviceId = snap.data().deviceId;
                     if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
-                        console.warn("🚪 جهاز مختلف — سيتم الخروج");
                         showDeviceKickedAndRedirect();
                         return false;
                     }
                 }
-            } catch (err) {
-                console.warn("⚠️ device check:", err);
-            }
+            } catch (err) {}
             return true;
         }
 
@@ -1182,17 +1186,13 @@
                     deviceWatchUnsub = mod.onSnapshot(ref, (snap) => {
                         if (!snap.exists()) return;
                         const registeredDeviceId = snap.data().deviceId;
-                        
                         if (registeredDeviceId && registeredDeviceId !== currentDeviceId) {
-                            console.warn("🔥 تم تسجيل الدخول من جهاز آخر!");
                             if (deviceWatchUnsub) { try { deviceWatchUnsub(); } catch(e) {} }
                             showDeviceKickedAndRedirect();
                         }
-                    }, (err) => console.warn("⚠️ device watch:", err));
+                    }, (err) => {});
                 });
-            } catch(e) { 
-                console.warn("device watch:", e); 
-            }
+            } catch(e) {}
         }
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -1223,21 +1223,15 @@
                     osc.start(now + offset);
                     osc.stop(now + offset + 0.15);
                 });
-            } catch (e) {
-                console.warn("⚠️ audio error:", e);
-            }
+            } catch (e) {}
         }
 
         function vibrateError() {
-            if (navigator.vibrate) {
-                navigator.vibrate([200, 100, 200]);
-            }
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }
 
         function vibrateSuccess() {
-            if (navigator.vibrate) {
-                navigator.vibrate([80, 50, 80]);
-            }
+            if (navigator.vibrate) navigator.vibrate([80, 50, 80]);
         }
 
         function alertMissingData(missingList) {
@@ -1303,7 +1297,7 @@
             const whatsappPart = cleanPhone ? `\n📱 رقم التليفون: ${phone}\n💬 واتساب: https://wa.me/${cleanPhone}` : '';
             const shareText = `لقد وجدت معلماً ممتازاً على منصة احجزلي!\n\n👨‍🏫 المعلم: ${name}\n📚 المادة: ${subject} (${grade})${whatsappPart}`;
             if (navigator.share) {
-                navigator.share({ title: 'مشاركة تفاصيل المعلم', text: shareText }).catch(err => console.error(err));
+                navigator.share({ title: 'مشاركة تفاصيل المعلم', text: shareText }).catch(err => {});
             } else {
                 navigator.clipboard.writeText(shareText).then(() => { showToast("تم نسخ بيانات المعلم للمشاركة! 📋"); });
             }
@@ -1348,7 +1342,6 @@
                 };
                 return firebaseSyncModule;
             } catch (err) {
-                console.error("❌ فشل استيراد Firebase:", err);
                 return null;
             }
         }
@@ -1397,10 +1390,7 @@
                     };
 
                     await mod.setDoc(ref, payload, { merge: true });
-                    console.log("☁️ [talep] تم الحفظ في Firestore:", key);
-                } catch (e) {
-                    console.warn("⚠️ [talep] فشل الحفظ في Firestore:", e);
-                } finally {
+                } catch (e) {} finally {
                     _talepSavePending = false;
                 }
             };
@@ -1422,7 +1412,6 @@
                 const snap = await mod.getDoc(ref);
 
                 if (!snap.exists()) {
-                    console.log("📭 [talep] لا توجد بيانات محفوظة لهذا الطالب");
                     localStorage.removeItem('talep_data');
                     localStorage.removeItem('location_consent_given');
                     return false;
@@ -1450,11 +1439,8 @@
                 } else {
                     localStorage.removeItem('location_consent_given');
                 }
-
-                console.log("☁️ [talep] تم تحميل البيانات من Firestore");
                 return true;
             } catch (e) {
-                console.warn("⚠️ [talep] فشل تحميل Firestore:", e);
                 return false;
             }
         }
@@ -1496,11 +1482,10 @@
                             loadStudentData();
                         }
                     }
-                }, (err) => console.warn("⚠️ talep onSnapshot:", err));
+                }, (err) => {});
             });
         }
 
-        // ✅ دالة تحويل doc لمعلم — تستخدم في onSnapshot وفي القراءة الاحتياطية
         function parseTeacherDoc(docSnap) {
             const state = docSnap.data();
             const lessonId = docSnap.id;
@@ -1561,12 +1546,10 @@
             };
         }
 
-        // ✅ المزامنة اللحظية — تخزن في الكاش وترسم من الكاش
         async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
             const grade = document.getElementById('s_grade').value;
 
-            // ✅ صفّر الكاش فوراً عند تغيير المرحلة/الصف
             cachedTeachersList = [];
             cachedTeachersHiddenCount = 0;
             cachedTeachersStageKey = stage;
@@ -1579,19 +1562,13 @@
             }
 
             const mod = await loadFirebaseModule();
-            if (!mod) {
-                console.warn("⚠️ Firebase غير جاهز لمزامنة المعلمين");
-                return;
-            }
+            if (!mod) return;
 
             if (teachersRealtimeUnsub) {
                 try { teachersRealtimeUnsub(); } catch(e) {}
                 teachersRealtimeUnsub = null;
             }
 
-            console.log("🔴 بدء المزامنة اللحظية للمعلمين...");
-
-            // ✅ الاستعلام هنا متوافق تماماً مع الفهرس الثاني (لأنه بادئة له)
             const q = mod.query(
                 mod.collection(mod.db, "lessons"),
                 mod.where("g_publish_map", "==", true),
@@ -1600,9 +1577,6 @@
             );
 
             teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
-                console.log(`🔄 [Realtime] تحديث لحظي — عدد الحصص المنشورة: ${snapshot.size}`);
-
-                // ✅ خزّن البيانات في الكاش
                 cachedTeachersList = [];
                 cachedTeachersHiddenCount = 0;
 
@@ -1621,17 +1595,13 @@
 
                 const liveIndicator = document.getElementById('liveIndicator');
 
-                // ✅ الرسم فقط إذا الخريطة جاهزة
                 if (!currentCenter || !map) {
                     isFirstTeachersSnapshot = false;
                     return;
                 }
 
                 const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
-                if (cardOpen && !isFirstTeachersSnapshot) {
-                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
-                    return;
-                }
+                if (cardOpen && !isFirstTeachersSnapshot) return;
 
                 if (liveIndicator) {
                     liveIndicator.classList.add('show');
@@ -1647,7 +1617,6 @@
                     }
                 }
 
-                // ✅ الرسم من الكاش (بدون قراءة إضافية)
                 renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
 
                 if (!isFirstTeachersSnapshot) {
@@ -1656,11 +1625,8 @@
                 isFirstTeachersSnapshot = false;
 
             }, (error) => {
-                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
                 const liveIndicator = document.getElementById('liveIndicator');
-                if (liveIndicator) {
-                    liveIndicator.classList.remove('show');
-                }
+                if (liveIndicator) liveIndicator.classList.remove('show');
             });
         }
 
@@ -2133,7 +2099,6 @@
                     curriculumCache = normalizeCurriculum(data);
                     localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                     localStorage.setItem('app_curriculum_updated_at', String(Date.now()));
-                    console.log("⚡ [talep] تم جلب المنهج من Firebase");
                     return true;
                 } else {
                     try {
@@ -2145,12 +2110,10 @@
                         localStorage.setItem('app_curriculum', JSON.stringify(curriculumCache));
                         return true;
                     } catch (e) {
-                        console.warn("⚠️ فشل رفع الافتراضي:", e);
                         return false;
                     }
                 }
             } catch (err) {
-                console.warn("⚠️ [talep] getDoc فشلت:", err);
                 return false;
             }
         }
@@ -2178,9 +2141,7 @@
                     }
                     isFirstCurriculumSnapshot = false;
                 }
-            }, (err) => {
-                console.warn("⚠️ [talep] onSnapshot فشل:", err);
-            });
+            }, (err) => {});
         }
 
         const curriculumChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_curriculum_sync') : null;
@@ -2336,7 +2297,6 @@
             const savedLessonsOwner_talep = localStorage.getItem(lessonsOwnerKey_talep);
 
             if (savedLessonsOwner_talep && currentKey_talep && savedLessonsOwner_talep !== currentKey_talep) {
-                console.log(`🧹 [talep] معلم مختلف — تنظيف حصص قديمة`);
                 const keysToRemove = [];
                 for (let i = 0; i < localStorage.length; i++) {
                     const k = localStorage.key(i);
@@ -2684,12 +2644,10 @@
             closeDeleteModal();
         }
 
-        // ✅ قراءة من الكاش — القراءة الاحتياطية فقط لو الكاش لسه ما امتلأش
         async function getRegisteredTeachersFromFirebase() {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
 
-            // ✅ لو الكاش جاهز ومطابق للاختيار الحالي — ارجع فوراً بدون أي قراءة
             if (cacheReady
                 && cachedTeachersStageKey === currentStage
                 && cachedTeachersGrade === currentGrade) {
@@ -2699,16 +2657,10 @@
                 };
             }
 
-            // ⚠️ Fallback نادر: الكاش لسه ما امتلأش
-            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
-
             const registeredList = [];
             let hiddenCount = 0;
 
-            if (!window.db) {
-                console.warn("⚠️ Firebase لم يتصل بعد");
-                return { registeredList, hiddenCount };
-            }
+            if (!window.db) return { registeredList, hiddenCount };
 
             try {
                 const mod = await loadFirebaseModule();
@@ -2726,9 +2678,7 @@
                     if (state.g_publish_map === false) { hiddenCount++; return; }
                     registeredList.push(parseTeacherDoc(docSnap));
                 });
-            } catch (err) {
-                console.error("❌ فشل القراءة الاحتياطية:", err);
-            }
+            } catch (err) {}
 
             return { registeredList, hiddenCount };
         }
@@ -2864,7 +2814,6 @@
 
             studentMarker.on('drag', function(e) { searchCircle.setLatLng(e.target.getLatLng()); });
 
-            // ✅ Debounce: انتظر 250ms قبل الرسم عشان مايتكررش مع كل حركة سريعة
             studentMarker.on('dragend', function(e) {
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
@@ -2941,10 +2890,6 @@
 
                 await mod.setDoc(ref, payload);
 
-                if (cleanPhone && globalRatingCache[cleanPhone]) {
-                    delete globalRatingCache[cleanPhone];
-                }
-
                 showToast("شكراً لك! تم إرسال تقييمك ⭐");
                 vibrateSuccess();
 
@@ -2954,14 +2899,7 @@
                 showTeacherInfoCard(lessonId);
 
             } catch (err) {
-                console.error("❌ خطأ في حفظ التقييم:", err);
-                
-                let errMsg = "حدث خطأ، حاول مرة أخرى!";
-                if (err.code === 'permission-denied' || String(err).includes('permissions')) {
-                    errMsg = "صلاحيات الحفظ غير كافية! يرجى تعديل قواعد Firestore.";
-                }
-                
-                showToast(errMsg, true);
+                showToast("حدث خطأ، حاول مرة أخرى!", true);
                 if (submitBtn) {
                     submitBtn.disabled = false;
                     submitBtn.innerHTML = '⭐ إرسال التقييم';
@@ -3010,7 +2948,6 @@
                     distribution: distribution
                 };
             } catch (err) {
-                console.warn("⚠️ فشل تحميل التقييمات:", err);
                 return { avg: 0, count: 0, reviews: [], hasRated: false, distribution: {} };
             }
         }
@@ -3280,7 +3217,6 @@
             });
         };
 
-        // ✅ دالة عرض المعلمين — تقرأ من الكاش وتفلتر داخل الدائرة فقط
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3346,7 +3282,6 @@
                 return;
             }
 
-            // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة
             const matchedInRadius = matched.filter(t => {
                 const d = map.distance(centerPos, [t.lat, t.lng]);
                 return d <= radiusInMeters;
@@ -3433,9 +3368,6 @@
             showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})`);
         }
 
-        // ══════════════════════════════════════════
-        // 📢 نظام الشكاوى والاقتراحات
-        // ══════════════════════════════════════════
         const COMPLAINT_EMAIL = 'mmoksh162@gmail.com';
 
         window.openComplaintModal = function() {
@@ -3548,7 +3480,7 @@ ${details}
                     showToast("⚠️ تعذر النسخ — استخدم متصفح أحدث", true);
                 });
             } else {
-                showToast("⚠️ النسخ التلقائي غير مدعوم — استخدم خيار الإرسال", true);
+                showToast("⚠️ النسخ التلقائي غير مدعوم", true);
             }
         };
     </script>
