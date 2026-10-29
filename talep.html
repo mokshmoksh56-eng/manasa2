@@ -1916,7 +1916,9 @@
                 const sortedGrades = getSortedGrades(stage);
                 
                 sortedGrades.forEach(g => {
-                    gSelect.innerHTML += `<option value="${g}">${g}</option>`;
+                    // إظهار اسم الصف كاملًا في المرحلة الابتدائية مع الحفاظ على القيمة القديمة للتوافق مع بيانات المعلمين.
+                    const gradeLabel = stage === 'primary' && !/الابتدائي/.test(g) ? `${g} الابتدائي` : g;
+                    gSelect.innerHTML += `<option value="${g}">${gradeLabel}</option>`;
                 });
                 gSelect.disabled = false;
 
@@ -2182,7 +2184,8 @@
             if (grade && subject) {
                 document.getElementById('studentSummaryCard').style.display = 'block';
                 document.getElementById('sum_name').innerText = name || 'بدون اسم';
-                document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : '--';
+                const gradeLabel = stage === 'primary' && grade && !/الابتدائي/.test(grade) ? `${grade} الابتدائي` : grade;
+                document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? gradeLabel : `${stage} - ${gradeLabel}`) : '--';
                 document.getElementById('sum_subject').innerText = subject || '--';
                 document.getElementById('sum_teacher_pref').innerText = prefTeacher || 'أي منهما';
                 document.getElementById('sum_loc').innerText = prefLoc || '--';
