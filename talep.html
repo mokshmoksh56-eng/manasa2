@@ -858,6 +858,10 @@
       window.fsGetDoc = getDoc;
       window.fsSetDoc = setDoc;
       window.fsLimit = limit;
+      window.fsQuery = query;
+      window.fsWhere = where;
+      window.fsCollection = collection;
+      window.fsGetDocs = getDocs;
 
       console.log("✅ Firebase + Firestore جاهز في talep.html");
     </script>
@@ -897,6 +901,67 @@
         // ✅ Pagination للمعلمين
         const TEACHERS_PAGE_SIZE = 100;
         let currentDisplayLimit = 100;
+
+        // تحميل عمر المعلم من ملف الحساب teachers باستخدام رقم الهاتف، مع دعم صيغ الأرقام المختلفة
+        const teacherProfileAgeCache = new Map();
+        function normalizeTeacherAge(value) {
+            if (value === null || value === undefined) return '';
+            const v = String(value).trim();
+            if (!v || v === 'غير محدد' || v === 'undefined' || v === 'null' || v === '0') return '';
+            return v;
+        }
+        function getAgeFromProfile(profile) {
+            if (!profile || typeof profile !== 'object') return '';
+            return normalizeTeacherAge(profile.age ?? profile.t_age ?? profile.teacherAge ?? profile.teacher_age ?? profile.g_age ?? profile.birthAge ?? profile.yearsOld);
+        }
+        async function getTeacherProfileAge(phone) {
+            const rawPhone = String(phone || '').trim();
+            const cleanPhone = rawPhone.replace(/\D/g, '');
+            if (!cleanPhone) return '';
+            if (teacherProfileAgeCache.has(cleanPhone)) return teacherProfileAgeCache.get(cleanPhone);
+            try {
+                if (!window.db || !window.fsGetDoc || !window.fsDoc) return '';
+
+                // الحسابات في المنصة محفوظة عادةً بمعرّف يساوي رقم الهاتف.
+                const ids = [...new Set([cleanPhone, rawPhone, cleanPhone.startsWith('20') ? '0' + cleanPhone.slice(2) : '20' + cleanPhone])];
+                for (const id of ids) {
+                    if (!id) continue;
+                    try {
+                        const snap = await window.fsGetDoc(window.fsDoc(window.db, 'teachers', id));
+                        if (snap && snap.exists()) {
+                            const age = getAgeFromProfile(snap.data());
+                            if (age) {
+                                teacherProfileAgeCache.set(cleanPhone, age);
+                                return age;
+                            }
+                        }
+                    } catch (e) { /* جرّب صيغة رقم أخرى */ }
+                }
+
+                // احتياط: بعض السجلات يكون رقم الهاتف داخل الحقول وليس معرّف المستند.
+                if (window.fsCollection && window.fsQuery && window.fsWhere && window.fsGetDocs) {
+                    for (const candidate of [...new Set([cleanPhone, rawPhone])]) {
+                        try {
+                            const q = window.fsQuery(window.fsCollection(window.db, 'teachers'), window.fsWhere('phone', '==', candidate));
+                            const results = await window.fsGetDocs(q);
+                            if (results && !results.empty) {
+                                for (const d of results.docs) {
+                                    const age = getAgeFromProfile(d.data());
+                                    if (age) {
+                                        teacherProfileAgeCache.set(cleanPhone, age);
+                                        return age;
+                                    }
+                                }
+                            }
+                        } catch (e) { /* تجاهل صيغة البحث غير المتاحة */ }
+                    }
+                }
+            } catch (e) {
+                console.warn('تعذر تحميل عمر المعلم من ملف الحساب:', e);
+            }
+            teacherProfileAgeCache.set(cleanPhone, '');
+            return '';
+        }
 
         // ✅ كاش التقييمات
         const RATINGS_CACHE_KEY = 'ratings_cache_v1';
@@ -1325,7 +1390,7 @@
             const state = docSnap.data();
             const lessonId = docSnap.id;
 
-            let teacherAge = state.t_age || state.age || 'غير محدد';
+            let teacherAge = state.t_age || state.age || state.teacherAge || state.teacher_age || state.g_age || 'غير محدد';
 
             let subjectsText = '';
             if (state.selectedSubjects && Array.isArray(state.selectedSubjects) && state.selectedSubjects.length > 0) {
@@ -2929,6 +2994,11 @@
             if (!targetTeacher) return;
 
             const t = targetTeacher;
+            // بعض المجموعات القديمة لا تحتوي على العمر؛ نقرأه من حساب المدرس عند فتح البطاقة فقط
+            if (!t.age || String(t.age).trim() === 'غير محدد' || String(t.age).trim() === '0') {
+                const profileAge = await getTeacherProfileAge(t.phone || t.teacherPhone || t.phoneNumber || '');
+                if (profileAge) t.age = profileAge;
+            }
             const isMs = (t.gender === 'مس');
             const emoji = isMs ? '👩‍🏫' : '👨‍🏫';
 
@@ -2940,7 +3010,7 @@
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
                 <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${t.grade || 'غير محدد'}</span></div>
                 <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
-                <div class="teacher-info-row"><span>🎂 العمر</span><span>${t.age} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
+                <div class="teacher-info-row"><span>🎂 العمر</span><span>${(t.age && String(t.age).trim() !== 'غير محدد') ? `${String(t.age).replace(/[<>]/g, '')} سنة` : 'غير مسجل في الحساب'}</span></div>
                 <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
                 <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
                 <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
