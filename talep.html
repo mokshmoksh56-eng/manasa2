@@ -1476,9 +1476,9 @@
             };
         }
 
-        // ✅ كاش المعلمين — TTL 20 دقيقة
+        // ✅ كاش المعلمين المحلي — TTL 24 ساعة، مع جلب عند الطلب
         const TEACHERS_CACHE_KEY = 'teachers_cache_v1';
-        const TEACHERS_CACHE_TTL = 20 * 60 * 1000;
+        const TEACHERS_CACHE_TTL = 24 * 60 * 60 * 1000;
 
         async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
@@ -1495,39 +1495,29 @@
                 return;
             }
 
-            // ✅ 1) تحقق من الكاش أولاً — صفر قراءات من Firestore
+            // استخدام الكاش المحلي أولًا لتجنب قراءة Firestore عند تكرار البحث.
             try {
                 const raw = localStorage.getItem(TEACHERS_CACHE_KEY);
                 if (raw) {
                     const cache = JSON.parse(raw);
                     if (cache.stage === stage && cache.grade === grade &&
                         (Date.now() - cache.ts) < TEACHERS_CACHE_TTL) {
-                        console.log("💾 استخدام كاش المعلمين المحلي — 0 قراءة");
                         cachedTeachersList = cache.list || [];
                         cachedTeachersHiddenCount = cache.hidden || 0;
                         cacheReady = true;
-
-                        if (currentCenter && map) {
-                            renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
-                        }
+                        if (currentCenter && map) renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
                         const liveIndicator = document.getElementById('liveIndicator');
                         if (liveIndicator) liveIndicator.classList.add('show');
                         return;
                     }
                 }
-            } catch (e) {}
+            } catch (e) { console.warn('تعذر قراءة كاش المعلمين', e); }
 
             const mod = await loadFirebaseModule();
             if (!mod) return;
 
-            if (teachersRealtimeUnsub) {
-                try { teachersRealtimeUnsub(); } catch(e) {}
-                teachersRealtimeUnsub = null;
-            }
-
-            console.log("🔴 قراءة من Firestore (كاش منتهي أو جديد)...");
-
-            // ✅ 2) limit(300) — الحد الأقصى للقراءة
+            // لا نستخدم onSnapshot هنا: getDocs ينفذ قراءة عند الحاجة فقط ولا يبقي اتصالًا لحظيًا.
+            if (teachersRealtimeUnsub) { try { teachersRealtimeUnsub(); } catch(e) {} teachersRealtimeUnsub = null; }
             const q = mod.query(
                 mod.collection(mod.db, "lessons"),
                 mod.where("g_publish_map", "==", true),
@@ -1536,76 +1526,31 @@
                 mod.limit(300)
             );
 
-            teachersRealtimeUnsub = mod.onSnapshot(q, (snapshot) => {
-                console.log(`🔄 [Realtime] عدد الحصص المنشورة: ${snapshot.size}`);
-
+            try {
+                const snapshot = await mod.getDocs(q);
                 cachedTeachersList = [];
                 cachedTeachersHiddenCount = 0;
-
                 snapshot.forEach(docSnap => {
                     const state = docSnap.data();
-                    if (state.g_publish_map === false) {
-                        cachedTeachersHiddenCount++;
-                        return;
-                    }
+                    if (state.g_publish_map === false) { cachedTeachersHiddenCount++; return; }
                     cachedTeachersList.push(parseTeacherDoc(docSnap));
                 });
-
                 cachedTeachersStageKey = stage;
                 cachedTeachersGrade = grade;
                 cacheReady = true;
-
-                // ✅ 3) خزّن في الكاش المحلي
                 try {
                     localStorage.setItem(TEACHERS_CACHE_KEY, JSON.stringify({
-                        stage: stage,
-                        grade: grade,
-                        list: cachedTeachersList,
-                        hidden: cachedTeachersHiddenCount,
-                        ts: Date.now()
+                        stage, grade, list: cachedTeachersList,
+                        hidden: cachedTeachersHiddenCount, ts: Date.now()
                     }));
                 } catch (e) {}
-
                 const liveIndicator = document.getElementById('liveIndicator');
-                if (!currentCenter || !map) {
-                    isFirstTeachersSnapshot = false;
-                    return;
-                }
-
-                const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
-                if (cardOpen && !isFirstTeachersSnapshot) {
-                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
-                    return;
-                }
-
-                if (liveIndicator) {
-                    liveIndicator.classList.add('show');
-                    if (!isFirstTeachersSnapshot) {
-                        liveIndicator.classList.add('updating');
-                        const textEl = liveIndicator.querySelector('span:last-child');
-                        if (textEl) textEl.textContent = 'جاري التحديث...';
-                        
-                        setTimeout(() => {
-                            liveIndicator.classList.remove('updating');
-                            if (textEl) textEl.textContent = 'مباشر';
-                        }, 1500);
-                    }
-                }
-
-                renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
-
-                if (!isFirstTeachersSnapshot) {
-                    showToast(`🔄 تم تحديث المعلمين على الخريطة`);
-                }
-                isFirstTeachersSnapshot = false;
-
-            }, (error) => {
-                console.error("❌ خطأ في المزامنة اللحظية للمعلمين:", error);
-                const liveIndicator = document.getElementById('liveIndicator');
-                if (liveIndicator) {
-                    liveIndicator.classList.remove('show');
-                }
-            });
+                if (liveIndicator) liveIndicator.classList.add('show');
+                if (currentCenter && map) renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
+            } catch (error) {
+                console.error('خطأ في تحميل المعلمين:', error);
+                showToast('تعذر تحميل المعلمين. تحقق من الاتصال ثم اضغط تحديث القائمة.');
+            }
         }
 
         // ✅ زر تحديث يدوي — يمسح الكاش ويقرأ من جديد
@@ -2707,11 +2652,14 @@
 
         function initMap() {
             if (!map) {
-                map = L.map('map', { zoomControl: false, maxZoom: 18 });
+                map = L.map('map', { zoomControl: false, maxZoom: 16, preferCanvas: true });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 
                 L.tileLayer('https://api.mapbox.com/styles/v1/mokshmoksh/cmvse1evw003r01sbgobebl0l/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A', {
-                    maxZoom: 18,
+                    maxZoom: 16,
+                    updateWhenIdle: true,
+                    updateWhenZooming: false,
+                    keepBuffer: 1,
                     attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
                 
@@ -2721,7 +2669,7 @@
                     showCoverageOnHover: false,
                     zoomToBoundsOnClick: true,
                     spiderfyDistanceMultiplier: 1.5,
-                    disableClusteringAtZoom: 18
+                    disableClusteringAtZoom: 16
                 }).addTo(map);
 
                 map.on('click', function() {
