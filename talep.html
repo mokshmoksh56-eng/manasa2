@@ -647,6 +647,49 @@
                 </div>
             </div>
 
+            <div class="smart-card" id="studentScheduleFilter" style="margin-top:14px;border:1px solid #BFDBFE;background:#F8FBFF;padding:14px;border-radius:14px;">
+                <button type="button" id="studentScheduleToggle" class="student-schedule-toggle" aria-expanded="false" aria-controls="studentScheduleBody" onclick="toggleStudentSchedule()">
+                    <span class="student-schedule-heading"><span>🗓️</span> المواعيد المناسبة لك <small>(اختياري)</small></span>
+                    <span class="student-schedule-chevron" id="studentScheduleChevron">＋</span>
+                </button>
+                <div id="studentScheduleBody" hidden>
+                <p style="font-size:12px;color:#475569;font-weight:700;margin-bottom:10px">اختار أكثر من يوم، وحدد وقت البداية والنهاية من القوائم المنسدلة. يمكنك تمرير القائمة لأعلى ولأسفل واختيار أكثر من فترة.</p>
+                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px" id="studentDaysChoices">
+                    <label class="schedule-day"><input type="checkbox" value="السبت"> السبت</label>
+                    <label class="schedule-day"><input type="checkbox" value="الأحد"> الأحد</label>
+                    <label class="schedule-day"><input type="checkbox" value="الإثنين"> الإثنين</label>
+                    <label class="schedule-day"><input type="checkbox" value="الثلاثاء"> الثلاثاء</label>
+                    <label class="schedule-day"><input type="checkbox" value="الأربعاء"> الأربعاء</label>
+                    <label class="schedule-day"><input type="checkbox" value="الخميس"> الخميس</label>
+                    <label class="schedule-day"><input type="checkbox" value="الجمعة"> الجمعة</label>
+                </div>
+                <div style="margin-top:12px;font-size:12px;font-weight:900;color:#1E3A8A">⏰ الفترات المناسبة</div>
+                <div id="studentTimeRanges" style="display:grid;gap:8px;margin-top:7px">
+                    <div class="student-time-row"><label>من <select class="student-time-start" aria-label="وقت البداية"></select></label><label>إلى <select class="student-time-end" aria-label="وقت النهاية"></select></label><button type="button" class="remove-time-range" onclick="removeStudentTimeRange(this)" title="حذف الفترة">×</button></div>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px">
+                    <button type="button" onclick="addStudentTimeRange()" style="border:1px solid #93C5FD;background:#EFF6FF;color:#1D4ED8;border-radius:9px;padding:8px 11px;font-weight:900;font-size:12px">＋ إضافة فترة أخرى</button>
+                    <button type="button" onclick="clearStudentSchedule()" style="border:1px solid #CBD5E1;background:#fff;color:#475569;border-radius:9px;padding:8px 11px;font-weight:900;font-size:12px">مسح المواعيد</button>
+                </div>
+                <div style="font-size:11px;color:#64748B;margin-top:8px">سيتم اعتبار الموعد مناسبًا إذا تداخل وقت المجموعة مع إحدى الفترات التي اخترتها. اترك الأيام والفترات دون تحديد لتعطيل فلتر المواعيد.</div>
+                </div>
+            </div>
+            <style>
+                .student-schedule-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;background:transparent;padding:2px 0;cursor:pointer;text-align:right;color:#1E3A8A;font:inherit;min-height:28px}
+                .student-schedule-heading{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:900}
+                .student-schedule-heading small{font-size:11px;color:#64748B;font-weight:700}
+                .student-schedule-chevron{display:flex;align-items:center;justify-content:center;flex:0 0 25px;width:25px;height:25px;border-radius:7px;background:#DBEAFE;color:#1D4ED8;font-size:18px;font-weight:900}
+                #studentScheduleBody{padding-top:10px}
+                #studentScheduleBody[hidden]{display:none!important}
+                .schedule-day{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid #CBD5E1;border-radius:9px;padding:8px 6px;font-size:12px;font-weight:800;color:#334155}
+                .schedule-day input{accent-color:#2563EB}
+                .student-time-row{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #CBD5E1;border-radius:10px;padding:8px;flex-wrap:wrap}
+                .student-time-row label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:#334155;flex:1;min-width:120px}
+                .student-time-row select{min-width:0;width:100%;padding:8px 6px;border:1px solid #CBD5E1;border-radius:7px;color:#0F172A;background:#F8FAFC;font:inherit;cursor:pointer}
+                .student-time-row select:focus{outline:2px solid #93C5FD;border-color:#2563EB}
+                .remove-time-range{border:0;background:#FEE2E2;color:#B91C1C;border-radius:8px;width:30px;height:30px;font-weight:900;font-size:18px}
+            </style>
+
             <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="triggerLocationFlow()">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor" style="width: 18px; height: 18px;">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
@@ -3107,6 +3150,88 @@
         };
 
         // ✅ دالة عرض المعلمين — تقرأ من الكاش + pagination 100
+        function toggleStudentSchedule(forceOpen) {
+            const body = document.getElementById('studentScheduleBody');
+            const toggle = document.getElementById('studentScheduleToggle');
+            const chevron = document.getElementById('studentScheduleChevron');
+            if (!body || !toggle) return;
+            const open = typeof forceOpen === 'boolean' ? forceOpen : body.hidden;
+            body.hidden = !open;
+            toggle.setAttribute('aria-expanded', String(open));
+            if (chevron) chevron.textContent = open ? '−' : '＋';
+        }
+
+        function studentTimeOptionsHtml() {
+            let html = '<option value="">اختار الوقت</option>';
+            for (let minutes = 6 * 60; minutes <= 23 * 60 + 30; minutes += 30) {
+                const h24 = Math.floor(minutes / 60), min = minutes % 60;
+                const suffix = h24 < 12 ? 'ص' : 'م';
+                let h12 = h24 % 12;
+                if (h12 === 0) h12 = 12;
+                const value = String(h24).padStart(2, '0') + ':' + String(min).padStart(2, '0');
+                const label = h12 + ':' + String(min).padStart(2, '0') + ' ' + suffix;
+                html += '<option value="' + value + '">' + label + '</option>';
+            }
+            return html;
+        }
+        function initStudentTimeSelects(root) {
+            (root || document).querySelectorAll('.student-time-start, .student-time-end').forEach(select => {
+                if (!select.options.length) select.innerHTML = studentTimeOptionsHtml();
+            });
+        }
+        function addStudentTimeRange() {
+            const wrap = document.getElementById('studentTimeRanges');
+            if (!wrap || wrap.children.length >= 6) { showToast('يمكنك إضافة حتى 6 فترات زمنية.', true); return; }
+            const row = document.createElement('div');
+            row.className = 'student-time-row';
+            row.innerHTML = '<label>من <select class="student-time-start" aria-label="وقت البداية"></select></label><label>إلى <select class="student-time-end" aria-label="وقت النهاية"></select></label><button type="button" class="remove-time-range" onclick="removeStudentTimeRange(this)" title="حذف الفترة">×</button>';
+            wrap.appendChild(row);
+            initStudentTimeSelects(row);
+        }
+        initStudentTimeSelects();
+        function removeStudentTimeRange(btn) {
+            const wrap = document.getElementById('studentTimeRanges');
+            if (wrap && wrap.children.length > 1) btn.closest('.student-time-row').remove();
+            else if (btn && btn.closest('.student-time-row')) { btn.closest('.student-time-row').querySelector('.student-time-start').value=''; btn.closest('.student-time-row').querySelector('.student-time-end').value=''; }
+        }
+        function clearStudentSchedule() {
+            document.querySelectorAll('#studentDaysChoices input[type="checkbox"]').forEach(el => el.checked = false);
+            const wrap = document.getElementById('studentTimeRanges');
+            if (wrap) { wrap.innerHTML = ''; }
+            addStudentTimeRange();
+            if (currentCenter && map) renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value, 10));
+            showToast('تم مسح فلتر المواعيد.');
+        }
+        function normalizeScheduleDay(value) {
+            return String(value || '').trim().replace(/[أإآ]/g, 'ا').replace(/ى/g, 'ي').replace(/ة/g, 'ه').replace(/\s+/g, ' ');
+        }
+        function timeToMinutes(value) {
+            if (!value || value === '--:--') return null;
+            const m = String(value).trim().match(/(\d{1,2})\s*:\s*(\d{1,2})\s*(ص|م|AM|PM)?/i);
+            if (!m) return null;
+            let h = parseInt(m[1],10), min = parseInt(m[2],10), ap = (m[3] || '').toLowerCase();
+            if (ap === 'م' || ap === 'pm') { if (h < 12) h += 12; }
+            else if (ap === 'ص' || ap === 'am') { if (h === 12) h = 0; }
+            if (h > 23 || min > 59) return null;
+            return h * 60 + min;
+        }
+        function studentScheduleMatches(teacher) {
+            const selectedDays = Array.from(document.querySelectorAll('#studentDaysChoices input:checked')).map(el => normalizeScheduleDay(el.value));
+            const ranges = Array.from(document.querySelectorAll('#studentTimeRanges .student-time-row')).map(row => {
+                const a = row.querySelector('.student-time-start')?.value;
+                const b = row.querySelector('.student-time-end')?.value;
+                return a && b ? [timeToMinutes(a), timeToMinutes(b)] : null;
+            }).filter(r => r && r[0] !== null && r[1] !== null && r[1] > r[0]);
+            if (!selectedDays.length && !ranges.length) return true;
+            const teacherDays = String(teacher.days || '').split(/[،,؛;]/).map(normalizeScheduleDay).filter(Boolean);
+            if (selectedDays.length && (!teacherDays.length || !selectedDays.some(day => teacherDays.some(td => td === day || td.includes(day) || day.includes(td))))) return false;
+            if (ranges.length) {
+                const start = timeToMinutes(teacher.startTime), end = timeToMinutes(teacher.endTime);
+                if (start === null || end === null || !ranges.some(r => start < r[1] && end > r[0])) return false;
+            }
+            return true;
+        }
+
         async function renderRegisteredTeachersFromEnd(centerPos, radiusInMeters) {
             const stageCheck = document.getElementById('s_stage').value;
             const gradeCheck = document.getElementById('s_grade').value;
@@ -3142,6 +3267,7 @@
             const matched = registeredList.filter(t => {
                 if (!isTeacherSubjectMatches(t, selectedSubject, selectedGrade)) return false;
                 if (!isTeacherGenderMatches(t.allowedGender, studentGender)) return false;
+                if (!studentScheduleMatches(t)) return false;
 
                 if (selectedStageKey) {
                     const tStageKey = String(t.stageKey || '').trim();
@@ -3165,9 +3291,12 @@
             });
 
             if (matched.length === 0) {
-                const noMatchMsg = prefLocValue
+                const hasScheduleFilter = document.querySelectorAll('#studentDaysChoices input:checked').length > 0 || Array.from(document.querySelectorAll('#studentTimeRanges .student-time-row')).some(row => row.querySelector('.student-time-start')?.value && row.querySelector('.student-time-end')?.value);
+                const noMatchMsg = hasScheduleFilter
+                    ? 'لا توجد مجموعات تطابق مواعيدك المختارة مع باقي شروط البحث. جرّب أيامًا أو فترات أخرى أو امسح فلتر المواعيد.'
+                    : (prefLocValue
                     ? `لا يوجد معلم يطابق (${selectedSubject} - ${selectedGrade} - ${prefLocValue}) حالياً!`
-                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`;
+                    : `لا يوجد معلم مسجل يطابق (${selectedSubject} - ${selectedGrade}) حالياً!`);
                 showToast(noMatchMsg, true);
                 return;
             }
