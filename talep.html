@@ -1386,6 +1386,36 @@
             });
         }
 
+        // عرض الصف الابتدائي باسمه الكامل في بطاقات المعلمين على الخريطة
+        function formatTeacherGradeForCard(teacher) {
+            const grade = String((teacher && teacher.grade) || '').trim();
+            if (!grade) return 'غير محدد';
+
+            const stageKey = String((teacher && teacher.stageKey) || '').trim().toLowerCase();
+            const stageName = String((teacher && teacher.stageName) || '').trim();
+            const isPrimary = stageKey === 'primary' ||
+                stageName.includes('الابتدائية') ||
+                stageName.includes('ابتدائي');
+
+            if (isPrimary) {
+                const primaryGrades = {
+                    'الأول': 'الأول الابتدائي',
+                    'الاول': 'الأول الابتدائي',
+                    'الثاني': 'الثاني الابتدائي',
+                    'الثالث': 'الثالث الابتدائي',
+                    'الرابع': 'الرابع الابتدائي',
+                    'الخامس': 'الخامس الابتدائي',
+                    'السادس': 'السادس الابتدائي'
+                };
+                return primaryGrades[grade] || (
+                    /^(الأول|الاول|الثاني|الثالث|الرابع|الخامس|السادس)$/.test(grade)
+                        ? grade + ' الابتدائي'
+                        : grade
+                );
+            }
+            return grade;
+        }
+
         function parseTeacherDoc(docSnap) {
             const state = docSnap.data();
             const lessonId = docSnap.id;
@@ -1916,9 +1946,7 @@
                 const sortedGrades = getSortedGrades(stage);
                 
                 sortedGrades.forEach(g => {
-                    // إظهار اسم الصف كاملًا في المرحلة الابتدائية مع الحفاظ على القيمة القديمة للتوافق مع بيانات المعلمين.
-                    const gradeLabel = stage === 'primary' && !/الابتدائي/.test(g) ? `${g} الابتدائي` : g;
-                    gSelect.innerHTML += `<option value="${g}">${gradeLabel}</option>`;
+                    gSelect.innerHTML += `<option value="${g}">${g}</option>`;
                 });
                 gSelect.disabled = false;
 
@@ -2184,8 +2212,7 @@
             if (grade && subject) {
                 document.getElementById('studentSummaryCard').style.display = 'block';
                 document.getElementById('sum_name').innerText = name || 'بدون اسم';
-                const gradeLabel = stage === 'primary' && grade && !/الابتدائي/.test(grade) ? `${grade} الابتدائي` : grade;
-                document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? gradeLabel : `${stage} - ${gradeLabel}`) : '--';
+                document.getElementById('sum_grade').innerText = grade ? (stage.includes('--') ? grade : `${stage} - ${grade}`) : '--';
                 document.getElementById('sum_subject').innerText = subject || '--';
                 document.getElementById('sum_teacher_pref').innerText = prefTeacher || 'أي منهما';
                 document.getElementById('sum_loc').innerText = prefLoc || '--';
@@ -2572,7 +2599,7 @@
                                     <div class="loc-icon" style="background: ${t.gender === 'مس' ? '#FCE7F3' : '#DBEAFE'}; color: ${t.gender === 'مس' ? '#9D174D' : '#1E40AF'};">${iconEmoji}</div>
                                     <div>
                                         <span class="loc-name" style="display: block;">أ/ ${t.name} ${t.groupName ? `(${t.groupName})` : ''}</span>
-                                        <span style="font-size: 10px; color: #64748B; font-weight: 800; display: block;">${t.subject} - ${t.grade}</span>
+                                        <span style="font-size: 10px; color: #64748B; font-weight: 800; display: block;">${t.subject} - ${formatTeacherGradeForCard(t)}</span>
                                         <span style="font-size: 11px; color: #0D9488; font-weight: 900; display: block; margin-top: 2px;" dir="ltr">📱 ${displayPhone}</span>
                                     </div>
                                 </div>
@@ -3011,7 +3038,7 @@
             body.innerHTML = `
                 <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
-                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${t.grade || 'غير محدد'}</span></div>
+                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${formatTeacherGradeForCard(t)}</span></div>
                 <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
                 <div class="teacher-info-row"><span>🎂 العمر</span><span>${(t.age && String(t.age).trim() !== 'غير محدد') ? `${String(t.age).replace(/[<>]/g, '')} سنة` : 'غير مسجل في الحساب'}</span></div>
                 <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
