@@ -647,14 +647,15 @@
                 </div>
             </div>
 
-            <div class="smart-card" id="studentScheduleFilter" style="margin-top:14px;border:1px solid #BFDBFE;background:#F8FBFF;padding:14px;border-radius:14px;">
+            <section class="smart-card student-schedule-card" id="studentScheduleFilter" aria-label="فلتر المواعيد المناسبة">
                 <button type="button" id="studentScheduleToggle" class="student-schedule-toggle" aria-expanded="false" aria-controls="studentScheduleBody" onclick="toggleStudentSchedule()">
-                    <span class="student-schedule-heading"><span>🗓️</span> المواعيد المناسبة لك <small>(اختياري)</small></span>
-                    <span class="student-schedule-chevron" id="studentScheduleChevron">＋</span>
+                    <span class="student-schedule-icon" aria-hidden="true">🗓️</span>
+                    <span class="student-schedule-title-wrap"><span class="student-schedule-heading">المواعيد المناسبة لك <small>اختياري</small></span><span class="student-schedule-subtitle" id="studentScheduleSummary">حدد أيامك وأوقاتك لتصفية النتائج</span></span>
+                    <span class="student-schedule-chevron" id="studentScheduleChevron" aria-hidden="true">＋</span>
                 </button>
                 <div id="studentScheduleBody" hidden>
-                <p style="font-size:12px;color:#475569;font-weight:700;margin-bottom:10px">اختار أكثر من يوم، وحدد وقت البداية والنهاية من القوائم المنسدلة. يمكنك تمرير القائمة لأعلى ولأسفل واختيار أكثر من فترة.</p>
-                <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px" id="studentDaysChoices">
+                <p class="student-schedule-help">اختار أكثر من يوم، وحدد وقت البداية والنهاية. تقدر تضيف أكثر من فترة زمنية.</p>
+                <div class="student-days-grid" id="studentDaysChoices">
                     <label class="schedule-day"><input type="checkbox" value="السبت"> السبت</label>
                     <label class="schedule-day"><input type="checkbox" value="الأحد"> الأحد</label>
                     <label class="schedule-day"><input type="checkbox" value="الإثنين"> الإثنين</label>
@@ -663,31 +664,50 @@
                     <label class="schedule-day"><input type="checkbox" value="الخميس"> الخميس</label>
                     <label class="schedule-day"><input type="checkbox" value="الجمعة"> الجمعة</label>
                 </div>
-                <div style="margin-top:12px;font-size:12px;font-weight:900;color:#1E3A8A">⏰ الفترات المناسبة</div>
-                <div id="studentTimeRanges" style="display:grid;gap:8px;margin-top:7px">
+                <div class="student-time-section-title">⏰ الفترات المناسبة</div>
+                <div id="studentTimeRanges" class="student-time-ranges">
                     <div class="student-time-row"><label>من <select class="student-time-start" aria-label="وقت البداية"></select></label><label>إلى <select class="student-time-end" aria-label="وقت النهاية"></select></label><button type="button" class="remove-time-range" onclick="removeStudentTimeRange(this)" title="حذف الفترة">×</button></div>
                 </div>
-                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:9px">
-                    <button type="button" onclick="addStudentTimeRange()" style="border:1px solid #93C5FD;background:#EFF6FF;color:#1D4ED8;border-radius:9px;padding:8px 11px;font-weight:900;font-size:12px">＋ إضافة فترة أخرى</button>
-                    <button type="button" onclick="clearStudentSchedule()" style="border:1px solid #CBD5E1;background:#fff;color:#475569;border-radius:9px;padding:8px 11px;font-weight:900;font-size:12px">مسح المواعيد</button>
+                <div class="student-schedule-actions">
+                    <button type="button" class="student-add-range" onclick="addStudentTimeRange()">＋ إضافة فترة أخرى</button>
+                    <button type="button" class="student-clear-schedule" onclick="clearStudentSchedule()">مسح المواعيد</button>
                 </div>
-                <div style="font-size:11px;color:#64748B;margin-top:8px">سيتم اعتبار الموعد مناسبًا إذا تداخل وقت المجموعة مع إحدى الفترات التي اخترتها. اترك الأيام والفترات دون تحديد لتعطيل فلتر المواعيد.</div>
+                <div class="student-schedule-note">سيتم عرض المجموعات التي تتوافق مع الأيام والأوقات التي اخترتها. اترك الاختيارات فارغة إذا لم ترغب في استخدام الفلتر.</div>
                 </div>
-            </div>
+            </section>
             <style>
-                .student-schedule-toggle{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;border:0;background:transparent;padding:2px 0;cursor:pointer;text-align:right;color:#1E3A8A;font:inherit;min-height:28px}
-                .student-schedule-heading{display:flex;align-items:center;gap:7px;font-size:14px;font-weight:900}
-                .student-schedule-heading small{font-size:11px;color:#64748B;font-weight:700}
-                .student-schedule-chevron{display:flex;align-items:center;justify-content:center;flex:0 0 25px;width:25px;height:25px;border-radius:7px;background:#DBEAFE;color:#1D4ED8;font-size:18px;font-weight:900}
-                #studentScheduleBody{padding-top:10px}
+                .student-schedule-card{margin-top:12px!important;padding:0!important;overflow:hidden;border:1px solid #dbeafe!important;border-radius:16px!important;background:linear-gradient(145deg,#ffffff 0%,#f5f9ff 100%)!important;box-shadow:0 5px 18px rgba(30,64,175,.06)}
+                .student-schedule-toggle{width:100%;display:flex;align-items:center;gap:10px;border:0;background:transparent;padding:11px 12px;cursor:pointer;text-align:right;color:#0f2f69;font:inherit;min-height:58px;touch-action:manipulation}
+                .student-schedule-toggle:focus-visible{outline:3px solid #93c5fd;outline-offset:-3px;border-radius:14px}
+                .student-schedule-icon{display:flex;align-items:center;justify-content:center;flex:0 0 38px;width:38px;height:38px;border-radius:12px;background:linear-gradient(145deg,#dbeafe,#eff6ff);font-size:20px;box-shadow:inset 0 0 0 1px #bfdbfe}
+                .student-schedule-title-wrap{display:flex;flex:1;min-width:0;flex-direction:column;gap:3px}
+                .student-schedule-heading{display:flex;align-items:center;gap:7px;flex-wrap:wrap;font-size:14px;font-weight:900;line-height:1.4}
+                .student-schedule-heading small{font-size:10px;color:#1d4ed8;background:#eaf2ff;border:1px solid #d4e5ff;padding:2px 7px;border-radius:999px;font-weight:800}
+                .student-schedule-subtitle{font-size:11px;line-height:1.45;color:#64748b;font-weight:600}
+                .student-schedule-chevron{display:flex;align-items:center;justify-content:center;flex:0 0 30px;width:30px;height:30px;border-radius:10px;background:#e0edff;color:#1d4ed8;font-size:19px;font-weight:800;transition:transform .2s ease,background .2s ease}
+                .student-schedule-toggle[aria-expanded="true"] .student-schedule-chevron{background:#2563eb;color:#fff;transform:rotate(180deg)}
+                #studentScheduleBody{padding:0 12px 13px;animation:studentScheduleReveal .18s ease-out}
                 #studentScheduleBody[hidden]{display:none!important}
-                .schedule-day{display:flex;align-items:center;gap:5px;background:#fff;border:1px solid #CBD5E1;border-radius:9px;padding:8px 6px;font-size:12px;font-weight:800;color:#334155}
-                .schedule-day input{accent-color:#2563EB}
-                .student-time-row{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid #CBD5E1;border-radius:10px;padding:8px;flex-wrap:wrap}
-                .student-time-row label{display:flex;align-items:center;gap:5px;font-size:12px;font-weight:800;color:#334155;flex:1;min-width:120px}
-                .student-time-row select{min-width:0;width:100%;padding:8px 6px;border:1px solid #CBD5E1;border-radius:7px;color:#0F172A;background:#F8FAFC;font:inherit;cursor:pointer}
-                .student-time-row select:focus{outline:2px solid #93C5FD;border-color:#2563EB}
-                .remove-time-range{border:0;background:#FEE2E2;color:#B91C1C;border-radius:8px;width:30px;height:30px;font-weight:900;font-size:18px}
+                @keyframes studentScheduleReveal{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+                .student-schedule-help{font-size:12px;line-height:1.7;color:#52627a;font-weight:600;margin:0 0 11px}
+                .student-days-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px}
+                .schedule-day{display:flex;align-items:center;justify-content:center;gap:6px;min-height:38px;background:#fff;border:1px solid #dbe3ef;border-radius:11px;padding:7px 5px;font-size:12px;font-weight:800;color:#334155;cursor:pointer;transition:border-color .15s ease,background .15s ease,box-shadow .15s ease;touch-action:manipulation}
+                .schedule-day:has(input:checked){background:#eaf2ff;border-color:#60a5fa;color:#1d4ed8;box-shadow:inset 0 0 0 1px #bfdbfe}
+                .schedule-day input{accent-color:#2563eb;width:15px;height:15px;margin:0;flex:0 0 auto}
+                .student-time-section-title{margin-top:14px;font-size:12px;font-weight:900;color:#1e3a8a}
+                .student-time-ranges{display:grid;gap:8px;margin-top:8px}
+                .student-time-row{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr) 34px;align-items:center;gap:7px;background:#fff;border:1px solid #dbe5f2;border-radius:12px;padding:8px}
+                .student-time-row label{display:flex;flex-direction:column;align-items:stretch;gap:5px;font-size:11px;font-weight:800;color:#52627a;min-width:0}
+                .student-time-row select{min-width:0;width:100%;min-height:42px;padding:8px 7px;border:1px solid #d8e2ef;border-radius:9px;color:#0f172a;background:#f8fafc;font-size:13px;font-weight:700;cursor:pointer}
+                .student-time-row select:focus{outline:2px solid #93c5fd;outline-offset:1px;border-color:#2563eb}
+                .remove-time-range{border:0;background:#fff1f2;color:#be123c;border-radius:10px;width:34px;height:38px;font-weight:900;font-size:20px;cursor:pointer;align-self:end}
+                .student-schedule-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+                .student-add-range,.student-clear-schedule{min-height:40px;border-radius:10px;padding:9px 12px;font-size:12px;font-weight:900;cursor:pointer;touch-action:manipulation}
+                .student-add-range{border:1px solid #bfdbfe;background:#eff6ff;color:#1d4ed8;flex:1}
+                .student-clear-schedule{border:1px solid #e2e8f0;background:#fff;color:#475569}
+                .student-schedule-note{font-size:11px;line-height:1.7;color:#64748b;margin-top:10px}
+                @media(max-width:420px){.student-schedule-toggle{padding:10px}.student-schedule-icon{width:34px;height:34px;flex-basis:34px}.student-schedule-heading{font-size:13px}.student-schedule-subtitle{font-size:10px}.student-days-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.schedule-day{justify-content:flex-start;padding-inline:10px}.student-time-row{grid-template-columns:minmax(0,1fr) minmax(0,1fr) 32px;padding:7px;gap:6px}.student-time-row select{font-size:12px;padding:7px 4px}.student-add-range,.student-clear-schedule{flex:1}}
+                @media(prefers-reduced-motion:reduce){#studentScheduleBody,.student-schedule-chevron{animation:none;transition:none}}
             </style>
 
             <button class="btn-search clickable-element" id="searchBtn" style="margin-top: 15px;" onclick="triggerLocationFlow()">
@@ -3161,6 +3181,18 @@
             if (chevron) chevron.textContent = open ? '−' : '＋';
         }
 
+        function updateStudentScheduleSummary() {
+            const summary = document.getElementById('studentScheduleSummary');
+            if (!summary) return;
+            const days = document.querySelectorAll('#studentDaysChoices input:checked').length;
+            const ranges = Array.from(document.querySelectorAll('#studentTimeRanges .student-time-row')).filter(row => {
+                const start = row.querySelector('.student-time-start')?.value;
+                const end = row.querySelector('.student-time-end')?.value;
+                return start && end && timeToMinutes(end) > timeToMinutes(start);
+            }).length;
+            summary.textContent = days || ranges ? `تم اختيار ${days} أيام و${ranges} فترات` : 'حدد أيامك وأوقاتك لتصفية النتائج';
+        }
+
         function studentTimeOptionsHtml() {
             let html = '<option value="">اختار الوقت</option>';
             for (let minutes = 6 * 60; minutes <= 23 * 60 + 30; minutes += 30) {
@@ -3187,18 +3219,25 @@
             row.innerHTML = '<label>من <select class="student-time-start" aria-label="وقت البداية"></select></label><label>إلى <select class="student-time-end" aria-label="وقت النهاية"></select></label><button type="button" class="remove-time-range" onclick="removeStudentTimeRange(this)" title="حذف الفترة">×</button>';
             wrap.appendChild(row);
             initStudentTimeSelects(row);
+            row.querySelectorAll('select').forEach(select => select.addEventListener('change', updateStudentScheduleSummary));
+            updateStudentScheduleSummary();
         }
         initStudentTimeSelects();
+        document.querySelectorAll('#studentDaysChoices input[type="checkbox"]').forEach(input => input.addEventListener('change', updateStudentScheduleSummary));
+        document.querySelectorAll('#studentTimeRanges select').forEach(select => select.addEventListener('change', updateStudentScheduleSummary));
+        updateStudentScheduleSummary();
         function removeStudentTimeRange(btn) {
             const wrap = document.getElementById('studentTimeRanges');
             if (wrap && wrap.children.length > 1) btn.closest('.student-time-row').remove();
             else if (btn && btn.closest('.student-time-row')) { btn.closest('.student-time-row').querySelector('.student-time-start').value=''; btn.closest('.student-time-row').querySelector('.student-time-end').value=''; }
+            updateStudentScheduleSummary();
         }
         function clearStudentSchedule() {
             document.querySelectorAll('#studentDaysChoices input[type="checkbox"]').forEach(el => el.checked = false);
             const wrap = document.getElementById('studentTimeRanges');
             if (wrap) { wrap.innerHTML = ''; }
             addStudentTimeRange();
+            updateStudentScheduleSummary();
             if (currentCenter && map) renderRegisteredTeachersFromEnd(currentCenter, parseInt(document.getElementById('search_radius').value, 10));
             showToast('تم مسح فلتر المواعيد.');
         }
