@@ -800,6 +800,13 @@
     </script>
 
     <script>
+        // حماية النصوص القادمة من قاعدة البيانات أو التخزين المحلي قبل إدراجها داخل HTML.
+        function escapeHTML(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+            }[ch]));
+        }
+
         // ==========================================
         // 0. المتغيرات الأساسية
         // ==========================================
@@ -1760,7 +1767,7 @@
             sortedStages.forEach(stageKey => {
                 if (curr[stageKey]) {
                     const stageName = curr[stageKey].name || stageKey;
-                    stageSelect.innerHTML += `<option value="${stageKey}">${stageName}</option>`;
+                    stageSelect.innerHTML += `<option value="${escapeHTML(stageKey)}">${escapeHTML(stageName)}</option>`;
                 }
             });
 
@@ -1887,14 +1894,16 @@
 
             pills.innerHTML = subjs.map(s => {
                 const isActive = (s === selectedSubj);
-                const safeS = s.replace(/'/g, "\\'");
                 return `
-                    <button type="button" onclick="pickStudentSubjectPill('${safeS}')" class="student-subj-pill ${isActive ? 'active' : ''}">
+                    <button type="button" data-subject="${escapeHTML(s)}" class="student-subj-pill ${isActive ? 'active' : ''}">
                         <span>${isActive ? '✔' : '📘'}</span>
-                        <span>${s}</span>
+                        <span>${escapeHTML(s)}</span>
                     </button>
                 `;
             }).join('');
+            pills.querySelectorAll('[data-subject]').forEach(btn => {
+                btn.addEventListener('click', () => pickStudentSubjectPill(btn.dataset.subject));
+            });
         }
 
         function pickStudentSubjectPill(subjName) {
@@ -2440,8 +2449,8 @@
                                 <div class="loc-info">
                                     <div class="loc-icon" style="background: ${t.gender === 'مس' ? '#FCE7F3' : '#DBEAFE'}; color: ${t.gender === 'مس' ? '#9D174D' : '#1E40AF'};">${iconEmoji}</div>
                                     <div>
-                                        <span class="loc-name" style="display: block;">أ/ ${t.name} ${t.groupName ? `(${t.groupName})` : ''}</span>
-                                        <span style="font-size: 10px; color: #64748B; font-weight: 800; display: block;">${t.subject} - ${t.grade}</span>
+                                        <span class="loc-name" style="display: block;">أ/ ${t.name} ${t.groupName ? `(${escapeHTML(t.groupName)})` : ''}</span>
+                                        <span style="font-size: 10px; color: #64748B; font-weight: 800; display: block;">${escapeHTML(t.subject)} - ${t.grade}</span>
                                         <span style="font-size: 11px; color: #0D9488; font-weight: 900; display: block; margin-top: 2px;" dir="ltr">📱 ${displayPhone}</span>
                                     </div>
                                 </div>
@@ -2450,8 +2459,8 @@
                                 </button>
                             </div>
                             <div style="display: flex; width: 100%; border-top: 1px dashed #E2E8F0; padding-top: 6px; gap: 6px;">
-                                <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${t.subject}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
-                                <button class="action-btn clickable-element" onclick="openTeacherWhatsApp('${t.phone || ''}', '${t.name}', '${t.subject}', '${t.grade}', '${t.groupName || ''}')" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px;">💬 واتساب</button>
+                                <button class="action-btn clickable-element" onclick="shareTeacher('${t.name}', '${escapeHTML(t.subject)}', '${t.grade}', '${t.phone || ''}')" style="flex: 1; background: #EFF6FF; border: 1px solid #BFDBFE; border-bottom: 2px solid #93C5FD; color: #1D4ED8; font-size: 12px; padding: 6px;">🔗 مشاركة</button>
+                                <button class="action-btn clickable-element" onclick="openTeacherWhatsApp('${t.phone || ''}', '${t.name}', '${escapeHTML(t.subject)}', '${t.grade}', '${t.groupName || ''}')" style="flex: 2; background: #22C55E; border-bottom: 2px solid #16A34A; color: white; padding: 6px; font-size: 12px;">💬 واتساب</button>
                             </div>
                         </div>
                     `;
@@ -2873,41 +2882,48 @@
             const body = document.getElementById('teacherInfoCardBody');
 
             body.innerHTML = `
-                <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
-                <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
-                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${t.grade || 'غير محدد'}</span></div>
-                <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
-                <div class="teacher-info-row"><span>🎂 العمر</span><span>${t.age} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
-                <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${t.days}</span></div>
-                <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${t.startTime} - ${t.endTime}</span></div>
-                <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${t.locType}</span></div>
+                <div class="teacher-info-title">${emoji} أ/ ${escapeHTML(t.teacherName)}</div>
+                <div class="teacher-info-row"><span>👥 المجموعة</span><span>${escapeHTML(t.groupName)}</span></div>
+                <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${escapeHTML(t.grade || 'غير محدد')}</span></div>
+                <div class="teacher-info-row"><span>📚 المادة</span><span>${escapeHTML(t.subject)}</span></div>
+                <div class="teacher-info-row"><span>🎂 العمر</span><span>${escapeHTML(t.age)} ${t.age !== 'غير محدد' ? 'سنة' : ''}</span></div>
+                <div class="teacher-info-row"><span>📅 الأيام</span><span style="color:#2563EB;">${escapeHTML(t.days)}</span></div>
+                <div class="teacher-info-row"><span>⏰ الموعد</span><span style="color:#065F46;">${escapeHTML(t.startTime)} - ${escapeHTML(t.endTime)}</span></div>
+                <div class="teacher-info-row"><span>📍 نوع المكان</span><span style="color:#059669;">${escapeHTML(t.locType)}</span></div>
                 
                 <div class="teacher-info-address">
                     <span class="addr-label">🏠 العنوان التفصيلي</span>
-                    <span class="addr-value">${t.address || 'غير محدد'}</span>
+                    <span class="addr-value">${escapeHTML(t.address || 'غير محدد')}</span>
                 </div>
                 
                 <div class="teacher-info-row" style="background:#ECFDF5; border:1px solid #A7F3D0;">
                     <span>📱 التليفون</span>
                     ${t.phone 
-                        ? `<a href="tel:${t.phone}" style="color:#047857; font-weight:900; font-size:11px;" dir="ltr">📞 ${t.phone}</a>` 
+                        ? `<a href="tel:${escapeHTML(t.phone)}" style="color:#047857; font-weight:900; font-size:11px;" dir="ltr">📞 ${escapeHTML(t.phone)}</a>` 
                         : `<span style="color:#EF4444;">غير مسجل</span>`}
                 </div>
                 
-                <div id="ratingBlock_${lessonId}">
+                <div id="ratingBlock_${escapeHTML(lessonId)}">
                     <div class="reviews-empty">⏳ جاري تحميل التقييمات...</div>
                 </div>
 
                 <div class="teacher-info-actions">
-                    <button class="teacher-info-btn-save" onclick="saveTeacher('${t.teacherName}', '${t.subject}', '${t.grade}', '${t.locType}', '${t.phone}', '${t.gender}', '${t.groupName}')">⭐ حفظ</button>
-                    <button class="teacher-info-btn-wa" onclick="openTeacherWhatsApp('${t.phone}', '${t.teacherName}', '${t.subject}', '${t.grade}', '${t.groupName}')">💬 واتساب</button>
+                    <button type="button" class="teacher-info-btn-save" data-action="save-teacher">⭐ حفظ</button>
+                    <button type="button" class="teacher-info-btn-wa" data-action="teacher-whatsapp">💬 واتساب</button>
                 </div>
-                <button class="complaint-teacher-btn" onclick="openComplaintForTeacher('${String(t.teacherName).replace(/'/g, "\\'")}', '${String(t.subject).replace(/'/g, "\\'")}', '${String(t.groupName).replace(/'/g, "\\'")}')">
+                <button type="button" class="complaint-teacher-btn" data-action="teacher-complaint">
                     ⚠️ الإبلاغ عن مشكلة مع هذا المدرس
                 </button>
             `;
 
             card.classList.add('show');
+
+            const saveBtn = body.querySelector('[data-action="save-teacher"]');
+            if (saveBtn) saveBtn.addEventListener('click', () => saveTeacher(t.teacherName, t.subject, t.grade, t.locType, t.phone, t.gender, t.groupName));
+            const whatsappBtn = body.querySelector('[data-action="teacher-whatsapp"]');
+            if (whatsappBtn) whatsappBtn.addEventListener('click', () => openTeacherWhatsApp(t.phone || '', t.teacherName, t.subject, t.grade, t.groupName));
+            const complaintBtn = body.querySelector('[data-action="teacher-complaint"]');
+            if (complaintBtn) complaintBtn.addEventListener('click', () => openComplaintForTeacher(t.teacherName, t.subject, t.groupName));
 
             const ratings = await loadTeacherRatings(lessonId);
             currentRatingLessonId = lessonId;
@@ -2956,11 +2972,11 @@
                         <div class="review-item-header">
                             <span class="review-item-name">
                                 <span style="display:inline-block; width:12px; height:12px; background:#D1FAE5; color:#059669; border-radius:50%; text-align:center; line-height:12px; font-size:7px; margin-left:2px;">✓</span>
-                                ${r.studentName}
+                                ${escapeHTML(r.studentName)}
                             </span>
                             <span class="review-item-stars">${'★'.repeat(r.stars)}${'☆'.repeat(5 - r.stars)}</span>
                         </div>
-                        ${r.comment ? `<div class="review-item-comment">"${r.comment}"</div>` : ''}
+                        ${r.comment ? `<div class="review-item-comment">"${escapeHTML(r.comment)}"</div>` : ''}
                         <div class="review-item-date">${formatDate(r.createdAt)}</div>
                     </div>
                 `).join('');
@@ -2976,11 +2992,11 @@
             const ratingFormHtml = ratings.hasRated
                 ? `<div class="rating-already-rated">✅ لقد قمت بتقييم هذا المعلم مسبقاً</div>`
                 : `
-                    <div class="stars-input" id="starsInput_${lessonId}">
-                        ${[1,2,3,4,5].map(i => `<button class="star-btn" onclick="selectStar(${i})" data-star="${i}">★</button>`).join('')}
+                    <div class="stars-input" id="starsInput_${escapeHTML(lessonId)}">
+                        ${[1,2,3,4,5].map(i => `<button class="star-btn" data-star="${i}">★</button>`).join('')}
                     </div>
-                    <textarea id="ratingComment_${lessonId}" class="rating-comment-input" placeholder="تعليق (اختياري)..." rows="1"></textarea>
-                    <button id="ratingSubmitBtn_${lessonId}" class="rating-submit-btn" onclick="submitTeacherRating('${String(lessonId).replace(/'/g, "\\'")}', '${String(t.teacherName).replace(/'/g, "\\'")}', '${String(t.phone || '').replace(/'/g, "\\'")}')">
+                    <textarea id="ratingComment_${escapeHTML(lessonId)}" class="rating-comment-input" placeholder="تعليق (اختياري)..." rows="1"></textarea>
+                    <button id="ratingSubmitBtn_${escapeHTML(lessonId)}" class="rating-submit-btn" data-action="submit-rating">
                         ⭐ إرسال التقييم
                     </button>
                 `;
@@ -3008,6 +3024,11 @@
                     </div>
                 </div>
             `;
+            ratingBlock.querySelectorAll('[data-star]').forEach(btn => {
+                btn.addEventListener('click', () => selectStar(Number(btn.dataset.star)));
+            });
+            const submitRatingBtn = ratingBlock.querySelector('[data-action="submit-rating"]');
+            if (submitRatingBtn) submitRatingBtn.addEventListener('click', () => submitTeacherRating(lessonId, t.teacherName, t.phone || ''));
         };
 
         window.closeTeacherInfoCard = function() {
