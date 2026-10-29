@@ -2569,16 +2569,6 @@
                 map.on('click', function() {
                     closeTeacherInfoCard();
                 });
-
-                // إعادة عرض المدرسين الموجودين داخل الجزء الظاهر فقط بعد انتهاء تحريك الخريطة.
-                // تأخير بسيط يمنع تكرار إعادة العرض أثناء سحب الخريطة بسرعة.
-                map.on('moveend', function() {
-                    if (!currentCenter || !teachersLayer) return;
-                    if (teacherRenderTimer) clearTimeout(teacherRenderTimer);
-                    teacherRenderTimer = setTimeout(() => {
-                        renderRegisteredTeachersFromEnd(currentCenter, lastRenderRadius || 3000);
-                    }, 250);
-                });
             }
             setTimeout(() => { if (map) map.invalidateSize(); }, 100);
         }
@@ -3182,40 +3172,31 @@
                 return;
             }
 
-            // عرض المدرسين الموجودين داخل حدود الجزء الظاهر من الخريطة فقط.
-            // عند تحريك الخريطة، تختفي العلامات خارج الشاشة وتظهر علامات المنطقة الجديدة.
-            const visibleBounds = map.getBounds();
-            const matchedInView = matched.filter(t => {
-                const lat = Number(t.lat);
-                const lng = Number(t.lng);
-                return Number.isFinite(lat) && Number.isFinite(lng)
-                    && visibleBounds.contains([lat, lng]);
+            // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة
+            const matchedInRadius = matched.filter(t => {
+                const d = map.distance(centerPos, [t.lat, t.lng]);
+                return d <= radiusInMeters;
             });
 
-            if (matchedInView.length === 0) {
-                const loadMoreBtn = document.getElementById('loadMoreTeachersBtn');
-                if (loadMoreBtn) loadMoreBtn.style.display = 'none';
-                const remainingSpan = document.getElementById('remainingTeachersCount');
-                if (remainingSpan) remainingSpan.textContent = '0';
+            if (matchedInRadius.length === 0) {
                 showToast(
-                    `🔍 لا يوجد مدرسون مطابقون داخل الجزء الظاهر من الخريطة لـ (${selectedSubject} - ${selectedGrade}). حرّك الخريطة إلى منطقة أخرى.`,
+                    `🔍 لا يوجد أي معلم داخل هذا النطاق لـ (${selectedSubject} - ${selectedGrade}) — وسّع النطاق أو حرّك النقطة الزرقاء!`,
                     true
                 );
                 return;
             }
 
-            // ترتيب المدرسين من الأقرب إلى مركز الجزء الظاهر من الخريطة.
-            const visibleCenter = map.getCenter();
-            matchedInView.forEach(t => {
+            // ✅ حساب المسافة + الترتيب من الأقرب للأبعد
+            matchedInRadius.forEach(t => {
                 t.ratingSummary = { avg: t.ratingAvg || 0, count: t.ratingCount || 0 };
-                t._distance = map.distance(visibleCenter, [Number(t.lat), Number(t.lng)]);
+                t._distance = map.distance(centerPos, [t.lat, t.lng]);
             });
 
-            matchedInView.sort((a, b) => a._distance - b._distance);
+            matchedInRadius.sort((a, b) => a._distance - b._distance);
 
-            const totalInView = matchedInView.length;
-            const finalList = matchedInView.slice(0, currentDisplayLimit);
-            const remaining = Math.max(0, totalInView - currentDisplayLimit);
+            const totalInsideRadius = matchedInRadius.length;
+            const finalList = matchedInRadius.slice(0, currentDisplayLimit);
+            const remaining = Math.max(0, totalInsideRadius - currentDisplayLimit);
 
             // ✅ تحديث زر "عرض المزيد"
             const loadMoreBtn = document.getElementById('loadMoreTeachersBtn');
@@ -3289,9 +3270,9 @@
 
             vibrateSuccess();
             if (remaining > 0) {
-                showToast(`✨ عرضنا ${shownCount} مدرس داخل الجزء الظاهر من الخريطة من أصل ${totalInView} — اضغط "عرض المزيد" لرؤية الباقي`);
+                showToast(`✨ عرضنا أقرب ${shownCount} معلم من أصل ${totalInsideRadius} — اضغط "عرض المزيد" لرؤية الباقي`);
             } else {
-                showToast(`✨ تم العثور على (${shownCount}) مدرس داخل الجزء الظاهر من الخريطة لـ (${selectedSubject} - ${selectedGrade})`);
+                showToast(`✨ تم العثور على (${shownCount}) معلم داخل النطاق لـ (${selectedSubject} - ${selectedGrade})`);
             }
         }
 
