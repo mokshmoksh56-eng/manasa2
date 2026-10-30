@@ -1345,8 +1345,11 @@
             const daysText = (state.g_days && Array.isArray(state.g_days) && state.g_days.length > 0)
                 ? state.g_days.join('، ') : 'غير محدد';
 
-            const lat = state.lat ? parseFloat(state.lat) : 30.0444;
-            const lng = state.lng ? parseFloat(state.lng) : 31.2357;
+            // لا نخترع موقعاً افتراضياً للمدرس: بدون إحداثيات صحيحة لا يظهر ضمن نتائج النطاق.
+            const rawLat = state.lat ?? state.latitude ?? state.g_lat ?? null;
+            const rawLng = state.lng ?? state.longitude ?? state.g_lng ?? null;
+            const lat = rawLat !== null && String(rawLat).trim() !== '' ? Number(rawLat) : NaN;
+            const lng = rawLng !== null && String(rawLng).trim() !== '' ? Number(rawLng) : NaN;
 
             return {
                 lessonId: lessonId,
@@ -1378,6 +1381,31 @@
         // ✅ كاش المعلمين — TTL 20 دقيقة
         const TEACHERS_CACHE_KEY = 'teachers_cache_v1';
         const TEACHERS_CACHE_TTL = 20 * 60 * 1000;
+        const LAST_SEARCH_LOCATION_KEY = 'talep_last_search_location_v1';
+
+        // آخر مركز بحث يُحفظ محلياً على نفس الجهاز، دون بيانات موقع سحابية.
+        function saveLastSearchLocation(lat, lng) {
+            const latitude = Number(lat), longitude = Number(lng);
+            if (!Number.isFinite(latitude) || !Number.isFinite(longitude) ||
+                latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180) return;
+            try {
+                localStorage.setItem(LAST_SEARCH_LOCATION_KEY, JSON.stringify({
+                    lat: latitude, lng: longitude, savedAt: Date.now()
+                }));
+            } catch (e) {}
+        }
+
+        function getLastSearchLocation() {
+            try {
+                const saved = JSON.parse(localStorage.getItem(LAST_SEARCH_LOCATION_KEY) || 'null');
+                if (saved && Number.isFinite(Number(saved.lat)) && Number.isFinite(Number(saved.lng)) &&
+                    Number(saved.lat) >= -90 && Number(saved.lat) <= 90 &&
+                    Number(saved.lng) >= -180 && Number(saved.lng) <= 180) {
+                    return { lat: Number(saved.lat), lng: Number(saved.lng) };
+                }
+            } catch (e) {}
+            return null;
+        }
 
         async function startTeachersRealtimeListener() {
             const stage = document.getElementById('s_stage').value;
@@ -1411,7 +1439,7 @@
                         }
                         const liveIndicator = document.getElementById('liveIndicator');
                         if (liveIndicator) liveIndicator.classList.add('show');
-                        return;
+                        // استمر في الاشتراك اللحظي حتى يتحدّث موقع المدرس فور تغييره.
                     }
                 }
             } catch (e) {}
@@ -1471,12 +1499,7 @@
                     return;
                 }
 
-                const cardOpen = document.getElementById('teacherInfoCard').classList.contains('show');
-                if (cardOpen && !isFirstTeachersSnapshot) {
-                    console.log("⏸️ يوجد كارت معلم مفتوح — تأجيل التحديث");
-                    return;
-                }
-
+                // نحدّث مواقع العلامات حتى لو كانت بطاقة مدرس مفتوحة؛ باقي البيانات محفوظة.
                 if (liveIndicator) {
                     liveIndicator.classList.add('show');
                     if (!isFirstTeachersSnapshot) {
@@ -2592,8 +2615,14 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 map = L.map('map', { zoomControl: false, maxZoom: 18 });
                 L.control.zoom({ position: 'bottomright' }).addTo(map);
                 
-                L.tileLayer('https://api.mapbox.com/styles/v1/mokshmoksh/cmvse1evw003r01sbgobebl0l/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A', {
+                L.tileLayer('https://api.mapbox.com/styles/v1/mokshmoksh/cmvse1evw003r01sbgobebl0l/tiles/512/{z}/{x}/{y}?access_token=pk.eyJ1IjoibW9rc2htb2tzaCIsImEiOiJjbXRyZXF5cXkwMWRhMnlzaDI0OXJiNXQ1In0.X30BmuAkJ69jOlicXZK53A', {
+                    tileSize: 512,
+                    zoomOffset: -1,
                     maxZoom: 18,
+                    maxNativeZoom: 17,
+                    updateWhenIdle: true,
+                    updateWhenZooming: false,
+                    keepBuffer: 0,
                     attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
                 
@@ -2632,6 +2661,15 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
         function startSmartSearch() {
             const btn = document.getElementById('searchBtn');
             const originalBtnHTML = btn.innerHTML;
+
+            // عند الرجوع للصفحة، استعد آخر موقع بحث محفوظ لتجنب طلب GPS وقراءات غير ضرورية.
+            const savedLocation = getLastSearchLocation();
+            if (savedLocation) {
+                buildRadarMap(savedLocation.lat, savedLocation.lng);
+                showToast("📍 تم استرجاع آخر موقع بحث محفوظ. يمكنك تحديثه من زر GPS على الخريطة.");
+                return;
+            }
+
             btn.innerHTML = "⏳ جاري تحديد موقعك الحالي...";
             btn.classList.add('loading');
 
@@ -2695,6 +2733,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             currentCenter = [lat, lng];
             lastRenderCenter = currentCenter;
             lastRenderRadius = searchRadius;
+            saveLastSearchLocation(lat, lng);
             
             map.setView(currentCenter, 15);
 
@@ -2710,6 +2749,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 currentDisplayLimit = 100; // ✅ reset pagination
                 currentCenter = [e.target.getLatLng().lat, e.target.getLatLng().lng];
                 lastRenderCenter = currentCenter;
+                saveLastSearchLocation(currentCenter[0], currentCenter[1]);
 
                 if (teacherRenderTimer) clearTimeout(teacherRenderTimer);
                 teacherRenderTimer = setTimeout(() => {
@@ -3320,8 +3360,11 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
 
             // ✅ فلتر مبدئي: استبعد أي معلم إحداثياته برّه الدائرة
             const matchedInRadius = matched.filter(t => {
-                const d = map.distance(centerPos, [t.lat, t.lng]);
-                return d <= radiusInMeters;
+                const lat = Number(t.lat), lng = Number(t.lng);
+                if (!Number.isFinite(lat) || !Number.isFinite(lng) ||
+                    lat < -90 || lat > 90 || lng < -180 || lng > 180) return false;
+                const d = map.distance(centerPos, [lat, lng]);
+                return Number.isFinite(d) && d <= radiusInMeters;
             });
 
             if (matchedInRadius.length === 0) {
@@ -3359,6 +3402,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             let shownCount = 0;
 
             finalList.forEach((t, idx) => {
+                if (!Number.isFinite(Number(t.lat)) || !Number.isFinite(Number(t.lng))) return;
                 shownCount++;
 
                 const isMs = (t.gender === 'مس');
