@@ -205,6 +205,18 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* صورة المعلم القابلة للتغيير من الاستوديو */
+        #welcomeAvatar {
+            width: 38px; height: 38px; flex: 0 0 38px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 50%; overflow: hidden; cursor: pointer;
+            background: #DBEAFE; border: 2px solid #60A5FA;
+            font-size: 21px; position: relative;
+        }
+        #welcomeAvatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        #welcomeAvatar:focus-visible { outline: 3px solid #F59E0B; outline-offset: 2px; }
+        #teacherPhotoInput { display: none; }
+
         .hero-welcome .hw-greeting {
             color: #1E40AF;
             font-weight: 900;
@@ -1763,7 +1775,8 @@
             </p>
 
             <div id="heroWelcome" class="hero-welcome" style="display: none;">
-                <span id="welcomeAvatar">👨‍🏫</span>
+                <button type="button" id="welcomeAvatar" aria-label="اختيار صورة المعلم من الاستوديو" title="اضغط لتغيير صورة المعلم">👨‍🏫</button>
+                <input type="file" id="teacherPhotoInput" accept="image/*">
                 <span class="hw-greeting" id="welcomeGreeting">مرحباً بعودتك</span>
                 <span class="hw-name" id="welcomeName">--</span>
                 <span class="hw-phone" id="welcomePhone">--</span>
@@ -2169,6 +2182,54 @@
             }
         }
 
+        // فتح استوديو الصور عند الضغط على صورة المعلم وحفظ الاختيار على الجهاز.
+        document.addEventListener('DOMContentLoaded', () => {
+            const avatar = document.getElementById('welcomeAvatar');
+            const photoInput = document.getElementById('teacherPhotoInput');
+            if (!avatar || !photoInput) return;
+            avatar.addEventListener('click', () => photoInput.click());
+            photoInput.addEventListener('change', () => {
+                const file = photoInput.files && photoInput.files[0];
+                if (!file) return;
+                if (!file.type.startsWith('image/')) {
+                    if (typeof showToast === 'function') showToast('اختار ملف صورة صحيح');
+                    else alert('اختار ملف صورة صحيح');
+                    photoInput.value = '';
+                    return;
+                }
+                // ضغط الصورة لتقليل مساحة التخزين دون تغيير الملف الأصلي في الاستوديو.
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const maxSide = 480;
+                        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.max(1, Math.round(img.width * scale));
+                        canvas.height = Math.max(1, Math.round(img.height * scale));
+                        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+                        const photo = canvas.toDataURL('image/jpeg', 0.82);
+                        try {
+                            localStorage.setItem('teacherProfilePhoto', photo);
+                            const logged = localStorage.getItem('loggedInTeacher');
+                            if (logged) {
+                                const teacher = JSON.parse(logged);
+                                teacher.photo = photo;
+                                localStorage.setItem('loggedInTeacher', JSON.stringify(teacher));
+                            }
+                            avatar.innerHTML = `<img src="${photo}" alt="صورة المعلم">`;
+                            if (typeof showToast === 'function') showToast('تم تحديث صورة المعلم بنجاح ✔');
+                        } catch (err) {
+                            alert('مساحة التخزين غير كافية. اختار صورة أصغر.');
+                        }
+                    };
+                    img.onerror = () => alert('تعذر فتح الصورة، جرّب صورة أخرى.');
+                    img.src = event.target.result;
+                };
+                reader.readAsDataURL(file);
+            });
+        });
+
         function renderWelcomeBanner() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -2197,7 +2258,13 @@
 
                 const isMiss = title === 'مس';
 
-                avatarEl.textContent = isMiss ? '👩‍🏫' : '👨‍🏫';
+                const defaultAvatar = isMiss ? '👩‍🏫' : '👨‍🏫';
+                const savedPhoto = teacher.photo || localStorage.getItem('teacherProfilePhoto') || '';
+                if (savedPhoto) {
+                    avatarEl.innerHTML = `<img src="${savedPhoto}" alt="صورة المعلم">`;
+                } else {
+                    avatarEl.textContent = defaultAvatar;
+                }
 
                 const now = new Date();
                 const hour = now.getHours();
