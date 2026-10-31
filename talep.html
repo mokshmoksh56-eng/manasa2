@@ -3324,14 +3324,28 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const distance = Number(t._distance);
                 const distanceText = Number.isFinite(distance) ? (distance < 1000 ? `${Math.round(distance)} م` : `${(distance / 1000).toFixed(1)} كم`) : '';
                 const rating = Number(t.ratingAvg || 0);
-                const ratingText = Number(t.ratingCount || 0) > 0 ? `⭐ ${rating.toFixed(1)} · ` : '';
+                const ratingCount = Number(t.ratingCount || 0);
+                const ratingText = ratingCount > 0 ? `⭐ ${rating.toFixed(1)} (${ratingCount} تقييم)` : '⭐ لا توجد تقييمات بعد';
                 const cardPhoto = t.groupPhoto || t.photo || '';
                 return `<button type="button" class="teacher-result-item" data-teacher-result-index="${index}" aria-label="عرض بيانات ${name}">
                     <span class="teacher-result-avatar">${cardPhoto ? `<img class="group-photo-expandable" data-group-photo-title="${group}" src="${escapeTeacherResultText(cardPhoto)}" alt="صورة المجموعة ${group}" loading="lazy">` : (isMs ? '👩‍🏫' : '👨‍🏫')}</span>
-                    <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · ${ratingText}${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}<br><span class="teacher-result-contact">📍 ${address}</span><br><span class="teacher-result-contact teacher-result-phone">📞 ${phone}</span></span></span>
+                    <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · <span class="teacher-result-rating" data-rating-summary-index="${index}">${ratingText}</span><br>${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}<br><span class="teacher-result-contact">📍 ${address}</span><br><span class="teacher-result-contact teacher-result-phone">📞 ${phone}</span></span></span>
                     <span class="teacher-result-distance">${distanceText || 'عرض'}<br>↗</span>
                 </button>`;
             }).join('');
+            // حدّث متوسط التقييم وعدد التقييمات من بيانات Firebase الفعلية، مع الاستفادة من الكاش الموجود.
+            const ratingsSnapshotList = lastTeacherResults.slice();
+            Promise.all(ratingsSnapshotList.map(async (teacher, index) => {
+                if (!teacher || !teacher.lessonId) return;
+                try {
+                    const ratings = await loadTeacherRatings(teacher.lessonId, teacher.phone);
+                    const ratingEl = listEl.querySelector(`[data-rating-summary-index="${index}"]`);
+                    if (!ratingEl || !lastTeacherResults[index] || lastTeacherResults[index].lessonId !== teacher.lessonId) return;
+                    ratingEl.textContent = ratings.count > 0
+                        ? `⭐ ${Number(ratings.avg || 0).toFixed(1)} (${ratings.count} تقييم)`
+                        : '⭐ لا توجد تقييمات بعد';
+                } catch (e) { console.warn('تعذر تحديث تقييم المعلم في القائمة', e); }
+            }));
             listEl.querySelectorAll('[data-teacher-result-index]').forEach(button => {
                 button.addEventListener('click', () => {
                     const t = lastTeacherResults[Number(button.dataset.teacherResultIndex)];
