@@ -939,10 +939,29 @@
         .card-image-box img {
             width: 100%;
             height: 100%;
-            object-fit: contain;
+            object-fit: cover;
             display: block;
             border-radius: 50%;
         }
+        .group-photo-edit {
+            position: absolute;
+            right: -2px;
+            bottom: -2px;
+            width: 27px;
+            height: 27px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: #0F766E;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, .25);
+            z-index: 30;
+            cursor: pointer;
+        }
+        .group-photo-edit:disabled { opacity: .45; cursor: not-allowed; }
 
         .portal-card.card-color-0 .card-image-box { background: #DBEAFE; border: 3px solid #60A5FA; }
         .portal-card.card-color-1 .card-image-box { background: #D1FAE5; border: 3px solid #34D399; }
@@ -3204,6 +3223,71 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
+        // اختيار صورة مستقلة لكل مجموعة وحفظها محلياً وفي Firestore.
+        async function chooseGroupCardPhoto(lessonId, event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
+            if (teacherIsBlocked) { showToast('🔒 الحساب محظور', true); return; }
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.style.display = 'none';
+            document.body.appendChild(input);
+            input.onchange = async () => {
+                const file = input.files && input.files[0];
+                if (!file) { input.remove(); return; }
+                if (!file.type.startsWith('image/')) {
+                    showToast('⚠️ اختار صورة من الاستوديو', true); input.remove(); return;
+                }
+                try {
+                    // ضغط الصورة لتقليل حجم التخزين وتفادي تجاوز حد مستند Firestore.
+                    const dataUrl = await new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.onerror = () => reject(new Error('تعذر قراءة الصورة'));
+                        reader.onload = () => {
+                            const img = new Image();
+                            img.onerror = () => reject(new Error('الصورة غير صالحة'));
+                            img.onload = () => {
+                                const maxSide = 720;
+                                const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                                const canvas = document.createElement('canvas');
+                                canvas.width = Math.max(1, Math.round(img.width * scale));
+                                canvas.height = Math.max(1, Math.round(img.height * scale));
+                                const ctx = canvas.getContext('2d');
+                                ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                                resolve(canvas.toDataURL('image/jpeg', 0.78));
+                            };
+                            img.src = reader.result;
+                        };
+                        reader.readAsDataURL(file);
+                    });
+                    const lesson = lessons.find(item => String(item.id) === String(lessonId));
+                    if (!lesson) throw new Error('المجموعة غير موجودة');
+                    lesson.data = lesson.data || {};
+                    lesson.data.g_cardPhoto = dataUrl;
+                    lesson.data.g_cardPhotoUpdatedAt = Date.now();
+                    saveLessonsToStorage();
+                    renderLessons();
+                    showToast('💾 تم حفظ صورة المجموعة');
+                    if (window.db && window.fsDoc && window.fsSetDoc) {
+                        const { phone: teacherPhone, name: teacherName } = getCurrentTeacherInfo();
+                        await window.fsSetDoc(window.fsDoc(window.db, 'lessons', String(lessonId)), {
+                            g_cardPhoto: dataUrl,
+                            g_cardPhotoUpdatedAt: Date.now(),
+                            g_phone: teacherPhone || '',
+                            g_teacher: teacherName || ''
+                        }, { merge: true });
+                        showFbSyncBadge('☁️ تم حفظ صورة المجموعة في السحابة');
+                    }
+                } catch (err) {
+                    console.error('Group photo save failed:', err);
+                    showToast('⚠️ لم يتم حفظ الصورة. حاول بصورة أصغر.', true);
+                } finally {
+                    input.remove();
+                }
+            };
+            input.click();
+        }
+
         function renderLessons() {
             const container = document.getElementById('lessonsContainer');
             const addContainer = document.getElementById('addNewGroupContainer');
@@ -3241,10 +3325,10 @@
                 validIds.add(lesson.id);
                 const colorIndex = index % 8;
                 const cardStyle = `card-color-${colorIndex}`;
-                const savedTeacherPhoto = (() => { try { const t = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}'); return t.photo || localStorage.getItem('teacherProfilePhoto') || ''; } catch(e) { return localStorage.getItem('teacherProfilePhoto') || ''; } })();
-                const groupImageHTML = savedTeacherPhoto
-                    ? `<img src="${savedTeacherPhoto}" alt="صورة المعلم" style="width:100%;height:100%;object-fit:cover;">`
-                    : '<img src="./teacher.png" alt="صورة المعلم">';
+                const groupPhoto = (lesson.data && lesson.data.g_cardPhoto) || '';
+                const groupImageHTML = groupPhoto
+                    ? `<img src="${groupPhoto}" alt="صورة المجموعة" style="width:100%;height:100%;object-fit:cover;">`
+                    : '<img src="./teacher.png" alt="اختر صورة للمجموعة" style="width:100%;height:100%;object-fit:cover;">';
 
                 // الاعتماد الكامل على الذاكرة وليس اللوكال ستوريدج لمنع التضارب
                 const data = lesson.data || {};
@@ -3262,9 +3346,10 @@
                     ? (isPublished ? 'ظاهرة للطلاب — يمكنك إدارتها.' : 'مخفية عن الطلاب — اضغط "فتح" لنشرها.')
                     : '⚠️ أكمل الإعداد أولاً — النشر متوقف حتى تكتمل البيانات.';
 
-                const statusBadgeHTML = calculateSessionStatus(savedState);
-                const infoBadgesHTML = getQuickInfoBadges(savedState);
-                const timeRangeHTML = hasReport ? getTimeRangeBadge(savedState) : '';
+                // تصميم مختصر: إخفاء بيانات ومواعيد المجموعة من الكارت، مع إبقاء الاسم وأزرار الإدارة.
+                const statusBadgeHTML = '';
+                const infoBadgesHTML = '';
+                const timeRangeHTML = '';
 
                 let statusDotHTML = '';
                 if (!hasReport) {
@@ -3356,13 +3441,10 @@
                     </div>
                     <div class="card-image-box" onclick="${teacherIsBlocked ? '' : (hasReport && !isPublished ? `showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) بالأعلى لفتحها', true)` : `openGroupModal('${lesson.id}')`)}">
                         ${groupImageHTML}
+                        <button type="button" class="group-photo-edit" title="اختيار أو تعديل صورة المجموعة" aria-label="اختيار صورة المجموعة" onclick="chooseGroupCardPhoto('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>📷</button>
                     </div>
                     <div class="card-text">
-                        ${timeRangeHTML}
-                        ${statusBadgeHTML}
                         <h2>${lesson.title}</h2>
-                        ${infoBadgesHTML}
-                        <p>${descText}</p>
                         ${
                             teacherIsBlocked 
                             ? `<button type="button" class="btn-go" onclick="showToast('🔒 الحساب محظور — تواصل مع الإدارة', true)">مغلق</button>`
@@ -3370,7 +3452,6 @@
                                 ? `<button type="button" class="btn-go" onclick="showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) في الأعلى لفتحها', true)">${btnText}</button>`
                                 : `<a href="${targetUrl}" class="btn-go">${btnText}</a>`
                         }
-                        ${noticeBannerHTML}
                     </div>
                 `;
 
