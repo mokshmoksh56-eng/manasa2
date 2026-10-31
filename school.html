@@ -996,6 +996,17 @@
             if (e.target.closest('button, a, select, .grade-selectable-card, .card-header')) playClickSound();
         });
 
+        function getRegistrationDuration(dateValue) {
+            if (!dateValue) return 'غير محدد';
+            const registeredAt = new Date(dateValue);
+            if (Number.isNaN(registeredAt.getTime())) return 'غير محدد';
+            const today = new Date();
+            registeredAt.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+            const days = Math.max(1, Math.floor((today.getTime() - registeredAt.getTime()) / 86400000) + 1);
+            return days === 1 ? 'اليوم الأول' : `${days} يوم`;
+        }
+
         function formatLastSeen(timestamp) {
             if (!timestamp) return { text: 'غير محدد', isOnline: false, fullDate: '' };
             
@@ -2534,7 +2545,11 @@
                                         <span class="label" style="font-size:13px;">📱 التليفون:</span>
                                         <span class="phone-number-big" dir="ltr">${r.phone}</span>
                                     </div>
-                                    <div class="info-pill" style="background:#F8FAFC;"><span class="label">📅 التسجيل:</span><span class="font-black text-slate-700">${r.regDate}</span></div>
+                                    <div class="info-pill flex-wrap" style="background:#F8FAFC; gap:8px;">
+                                        <span class="label">📅 التسجيل:</span>
+                                        <span class="font-black text-slate-700">${r.regDate}</span>
+                                        <span style="background:#DBEAFE;color:#1D4ED8;border:1px solid #93C5FD;border-radius:999px;padding:3px 9px;font-size:11px;font-weight:900;white-space:nowrap;">⏳ المدة: ${getRegistrationDuration(r.regDate)}</span>
+                                    </div>
                                 </div>
 
                                 <div class="info-pill flex flex-col gap-2" style="background:#F8FAFC; border-color:#CBD5E1;">
