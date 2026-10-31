@@ -3571,7 +3571,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
 
                 const markerPhoto = t.groupPhoto || t.photo || '';
                 const markerFace = markerPhoto
-                    ? `<div class="registered-teacher-marker" style="padding:0;overflow:hidden;${isMs ? 'background-color:#EC4899;' : ''}"><img class="group-photo-expandable" data-group-photo-title="${escapeTeacherResultText(t.groupName || t.teacherName || 'المجموعة')}" src="${escapeTeacherResultText(markerPhoto)}" alt="صورة المجموعة" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;cursor:zoom-in;"></div>`
+                    ? `<div class="registered-teacher-marker" style="padding:0;overflow:hidden;${isMs ? 'background-color:#EC4899;' : ''}"><img class="map-marker-teacher-photo" src="${escapeTeacherResultText(markerPhoto)}" alt="صورة المعلم" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;cursor:pointer;"></div>`
                     : `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
                 const iconHtml = `
                     <div style="position:relative; width:36px; height:36px;">
@@ -3749,6 +3749,8 @@ ${details}
     // Capture phase prevents the image tap from also opening the teacher info card / selecting the result.
     document.addEventListener('click', function(event){
         const target = event.target;
+        // صورة المعلم على الخريطة: الضغط عليها يفتح كارت المعلم عبر حدث علامة الخريطة، ولا يفتح الصورة المكبرة مباشرة.
+        if (target && target.matches && target.matches('img.map-marker-teacher-photo')) return;
         if (!target || !target.matches || !target.matches('img.group-photo-expandable')) return;
         event.preventDefault();
         event.stopPropagation();
