@@ -447,11 +447,18 @@
         .teacher-results-list{max-height:300px;overflow:auto;padding:7px;display:flex;flex-direction:column;gap:7px}
         .teacher-result-item{width:100%;text-align:right;display:flex;align-items:center;gap:9px;border:1px solid #e2e8f0;border-radius:11px;background:#fff;padding:9px;cursor:pointer;transition:background .15s,border-color .15s}
         .teacher-result-item:active,.teacher-result-item:focus-visible{background:#eff6ff;border-color:#93c5fd;outline:none}
-        .teacher-result-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:21px}
+        .teacher-result-avatar{width:46px;height:46px;flex:0 0 46px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:23px;overflow:hidden;border:2px solid #bfdbfe;box-shadow:0 2px 5px rgba(15,45,92,.12)}
+        .teacher-result-avatar img{width:100%;height:100%;object-fit:cover;display:block}
+        .teacher-info-profile{display:flex;align-items:center;justify-content:center;gap:10px;margin:3px 0 9px;padding:7px;background:linear-gradient(135deg,#eff6ff,#fff);border:1px solid #dbeafe;border-radius:10px}
+        .teacher-info-profile-photo{width:66px;height:66px;flex:0 0 66px;object-fit:cover;border-radius:50%;border:3px solid #10b981;background:#dbeafe;box-shadow:0 3px 8px rgba(0,0,0,.12)}
+        .teacher-info-profile-emoji{width:66px;height:66px;flex:0 0 66px;display:flex;align-items:center;justify-content:center;font-size:35px;border-radius:50%;background:#dbeafe;border:3px solid #93c5fd}
+        .teacher-info-profile-name{font-size:14px;font-weight:900;color:#0f2d5c;line-height:1.5}
         .teacher-result-main{flex:1;min-width:0}
         .teacher-result-name{font-size:12px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
         .teacher-result-sub{font-size:10px;color:#64748b;font-weight:700;margin-top:2px;line-height:1.5}
         .teacher-result-distance{font-size:10px;font-weight:900;color:#047857;background:#d1fae5;border-radius:8px;padding:4px 6px;white-space:nowrap}
+        .teacher-result-contact{display:inline-block;margin-top:3px;color:#334155;font-size:10px;font-weight:800;white-space:normal;overflow-wrap:anywhere;line-height:1.55}
+        .teacher-result-phone{color:#047857;direction:ltr;unicode-bidi:plaintext}
         .teacher-results-empty{padding:15px 10px;text-align:center;color:#64748b;font-size:12px;font-weight:800}
         .teacher-results-panel.is-collapsed .teacher-results-list{display:none}
         .map-container.is-fullscreen ~ .map-actions-wrapper #teacherResultsPanel{position:fixed;z-index:1000000;left:10px;right:10px;bottom:10px;margin:0 auto;width:auto;max-width:520px;max-height:32vh;box-shadow:0 8px 28px rgba(0,0,0,.25)}
@@ -1385,6 +1392,7 @@
                 lessonId: lessonId,
                 groupName: state.g_name || `مجموعة ${lessonId}`,
                 teacherName: state.g_teacher || 'المعلم',
+                photo: state.teacherPhoto || state.teacher_photo || state.profilePhoto || state.profile_photo || state.photoURL || state.photoUrl || state.photo || state.avatarUrl || state.imageUrl || state.image || '',
                 age: teacherAge,
                 count: state.g_count || '--',
                 grade: (state.s_grade || '').trim(),
@@ -2984,8 +2992,14 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             const card = document.getElementById('teacherInfoCard');
             const body = document.getElementById('teacherInfoCardBody');
 
+            const profilePhoto = getTeacherPhotoUrl(t);
             body.innerHTML = `
-                <div class="teacher-info-title">${emoji} أ/ ${t.teacherName}</div>
+                <div class="teacher-info-profile">
+                    ${profilePhoto
+                        ? `<img class="teacher-info-profile-photo" src="${escapeTeacherResultText(profilePhoto)}" alt="صورة ${escapeTeacherResultText(t.teacherName || 'المعلم')}" referrerpolicy="no-referrer" onerror="this.outerHTML='<div class=&quot;teacher-info-profile-emoji&quot;>${emoji}</div>'">`
+                        : `<div class="teacher-info-profile-emoji">${emoji}</div>`}
+                    <div class="teacher-info-profile-name">أ/ ${escapeTeacherResultText(t.teacherName || 'المعلم')}<br><span style="font-size:10px;color:#64748b;">👨‍🏫 بيانات المعلم</span></div>
+                </div>
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
                 <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${formatTeacherGradeForCard(t)}</span></div>
                 <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
@@ -3214,6 +3228,20 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
         }
 
+        function getTeacherPhotoUrl(teacher) {
+            const candidate = teacher && (teacher.photo || teacher.teacherPhoto || teacher.profilePhoto || teacher.photoURL || teacher.photoUrl || teacher.avatarUrl || teacher.imageUrl || teacher.image);
+            if (typeof candidate === 'string' && /^(https?:\/\/|data:image\/|blob:)/i.test(candidate.trim())) return candidate.trim();
+            return '';
+        }
+
+        function teacherAvatarMarkup(teacher, isMs, className = 'teacher-result-avatar') {
+            const photo = getTeacherPhotoUrl(teacher);
+            const fallback = isMs ? '👩‍🏫' : '👨‍🏫';
+            return photo
+                ? `<span class="${className}"><img src="${escapeTeacherResultText(photo)}" alt="صورة ${escapeTeacherResultText(teacher.teacherName || 'المعلم')}" loading="lazy" referrerpolicy="no-referrer" onerror="this.parentElement.innerHTML='${fallback}'"></span>`
+                : `<span class="${className}">${fallback}</span>`;
+        }
+
         function renderTeacherResultsPanel(list, totalCount) {
             const panel = document.getElementById('teacherResultsPanel');
             const listEl = document.getElementById('teacherResultsList');
@@ -3233,13 +3261,15 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const subject = escapeTeacherResultText(t.subject || 'المادة غير محددة');
                 const grade = escapeTeacherResultText(formatTeacherGradeForCard(t) || t.grade || 'الصف غير محدد');
                 const group = escapeTeacherResultText(t.groupName || 'مجموعة');
+                const address = escapeTeacherResultText(t.address || 'العنوان غير محدد');
+                const phone = escapeTeacherResultText(t.phone || 'رقم التليفون غير مسجل');
                 const distance = Number(t._distance);
                 const distanceText = Number.isFinite(distance) ? (distance < 1000 ? `${Math.round(distance)} م` : `${(distance / 1000).toFixed(1)} كم`) : '';
                 const rating = Number(t.ratingAvg || 0);
                 const ratingText = Number(t.ratingCount || 0) > 0 ? `⭐ ${rating.toFixed(1)} · ` : '';
                 return `<button type="button" class="teacher-result-item" data-teacher-result-index="${index}" aria-label="عرض بيانات ${name}">
-                    <span class="teacher-result-avatar">${isMs ? '👩‍🏫' : '👨‍🏫'}</span>
-                    <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · ${ratingText}${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}</span></span>
+                    ${teacherAvatarMarkup(t, isMs)}
+                    <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · ${ratingText}${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}<br><span class="teacher-result-contact">📍 ${address}</span><br><span class="teacher-result-contact teacher-result-phone">📞 ${phone}</span></span></span>
                     <span class="teacher-result-distance">${distanceText || 'عرض'}<br>↗</span>
                 </button>`;
             }).join('');
