@@ -1022,6 +1022,29 @@
             return stId;
         }
 
+        // معرّف ثابت لهذا المتصفح/الجهاز لمنع تكرار تقييم المعلم نفسه.
+        // ملاحظة: هذا قيد على مستوى التطبيق؛ لا يثبت هوية الجهاز بشكل غير قابل للتحايل.
+        function getRatingDeviceId() {
+            const key = 'teacher_rating_device_id_v1';
+            let id = '';
+            try { id = localStorage.getItem(key) || ''; } catch (e) {}
+            if (!id) {
+                id = 'dev_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 14);
+                try { localStorage.setItem(key, id); } catch (e) {}
+            }
+            return id;
+        }
+
+        function getStableTeacherRatingKey(lessonId, teacherPhone) {
+            const phone = String(teacherPhone || '').replace(/\\D/g, '');
+            // رقم الهاتف هو أفضل معرّف مشترك بين حصص المعلم المختلفة.
+            return phone ? 'phone_' + phone : 'lesson_' + String(lessonId || 'unknown').replace(/[^a-zA-Z0-9_-]/g, '_');
+        }
+
+        function makeSafeRatingDocId(value) {
+            return String(value || '').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 180);
+        }
+
         function getCurrentTeacherKey() {
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
@@ -2873,8 +2896,10 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const cleanPhone = String(teacherPhone || '').replace(/\D/g, '');
                 const safeLessonId = String(lessonId).replace(/[\/\s]+/g, '_');
                 const safeTeacherName = String(teacherName || 'معلم').replace(/undefined/g, 'معلم');
-                const ratingId = `${safeLessonId}_${studentId}`;
-
+                const deviceId = getRatingDeviceId();
+                const teacherRatingKey = getStableTeacherRatingKey(safeLessonId, cleanPhone);
+                // نفس معرّف المستند لنفس الجهاز والمعلم، حتى لو ظهر المعلم في أكثر من حصة.
+                const ratingId = makeSafeRatingDocId(`once_${teacherRatingKey}_${deviceId}`);
                 const ref = mod.doc(mod.db, "teacher_ratings", ratingId);
 
                 const existing = await mod.getDoc(ref);
@@ -2892,6 +2917,8 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                     teacherName: safeTeacherName,
                     teacherPhone: cleanPhone,
                     studentId: studentId,
+                    deviceId: deviceId,
+                    teacherRatingKey: teacherRatingKey,
                     studentName: studentName,
                     stars: Number(currentSelectedStars) || 1,
                     comment: comment || '',
@@ -2929,11 +2956,11 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             }
         };
 
-        async function loadTeacherRatings(lessonId) {
+        async function loadTeacherRatings(lessonId, teacherPhone) {
             // ✅ كاش التقييمات — صفر قراءات متكررة
             const cache = getRatingsCache();
             const hit = cache[lessonId];
-            if (hit && (Date.now() - hit.ts) < RATINGS_CACHE_TTL) {
+            if (hit && hit.data && hit.data.hasRated && (Date.now() - hit.ts) < RATINGS_CACHE_TTL) {
                 return hit.data;
             }
 
@@ -2950,8 +2977,19 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const reviews = [];
                 let sum = 0;
                 const studentId = getStudentId();
+                const deviceId = getRatingDeviceId();
                 let hasRated = false;
                 const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+
+                // تحقق أيضًا من تقييم سابق لهذا المعلم من الجهاز نفسه، حتى لو كان في حصة أخرى.
+                try {
+                    const teacherKey = getStableTeacherRatingKey(lessonId, teacherPhone);
+                    const ownRatingId = makeSafeRatingDocId(`once_${teacherKey}_${deviceId}`);
+                    const ownRating = await mod.getDoc(mod.doc(mod.db, "teacher_ratings", ownRatingId));
+                    if (ownRating.exists()) hasRated = true;
+                } catch (e) {
+                    console.warn("تعذر التحقق من التقييم السابق:", e);
+                }
 
                 snap.forEach(docSnap => {
                     const d = docSnap.data();
@@ -2964,7 +3002,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                     });
                     sum += stars;
                     if (distribution[stars] !== undefined) distribution[stars]++;
-                    if (d.studentId === studentId) hasRated = true;
+                    if (d.studentId === studentId || d.deviceId === deviceId) hasRated = true;
                 });
 
                 reviews.sort((a, b) => b.createdAt - a.createdAt);
@@ -3069,7 +3107,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
 
             card.classList.add('show');
 
-            const ratings = await loadTeacherRatings(lessonId);
+            const ratings = await loadTeacherRatings(lessonId, t.phone);
             currentRatingLessonId = lessonId;
             currentSelectedStars = 0;
 
