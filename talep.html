@@ -437,6 +437,27 @@
             #map { height: 260px; }
             .teacher-info-card { max-height: 70vh; padding: 8px; }
         }
+
+        /* قائمة المعلمين الناتجة عن البحث */
+        .teacher-results-panel{direction:rtl;background:#fff;border:1px solid #dbeafe;border-radius:14px;overflow:hidden;box-shadow:0 5px 18px rgba(15,45,92,.08);margin:0 0 12px}
+        .teacher-results-head{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:10px 12px;background:linear-gradient(135deg,#eff6ff,#fff);border-bottom:1px solid #e2e8f0}
+        .teacher-results-title{font-size:13px;font-weight:900;color:#0f2d5c;display:flex;align-items:center;gap:7px}
+        .teacher-results-count{font-size:10px;font-weight:900;color:#1d4ed8;background:#dbeafe;border-radius:999px;padding:3px 8px;white-space:nowrap}
+        .teacher-results-toggle{border:0;background:#e0ecff;color:#1d4ed8;border-radius:8px;padding:5px 9px;font-size:11px;font-weight:900;cursor:pointer}
+        .teacher-results-list{max-height:300px;overflow:auto;padding:7px;display:flex;flex-direction:column;gap:7px}
+        .teacher-result-item{width:100%;text-align:right;display:flex;align-items:center;gap:9px;border:1px solid #e2e8f0;border-radius:11px;background:#fff;padding:9px;cursor:pointer;transition:background .15s,border-color .15s}
+        .teacher-result-item:active,.teacher-result-item:focus-visible{background:#eff6ff;border-color:#93c5fd;outline:none}
+        .teacher-result-avatar{width:38px;height:38px;flex:0 0 38px;border-radius:12px;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-size:21px}
+        .teacher-result-main{flex:1;min-width:0}
+        .teacher-result-name{font-size:12px;font-weight:900;color:#0f172a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+        .teacher-result-sub{font-size:10px;color:#64748b;font-weight:700;margin-top:2px;line-height:1.5}
+        .teacher-result-distance{font-size:10px;font-weight:900;color:#047857;background:#d1fae5;border-radius:8px;padding:4px 6px;white-space:nowrap}
+        .teacher-results-empty{padding:15px 10px;text-align:center;color:#64748b;font-size:12px;font-weight:800}
+        .teacher-results-panel.is-collapsed .teacher-results-list{display:none}
+        .map-container.is-fullscreen ~ .map-actions-wrapper #teacherResultsPanel{position:fixed;z-index:1000000;left:10px;right:10px;bottom:10px;margin:0 auto;width:auto;max-width:520px;max-height:32vh;box-shadow:0 8px 28px rgba(0,0,0,.25)}
+        .map-container.is-fullscreen ~ .map-actions-wrapper #teacherResultsPanel .teacher-results-list{max-height:calc(32vh - 48px)}
+        .map-container.is-fullscreen ~ .map-actions-wrapper #teacherResultsPanel.is-collapsed{bottom:10px}
+        @media(max-width:480px){.teacher-results-list{max-height:250px}.teacher-result-item{padding:8px}.teacher-result-avatar{width:34px;height:34px;flex-basis:34px}}
     </style>
 </head>
 <body>
@@ -764,6 +785,14 @@
                 
                 <div class="map-actions-wrapper" style="padding: 10px; background: #F8FAFC; border: 1.5px solid #CBD5E1; border-top: none; border-bottom: 4px solid #334155; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
                     
+                    <section id="teacherResultsPanel" class="teacher-results-panel" style="display:none;" aria-label="المعلمون الموجودون على الخريطة">
+                        <div class="teacher-results-head">
+                            <div class="teacher-results-title">🧭 المعلمون على الخريطة <span id="teacherResultsCount" class="teacher-results-count">0</span></div>
+                            <button type="button" class="teacher-results-toggle" id="teacherResultsToggle" onclick="toggleTeacherResultsList()" aria-expanded="true">طي القائمة −</button>
+                        </div>
+                        <div id="teacherResultsList" class="teacher-results-list"></div>
+                    </section>
+
                     <!-- ✅ زر عرض المزيد من المعلمين -->
                     <button id="loadMoreTeachersBtn" class="action-btn clickable-element" 
                         style="display:none; background: linear-gradient(135deg, #F59E0B, #D97706); border-bottom: 3px solid #B45309; margin-bottom: 8px; font-size: 13px;" 
@@ -884,9 +913,6 @@
         let cachedTeachersStageKey = '__init__';
         let cachedTeachersGrade = '__init__';
         let cacheReady = false;
-        // يمنع تكرار طلبات القراءة الاحتياطية المتزامنة لنفس الصف.
-        let teachersFallbackPromise = null;
-        let teachersFallbackKey = '';
         let teacherRenderTimer = null;
 
         let openPopupLessonId = null;
@@ -898,6 +924,7 @@
         // ✅ Pagination للمعلمين
         const TEACHERS_PAGE_SIZE = 100;
         let currentDisplayLimit = 100;
+        let lastTeacherResults = [];
 
         // تحميل عمر المعلم من ملف الحساب teachers باستخدام رقم الهاتف، مع دعم صيغ الأرقام المختلفة
         const teacherProfileAgeCache = new Map();
@@ -2553,75 +2580,50 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
         async function getRegisteredTeachersFromFirebase() {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
-            const cacheKey = `${currentStage}::${currentGrade}`;
 
-            if (cacheReady && cachedTeachersStageKey === currentStage && cachedTeachersGrade === currentGrade) {
-                return { registeredList: cachedTeachersList, hiddenCount: cachedTeachersHiddenCount };
+            if (cacheReady
+                && cachedTeachersStageKey === currentStage
+                && cachedTeachersGrade === currentGrade) {
+                return {
+                    registeredList: cachedTeachersList,
+                    hiddenCount: cachedTeachersHiddenCount
+                };
             }
 
-            // لو استعلام احتياطي لنفس الصف شغال بالفعل، شارك نتيجته بدل تكرار قراءة Firestore.
-            if (teachersFallbackPromise) {
-                if (teachersFallbackKey === cacheKey) return await teachersFallbackPromise;
-                // انتظر الاستعلام الجاري لصف مختلف، ثم أعد التحقق من الصف الحالي.
-                try { await teachersFallbackPromise; } catch (e) {}
-                return await getRegisteredTeachersFromFirebase();
-            }
+            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
 
-            teachersFallbackKey = cacheKey;
-            teachersFallbackPromise = (async () => {
-                const registeredList = [];
-                let hiddenCount = 0;
+            const registeredList = [];
+            let hiddenCount = 0;
 
-                if (!window.db) {
-                    console.warn("⚠️ Firebase لم يتصل بعد");
-                    return { registeredList, hiddenCount };
-                }
-
-                try {
-                    const mod = await loadFirebaseModule();
-                    if (!mod) return { registeredList, hiddenCount };
-
-                    const constraints = [
-                        mod.where("g_publish_map", "==", true),
-                        mod.limit(300)
-                    ];
-                    if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
-                    if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
-
-                    const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
-                    const snap = await mod.getDocs(q);
-
-                    snap.forEach(docSnap => {
-                        const state = docSnap.data();
-                        if (state.g_publish_map === false) { hiddenCount++; return; }
-                        registeredList.push(parseTeacherDoc(docSnap));
-                    });
-
-                    // احتفظ بالنتيجة في الذاكرة حتى لا تعيد كل إعادة رسم قراءة المجموعة نفسها.
-                    cachedTeachersList = registeredList;
-                    cachedTeachersHiddenCount = hiddenCount;
-                    cachedTeachersStageKey = currentStage;
-                    cachedTeachersGrade = currentGrade;
-                    cacheReady = true;
-                    try {
-                        localStorage.setItem(TEACHERS_CACHE_KEY, JSON.stringify({
-                            stage: currentStage, grade: currentGrade,
-                            list: registeredList, hidden: hiddenCount, ts: Date.now()
-                        }));
-                    } catch (e) {}
-                } catch (err) {
-                    console.error("❌ فشل القراءة الاحتياطية:", err);
-                }
-
+            if (!window.db) {
+                console.warn("⚠️ Firebase لم يتصل بعد");
                 return { registeredList, hiddenCount };
-            })();
+            }
 
             try {
-                return await teachersFallbackPromise;
-            } finally {
-                teachersFallbackPromise = null;
-                teachersFallbackKey = '';
+                const mod = await loadFirebaseModule();
+                if (!mod) return { registeredList, hiddenCount };
+
+                const constraints = [
+                    mod.where("g_publish_map", "==", true),
+                    mod.limit(300)  // ✅
+                ];
+                if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
+                if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
+
+                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                const snap = await mod.getDocs(q);
+
+                snap.forEach(docSnap => {
+                    const state = docSnap.data();
+                    if (state.g_publish_map === false) { hiddenCount++; return; }
+                    registeredList.push(parseTeacherDoc(docSnap));
+                });
+            } catch (err) {
+                console.error("❌ فشل القراءة الاحتياطية:", err);
             }
+
+            return { registeredList, hiddenCount };
         }
 
         function getStageNameByKey(stageKey) {
@@ -2650,9 +2652,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                     maxNativeZoom: 17,
                     updateWhenIdle: true,
                     updateWhenZooming: false,
-                    updateInterval: 250,
                     keepBuffer: 0,
-                    noWrap: true,
                     attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
                 
@@ -3210,6 +3210,61 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             });
         };
 
+        function escapeTeacherResultText(value) {
+            return String(value ?? '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));
+        }
+
+        function renderTeacherResultsPanel(list, totalCount) {
+            const panel = document.getElementById('teacherResultsPanel');
+            const listEl = document.getElementById('teacherResultsList');
+            const countEl = document.getElementById('teacherResultsCount');
+            if (!panel || !listEl || !countEl) return;
+            lastTeacherResults = Array.isArray(list) ? list.slice() : [];
+            if (!lastTeacherResults.length) {
+                panel.style.display = 'none';
+                listEl.innerHTML = '';
+                return;
+            }
+            panel.style.display = 'block';
+            countEl.textContent = `${lastTeacherResults.length}${totalCount > lastTeacherResults.length ? ` / ${totalCount}` : ''}`;
+            listEl.innerHTML = lastTeacherResults.map((t, index) => {
+                const isMs = t.gender === 'مس';
+                const name = escapeTeacherResultText(t.teacherName || 'معلم');
+                const subject = escapeTeacherResultText(t.subject || 'المادة غير محددة');
+                const grade = escapeTeacherResultText(formatTeacherGradeForCard(t) || t.grade || 'الصف غير محدد');
+                const group = escapeTeacherResultText(t.groupName || 'مجموعة');
+                const distance = Number(t._distance);
+                const distanceText = Number.isFinite(distance) ? (distance < 1000 ? `${Math.round(distance)} م` : `${(distance / 1000).toFixed(1)} كم`) : '';
+                const rating = Number(t.ratingAvg || 0);
+                const ratingText = Number(t.ratingCount || 0) > 0 ? `⭐ ${rating.toFixed(1)} · ` : '';
+                return `<button type="button" class="teacher-result-item" data-teacher-result-index="${index}" aria-label="عرض بيانات ${name}">
+                    <span class="teacher-result-avatar">${isMs ? '👩‍🏫' : '👨‍🏫'}</span>
+                    <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · ${ratingText}${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}</span></span>
+                    <span class="teacher-result-distance">${distanceText || 'عرض'}<br>↗</span>
+                </button>`;
+            }).join('');
+            listEl.querySelectorAll('[data-teacher-result-index]').forEach(button => {
+                button.addEventListener('click', () => {
+                    const t = lastTeacherResults[Number(button.dataset.teacherResultIndex)];
+                    if (!t || !map) return;
+                    if (Number.isFinite(Number(t.lat)) && Number.isFinite(Number(t.lng))) {
+                        map.setView([Number(t.lat), Number(t.lng)], Math.max(map.getZoom(), 15), {animate:true});
+                    }
+                    if (isMapFullscreen) toggleMapFullscreen();
+                    setTimeout(() => showTeacherInfoCard(t.lessonId), 180);
+                });
+            });
+        }
+
+        window.toggleTeacherResultsList = function() {
+            const panel = document.getElementById('teacherResultsPanel');
+            const button = document.getElementById('teacherResultsToggle');
+            if (!panel || !button) return;
+            const collapsed = panel.classList.toggle('is-collapsed');
+            button.textContent = collapsed ? 'عرض القائمة ＋' : 'طي القائمة −';
+            button.setAttribute('aria-expanded', String(!collapsed));
+        };
+
         // ✅ زر عرض المزيد
         window.loadMoreTeachers = function() {
             currentDisplayLimit += TEACHERS_PAGE_SIZE;
@@ -3331,6 +3386,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const liveIndicator = document.getElementById('liveIndicator');
                 if (liveIndicator) liveIndicator.classList.remove('show');
                 closeTeacherInfoCard();
+                renderTeacherResultsPanel([], 0);
                 return;
             }
 
@@ -3347,6 +3403,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             teachersLayer.clearLayers();
 
             if (registeredList.length === 0) {
+                renderTeacherResultsPanel([], 0);
                 showToast(hiddenCount > 0 ? "موقع المستر غير مفعل حالياً 🔒" : "لا يوجد معلم مسجل حالياً في النظام!", true);
                 return;
             }
@@ -3378,6 +3435,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             });
 
             if (matched.length === 0) {
+                renderTeacherResultsPanel([], 0);
                 const hasScheduleFilter = document.querySelectorAll('#studentDaysChoices input:checked').length > 0 || Array.from(document.querySelectorAll('#studentTimeRanges .student-time-row')).some(row => row.querySelector('.student-time-start')?.value && row.querySelector('.student-time-end')?.value);
                 const noMatchMsg = hasScheduleFilter
                     ? 'لا توجد مجموعات تطابق مواعيدك المختارة مع باقي شروط البحث. جرّب أيامًا أو فترات أخرى أو امسح فلتر المواعيد.'
@@ -3398,6 +3456,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             });
 
             if (matchedInRadius.length === 0) {
+                renderTeacherResultsPanel([], 0);
                 showToast(
                     `🔍 لا يوجد أي معلم داخل هذا النطاق لـ (${selectedSubject} - ${selectedGrade}) — وسّع النطاق أو حرّك النقطة الزرقاء!`,
                     true
@@ -3416,6 +3475,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             const totalInsideRadius = matchedInRadius.length;
             const finalList = matchedInRadius.slice(0, currentDisplayLimit);
             const remaining = Math.max(0, totalInsideRadius - currentDisplayLimit);
+            renderTeacherResultsPanel(finalList, totalInsideRadius);
 
             // ✅ تحديث زر "عرض المزيد"
             const loadMoreBtn = document.getElementById('loadMoreTeachersBtn');
