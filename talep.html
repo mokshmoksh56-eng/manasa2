@@ -1387,7 +1387,9 @@
                 lessonId: lessonId,
                 groupName: state.g_name || `مجموعة ${lessonId}`,
                 teacherName: state.g_teacher || 'المعلم',
-                photo: state.teacherPhoto || state.photo || state.profilePhoto || '',
+                // صورة المجموعة التي يختارها المعلم في index2.html (g_cardPhoto)
+                groupPhoto: state.g_cardPhoto || state.groupPhoto || state.group_photo || '',
+                photo: state.g_cardPhoto || state.groupPhoto || state.group_photo || state.teacherPhoto || state.photo || state.profilePhoto || '',
                 age: teacherAge,
                 count: state.g_count || '--',
                 grade: (state.s_grade || '').trim(),
@@ -3017,8 +3019,9 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
             const card = document.getElementById('teacherInfoCard');
             const body = document.getElementById('teacherInfoCardBody');
 
+            const infoPhoto = t.groupPhoto || t.photo || '';
             body.innerHTML = `
-                ${t.photo ? `<div class="teacher-info-profile"><img src="${escapeTeacherResultText(t.photo)}" alt="صورة ${escapeTeacherResultText(t.teacherName)}"><div class="teacher-info-title">أ/ ${escapeTeacherResultText(t.teacherName)}</div></div>` : `<div class="teacher-info-title">${emoji} أ/ ${escapeTeacherResultText(t.teacherName)}</div>`}
+                ${infoPhoto ? `<div class="teacher-info-profile"><img src="${escapeTeacherResultText(infoPhoto)}" alt="صورة المجموعة ${escapeTeacherResultText(t.groupName)}"><div class="teacher-info-title">أ/ ${escapeTeacherResultText(t.teacherName)}</div></div>` : `<div class="teacher-info-title">${emoji} أ/ ${escapeTeacherResultText(t.teacherName)}</div>`}
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
                 <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${formatTeacherGradeForCard(t)}</span></div>
                 <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
@@ -3272,8 +3275,9 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const distanceText = Number.isFinite(distance) ? (distance < 1000 ? `${Math.round(distance)} م` : `${(distance / 1000).toFixed(1)} كم`) : '';
                 const rating = Number(t.ratingAvg || 0);
                 const ratingText = Number(t.ratingCount || 0) > 0 ? `⭐ ${rating.toFixed(1)} · ` : '';
+                const cardPhoto = t.groupPhoto || t.photo || '';
                 return `<button type="button" class="teacher-result-item" data-teacher-result-index="${index}" aria-label="عرض بيانات ${name}">
-                    <span class="teacher-result-avatar">${t.photo ? `<img src="${escapeTeacherResultText(t.photo)}" alt="صورة ${name}" loading="lazy">` : (isMs ? '👩‍🏫' : '👨‍🏫')}</span>
+                    <span class="teacher-result-avatar">${cardPhoto ? `<img src="${escapeTeacherResultText(cardPhoto)}" alt="صورة المجموعة ${group}" loading="lazy">` : (isMs ? '👩‍🏫' : '👨‍🏫')}</span>
                     <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · ${ratingText}${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}<br><span class="teacher-result-contact">📍 ${address}</span><br><span class="teacher-result-contact teacher-result-phone">📞 ${phone}</span></span></span>
                     <span class="teacher-result-distance">${distanceText || 'عرض'}<br>↗</span>
                 </button>`;
@@ -3553,9 +3557,13 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                     }
                 }
 
+                const markerPhoto = t.groupPhoto || t.photo || '';
+                const markerFace = markerPhoto
+                    ? `<div class="registered-teacher-marker" style="padding:0;overflow:hidden;${isMs ? 'background-color:#EC4899;' : ''}"><img src="${escapeTeacherResultText(markerPhoto)}" alt="صورة المجموعة" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"></div>`
+                    : `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
                 const iconHtml = `
                     <div style="position:relative; width:36px; height:36px;">
-                        <div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>
+                        ${markerFace}
                         ${ratingBadgeHtml}
                     </div>
                 `;
