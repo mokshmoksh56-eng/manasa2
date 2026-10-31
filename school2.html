@@ -866,10 +866,25 @@
 
       let isAppInitialized = false;
 
-      onAuthStateChanged(auth, (user) => {
+      onAuthStateChanged(auth, async (user) => {
           const loginModal = document.getElementById('adminLoginModal');
+          const loginError = document.getElementById('adminLoginError');
+
+          // Teacher accounts created by login.html use phone@ehgezly.com.
+          // Keep these accounts out of the administration dashboard.
+          if (user && String(user.email || '').toLowerCase().endsWith('@ehgezly.com')) {
+              if (loginModal) loginModal.classList.add('active');
+              if (loginError) {
+                  loginError.innerText = 'حساب المعلم لا يملك صلاحية دخول لوحة الإدارة.';
+                  loginError.classList.remove('hidden');
+              }
+              try { await signOut(auth); } catch (e) {}
+              return;
+          }
+
           if (user) {
               if (loginModal) loginModal.classList.remove('active');
+              if (loginError) loginError.classList.add('hidden');
               if (!isAppInitialized) {
                   if (typeof populateGradeFilter === 'function') populateGradeFilter();
                   if (typeof loadCurriculumFromFirebase === 'function') loadCurriculumFromFirebase();
@@ -904,7 +919,13 @@
             btn.disabled = true;
             err.classList.add('hidden');
 
-            window.fsSignIn(window.auth, email, pass).then((userCredential) => {
+            window.fsSignIn(window.auth, email, pass).then(async (userCredential) => {
+                const signedEmail = String(userCredential.user.email || '').toLowerCase();
+                if (signedEmail.endsWith('@ehgezly.com')) {
+                    await window.fsSignOut(window.auth);
+                    err.innerText = 'حساب المعلم لا يملك صلاحية دخول لوحة الإدارة.';
+                    err.classList.remove('hidden');
+                }
                 btn.innerText = 'دخول آمن 🔒';
                 btn.disabled = false;
             }).catch((error) => {
