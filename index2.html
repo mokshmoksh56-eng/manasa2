@@ -2212,15 +2212,31 @@
                         try {
                             localStorage.setItem('teacherProfilePhoto', photo);
                             const logged = localStorage.getItem('loggedInTeacher');
-                            if (logged) {
-                                const teacher = JSON.parse(logged);
-                                teacher.photo = photo;
-                                localStorage.setItem('loggedInTeacher', JSON.stringify(teacher));
-                            }
+                            let teacher = {};
+                            if (logged) teacher = JSON.parse(logged) || {};
+                            teacher.photo = photo;
+                            localStorage.setItem('loggedInTeacher', JSON.stringify(teacher));
                             avatar.innerHTML = `<img src="${photo}" alt="صورة المعلم">`;
-                            if (typeof showToast === 'function') showToast('تم تحديث صورة المعلم بنجاح ✔');
+                            // حفظ الصورة في سجل المعلم السحابي حتى تظهر للطلاب في talep.html.
+                            const phoneKey = String(teacher.phone || '').replace(/\D/g, '');
+                            if (phoneKey && window.db && window.fsDoc && window.fsSetDoc) {
+                                window.fsSetDoc(window.fsDoc(window.db, 'teachers', phoneKey), {
+                                    photo: photo,
+                                    teacherPhoto: photo,
+                                    photoUpdatedAt: Date.now()
+                                }, { merge: true }).then(() => {
+                                    if (typeof showToast === 'function') showToast('تم حفظ صورة المعلم وتحديثها للطلاب ✔');
+                                }).catch(err => {
+                                    console.warn('تعذر حفظ صورة المعلم سحابياً:', err);
+                                    if (typeof showToast === 'function') showToast('تم تغيير الصورة على هذا الجهاز، لكن تعذر مزامنتها سحابياً', true);
+                                });
+                            } else if (typeof showToast === 'function') {
+                                showToast('تم تغيير الصورة على هذا الجهاز. سجّل الدخول للرفع السحابي.');
+                            }
+                            if (typeof renderLessons === 'function') renderLessons();
                         } catch (err) {
-                            alert('مساحة التخزين غير كافية. اختار صورة أصغر.');
+                            console.error(err);
+                            alert('تعذر حفظ الصورة. اختار صورة أصغر.');
                         }
                     };
                     img.onerror = () => alert('تعذر فتح الصورة، جرّب صورة أخرى.');
@@ -3225,7 +3241,10 @@
                 validIds.add(lesson.id);
                 const colorIndex = index % 8;
                 const cardStyle = `card-color-${colorIndex}`;
-                const imgName = (index % 2 === 0) ? 'teacher.png' : 'student.png';
+                const savedTeacherPhoto = (() => { try { const t = JSON.parse(localStorage.getItem('loggedInTeacher') || '{}'); return t.photo || localStorage.getItem('teacherProfilePhoto') || ''; } catch(e) { return localStorage.getItem('teacherProfilePhoto') || ''; } })();
+                const groupImageHTML = savedTeacherPhoto
+                    ? `<img src="${savedTeacherPhoto}" alt="صورة المعلم" style="width:100%;height:100%;object-fit:cover;">`
+                    : '<img src="./teacher.png" alt="صورة المعلم">';
 
                 // الاعتماد الكامل على الذاكرة وليس اللوكال ستوريدج لمنع التضارب
                 const data = lesson.data || {};
@@ -3336,7 +3355,7 @@
                         </button>
                     </div>
                     <div class="card-image-box" onclick="${teacherIsBlocked ? '' : (hasReport && !isPublished ? `showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) بالأعلى لفتحها', true)` : `openGroupModal('${lesson.id}')`)}">
-                        <img src="./${imgName}" alt="صورة الحصة">
+                        ${groupImageHTML}
                     </div>
                     <div class="card-text">
                         ${timeRangeHTML}
