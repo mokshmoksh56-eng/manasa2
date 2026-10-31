@@ -3012,15 +3012,15 @@
             let state;
             try { state = JSON.parse(savedState); } catch(e) { return ''; }
             const grade = state.s_grade || '';
-            
+
             let subjectsBadges = '';
             if (state.selectedSubjects && state.selectedSubjects.length > 0) {
                 state.selectedSubjects.forEach(sub => {
-                    const cleanSub = sub.split(' - ')[1] || sub;
+                    const cleanSub = String(sub).split(' - ')[1] || sub;
                     subjectsBadges += `<span class="info-badge">📚 ${cleanSub}</span>`;
                 });
             }
-            
+
             let stageStr = '';
             if(state.s_stage) {
                 stageStr = state.s_stage;
@@ -3033,14 +3033,36 @@
                         if(curr[state.s_stage] && curr[state.s_stage].name) stageStr = curr[state.s_stage].name;
                     } catch(e) {}
                 }
-                stageStr = stageStr.replace(/^[🎒📐🎓]\s*/, '').replace('المرحلة ', '').replace('الابتدائية', 'ابتدائي').replace('الإعدادية', 'إعدادي').replace('الثانوية', 'ثانوي');
+                stageStr = String(stageStr).replace(/^[🎒📐🎓]\s*/, '').replace('المرحلة ', '').replace('الابتدائية', 'ابتدائي').replace('الإعدادية', 'إعدادي').replace('الثانوية', 'ثانوي');
+            }
+
+            // نفس تسميات الفئة ومكان الدرس المستخدمة في end.html
+            let genderText = '';
+            if (state.g_gender) {
+                genderText = state.g_gender;
+                if (state.g_gender === 'g_boys' || state.g_gender === 'اولاد فقط') genderText = 'أولاد فقط';
+                else if (state.g_gender === 'g_girls' || state.g_gender === 'بنات فقط') genderText = 'بنات فقط';
+                else if (state.g_gender === 'ولاد وبنات') genderText = 'ولاد وبنات';
+                else if (state.g_gender === 'مختلط') genderText = 'مختلط';
+                else if (state.g_gender !== 'g_boys' && state.g_gender !== 'g_girls') genderText = state.g_gender;
+            }
+
+            let locationText = '';
+            if (state.g_loc) {
+                const loc = state.g_loc;
+                if (loc === 'l_center' || loc === 'فى السنتر' || loc === 'في السنتر') locationText = 'في السنتر';
+                else if (loc === 'l_teach' || loc === 'عند المستر') locationText = 'عند المستر';
+                else if (loc === 'l_stud' || loc === 'فى منزل الطالب' || loc === 'في منزل الطالب') locationText = 'في منزل الطالب';
+                else locationText = loc;
             }
 
             let badges = '';
             if (stageStr) badges += `<span class="info-badge">🎓 ${stageStr}</span>`;
             if (grade) badges += `<span class="info-badge">👑 ${grade}</span>`;
-            badges += subjectsBadges;
-            
+            if (subjectsBadges) badges += subjectsBadges;
+            if (genderText) badges += `<span class="info-badge">👥 ${genderText}</span>`;
+            if (locationText) badges += `<span class="info-badge">📍 ${locationText}</span>`;
+
             return badges ? `<div class="info-badges-row">${badges}</div>` : '';
         }
 
