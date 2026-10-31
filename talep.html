@@ -884,6 +884,9 @@
         let cachedTeachersStageKey = '__init__';
         let cachedTeachersGrade = '__init__';
         let cacheReady = false;
+        // يمنع تكرار طلبات القراءة الاحتياطية المتزامنة لنفس الصف.
+        let teachersFallbackPromise = null;
+        let teachersFallbackKey = '';
         let teacherRenderTimer = null;
 
         let openPopupLessonId = null;
@@ -2550,50 +2553,75 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
         async function getRegisteredTeachersFromFirebase() {
             const currentStage = (document.getElementById('s_stage').value || '').trim();
             const currentGrade = (document.getElementById('s_grade').value || '').trim();
+            const cacheKey = `${currentStage}::${currentGrade}`;
 
-            if (cacheReady
-                && cachedTeachersStageKey === currentStage
-                && cachedTeachersGrade === currentGrade) {
-                return {
-                    registeredList: cachedTeachersList,
-                    hiddenCount: cachedTeachersHiddenCount
-                };
+            if (cacheReady && cachedTeachersStageKey === currentStage && cachedTeachersGrade === currentGrade) {
+                return { registeredList: cachedTeachersList, hiddenCount: cachedTeachersHiddenCount };
             }
 
-            console.warn("⚠️ الكاش غير جاهز — قراءة احتياطية من Firestore");
+            // لو استعلام احتياطي لنفس الصف شغال بالفعل، شارك نتيجته بدل تكرار قراءة Firestore.
+            if (teachersFallbackPromise) {
+                if (teachersFallbackKey === cacheKey) return await teachersFallbackPromise;
+                // انتظر الاستعلام الجاري لصف مختلف، ثم أعد التحقق من الصف الحالي.
+                try { await teachersFallbackPromise; } catch (e) {}
+                return await getRegisteredTeachersFromFirebase();
+            }
 
-            const registeredList = [];
-            let hiddenCount = 0;
+            teachersFallbackKey = cacheKey;
+            teachersFallbackPromise = (async () => {
+                const registeredList = [];
+                let hiddenCount = 0;
 
-            if (!window.db) {
-                console.warn("⚠️ Firebase لم يتصل بعد");
+                if (!window.db) {
+                    console.warn("⚠️ Firebase لم يتصل بعد");
+                    return { registeredList, hiddenCount };
+                }
+
+                try {
+                    const mod = await loadFirebaseModule();
+                    if (!mod) return { registeredList, hiddenCount };
+
+                    const constraints = [
+                        mod.where("g_publish_map", "==", true),
+                        mod.limit(300)
+                    ];
+                    if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
+                    if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
+
+                    const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
+                    const snap = await mod.getDocs(q);
+
+                    snap.forEach(docSnap => {
+                        const state = docSnap.data();
+                        if (state.g_publish_map === false) { hiddenCount++; return; }
+                        registeredList.push(parseTeacherDoc(docSnap));
+                    });
+
+                    // احتفظ بالنتيجة في الذاكرة حتى لا تعيد كل إعادة رسم قراءة المجموعة نفسها.
+                    cachedTeachersList = registeredList;
+                    cachedTeachersHiddenCount = hiddenCount;
+                    cachedTeachersStageKey = currentStage;
+                    cachedTeachersGrade = currentGrade;
+                    cacheReady = true;
+                    try {
+                        localStorage.setItem(TEACHERS_CACHE_KEY, JSON.stringify({
+                            stage: currentStage, grade: currentGrade,
+                            list: registeredList, hidden: hiddenCount, ts: Date.now()
+                        }));
+                    } catch (e) {}
+                } catch (err) {
+                    console.error("❌ فشل القراءة الاحتياطية:", err);
+                }
+
                 return { registeredList, hiddenCount };
-            }
+            })();
 
             try {
-                const mod = await loadFirebaseModule();
-                if (!mod) return { registeredList, hiddenCount };
-
-                const constraints = [
-                    mod.where("g_publish_map", "==", true),
-                    mod.limit(300)  // ✅
-                ];
-                if (currentStage) constraints.push(mod.where("s_stage", "==", currentStage));
-                if (currentGrade) constraints.push(mod.where("s_grade", "==", currentGrade));
-
-                const q = mod.query(mod.collection(mod.db, "lessons"), ...constraints);
-                const snap = await mod.getDocs(q);
-
-                snap.forEach(docSnap => {
-                    const state = docSnap.data();
-                    if (state.g_publish_map === false) { hiddenCount++; return; }
-                    registeredList.push(parseTeacherDoc(docSnap));
-                });
-            } catch (err) {
-                console.error("❌ فشل القراءة الاحتياطية:", err);
+                return await teachersFallbackPromise;
+            } finally {
+                teachersFallbackPromise = null;
+                teachersFallbackKey = '';
             }
-
-            return { registeredList, hiddenCount };
         }
 
         function getStageNameByKey(stageKey) {
@@ -2622,7 +2650,9 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                     maxNativeZoom: 17,
                     updateWhenIdle: true,
                     updateWhenZooming: false,
+                    updateInterval: 250,
                     keepBuffer: 0,
+                    noWrap: true,
                     attribution: '© <a href="https://www.mapbox.com/about/maps/">Mapbox</a> © <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 }).addTo(map);
                 
