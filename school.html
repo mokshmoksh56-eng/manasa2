@@ -829,6 +829,31 @@
         </div>
     </div>
 
+    <!-- مودال إعادة تعيين كلمة المرور -->
+    <div id="passwordResetModal" class="modal-overlay" onclick="closeModal('passwordResetModal')" style="z-index: 999999;">
+        <div class="modal-box" onclick="event.stopPropagation()" style="max-width: 450px; border-bottom-color: #F59E0B; text-align: center;">
+            <div class="text-5xl mb-3">🔑</div>
+            <h3 class="text-lg font-black text-slate-800 mb-2">إعادة تعيين الرقم السري</h3>
+            <p class="text-xs font-bold text-slate-600 mb-4">بسبب استخدام فايربيز وإيميلات وهمية للحماية، لا يمكن تغيير الباسورد برمجياً من هنا مباشرة.</p>
+            
+            <div class="bg-amber-50 border border-amber-200 rounded-xl p-4 mb-4 text-right">
+                <p class="text-sm font-black text-amber-800 mb-2">لحل المشكلة، اتبع هذه الخطوات:</p>
+                <ol class="text-xs font-bold text-amber-900 leading-loose list-decimal list-inside space-y-1">
+                    <li>انسخ الإيميل التسجيلي الخاص بهذا المعلم:</li>
+                    <div class="bg-white border-2 border-amber-300 rounded-lg p-2 my-2 text-center text-blue-700 font-black text-sm cursor-pointer hover:bg-blue-50 transition-colors" onclick="copyFakeEmail()" id="fakeEmailDisplay" title="اضغط للنسخ"></div>
+                    <li>افتح لوحة <b>Firebase Console</b> ثم ادخل على <b>Authentication</b>.</li>
+                    <li>ابحث عن هذا الإيميل وقم بـ <b>Delete account</b> من هناك <u>فقط</u>.</li>
+                    <li>اطلب من المعلم الدخول لصفحة إنشاء حساب جديد بنفس رقمه، وسيعود حسابه بكل بياناته!</li>
+                </ol>
+            </div>
+            
+            <div class="flex gap-3 justify-center">
+                <a href="https://console.firebase.google.com/" target="_blank" class="action-chip bg-amber-500 hover:bg-amber-600 text-white px-6 py-2.5 flex-1 text-sm shadow-md transition-colors" style="text-decoration: none;">🔗 فتح Firebase</a>
+                <button onclick="closeModal('passwordResetModal')" class="action-chip bg-slate-200 text-slate-700 px-6 py-2.5 flex-1 text-sm border-none">إغلاق</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
       import {
@@ -2527,8 +2552,13 @@
                                 ${unifiedScheduleHTML}
                             </div>
                             <div class="flex flex-wrap items-center justify-between gap-2 mt-4 pt-3 border-t border-slate-300">
-                                <div class="flex gap-2">${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md">💬 واتساب</a>` : ''}</div>
-                                <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-red-700 hover:bg-red-800 text-white font-black shadow-md border border-red-900 transition-colors">🔥 حذف نهائي من Firebase</button>
+                                <div class="flex gap-2">
+                                    ${cleanPhone ? `<a href="tel:${cleanPhone}" class="action-chip bg-blue-600 text-white shadow-md" style="text-decoration: none;">📞 اتصال</a><a href="https://wa.me/${waPhone}" target="_blank" onclick="recordWaClick('${docIdSafe}', '${r.phone}', '${safeTeacherName}')" class="action-chip bg-emerald-600 text-white shadow-md" style="text-decoration: none;">💬 واتساب</a>` : ''}
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="showPasswordResetGuide('${r.phone}')" class="action-chip bg-amber-500 hover:bg-amber-600 text-white font-black shadow-md border border-amber-700 transition-colors">🔑 نسي الباسورد؟</button>
+                                    <button onclick="deleteRecord('${lessonsArrayStr}', '${r.phone}', '${safeTeacherName}', '${docIdSafe}')" class="action-chip bg-red-700 hover:bg-red-800 text-white font-black shadow-md border border-red-900 transition-colors">🔥 حذف نهائي</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -2858,6 +2888,26 @@
                 adminMarker.setLatLng([lat, lng]);
             }
             setTimeout(() => { adminMap.invalidateSize(); }, 200);
+        }
+
+        function showPasswordResetGuide(phone) {
+            const cleanPhone = String(phone || '').replace(/\D/g, '');
+            if(!cleanPhone) {
+                showToast('⚠️ لا يوجد رقم هاتف صالح لهذا المعلم', true);
+                return;
+            }
+            const fakeEmail = cleanPhone + "@ehgezly.com";
+            document.getElementById('fakeEmailDisplay').textContent = fakeEmail;
+            document.getElementById('passwordResetModal').classList.add('active');
+        }
+
+        function copyFakeEmail() {
+            const email = document.getElementById('fakeEmailDisplay').textContent;
+            navigator.clipboard.writeText(email).then(() => {
+                showToast('✅ تم نسخ الإيميل بنجاح، اذهب إلى فايربيز الآن');
+            }).catch(() => {
+                showToast('⚠️ فشل النسخ، قم بنسخه يدوياً', true);
+            });
         }
     </script>
 </body>
