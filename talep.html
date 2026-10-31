@@ -460,12 +460,24 @@
         .map-container.is-fullscreen ~ .map-actions-wrapper #teacherResultsPanel .teacher-results-list{max-height:calc(32vh - 48px)}
         .map-container.is-fullscreen ~ .map-actions-wrapper #teacherResultsPanel.is-collapsed{bottom:10px}
         @media(max-width:480px){.teacher-results-list{max-height:250px}.teacher-result-item{padding:8px}.teacher-result-avatar{width:34px;height:34px;flex-basis:34px}}
+        .group-photo-expandable{cursor:zoom-in;touch-action:manipulation}
+        .group-photo-lightbox{position:fixed;inset:0;z-index:2147483000;background:rgba(0,0,0,.94);display:none;align-items:center;justify-content:center;padding:18px;box-sizing:border-box}
+        .group-photo-lightbox.is-open{display:flex}
+        .group-photo-lightbox img{display:block;max-width:100%;max-height:calc(100dvh - 36px);width:auto;height:auto;object-fit:contain;border-radius:8px;box-shadow:0 10px 40px rgba(0,0,0,.45)}
+        .group-photo-lightbox-close{position:absolute;top:max(12px,env(safe-area-inset-top));right:14px;width:44px;height:44px;border:0;border-radius:50%;background:rgba(255,255,255,.16);color:#fff;font-size:30px;line-height:1;cursor:pointer;z-index:2}
+        .group-photo-lightbox-caption{position:absolute;bottom:max(12px,env(safe-area-inset-bottom));left:15px;right:15px;text-align:center;color:#fff;font-size:13px;font-weight:800;text-shadow:0 1px 4px #000;pointer-events:none}
     </style>
 </head>
 <body>
 
     <div id="customToast" class="custom-toast">
         <span id="toastIcon">✨</span> <span id="toastText">تمت العملية بنجاح!</span>
+    </div>
+
+    <div id="groupPhotoLightbox" class="group-photo-lightbox" role="dialog" aria-modal="true" aria-label="صورة المجموعة" onclick="if(event.target===this) closeGroupPhotoLightbox()">
+        <button type="button" class="group-photo-lightbox-close" aria-label="إغلاق الصورة" onclick="closeGroupPhotoLightbox()">×</button>
+        <img id="groupPhotoLightboxImage" src="" alt="صورة المجموعة بالحجم الكامل">
+        <div id="groupPhotoLightboxCaption" class="group-photo-lightbox-caption"></div>
     </div>
 
     <div id="locationDisclosureModal" class="custom-modal-overlay">
@@ -3021,7 +3033,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
 
             const infoPhoto = t.groupPhoto || t.photo || '';
             body.innerHTML = `
-                ${infoPhoto ? `<div class="teacher-info-profile"><img src="${escapeTeacherResultText(infoPhoto)}" alt="صورة المجموعة ${escapeTeacherResultText(t.groupName)}"><div class="teacher-info-title">أ/ ${escapeTeacherResultText(t.teacherName)}</div></div>` : `<div class="teacher-info-title">${emoji} أ/ ${escapeTeacherResultText(t.teacherName)}</div>`}
+                ${infoPhoto ? `<div class="teacher-info-profile"><img class="group-photo-expandable" data-group-photo-title="${escapeTeacherResultText(t.groupName || t.teacherName || 'المجموعة')}" src="${escapeTeacherResultText(infoPhoto)}" alt="صورة المجموعة ${escapeTeacherResultText(t.groupName)}"><div class="teacher-info-title">أ/ ${escapeTeacherResultText(t.teacherName)}</div></div>` : `<div class="teacher-info-title">${emoji} أ/ ${escapeTeacherResultText(t.teacherName)}</div>`}
                 <div class="teacher-info-row"><span>👥 المجموعة</span><span>${t.groupName}</span></div>
                 <div class="teacher-info-row"><span>🎓 الصف الدراسي</span><span style="color:#2563EB;">${formatTeacherGradeForCard(t)}</span></div>
                 <div class="teacher-info-row"><span>📚 المادة</span><span>${t.subject}</span></div>
@@ -3277,7 +3289,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
                 const ratingText = Number(t.ratingCount || 0) > 0 ? `⭐ ${rating.toFixed(1)} · ` : '';
                 const cardPhoto = t.groupPhoto || t.photo || '';
                 return `<button type="button" class="teacher-result-item" data-teacher-result-index="${index}" aria-label="عرض بيانات ${name}">
-                    <span class="teacher-result-avatar">${cardPhoto ? `<img src="${escapeTeacherResultText(cardPhoto)}" alt="صورة المجموعة ${group}" loading="lazy">` : (isMs ? '👩‍🏫' : '👨‍🏫')}</span>
+                    <span class="teacher-result-avatar">${cardPhoto ? `<img class="group-photo-expandable" data-group-photo-title="${group}" src="${escapeTeacherResultText(cardPhoto)}" alt="صورة المجموعة ${group}" loading="lazy">` : (isMs ? '👩‍🏫' : '👨‍🏫')}</span>
                     <span class="teacher-result-main"><span class="teacher-result-name">${name}</span><span class="teacher-result-sub">${subject} · ${grade}<br>${group} · ${ratingText}${escapeTeacherResultText(t.days || 'المواعيد غير محددة')}<br><span class="teacher-result-contact">📍 ${address}</span><br><span class="teacher-result-contact teacher-result-phone">📞 ${phone}</span></span></span>
                     <span class="teacher-result-distance">${distanceText || 'عرض'}<br>↗</span>
                 </button>`;
@@ -3559,7 +3571,7 @@ if (data.s_stage && getCurriculum()[data.s_stage] && !document.getElementById('s
 
                 const markerPhoto = t.groupPhoto || t.photo || '';
                 const markerFace = markerPhoto
-                    ? `<div class="registered-teacher-marker" style="padding:0;overflow:hidden;${isMs ? 'background-color:#EC4899;' : ''}"><img src="${escapeTeacherResultText(markerPhoto)}" alt="صورة المجموعة" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;"></div>`
+                    ? `<div class="registered-teacher-marker" style="padding:0;overflow:hidden;${isMs ? 'background-color:#EC4899;' : ''}"><img class="group-photo-expandable" data-group-photo-title="${escapeTeacherResultText(t.groupName || t.teacherName || 'المجموعة')}" src="${escapeTeacherResultText(markerPhoto)}" alt="صورة المجموعة" style="width:100%;height:100%;object-fit:cover;border-radius:50%;display:block;cursor:zoom-in;"></div>`
                     : `<div class="registered-teacher-marker" style="${isMs ? 'background-color:#EC4899;' : ''}">${emoji}</div>`;
                 const iconHtml = `
                     <div style="position:relative; width:36px; height:36px;">
@@ -3712,5 +3724,41 @@ ${details}
             }
         };
     </script>
+<script>
+(function(){
+    const box = document.getElementById('groupPhotoLightbox');
+    const image = document.getElementById('groupPhotoLightboxImage');
+    const caption = document.getElementById('groupPhotoLightboxCaption');
+    let previousOverflow = '';
+    window.openGroupPhotoLightbox = function(src, title){
+        if (!box || !image || !src) return;
+        image.src = src;
+        image.alt = title ? ('صورة ' + title) : 'صورة المجموعة بالحجم الكامل';
+        if (caption) caption.textContent = title || '';
+        previousOverflow = document.body.style.overflow;
+        box.classList.add('is-open');
+        document.body.style.overflow = 'hidden';
+    };
+    window.closeGroupPhotoLightbox = function(){
+        if (!box || !image) return;
+        box.classList.remove('is-open');
+        image.src = '';
+        if (caption) caption.textContent = '';
+        document.body.style.overflow = previousOverflow;
+    };
+    // Capture phase prevents the image tap from also opening the teacher info card / selecting the result.
+    document.addEventListener('click', function(event){
+        const target = event.target;
+        if (!target || !target.matches || !target.matches('img.group-photo-expandable')) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+        window.openGroupPhotoLightbox(target.currentSrc || target.src, target.getAttribute('data-group-photo-title') || target.alt || 'صورة المجموعة');
+    }, true);
+    document.addEventListener('keydown', function(event){
+        if (event.key === 'Escape' && box && box.classList.contains('is-open')) window.closeGroupPhotoLightbox();
+    });
+})();
+</script>
 </body>
 </html>
