@@ -3223,6 +3223,32 @@
             setTimeout(() => toast.classList.remove('show'), 2800);
         }
 
+        // عرض صورة المجموعة فقط، دون فتح تفاصيل المجموعة أو الانتقال لصفحة أخرى.
+        function showGroupCardPhoto(lessonId, event) {
+            if (event) { event.preventDefault(); event.stopPropagation(); }
+            const lesson = lessons.find(item => String(item.id) === String(lessonId));
+            const photo = lesson && lesson.data && lesson.data.g_cardPhoto;
+            if (!photo) { showToast('📷 اختار صورة للمجموعة أولاً'); return; }
+            let viewer = document.getElementById('groupPhotoViewer');
+            if (!viewer) {
+                viewer = document.createElement('div');
+                viewer.id = 'groupPhotoViewer';
+                viewer.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,23,.92);z-index:20000;display:none;align-items:center;justify-content:center;padding:18px;box-sizing:border-box;';
+                viewer.innerHTML = '<button type="button" aria-label="إغلاق الصورة" style="position:absolute;top:18px;right:18px;width:42px;height:42px;border:0;border-radius:50%;background:#fff;color:#0f172a;font-size:25px;font-weight:900;cursor:pointer;" onclick="closeGroupCardPhoto()">×</button><img id="groupPhotoViewerImage" alt="صورة المجموعة" style="display:block;max-width:100%;max-height:86vh;object-fit:contain;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.45);">';
+                viewer.addEventListener('click', function(e) { if (e.target === viewer) closeGroupCardPhoto(); });
+                document.body.appendChild(viewer);
+            }
+            document.getElementById('groupPhotoViewerImage').src = photo;
+            viewer.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeGroupCardPhoto() {
+            const viewer = document.getElementById('groupPhotoViewer');
+            if (viewer) viewer.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
         // اختيار صورة مستقلة لكل مجموعة وحفظها محلياً وفي Firestore.
         async function chooseGroupCardPhoto(lessonId, event) {
             if (event) { event.preventDefault(); event.stopPropagation(); }
@@ -3346,10 +3372,10 @@
                     ? (isPublished ? 'ظاهرة للطلاب — يمكنك إدارتها.' : 'مخفية عن الطلاب — اضغط "فتح" لنشرها.')
                     : '⚠️ أكمل الإعداد أولاً — النشر متوقف حتى تكتمل البيانات.';
 
-                // تصميم مختصر: إخفاء بيانات ومواعيد المجموعة من الكارت، مع إبقاء الاسم وأزرار الإدارة.
-                const statusBadgeHTML = '';
-                const infoBadgesHTML = '';
-                const timeRangeHTML = '';
+                // إظهار بيانات المجموعة الأساسية على الكارت كما كانت: الحالة، المرحلة/الصف/المواد، والمواعيد.
+                const statusBadgeHTML = calculateSessionStatus(savedState);
+                const infoBadgesHTML = getQuickInfoBadges(savedState);
+                const timeRangeHTML = getTimeRangeBadge(savedState);
 
                 let statusDotHTML = '';
                 if (!hasReport) {
@@ -3439,12 +3465,18 @@
                             </svg>
                         </button>
                     </div>
-                    <div class="card-image-box" onclick="${teacherIsBlocked ? '' : (hasReport && !isPublished ? `showToast('🔒 المجموعة مخفية! استخدم أيقونة (العين) بالأعلى لفتحها', true)` : `openGroupModal('${lesson.id}')`)}">
+                    <div class="card-image-box" onclick="showGroupCardPhoto('${lesson.id}', event)" title="اضغط لعرض الصورة فقط">
                         ${groupImageHTML}
                         <button type="button" class="group-photo-edit" title="اختيار أو تعديل صورة المجموعة" aria-label="اختيار صورة المجموعة" onclick="chooseGroupCardPhoto('${lesson.id}', event)" ${teacherIsBlocked ? 'disabled' : ''}>📷</button>
                     </div>
                     <div class="card-text">
                         <h2>${lesson.title}</h2>
+                        <div class="card-details-restored" style="width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:5px;margin:3px 0 7px;">
+                            <div>${statusBadgeHTML}</div>
+                            ${infoBadgesHTML}
+                            ${timeRangeHTML}
+                            <p style="margin:0;font-size:10.5px;line-height:1.4;color:#475569;white-space:normal;">${descText}</p>
+                        </div>
                         ${
                             teacherIsBlocked 
                             ? `<button type="button" class="btn-go" onclick="showToast('🔒 الحساب محظور — تواصل مع الإدارة', true)">مغلق</button>`
