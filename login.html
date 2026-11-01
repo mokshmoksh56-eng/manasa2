@@ -595,17 +595,7 @@
                 <input type="password" id="regPassword2" class="custom-input" placeholder="أدخل 6 أرقام" maxlength="6" inputmode="numeric" oninput="enforceDigitsOnly(this)">
             </div>
 
-            <div id="recaptcha-container" style="margin:10px 0;"></div>
-            <button class="btn-submit" id="registerBtn" onclick="handleRegister(event)">📩 إرسال كود التحقق SMS</button>
-            <div id="otpSection" style="display:none; margin-top:15px;">
-                <div class="input-group">
-                    <label class="input-label">كود التحقق المرسل برسالة SMS</label>
-                    <input type="tel" id="regOtp" class="custom-input" placeholder="أدخل كود التحقق" maxlength="6" inputmode="numeric" autocomplete="one-time-code" oninput="enforceDigitsOnly(this)">
-                </div>
-                <button type="button" class="btn-submit" id="verifyOtpBtn" onclick="completePhoneVerification()">✅ تأكيد الكود وإنشاء الحساب</button>
-                <button type="button" class="btn-logout" style="width:100%; margin-top:8px;" onclick="resetPhoneVerification()">تغيير الرقم / إعادة المحاولة</button>
-            </div>
-            <p style="font-size:11px;color:#64748B;text-align:center;margin-top:10px;line-height:1.7;">بإرسال الكود، قد تصلك رسالة SMS للتحقق، وقد تُطبق رسوم شركة الاتصالات.</p>
+            <button class="btn-submit" id="registerBtn" onclick="handleRegister(event)">إنشاء حساب</button>
         </div>
     </div>
 
@@ -711,10 +701,6 @@
                     createUser: authModule.createUserWithEmailAndPassword,
                     signIn: authModule.signInWithEmailAndPassword,
                     signOut: authModule.signOut,
-                    RecaptchaVerifier: authModule.RecaptchaVerifier,
-                    signInWithPhoneNumber: authModule.signInWithPhoneNumber,
-                    EmailAuthProvider: authModule.EmailAuthProvider,
-                    linkWithCredential: authModule.linkWithCredential,
                     doc: fs.doc, getDoc: fs.getDoc, setDoc: fs.setDoc, deleteDoc: fs.deleteDoc
                 };
                 return _fbModule;
@@ -875,32 +861,6 @@
         // ==========================================
         // 📝 Register — حساب جديد
         // ==========================================
-        let pendingTeacherRegistration = null;
-        let phoneConfirmationResult = null;
-        let phoneRecaptchaVerifier = null;
-
-        function egyptE164(localPhone) {
-            const digits = String(localPhone || '').replace(/\D/g, '');
-            if (!/^01[0125]\d{8}$/.test(digits)) throw new Error('اكتب رقم موبايل مصري صحيح من 11 رقمًا يبدأ بـ 010 أو 011 أو 012 أو 015.');
-            return '+20' + digits.substring(1);
-        }
-
-        function resetPhoneVerification() {
-            phoneConfirmationResult = null;
-            pendingTeacherRegistration = null;
-            document.getElementById('otpSection').style.display = 'none';
-            document.getElementById('regOtp').value = '';
-            const btn = document.getElementById('registerBtn');
-            btn.disabled = false;
-            btn.innerText = '📩 إرسال كود التحقق SMS';
-            if (phoneRecaptchaVerifier) {
-                try { phoneRecaptchaVerifier.clear(); } catch(e) {}
-                phoneRecaptchaVerifier = null;
-            }
-            const box = document.getElementById('recaptcha-container');
-            if (box) box.innerHTML = '';
-        }
-
         async function handleRegister(event) {
             const title = document.querySelector('input[name="title"]:checked').value;
             const name = document.getElementById('regName').value.trim();
@@ -910,100 +870,117 @@
             const pass1 = document.getElementById('regPassword1').value;
             const pass2 = document.getElementById('regPassword2').value;
 
-            if (!name || !age || !phone || !phoneConfirm || !pass1 || !pass2)
+            if (!name || !age || !phone || !phoneConfirm || !pass1 || !pass2) 
                 return showAlert('الرجاء إكمال جميع البيانات.');
-            if (!/^\d{11}$/.test(phone)) return showAlert('رقم التليفون يجب أن يكون 11 رقمًا بالضبط.');
-            if (phone !== phoneConfirm) return showAlert('رقم التليفون وتأكيده غير متطابقين.');
-            if (!/^\d{6}$/.test(pass1)) return showAlert('الرقم السري يجب أن يكون 6 أرقام بالضبط.');
-            if (pass1 !== pass2) return showAlert('الرقمان السريان غير متطابقين.');
-            if (phoneConfirmationResult) return showAlert('أدخل كود SMS الموجود في الرسالة ثم اضغط تأكيد.', false);
+
+            if (!/^\d{11}$/.test(phone)) 
+                return showAlert('رقم التليفون يجب أن يكون 11 رقماً بالضبط.');
+            if (phone !== phoneConfirm) 
+                return showAlert('رقم التليفون وتأكيده غير متطابقين.');
+
+            if (!/^\d{6}$/.test(pass1)) 
+                return showAlert('الرقم السري يجب أن يكون 6 أرقام بالضبط.');
+            if (pass1 !== pass2) 
+                return showAlert('الرقمان السريان غير متطابقين.');
 
             const btn = document.getElementById('registerBtn');
             const originalText = btn.innerText;
-            btn.innerText = '⏳ جاري التحقق وإرسال الرسالة...';
+            btn.innerText = '⏳ جاري التحقق...';
             btn.disabled = true;
+
             const fb = await getFbModule();
             if (!fb) {
-                btn.innerText = originalText; btn.disabled = false;
+                btn.innerText = originalText;
+                btn.disabled = false;
                 return showAlert('تعذر الاتصال بالسحابة. تأكد من الإنترنت.');
             }
 
+            const fakeEmail = phone + "@ehgezly.com";
+
             try {
-                const blockedCheck = await fb.getDoc(fb.doc(fb.db, 'blocked_teachers', phone));
-                if (blockedCheck.exists()) {
-                    btn.innerText = originalText; btn.disabled = false;
-                    document.getElementById('blockedAccountModal').classList.add('active'); return;
+                let blockedCheck;
+                try {
+                    blockedCheck = await fb.getDoc(fb.doc(fb.db, "blocked_teachers", phone));
+                } catch (blockErr) {
+                    console.error("فشل فحص البصمة السوداء:", blockErr);
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت.');
                 }
-                const teacherCheck = await fb.getDoc(fb.doc(fb.db, 'teachers', phone));
-                if (teacherCheck.exists()) {
-                    const existing = teacherCheck.data();
-                    btn.innerText = originalText; btn.disabled = false;
-                    if (existing.isBlocked === true) document.getElementById('blockedAccountModal').classList.add('active');
-                    else showAlert('هذا الرقم مسجل مسبقًا! يمكنك تسجيل الدخول.');
+
+                if (blockedCheck.exists()) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    document.getElementById('blockedAccountModal').classList.add('active');
                     return;
                 }
 
-                const e164 = egyptE164(phone);
-                pendingTeacherRegistration = { title, name, age, phone, pass1 };
-                fb.auth.languageCode = 'ar';
-                phoneRecaptchaVerifier = new fb.RecaptchaVerifier(fb.auth, 'recaptcha-container', {
-                    size: 'invisible',
-                    callback: () => {}
-                });
-                phoneConfirmationResult = await fb.signInWithPhoneNumber(fb.auth, e164, phoneRecaptchaVerifier);
-                document.getElementById('otpSection').style.display = 'block';
-                document.getElementById('regOtp').focus();
-                btn.innerText = '📩 تم إرسال الكود';
-                btn.disabled = true;
-                showAlert('تم إرسال كود التحقق إلى ' + e164 + '. افحص رسائل SMS.', false);
-            } catch (error) {
-                console.error('SMS registration error:', error);
-                btn.innerText = originalText; btn.disabled = false;
-                if (phoneRecaptchaVerifier) { try { phoneRecaptchaVerifier.clear(); } catch(e) {} phoneRecaptchaVerifier = null; }
-                const msg = error.message || '';
-                if (error.code === 'auth/invalid-phone-number') showAlert('رقم الموبايل غير صحيح. اكتب رقمًا مصريًا صحيحًا.');
-                else if (error.code === 'auth/too-many-requests') showAlert('تم طلب رسائل كثيرة. انتظر قليلًا ثم حاول مرة أخرى.');
-                else if (error.code === 'auth/operation-not-allowed') showAlert('تسجيل الهاتف غير مفعّل في Firebase Authentication. فعّل Phone sign-in أولًا.');
-                else if (error.code === 'auth/captcha-check-failed') showAlert('تعذر التحقق الأمني. حدّث الصفحة وحاول مرة أخرى.');
-                else if (msg.includes('رقم موبايل مصري')) showAlert(msg);
-                else showAlert('تعذر إرسال رسالة SMS. راجع إعدادات Firebase والدومين المصرح به ثم حاول مرة أخرى.');
-            }
-        }
+                let teacherCheck;
+                try {
+                    teacherCheck = await fb.getDoc(fb.doc(fb.db, "teachers", phone));
+                } catch (teachErr) {
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('تعذر التحقق من حالة الحساب. تأكد من الإنترنت.');
+                }
 
-        async function completePhoneVerification() {
-            const code = document.getElementById('regOtp').value.trim();
-            if (!/^\d{6}$/.test(code)) return showAlert('أدخل كود التحقق المكوّن من 6 أرقام.');
-            if (!phoneConfirmationResult || !pendingTeacherRegistration) return showAlert('اطلب كود تحقق جديدًا أولًا.');
-            const btn = document.getElementById('verifyOtpBtn');
-            const oldText = btn.innerText;
-            btn.disabled = true; btn.innerText = '⏳ جاري تأكيد الكود...';
-            const fb = await getFbModule();
-            try {
-                const result = await phoneConfirmationResult.confirm(code);
-                const user = result.user;
-                const p = pendingTeacherRegistration;
-                // ربط كلمة السر الحالية بحساب الهاتف حتى يستمر تسجيل الدخول القديم بالعمل.
-                const credential = fb.EmailAuthProvider.credential(p.phone + '@ehgezly.com', p.pass1);
-                await fb.linkWithCredential(user, credential);
-                const accountData = { title: p.title, name: p.name, age: p.age, phone: p.phone, createdAt: new Date().toISOString().split('T')[0] };
-                await fb.setDoc(fb.doc(fb.db, 'teachers', p.phone), {
-                    auth_uid: user.uid, phone: p.phone, teacherName: p.name, name: p.name,
-                    title: p.title, age: p.age, isBlocked: false, waClicks: 0, phoneType: '',
-                    phoneVerified: true, createdAt: accountData.createdAt, updatedAt: Date.now(), lastSeen: Date.now()
+                if (teacherCheck.exists()) {
+                    const existing = teacherCheck.data();
+                    if (existing.isBlocked === true) {
+                        btn.innerText = originalText;
+                        btn.disabled = false;
+                        document.getElementById('blockedAccountModal').classList.add('active');
+                        return;
+                    }
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return showAlert('هذا الرقم مسجل مسبقاً! الرجاء تسجيل الدخول.');
+                }
+
+                btn.innerText = '⏳ جاري إنشاء الحساب...';
+
+                const userCredential = await fb.createUser(fb.auth, fakeEmail, pass1);
+                const user = userCredential.user;
+
+                await fb.setDoc(fb.doc(fb.db, "teachers", phone), {
+                    auth_uid: user.uid,
+                    phone: phone,
+                    teacherName: name,
+                    name: name,
+                    title: title,
+                    age: age,
+                    isBlocked: false,
+                    waClicks: 0,
+                    phoneType: '',
+                    createdAt: new Date().toISOString().split('T')[0],
+                    updatedAt: Date.now(),
+                    lastSeen: Date.now()
                 }, { merge: true });
-                localStorage.setItem('teacherAccount_' + p.phone, JSON.stringify(accountData));
-                localStorage.setItem('rememberedPhone', p.phone);
+
+                const accountData = { title, name, age, phone, createdAt: new Date().toISOString().split('T')[0] };
+                localStorage.setItem('teacherAccount_' + phone, JSON.stringify(accountData));
+                localStorage.setItem('rememberedPhone', phone);
                 localStorage.setItem('loggedInTeacher', JSON.stringify(accountData));
-                try { await verifyAndRegisterDevice(p.phone, accountData); } catch(e) {}
-                btn.innerText = oldText; btn.disabled = false;
+
+                try {
+                    await verifyAndRegisterDevice(phone, accountData);
+                } catch (e) {}
+
+                // 🎉 إظهار مودال الترحيب بدل التحويل المباشر
+                btn.innerText = originalText;
+                btn.disabled = false;
                 showWelcomeModal(accountData);
+
             } catch (error) {
-                console.error('OTP confirmation error:', error);
-                btn.innerText = oldText; btn.disabled = false;
-                if (error.code === 'auth/invalid-verification-code') showAlert('كود التحقق غير صحيح. راجع الرسالة وحاول مرة أخرى.');
-                else if (error.code === 'auth/code-expired') showAlert('انتهت صلاحية الكود. اضغط إعادة المحاولة واطلب كودًا جديدًا.');
-                else if (error.code === 'auth/credential-already-in-use' || error.code === 'auth/email-already-in-use') showAlert('هذا الرقم مرتبط بحساب موجود بالفعل. جرّب تسجيل الدخول أو تواصل مع الإدارة.');
-                else showAlert('لم نتمكن من إكمال التسجيل. تأكد من الكود وإعدادات Firebase ثم حاول مرة أخرى.');
+                btn.innerText = originalText;
+                btn.disabled = false;
+                if (error.code === 'auth/email-already-in-use') {
+                    showAlert('هذا الرقم مسجل مسبقاً! الرجاء تسجيل الدخول.');
+                } else if (error.code === 'permission-denied') {
+                    showAlert('⚠️ خطأ في الصلاحيات. تواصل مع الإدارة.');
+                } else {
+                    showAlert('حدث خطأ أثناء إنشاء الحساب، تأكد من اتصالك بالإنترنت.');
+                }
             }
         }
 
