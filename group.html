@@ -1026,16 +1026,16 @@
                 .trim();
         }
 
-        function checkTeacherBlockedStatus() {
-            let currentPhone = localStorage.getItem('rememberedPhone') || '';
+        async function checkTeacherBlockedStatus() {
+            let currentPhone = String(localStorage.getItem('rememberedPhone') || '').replace(/\\D/g, '');
             let currentTeacherName = '';
 
             try {
                 const loggedStr = localStorage.getItem('loggedInTeacher');
                 if (loggedStr) {
                     const loggedObj = JSON.parse(loggedStr);
-                    if (loggedObj.phone) currentPhone = loggedObj.phone;
-                    if (loggedObj.name) currentTeacherName = cleanTeacherName(loggedObj.name);
+                    if (loggedObj.phone) currentPhone = String(loggedObj.phone).replace(/\\D/g, '');
+                    if (loggedObj.name || loggedObj.fullName) currentTeacherName = cleanTeacherName(loggedObj.fullName || loggedObj.name);
                 }
             } catch (e) {}
 
@@ -1045,12 +1045,33 @@
                 if (cleanInputName) currentTeacherName = cleanInputName;
             }
 
+            // الحالة السحابية هي المرجع الأساسي، وليس علامة قديمة محفوظة على الجهاز.
             let isBlocked = false;
-            if (currentPhone && localStorage.getItem('teacherBlocked_' + currentPhone) === 'true') {
-                isBlocked = true;
+            let cloudChecked = false;
+            if (currentPhone && window.db && window.fsGetDoc && window.doc) {
+                try {
+                    const [blockedSnap, teacherSnap] = await Promise.all([
+                        window.fsGetDoc(window.doc(window.db, 'blocked_teachers', currentPhone)),
+                        window.fsGetDoc(window.doc(window.db, 'teachers', currentPhone))
+                    ]);
+                    isBlocked = blockedSnap.exists() || (teacherSnap.exists() && teacherSnap.data().isBlocked === true);
+                    cloudChecked = true;
+                } catch (e) {
+                    console.warn('تعذر التحقق من حالة الحظر سحابياً:', e);
+                }
             }
-            if (currentTeacherName && localStorage.getItem('teacherBlocked_name_' + currentTeacherName) === 'true') {
-                isBlocked = true;
+
+            if (cloudChecked) {
+                // امسح أي حظر محلي قديم بعد تأكيد أن الحساب غير محظور في Firebase.
+                localStorage.setItem('teacherBlocked_' + currentPhone, isBlocked ? 'true' : 'false');
+                if (currentTeacherName) {
+                    localStorage.setItem('teacherBlocked_name_' + currentTeacherName, isBlocked ? 'true' : 'false');
+                }
+            } else {
+                isBlocked = !!(
+                    (currentPhone && localStorage.getItem('teacherBlocked_' + currentPhone) === 'true') ||
+                    (currentTeacherName && localStorage.getItem('teacherBlocked_name_' + currentTeacherName) === 'true')
+                );
             }
 
             if (previousBlockedState === true && isBlocked === false) {
@@ -1061,15 +1082,11 @@
                     setTimeout(() => { unblockToast.classList.remove('show'); }, 4000);
                 }
             }
-            
-            previousBlockedState = isBlocked;
 
+            previousBlockedState = isBlocked;
             const blockedModal = document.getElementById('blockedModal');
-            if (isBlocked) {
-                if (blockedModal) blockedModal.classList.add('active');
-            } else {
-                if (blockedModal) blockedModal.classList.remove('active');
-            }
+            if (blockedModal) blockedModal.classList.toggle('active', isBlocked);
+            return isBlocked;
         }
 
         const authStatusChannel = ('BroadcastChannel' in window) ? new BroadcastChannel('ehgezly_auth_status_sync') : null;
