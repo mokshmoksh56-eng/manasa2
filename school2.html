@@ -163,6 +163,25 @@
         }
         .user-meta span { display: flex; align-items: center; gap: 4px; }
 
+        /* ============ عداد أيام التسجيل ============ */
+        .user-counter {
+            font-size: 13px;
+            color: #c7d2fe;
+            background: rgba(110,142,251,0.12);
+            border: 1px solid rgba(110,142,251,0.35);
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            align-self: flex-start;
+        }
+        .user-counter strong {
+            color: #6e8efb;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
         .user-actions { display: flex; gap: 8px; flex-wrap: wrap; }
         .user-actions button {
             flex: 1; min-width: 100px;
@@ -358,21 +377,46 @@
         } catch (e) { return ''; }
     }
 
-    // ==================== التحقق من تسجيل الدخول (باستخدام localStorage للحفظ الدائم) ====================
+    // ==================== ⏱️ عداد أيام التسجيل ====================
+
+    function getDaysElapsed(createdAt) {
+        if (!createdAt) return null;
+
+        let start = createdAt;
+        // دعم Unix timestamp بالثواني أو بالميلي ثانية
+        if (typeof start === 'number' && start < 1e12) start = start * 1000;
+
+        const startMs = new Date(start).getTime();
+        if (isNaN(startMs)) return null;
+
+        let diff = Date.now() - startMs;
+        if (diff < 0) diff = 0;
+
+        return Math.floor(diff / 86400000); // 1000*60*60*24
+    }
+
+    function updateCounters() {
+        document.querySelectorAll('.user-counter').forEach(el => {
+            const days = getDaysElapsed(el.dataset.created);
+            el.querySelector('strong').textContent = (days === null) ? '—' : days;
+        });
+    }
+
+    // تحديث العداد تلقائياً كل دقيقة (يكفي لأنه بالأيام)
+    setInterval(updateCounters, 60000);
+
+    // ==================== التحقق من تسجيل الدخول ====================
 
     function isLoggedIn() {
-        // 🔥 تم التغيير من sessionStorage إلى localStorage
         return localStorage.getItem('admin_logged_in') === 'true';
     }
 
     function setLoggedIn() {
-        // 🔥 تم التغيير من sessionStorage إلى localStorage
         localStorage.setItem('admin_logged_in', 'true');
         localStorage.setItem('admin_email', ADMIN_EMAIL);
     }
 
     function setLoggedOut() {
-        // 🔥 تم التغيير من sessionStorage إلى localStorage
         localStorage.removeItem('admin_logged_in');
         localStorage.removeItem('admin_email');
     }
@@ -413,7 +457,7 @@
         btn.innerText = "⏳ جاري الدخول...";
         btn.disabled = true;
         setLoggedIn();
-        
+
         setTimeout(() => {
             loginOverlay.style.display = 'none';
             dashboard.style.display = 'block';
@@ -529,6 +573,12 @@
                         <span>📅 ${formatDate(user.createdAt)}</span>
                         ${user.createdAt ? `<span>(${daysAgo(user.createdAt)})</span>` : ''}
                     </div>
+
+                    <!-- ⏱️ عداد أيام التسجيل -->
+                    <div class="user-counter" data-created="${user.createdAt || ''}">
+                        ⏱️ مسجل من: <strong>—</strong> يوم
+                    </div>
+
                     ${user.banned && user.bannedAt ? `
                         <div class="user-meta" style="color:#ef4444;">
                             <span>🚫 حُظر في ${formatDate(user.bannedAt)}</span>
@@ -545,6 +595,9 @@
                 </div>
             </div>
         `).join('');
+
+        // تشغيل العداد أول مرة بعد الرسم
+        updateCounters();
     }
 
     // ==================== حظر / إلغاء حظر ====================
