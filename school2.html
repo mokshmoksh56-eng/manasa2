@@ -358,20 +358,23 @@
         } catch (e) { return ''; }
     }
 
-    // ==================== التحقق من تسجيل الدخول ====================
+    // ==================== التحقق من تسجيل الدخول (باستخدام localStorage للحفظ الدائم) ====================
 
     function isLoggedIn() {
-        return sessionStorage.getItem('admin_logged_in') === 'true';
+        // 🔥 تم التغيير من sessionStorage إلى localStorage
+        return localStorage.getItem('admin_logged_in') === 'true';
     }
 
     function setLoggedIn() {
-        sessionStorage.setItem('admin_logged_in', 'true');
-        sessionStorage.setItem('admin_email', ADMIN_EMAIL);
+        // 🔥 تم التغيير من sessionStorage إلى localStorage
+        localStorage.setItem('admin_logged_in', 'true');
+        localStorage.setItem('admin_email', ADMIN_EMAIL);
     }
 
     function setLoggedOut() {
-        sessionStorage.removeItem('admin_logged_in');
-        sessionStorage.removeItem('admin_email');
+        // 🔥 تم التغيير من sessionStorage إلى localStorage
+        localStorage.removeItem('admin_logged_in');
+        localStorage.removeItem('admin_email');
     }
 
     // ==================== دخول الأدمن ====================
@@ -421,7 +424,7 @@
         }, 400);
     });
 
-    // تسجيل دخول تلقائي لو موجود في sessionStorage
+    // تسجيل دخول تلقائي لو موجود في localStorage
     if (isLoggedIn()) {
         loginOverlay.style.display = 'none';
         dashboard.style.display = 'block';
